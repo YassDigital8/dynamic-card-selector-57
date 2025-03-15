@@ -1,6 +1,7 @@
 
 import React from 'react';
-import { DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 import { FileInfo } from '@/models/FileModel';
 import { useFileSelection } from '@/hooks/upload/useFileSelection';
 import { GalleryForm } from '@/components/gallery/GalleryForm';
@@ -50,6 +51,18 @@ export const GalleryDialogContent: React.FC<GalleryDialogContentProps> = ({
       
       <div className="space-y-6 py-4">
         <div className="space-y-4">
+          <GalleryForm
+            name={formProps.name}
+            setName={formProps.setName}
+            description={formProps.description}
+            setDescription={formProps.setDescription}
+            onCancel={formProps.onCancel}
+            onSubmit={formProps.onSubmit}
+            submitLabel={formProps.submitLabel}
+            cancelLabel={formProps.cancelLabel}
+            showFooter={false}
+          />
+
           <CoverImageSelector
             coverImage={coverSelectorProps.coverImage}
             selectedIconName={coverSelectorProps.selectedIconName}
@@ -64,17 +77,13 @@ export const GalleryDialogContent: React.FC<GalleryDialogContentProps> = ({
             handleFile={handleFile}
             galleryImageFiles={coverSelectorProps.galleryImageFiles}
           />
-
-          <GalleryForm
-            name={formProps.name}
-            setName={formProps.setName}
-            description={formProps.description}
-            setDescription={formProps.setDescription}
-            onCancel={formProps.onCancel}
-            onSubmit={formProps.onSubmit}
-            submitLabel={formProps.submitLabel}
-            cancelLabel={formProps.cancelLabel}
-          />
+          
+          <DialogFooter className="mt-4">
+            <Button type="button" variant="outline" onClick={formProps.onCancel}>
+              {formProps.cancelLabel}
+            </Button>
+            <Button type="submit" onClick={formProps.onSubmit}>{formProps.submitLabel}</Button>
+          </DialogFooter>
         </div>
       </div>
     </DialogContent>

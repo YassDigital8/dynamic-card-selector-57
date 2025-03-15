@@ -15,6 +15,7 @@ interface GalleryFormProps {
   onSubmit: (e: React.FormEvent) => void;
   submitLabel?: string;
   cancelLabel?: string;
+  showFooter?: boolean;
 }
 
 export const GalleryForm: React.FC<GalleryFormProps> = ({
@@ -26,9 +27,13 @@ export const GalleryForm: React.FC<GalleryFormProps> = ({
   onSubmit,
   submitLabel = 'Save Changes',
   cancelLabel = 'Cancel',
+  showFooter = true,
 }) => {
   return (
-    <form onSubmit={onSubmit} className="space-y-4">
+    <form onSubmit={(e) => {
+      e.preventDefault();
+      onSubmit(e);
+    }} className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="name">Gallery Name</Label>
         <Input
@@ -51,12 +56,14 @@ export const GalleryForm: React.FC<GalleryFormProps> = ({
         />
       </div>
       
-      <DialogFooter className="mt-4">
-        <Button type="button" variant="outline" onClick={onCancel}>
-          {cancelLabel}
-        </Button>
-        <Button type="submit">{submitLabel}</Button>
-      </DialogFooter>
+      {showFooter && (
+        <DialogFooter className="mt-4">
+          <Button type="button" variant="outline" onClick={onCancel}>
+            {cancelLabel}
+          </Button>
+          <Button type="submit">{submitLabel}</Button>
+        </DialogFooter>
+      )}
     </form>
   );
 };

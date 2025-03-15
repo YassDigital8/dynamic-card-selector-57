@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { FileDropzone } from '@/components/gallery/FileDropzone';
@@ -34,7 +35,7 @@ export const CoverImageSelector: React.FC<CoverImageSelectorProps> = ({
   handleFile,
   galleryImageFiles
 }) => {
-  return <Tabs value={coverImageSource} onValueChange={value => onCoverImageSourceChange(value as any)} className="it should be under Gallery name and Description ">
+  return <Tabs value={coverImageSource} onValueChange={value => onCoverImageSourceChange(value as any)} className="w-full">
       <TabsList className="grid w-full grid-cols-3">
         <TabsTrigger value="upload" className="flex items-center gap-2">
           <Upload className="h-4 w-4" />
