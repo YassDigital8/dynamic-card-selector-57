@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Gallery, FileInfo } from '@/models/FileModel';
 import { GalleryList } from './GalleryList';
@@ -33,8 +34,9 @@ export const GalleryTabContent: React.FC<GalleryTabContentProps> = ({
 }) => {
   const [isEditGalleryOpen, setIsEditGalleryOpen] = useState(false);
   
-  const filteredFiles = selectedGallery
-    ? files.filter(file => file.galleryId === selectedGallery.id)
+  // When in browse tab, show all files instead of filtering by gallery
+  const displayFiles = activeTab === 'browse' && selectedGallery
+    ? files // Show all files regardless of gallery
     : [];
 
   return (
@@ -97,9 +99,9 @@ export const GalleryTabContent: React.FC<GalleryTabContentProps> = ({
             </Alert>
           )}
           
-          {filteredFiles.length > 0 ? (
+          {displayFiles.length > 0 ? (
             <FileList 
-              files={filteredFiles}
+              files={displayFiles}
               onViewFile={onViewFile}
             />
           ) : (
