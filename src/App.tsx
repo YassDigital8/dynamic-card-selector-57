@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
+import Gallery from "./pages/Gallery";
 import useAuthentication from "./hooks/useAuthentication";
 
 // Initialize theme from localStorage or default to light
@@ -97,6 +98,11 @@ const App = () => {
             <Route path="/settings" element={
               <ProtectedRoute>
                 <Index />
+              </ProtectedRoute>
+            } />
+            <Route path="/gallery" element={
+              <ProtectedRoute>
+                <Gallery />
               </ProtectedRoute>
             } />
             

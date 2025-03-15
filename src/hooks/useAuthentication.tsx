@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -17,7 +16,7 @@ interface UserInfo {
   email: string;
 }
 
-const useAuthentication = () => {
+export const useAuthentication = () => {
   const [authToken, setAuthToken] = useState<string>('');
   const [authLoading, setAuthLoading] = useState<boolean>(true);
   const [authError, setAuthError] = useState<string | null>(null);
