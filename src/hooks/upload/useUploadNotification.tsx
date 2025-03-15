@@ -1,3 +1,4 @@
+
 import { useToast } from '@/hooks/use-toast';
 import { FileInfo } from '@/models/FileModel';
 import { CheckCircle, AlertCircle, InfoIcon, Eye } from 'lucide-react';
@@ -13,11 +14,11 @@ export const useUploadNotification = () => {
     toast({
       description: (
         <div className="py-1">
-          <div className="flex items-center gap-2">
-            <CheckCircle className="h-4 w-4 text-green-500" />
-            <span className="font-medium">Uploaded to: {galleryName}</span>
-          </div>
-          <div className="mt-2">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <CheckCircle className="h-4 w-4 text-green-500" />
+              <span className="font-medium">Uploaded to: {galleryName}</span>
+            </div>
             <Button 
               variant="outline" 
               size="sm" 
@@ -28,7 +29,7 @@ export const useUploadNotification = () => {
                 document.dispatchEvent(event);
               }}
             >
-              <Eye className="h-3.5 w-3.5" />
+              <Eye className="h-3.5 w-3.5 mr-1" />
               View
             </Button>
           </div>
