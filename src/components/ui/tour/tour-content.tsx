@@ -41,19 +41,19 @@ export const TourContent: React.FC<TourContentProps> = ({
         >
           <X size={14} />
         </Button>
-        <div className="p-5">
+        <div className="p-3 sm:p-5">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
             {title}
           </h3>
-          <div className="text-gray-600 dark:text-gray-300 text-sm max-h-[50vh] overflow-y-auto">
+          <div className="text-gray-600 dark:text-gray-300 text-sm max-h-[30vh] sm:max-h-[50vh] overflow-y-auto pb-2">
             {content}
           </div>
           
           {needsConfirmation && (
-            <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/30 border border-blue-100 dark:border-blue-800 rounded-md">
-              <p className="text-blue-700 dark:text-blue-300 text-sm font-medium flex items-center gap-2">
-                <CheckCircle size={16} className="text-blue-500" />
-                Please confirm you understand this step before continuing
+            <div className="mt-3 p-2 sm:p-3 bg-blue-50 dark:bg-blue-900/30 border border-blue-100 dark:border-blue-800 rounded-md">
+              <p className="text-blue-700 dark:text-blue-300 text-xs sm:text-sm font-medium flex items-center gap-2">
+                <CheckCircle size={16} className="text-blue-500 flex-shrink-0" />
+                <span>Please confirm you understand this step before continuing</span>
               </p>
             </div>
           )}
