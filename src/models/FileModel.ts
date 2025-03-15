@@ -32,5 +32,6 @@ export interface Gallery {
   createdBy: string;
   createdOn: string;
   coverImageUrl?: string;
+  iconName?: string; // Name of the Lucide icon to use
   fileCount: number;
 }

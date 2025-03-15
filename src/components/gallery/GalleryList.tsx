@@ -2,7 +2,10 @@
 import React from 'react';
 import { Gallery } from '@/models/FileModel';
 import { Card, CardContent } from '@/components/ui/card';
-import { FolderOpen, Image, FileText } from 'lucide-react';
+import { 
+  FolderOpen, Image, FileText, Images, Folder, 
+  GalleryHorizontal, GalleryVertical, Library, BookImage 
+} from 'lucide-react';
 import { formatDate } from '@/lib/date-utils';
 
 interface GalleryListProps {
@@ -11,6 +14,42 @@ interface GalleryListProps {
 }
 
 export const GalleryList: React.FC<GalleryListProps> = ({ galleries, onSelectGallery }) => {
+  const renderGalleryIcon = (gallery: Gallery) => {
+    if (gallery.coverImageUrl) {
+      return (
+        <img 
+          src={gallery.coverImageUrl} 
+          alt={gallery.name} 
+          className="w-full h-full object-cover"
+        />
+      );
+    }
+
+    if (gallery.iconName) {
+      switch (gallery.iconName) {
+        case 'Image':
+          return <Image className="w-12 h-12 text-muted-foreground" />;
+        case 'Images':
+          return <Images className="w-12 h-12 text-muted-foreground" />;
+        case 'Folder':
+          return <Folder className="w-12 h-12 text-muted-foreground" />;
+        case 'GalleryHorizontal':
+          return <GalleryHorizontal className="w-12 h-12 text-muted-foreground" />;
+        case 'GalleryVertical':
+          return <GalleryVertical className="w-12 h-12 text-muted-foreground" />;
+        case 'Library':
+          return <Library className="w-12 h-12 text-muted-foreground" />;
+        case 'BookImage':
+          return <BookImage className="w-12 h-12 text-muted-foreground" />;
+        case 'FolderOpen':
+        default:
+          return <FolderOpen className="w-12 h-12 text-muted-foreground" />;
+      }
+    }
+
+    return <FolderOpen className="w-12 h-12 text-muted-foreground" />;
+  };
+
   if (galleries.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center p-12 text-center">
@@ -38,7 +77,7 @@ export const GalleryList: React.FC<GalleryListProps> = ({ galleries, onSelectGal
               />
             ) : (
               <div className="flex flex-col items-center justify-center">
-                <FolderOpen className="w-12 h-12 text-muted-foreground" />
+                {renderGalleryIcon(gallery)}
               </div>
             )}
           </div>
