@@ -9,6 +9,7 @@ interface GalleryTabsProps {
   activeTab: string;
   setActiveTab: (value: string) => void;
   onCreateGallery: () => void;
+  children: React.ReactNode; // Add children prop to the interface
 }
 
 export const GalleryTabs: React.FC<GalleryTabsProps> = ({
