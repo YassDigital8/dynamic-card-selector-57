@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
   SidebarProvider, 
@@ -47,7 +48,9 @@ const PageContainer: React.FC<PageContainerProps> = ({ children }) => {
         <Sidebar>
           <SidebarHeader className="border-b border-sidebar-border">
             <div className="flex items-center justify-between px-3 py-4">
-              <Logo showText={true} />
+              <Link to="/">
+                <Logo showText={true} />
+              </Link>
               <ThemeToggle />
             </div>
           </SidebarHeader>
@@ -58,31 +61,39 @@ const PageContainer: React.FC<PageContainerProps> = ({ children }) => {
               <SidebarGroupContent>
                 <SidebarMenu>
                   <SidebarMenuItem>
-                    <SidebarMenuButton isActive={true} tooltip="Dashboard">
-                      <FileText />
-                      <span>Dashboard</span>
-                    </SidebarMenuButton>
+                    <Link to="/" className="w-full">
+                      <SidebarMenuButton isActive={window.location.pathname === '/'} tooltip="Dashboard">
+                        <FileText />
+                        <span>Dashboard</span>
+                      </SidebarMenuButton>
+                    </Link>
                   </SidebarMenuItem>
                   
                   <SidebarMenuItem>
-                    <SidebarMenuButton tooltip="Pages">
-                      <FileText />
-                      <span>Pages</span>
-                    </SidebarMenuButton>
+                    <Link to="/pages" className="w-full">
+                      <SidebarMenuButton tooltip="Pages" isActive={window.location.pathname === '/pages'}>
+                        <FileText />
+                        <span>Pages</span>
+                      </SidebarMenuButton>
+                    </Link>
                   </SidebarMenuItem>
                   
                   <SidebarMenuItem>
-                    <SidebarMenuButton tooltip="Users">
-                      <Users />
-                      <span>Users</span>
-                    </SidebarMenuButton>
+                    <Link to="/users" className="w-full">
+                      <SidebarMenuButton tooltip="Users" isActive={window.location.pathname === '/users'}>
+                        <Users />
+                        <span>Users</span>
+                      </SidebarMenuButton>
+                    </Link>
                   </SidebarMenuItem>
                   
                   <SidebarMenuItem>
-                    <SidebarMenuButton tooltip="Settings">
-                      <Settings />
-                      <span>Settings</span>
-                    </SidebarMenuButton>
+                    <Link to="/settings" className="w-full">
+                      <SidebarMenuButton tooltip="Settings" isActive={window.location.pathname === '/settings'}>
+                        <Settings />
+                        <span>Settings</span>
+                      </SidebarMenuButton>
+                    </Link>
                   </SidebarMenuItem>
                 </SidebarMenu>
               </SidebarGroupContent>
