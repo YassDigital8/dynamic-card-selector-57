@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { FileInfo, Gallery } from '@/models/FileModel';
 import { useToast } from '@/hooks/use-toast';
@@ -162,13 +161,12 @@ export const useFileUpload = ({ onFileUploaded, selectedGalleryId = '', gallerie
       });
       
       toast({
-        title: "File Uploaded Successfully",
         description: (
-          <div className="bg-green-50 py-2 -mx-4 px-4 -my-2 rounded-md text-center">
-            <p className="text-green-700 mb-3">
+          <div className="py-2 -mx-4 px-4 -my-2 text-center">
+            <p className="text-gray-700 mb-3">
               Your file "{selectedFile.name}" has been uploaded.
             </p>
-            <div className="flex justify-center gap-3">
+            <div className="flex justify-center">
               <button 
                 onClick={() => document.dispatchEvent(new CustomEvent('view-uploaded-file', { detail: fileInfo }))}
                 className="bg-gray-800 text-white px-3 py-1.5 rounded-md flex items-center gap-2 text-sm"
@@ -178,15 +176,6 @@ export const useFileUpload = ({ onFileUploaded, selectedGalleryId = '', gallerie
                   <circle cx="12" cy="12" r="3" />
                 </svg>
                 View File
-              </button>
-              <button 
-                onClick={() => {
-                  resetUploadedFile();
-                  document.dispatchEvent(new CustomEvent('reset-upload'));
-                }}
-                className="bg-white text-gray-800 border border-gray-300 px-3 py-1.5 rounded-md text-sm"
-              >
-                Upload Another File
               </button>
             </div>
           </div>
