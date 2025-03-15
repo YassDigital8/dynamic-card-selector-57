@@ -79,27 +79,24 @@ const Index = () => {
         </div>
         
         <TabsContent value="pages" className="mt-0">
-          <div className="grid grid-cols-1 gap-6">
-            <div ref={pageSelectorsRef}>
-              <PageSelectors 
-                posOptions={pageNavigation.posOptions}
-                languageOptions={pageNavigation.languageOptions}
-                selectedPOS={pageNavigation.selectedPOS}
-                selectedLanguage={pageNavigation.selectedLanguage}
-                setSelectedPOS={pageNavigation.setSelectedPOS}
-                setSelectedLanguage={pageNavigation.setSelectedLanguage}
-                loading={pageNavigation.loading}
-                currentStep={pageNavigation.currentStep}
-              />
-            </div>
-            
-            {pageNavigation.currentStep === 'options' && (
-              <ResizablePanelGroup 
-                direction="horizontal" 
-                className="min-h-[500px] rounded-lg border"
-              >
-                <ResizablePanel defaultSize={40} minSize={30}>
-                  <div ref={pathSelectorsRef} className="h-full p-4 overflow-auto">
+          <ResizablePanelGroup direction="horizontal" className="min-h-[500px]">
+            <ResizablePanel defaultSize={40} minSize={30}>
+              <div className="h-full pr-4 overflow-auto">
+                <div ref={pageSelectorsRef}>
+                  <PageSelectors 
+                    posOptions={pageNavigation.posOptions}
+                    languageOptions={pageNavigation.languageOptions}
+                    selectedPOS={pageNavigation.selectedPOS}
+                    selectedLanguage={pageNavigation.selectedLanguage}
+                    setSelectedPOS={pageNavigation.setSelectedPOS}
+                    setSelectedLanguage={pageNavigation.setSelectedLanguage}
+                    loading={pageNavigation.loading}
+                    currentStep={pageNavigation.currentStep}
+                  />
+                </div>
+                
+                {pageNavigation.currentStep === 'options' && (
+                  <div ref={pathSelectorsRef} className="mt-6">
                     <PathSelectors 
                       availableSlugs={pageNavigation.availableSlugs}
                       selectedSlug={pageNavigation.selectedSlug}
@@ -114,27 +111,25 @@ const Index = () => {
                       currentStep={pageNavigation.currentStep}
                     />
                   </div>
-                </ResizablePanel>
-                
-                <ResizableHandle withHandle />
-                
-                <ResizablePanel defaultSize={60}>
-                  <div ref={pageDataRef} className="h-full p-4 overflow-auto">
-                    {(pageNavigation.selectedSlug || pageNavigation.pageData) && (
-                      <PageData 
-                        pageData={pageNavigation.pageData} 
-                        onRefresh={pageNavigation.refreshPageData}
-                        selectedPOS={pageNavigation.selectedPOS}
-                        selectedLanguage={pageNavigation.selectedLanguage}
-                        selectedSlug={pageNavigation.selectedSlug}
-                        selectedSubSlug={pageNavigation.selectedSubSlug}
-                      />
-                    )}
-                  </div>
-                </ResizablePanel>
-              </ResizablePanelGroup>
-            )}
-          </div>
+                )}
+              </div>
+            </ResizablePanel>
+            
+            <ResizableHandle withHandle />
+            
+            <ResizablePanel defaultSize={60}>
+              <div ref={pageDataRef} className="h-full pl-4 overflow-auto">
+                <PageData 
+                  pageData={pageNavigation.pageData} 
+                  onRefresh={pageNavigation.refreshPageData}
+                  selectedPOS={pageNavigation.selectedPOS}
+                  selectedLanguage={pageNavigation.selectedLanguage}
+                  selectedSlug={pageNavigation.selectedSlug}
+                  selectedSubSlug={pageNavigation.selectedSubSlug}
+                />
+              </div>
+            </ResizablePanel>
+          </ResizablePanelGroup>
         </TabsContent>
         
         <TabsContent value="settings" className="mt-0">
