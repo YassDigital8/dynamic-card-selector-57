@@ -52,6 +52,36 @@ export const TourTooltip: React.FC<TourTooltipProps> = ({
     height: 0
   });
 
+  // Handle next click with prevention of event bubbling
+  const handleNextClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    console.log("Next button clicked");
+    onNext();
+  };
+
+  // Handle previous click with prevention of event bubbling
+  const handlePrevClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    console.log("Previous button clicked");
+    onPrev();
+  };
+
+  // Handle close with prevention of event bubbling
+  const handleCloseClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    console.log("Close button clicked");
+    onClose();
+  };
+
+  // Handle confirm with prevention of event bubbling
+  const handleConfirmClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    console.log("Confirm button clicked");
+    if (onConfirm) {
+      onConfirm();
+    }
+  };
+
   React.useEffect(() => {
     if (targetRef.current && isVisible) {
       const updatePosition = () => {
@@ -102,7 +132,7 @@ export const TourTooltip: React.FC<TourTooltipProps> = ({
             e.stopPropagation();
             // Allow clicking through the backdrop only if we don't need confirmation
             if (!needsConfirmation) {
-              onClose();
+              handleCloseClick(e);
             }
           }}
         >
@@ -115,17 +145,18 @@ export const TourTooltip: React.FC<TourTooltipProps> = ({
             exit="hidden"
             variants={tooltipVariants}
             className="pointer-events-auto"
+            onClick={(e) => e.stopPropagation()} // Prevent clicks from bubbling to parent
           >
             <TourContent
               step={step}
               totalSteps={totalSteps}
               title={title}
               content={content}
-              onNext={onNext}
-              onPrev={onPrev}
-              onClose={onClose}
+              onNext={handleNextClick}
+              onPrev={handlePrevClick}
+              onClose={handleCloseClick}
               needsConfirmation={needsConfirmation}
-              onConfirm={onConfirm}
+              onConfirm={handleConfirmClick}
             />
             <TourArrow position={position} />
           </motion.div>

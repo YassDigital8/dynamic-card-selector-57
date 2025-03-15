@@ -63,6 +63,30 @@ const PagesTour: React.FC<PagesTourProps> = ({
     }
   }, [currentStep, showTour, isActive]);
 
+  // Handle next step - prevent event bubbling
+  const handleNextStep = () => {
+    console.log("Handling next step");
+    nextStep();
+  };
+
+  // Handle previous step - prevent event bubbling
+  const handlePrevStep = () => {
+    console.log("Handling previous step");
+    prevStep();
+  };
+
+  // Handle close tour - prevent event bubbling
+  const handleCloseTour = () => {
+    console.log("Handling close tour");
+    closeTour();
+  };
+
+  // Handle confirm step - prevent event bubbling
+  const handleConfirmStep = () => {
+    console.log("Handling confirm step");
+    confirmStep();
+  };
+
   const tourSteps = [
     {
       title: "Welcome to Pages Module",
@@ -117,6 +141,11 @@ const PagesTour: React.FC<PagesTourProps> = ({
 
   const currentTourStep = tourSteps[currentStep];
 
+  console.log("Current step:", currentStep);
+  console.log("Show tour:", showTour);
+  console.log("Is active:", isActive);
+  console.log("Needs confirmation:", needsConfirmation);
+
   const TourRestartButton = () => (
     <Button
       variant="outline"
@@ -139,13 +168,13 @@ const PagesTour: React.FC<PagesTourProps> = ({
             title={currentTourStep.title}
             content={currentTourStep.content}
             targetRef={currentTourStep.target}
-            onNext={nextStep}
-            onPrev={prevStep}
-            onClose={closeTour}
+            onNext={handleNextStep}
+            onPrev={handlePrevStep}
+            onClose={handleCloseTour}
             position={currentTourStep.position}
             isVisible={showTour && isActive}
             needsConfirmation={needsConfirmation}
-            onConfirm={confirmStep}
+            onConfirm={handleConfirmStep}
           />
           {!isActive && (
             <Button

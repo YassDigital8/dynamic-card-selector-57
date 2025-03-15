@@ -47,20 +47,25 @@ export const useTourGuide = (tourId: string) => {
     saveTourState(tourState);
   }, [tourState]);
 
-  // Tour navigation actions
+  // Tour navigation actions - fixed to properly update state
   const nextStep = useCallback(() => {
-    setTourState(prev => ({
-      ...prev,
-      currentStep: prev.currentStep + 1,
-      needsConfirmation: false
-    }));
+    setTourState(prev => {
+      console.log("Moving to next step from", prev.currentStep);
+      return {
+        ...prev,
+        currentStep: prev.currentStep + 1,
+        needsConfirmation: false,
+        showTour: true // Ensure the tour stays visible
+      };
+    });
   }, []);
 
   const prevStep = useCallback(() => {
     setTourState(prev => ({
       ...prev,
       currentStep: Math.max(0, prev.currentStep - 1),
-      needsConfirmation: false
+      needsConfirmation: false,
+      showTour: true // Ensure the tour stays visible
     }));
   }, []);
 
@@ -98,11 +103,12 @@ export const useTourGuide = (tourId: string) => {
   const resumeTour = useCallback(() => {
     setTourState(prev => ({
       ...prev,
-      isActive: true
+      isActive: true,
+      showTour: true // Ensure the tour is shown when resumed
     }));
   }, []);
 
-  // New confirmation action
+  // Confirmation action
   const requireConfirmation = useCallback(() => {
     setTourState(prev => ({
       ...prev,
@@ -113,9 +119,18 @@ export const useTourGuide = (tourId: string) => {
   const confirmStep = useCallback(() => {
     setTourState(prev => ({
       ...prev,
-      needsConfirmation: false
+      needsConfirmation: false,
+      // Move to the next step after confirmation
+      currentStep: prev.currentStep + 1
     }));
   }, []);
+
+  console.log("Current tour state:", { 
+    showTour: tourState.showTour, 
+    currentStep: tourState.currentStep, 
+    isActive: tourState.isActive,
+    needsConfirmation: tourState.needsConfirmation 
+  });
 
   return {
     showTour: tourState.showTour && !isTourCompleted,

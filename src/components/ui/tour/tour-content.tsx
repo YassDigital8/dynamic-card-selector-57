@@ -9,11 +9,11 @@ interface TourContentProps {
   totalSteps: number;
   title: string;
   content: React.ReactNode;
-  onNext: () => void;
-  onPrev: () => void;
-  onClose: () => void;
+  onNext: (e: React.MouseEvent) => void;
+  onPrev: (e: React.MouseEvent) => void;
+  onClose: (e: React.MouseEvent) => void;
   needsConfirmation?: boolean;
-  onConfirm?: () => void;
+  onConfirm?: (e: React.MouseEvent) => void;
 }
 
 export const TourContent: React.FC<TourContentProps> = ({
