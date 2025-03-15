@@ -90,7 +90,10 @@ export const FileList: React.FC<FileListProps> = ({ files, onViewFile, onDeleteF
                 variant="ghost" 
                 size="icon" 
                 className="h-8 w-8 text-red-500 hover:text-red-600" 
-                onClick={() => onDeleteFile && onDeleteFile(file)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (onDeleteFile) onDeleteFile(file);
+                }}
                 title="Delete file"
               >
                 <Trash2 className="h-4 w-4" />
