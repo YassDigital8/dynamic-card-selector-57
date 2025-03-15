@@ -21,8 +21,8 @@ import {
   Settings, 
   Users, 
   HelpCircle,
-  PlusCircle 
 } from 'lucide-react';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 
 interface PageContainerProps {
   children: React.ReactNode;
@@ -43,12 +43,15 @@ const fadeInVariants = {
 const PageContainer: React.FC<PageContainerProps> = ({ children }) => {
   return (
     <SidebarProvider defaultOpen={true}>
-      <div className="flex min-h-screen w-full bg-gray-50">
+      <div className="flex min-h-screen w-full bg-background text-foreground">
         <Sidebar>
-          <SidebarHeader className="border-b border-gray-200">
-            <div className="flex items-center gap-2 px-3 py-4">
-              <LayoutDashboard className="h-6 w-6 text-blue-600" />
-              <span className="text-xl font-bold text-blue-600">Admin Portal</span>
+          <SidebarHeader className="border-b border-sidebar-border">
+            <div className="flex items-center justify-between px-3 py-4">
+              <div className="flex items-center gap-2">
+                <LayoutDashboard className="h-6 w-6 text-sidebar-primary" />
+                <span className="text-xl font-bold text-sidebar-primary">Admin Portal</span>
+              </div>
+              <ThemeToggle />
             </div>
           </SidebarHeader>
           
@@ -89,7 +92,7 @@ const PageContainer: React.FC<PageContainerProps> = ({ children }) => {
             </SidebarGroup>
           </SidebarContent>
           
-          <SidebarFooter className="border-t border-gray-200 p-4">
+          <SidebarFooter className="border-t border-sidebar-border p-4">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <HelpCircle className="h-4 w-4" />
               <span>Need help?</span>
@@ -107,11 +110,11 @@ const PageContainer: React.FC<PageContainerProps> = ({ children }) => {
             >
               <div className="flex justify-between items-center mb-8">
                 <div>
-                  <h1 className="text-3xl font-bold text-gray-800">Page Navigator</h1>
-                  <p className="text-gray-500 mt-1">Manage pages across different POS and languages</p>
+                  <h1 className="text-3xl font-bold text-foreground">Page Navigator</h1>
+                  <p className="text-muted-foreground mt-1">Manage pages across different POS and languages</p>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
-                  <span className="inline-block w-2 h-2 bg-blue-600 rounded-full"></span>
+                <div className="flex items-center gap-2 text-sm text-primary bg-secondary px-3 py-1 rounded-full">
+                  <span className="inline-block w-2 h-2 bg-primary rounded-full"></span>
                   Demo Mode
                 </div>
               </div>
