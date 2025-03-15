@@ -1,9 +1,8 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { FileText, FolderPlus, PlusCircle } from 'lucide-react';
+import { FolderPlus, FileText } from 'lucide-react';
 
 interface PageSelectorsProps {
   posOptions: string[];
@@ -13,7 +12,6 @@ interface PageSelectorsProps {
   setSelectedPOS: (value: string) => void;
   setSelectedLanguage: (value: string) => void;
   loading: boolean;
-  onAddPageClick?: () => void;
 }
 
 const fadeInVariants = {
@@ -21,20 +19,6 @@ const fadeInVariants = {
   visible: { 
     opacity: 1,
     transition: { duration: 0.8 }
-  }
-};
-
-const buttonVariants = {
-  hover: { 
-    scale: 1.03,
-    transition: { 
-      type: "spring", 
-      stiffness: 400, 
-      damping: 10
-    }
-  },
-  tap: { 
-    scale: 0.97
   }
 };
 
@@ -46,7 +30,6 @@ const PageSelectors = ({
   setSelectedPOS,
   setSelectedLanguage,
   loading,
-  onAddPageClick
 }: PageSelectorsProps) => {
   return (
     <>
@@ -93,31 +76,6 @@ const PageSelectors = ({
           </Select>
         </div>
       </div>
-
-      {/* Add Page button appears right after selecting language and POS */}
-      {selectedPOS && selectedLanguage && (
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={fadeInVariants}
-          className="mb-6"
-        >
-          <motion.div
-            variants={buttonVariants}
-            whileHover="hover"
-            whileTap="tap"
-          >
-            <Button 
-              onClick={onAddPageClick}
-              className="w-full gap-2 shadow-md bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white transition-all"
-              disabled={loading || !selectedPOS || !selectedLanguage}
-            >
-              <PlusCircle className="h-5 w-5" />
-              Add Page
-            </Button>
-          </motion.div>
-        </motion.div>
-      )}
     </>
   );
 };

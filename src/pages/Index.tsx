@@ -51,7 +51,6 @@ const Index = () => {
         setSelectedPOS={pageNavigation.setSelectedPOS}
         setSelectedLanguage={pageNavigation.setSelectedLanguage}
         loading={pageNavigation.loading}
-        onAddPageClick={() => pageAddition.setAddPageDialogOpen(true)}
       />
 
       <PathSelectors 
@@ -65,6 +64,7 @@ const Index = () => {
         handleFetchData={pageNavigation.handleFetchData}
         selectedPOS={pageNavigation.selectedPOS}
         selectedLanguage={pageNavigation.selectedLanguage}
+        onAddPageClick={() => pageAddition.setAddPageDialogOpen(true)}
       />
 
       <PageData pageData={pageNavigation.pageData} />
