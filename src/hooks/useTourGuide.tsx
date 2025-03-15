@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 interface TourState {
   showTour: boolean;
@@ -8,51 +8,60 @@ interface TourState {
   isActive: boolean;
 }
 
+// Helper function to get initial tour state from localStorage
+const getInitialTourState = (): TourState => {
+  const savedState = localStorage.getItem('tour-guide-state');
+  if (savedState) {
+    return JSON.parse(savedState);
+  }
+  return {
+    showTour: true,
+    currentStep: 0,
+    completedTours: [],
+    isActive: true
+  };
+};
+
+// Helper function to save tour state to localStorage
+const saveTourState = (state: TourState): void => {
+  localStorage.setItem('tour-guide-state', JSON.stringify(state));
+};
+
 export const useTourGuide = (tourId: string) => {
-  const [tourState, setTourState] = useState<TourState>(() => {
-    // Initialize from localStorage if available
-    const savedState = localStorage.getItem('tour-guide-state');
-    if (savedState) {
-      return JSON.parse(savedState);
-    }
-    return {
-      showTour: true,
-      currentStep: 0,
-      completedTours: [],
-      isActive: true
-    };
-  });
+  const [tourState, setTourState] = useState<TourState>(getInitialTourState);
 
   // Check if this specific tour has been completed
   const isTourCompleted = tourState.completedTours.includes(tourId);
   
-  // Set showTour based on whether this tour has been completed
+  // Effect to initialize tour if not completed
   useEffect(() => {
     if (!isTourCompleted) {
       setTourState(prev => ({ ...prev, showTour: true, isActive: true }));
     }
   }, [isTourCompleted]);
 
-  // Save tour state to localStorage whenever it changes
+  // Effect to save state changes to localStorage
   useEffect(() => {
-    localStorage.setItem('tour-guide-state', JSON.stringify(tourState));
+    saveTourState(tourState);
   }, [tourState]);
 
-  const nextStep = () => {
+  // Tour navigation actions
+  const nextStep = useCallback(() => {
     setTourState(prev => ({
       ...prev,
       currentStep: prev.currentStep + 1
     }));
-  };
+  }, []);
 
-  const prevStep = () => {
+  const prevStep = useCallback(() => {
     setTourState(prev => ({
       ...prev,
       currentStep: Math.max(0, prev.currentStep - 1)
     }));
-  };
+  }, []);
 
-  const closeTour = () => {
+  // Tour control actions
+  const closeTour = useCallback(() => {
     setTourState(prev => ({
       ...prev,
       showTour: false,
@@ -60,9 +69,9 @@ export const useTourGuide = (tourId: string) => {
       isActive: false,
       completedTours: [...prev.completedTours, tourId]
     }));
-  };
+  }, [tourId]);
 
-  const resetTour = () => {
+  const resetTour = useCallback(() => {
     setTourState(prev => ({
       ...prev,
       showTour: true,
@@ -70,21 +79,22 @@ export const useTourGuide = (tourId: string) => {
       isActive: true,
       completedTours: prev.completedTours.filter(id => id !== tourId)
     }));
-  };
+  }, [tourId]);
 
-  const pauseTour = () => {
+  // Tour activity state control
+  const pauseTour = useCallback(() => {
     setTourState(prev => ({
       ...prev,
       isActive: false
     }));
-  };
+  }, []);
 
-  const resumeTour = () => {
+  const resumeTour = useCallback(() => {
     setTourState(prev => ({
       ...prev,
       isActive: true
     }));
-  };
+  }, []);
 
   return {
     showTour: tourState.showTour && !isTourCompleted,
