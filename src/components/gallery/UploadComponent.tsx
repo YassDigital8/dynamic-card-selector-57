@@ -48,10 +48,11 @@ export const UploadComponent: React.FC<UploadComponentProps> = ({
         isImage={isImage}
       />
 
-      {isImage && selectedFile && (
+      {selectedFile && (
         <ImageMetadataForm 
           metadata={metadata}
           onMetadataChange={handleMetadataChange}
+          isImage={isImage}
         />
       )}
 

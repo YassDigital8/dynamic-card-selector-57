@@ -30,6 +30,12 @@ export const useFileUpload = ({ onFileUploaded, selectedGalleryId = '' }: UseFil
       setSelectedFile(null);
       setFilePreview(null);
       setIsImage(false);
+      setMetadata({
+        title: '',
+        altText: '',
+        caption: '',
+        description: ''
+      });
       return;
     }
     
@@ -48,16 +54,16 @@ export const useFileUpload = ({ onFileUploaded, selectedGalleryId = '' }: UseFil
         }
       };
       reader.readAsDataURL(file);
-      
-      // Set title to filename by default (without extension)
-      const fileName = file.name.split('.').slice(0, -1).join('.');
-      setMetadata(prev => ({
-        ...prev,
-        title: fileName
-      }));
     } else {
       setFilePreview(null);
     }
+    
+    // Set title to filename by default (without extension)
+    const fileName = file.name.split('.').slice(0, -1).join('.');
+    setMetadata(prev => ({
+      ...prev,
+      title: fileName
+    }));
   };
 
   const handleMetadataChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -97,12 +103,10 @@ export const useFileUpload = ({ onFileUploaded, selectedGalleryId = '' }: UseFil
         galleryId: targetGalleryId,
       };
       
-      // Add metadata for images
-      if (isImage) {
-        fileInfo.metadata = {
-          ...metadata
-        };
-      }
+      // Add metadata for all files
+      fileInfo.metadata = {
+        ...metadata
+      };
       
       // Notify parent component about the new file
       onFileUploaded(fileInfo);

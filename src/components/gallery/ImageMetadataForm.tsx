@@ -16,18 +16,20 @@ interface ImageMetadata {
 interface ImageMetadataFormProps {
   metadata: ImageMetadata;
   onMetadataChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  isImage: boolean;
 }
 
 export const ImageMetadataForm: React.FC<ImageMetadataFormProps> = ({
   metadata,
-  onMetadataChange
+  onMetadataChange,
+  isImage
 }) => {
   return (
     <Card>
       <CardContent className="p-6 space-y-4">
         <div className="flex items-center">
           <Image className="h-5 w-5 mr-2 text-blue-500" />
-          <h2 className="text-lg font-medium">Image Metadata</h2>
+          <h2 className="text-lg font-medium">File Information</h2>
         </div>
         
         <div className="space-y-4">
@@ -39,31 +41,33 @@ export const ImageMetadataForm: React.FC<ImageMetadataFormProps> = ({
               value={metadata.title}
               onChange={onMetadataChange}
               className="mt-1"
-              placeholder="Enter image title"
+              placeholder="Enter file title"
             />
           </div>
           
-          <div>
-            <Label htmlFor="altText">Alternative Text</Label>
-            <Input
-              id="altText"
-              name="altText"
-              value={metadata.altText}
-              onChange={onMetadataChange}
-              className="mt-1"
-              placeholder="Describe the image for accessibility"
-            />
-          </div>
+          {isImage && (
+            <div>
+              <Label htmlFor="altText">Alternative Text</Label>
+              <Input
+                id="altText"
+                name="altText"
+                value={metadata.altText}
+                onChange={onMetadataChange}
+                className="mt-1"
+                placeholder="Describe the image for accessibility"
+              />
+            </div>
+          )}
           
           <div>
             <Label htmlFor="caption">Caption</Label>
-            <Textarea
+            <Input
               id="caption"
               name="caption"
               value={metadata.caption}
               onChange={onMetadataChange}
               className="mt-1"
-              placeholder="Enter a caption for the image"
+              placeholder="Enter a caption for the file"
             />
           </div>
           
