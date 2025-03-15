@@ -18,86 +18,87 @@ interface UserInfo {
 }
 
 const useAuthentication = () => {
-  const [authToken, setAuthToken] = useState('');
-  const [authLoading, setAuthLoading] = useState(true);
+  const [authToken, setAuthToken] = useState<string>('');
+  const [authLoading, setAuthLoading] = useState<boolean>(true);
   const [authError, setAuthError] = useState<string | null>(null);
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const { toast } = useToast();
   
   useEffect(() => {
-    const authenticate = async () => {
+    const checkAuthentication = async () => {
       setAuthLoading(true);
       setAuthError(null);
+      
+      // Check if we have a token in localStorage
+      const storedToken = localStorage.getItem('authToken');
+      
+      if (!storedToken) {
+        console.log("No authentication token found");
+        setAuthLoading(false);
+        return;
+      }
+      
       try {
-        console.log("Attempting authentication...");
+        console.log("Validating stored authentication token...");
+        // We could check token validity with the server here if needed
+        // For now, we'll just set it as valid
         
-        const authResponse = await fetch('https://92.112.184.210:7182/api/Authentication/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            email: "tarek3.doe@example.com",
-            password: "Hi@2025"
-          }),
-          signal: AbortSignal.timeout(10000)
-        });
-
-        if (!authResponse.ok) {
-          throw new Error(`Authentication failed with status: ${authResponse.status}`);
-        }
+        setAuthToken(storedToken);
         
-        const authData: AuthResponse = await authResponse.json();
-        console.log("Auth data received:", authData);
+        // Extract user info from the token or fetch it from the server
+        // This is a mock implementation
+        const mockUserInfo = {
+          firstName: "User",
+          email: "user@example.com"
+        };
         
-        if (!authData.isAuthenticated) {
-          throw new Error('Authentication failed: ' + authData.message);
-        }
+        setUserInfo(mockUserInfo);
+        console.log("Authentication successful with stored token");
         
-        setAuthToken(authData.token);
-        localStorage.setItem('authToken', authData.token);
-        
-        setUserInfo({
-          firstName: authData.firstName,
-          email: authData.email
-        });
-        
-        console.log("Authentication successful!");
-        toast({
-          title: "Authentication successful",
-          description: `Welcome, ${authData.firstName || authData.email}`,
-        });
       } catch (error) {
-        console.error('Authentication error:', error);
+        console.error('Authentication validation error:', error);
+        
+        // Clear invalid token
+        localStorage.removeItem('authToken');
         
         let errorMessage = '';
-        if (error instanceof TypeError && error.message === 'Failed to fetch') {
-          errorMessage = 'Network error: Unable to connect to authentication server. ' +
-                        'This may be due to a certificate issue with the server or network connectivity problem.';
+        if (error instanceof Error) {
+          errorMessage = error.message;
         } else {
-          errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+          errorMessage = 'Unknown error occurred during authentication validation';
         }
         
-        setAuthError(`Authentication error: ${errorMessage}`);
-        
-        const mockToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0YXJlazMuZG9lQGV4YW1wbGUuY29tIiwibmFtZSI6IlRhcmVrIERvZSIsImlhdCI6MTUxNjIzOTAyMn0.mock_token";
-        setAuthToken(mockToken);
-        localStorage.setItem('authToken', mockToken);
-        
-        toast({
-          variant: "destructive",
-          title: "Authentication issue",
-          description: "Using simulated data for development\n\nError: " + errorMessage.substring(0, 150),
-        });
+        setAuthError(errorMessage);
       } finally {
         setAuthLoading(false);
       }
     };
 
-    authenticate();
+    checkAuthentication();
   }, []);
 
-  return { authToken, authLoading, authError, userInfo };
+  const logout = () => {
+    localStorage.removeItem('authToken');
+    setAuthToken('');
+    setUserInfo(null);
+    
+    toast({
+      title: "Logged out",
+      description: "You have been successfully logged out",
+    });
+    
+    // Redirect to login page
+    window.location.href = '/login';
+  };
+
+  return { 
+    authToken, 
+    authLoading, 
+    authError, 
+    userInfo,
+    isAuthenticated: !!authToken,
+    logout 
+  };
 };
 
 export default useAuthentication;
