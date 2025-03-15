@@ -1,7 +1,7 @@
-
 import { useToast } from '@/hooks/use-toast';
 import { FileInfo } from '@/models/FileModel';
-import { CheckCircle, AlertCircle, InfoIcon } from 'lucide-react';
+import { CheckCircle, AlertCircle, InfoIcon, Eye } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export const useUploadNotification = () => {
   const { toast } = useToast();
@@ -16,6 +16,21 @@ export const useUploadNotification = () => {
           <div className="flex items-center gap-2">
             <CheckCircle className="h-4 w-4 text-green-500" />
             <span className="font-medium">Uploaded to: {galleryName}</span>
+          </div>
+          <div className="mt-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="flex items-center gap-1"
+              onClick={() => {
+                // Dispatch a custom event to view the uploaded file
+                const event = new CustomEvent('view-uploaded-file', { detail: fileInfo });
+                document.dispatchEvent(event);
+              }}
+            >
+              <Eye className="h-3.5 w-3.5" />
+              View
+            </Button>
           </div>
         </div>
       ),

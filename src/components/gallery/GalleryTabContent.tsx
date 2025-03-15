@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Gallery, FileInfo } from '@/models/FileModel';
 import { GalleryList } from './GalleryList';
@@ -47,6 +48,21 @@ export const GalleryTabContent: React.FC<GalleryTabContentProps> = ({
     setActiveTab('upload');
   };
 
+  // Handler for viewing a file after upload
+  const handleViewFile = (file: FileInfo) => {
+    // Set the selected gallery to the gallery the file belongs to
+    const fileGallery = galleries.find(g => g.id === file.galleryId);
+    if (fileGallery) {
+      setSelectedGallery(fileGallery);
+    }
+    
+    // Call the parent component's onViewFile
+    onViewFile(file);
+    
+    // Switch to browse tab
+    setActiveTab('browse');
+  };
+
   return (
     <div className="space-y-4">
       {activeTab === 'galleries' && (
@@ -62,7 +78,7 @@ export const GalleryTabContent: React.FC<GalleryTabContentProps> = ({
           onFileUploaded={onFileUploaded}
           galleries={galleries}
           selectedGalleryId={selectedGallery?.id}
-          onViewFile={onViewFile}
+          onViewFile={handleViewFile}
         />
       )}
       
