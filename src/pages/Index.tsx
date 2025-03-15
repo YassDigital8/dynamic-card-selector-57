@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { FileText, Settings, PlusCircle } from 'lucide-react';
@@ -122,6 +121,7 @@ const Index = () => {
                 <PageData 
                   pageData={pageNavigation.pageData} 
                   onRefresh={pageNavigation.refreshPageData}
+                  onDelete={pageNavigation.deletePage}
                   selectedPOS={pageNavigation.selectedPOS}
                   selectedLanguage={pageNavigation.selectedLanguage}
                   selectedSlug={pageNavigation.selectedSlug}
