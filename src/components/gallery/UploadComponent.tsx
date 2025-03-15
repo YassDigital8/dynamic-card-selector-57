@@ -29,7 +29,11 @@ export const UploadComponent: React.FC<UploadComponentProps> = ({
     handleMetadataChange,
     handleUpload,
     setTargetGalleryId
-  } = useFileUpload({ onFileUploaded, selectedGalleryId });
+  } = useFileUpload({ 
+    onFileUploaded, 
+    selectedGalleryId,
+    galleries 
+  });
 
   return (
     <div className="space-y-6">

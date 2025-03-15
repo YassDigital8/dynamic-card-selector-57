@@ -1,15 +1,15 @@
-
 import { useState } from 'react';
-import { FileInfo } from '@/models/FileModel';
+import { FileInfo, Gallery } from '@/models/FileModel';
 import { useToast } from '@/hooks/use-toast';
 import { useAuthentication } from '@/hooks/useAuthentication';
 
 interface UseFileUploadProps {
   onFileUploaded: (file: FileInfo) => void;
   selectedGalleryId?: string;
+  galleries: Gallery[];
 }
 
-export const useFileUpload = ({ onFileUploaded, selectedGalleryId = '' }: UseFileUploadProps) => {
+export const useFileUpload = ({ onFileUploaded, selectedGalleryId = '', galleries }: UseFileUploadProps) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [filePreview, setFilePreview] = useState<string | null>(null);
   const [isImage, setIsImage] = useState(false);
@@ -41,11 +41,9 @@ export const useFileUpload = ({ onFileUploaded, selectedGalleryId = '' }: UseFil
     
     setSelectedFile(file);
     
-    // Check if file is an image
     const isImageFile = file.type.startsWith('image/');
     setIsImage(isImageFile);
     
-    // Create preview for images
     if (isImageFile) {
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -58,7 +56,6 @@ export const useFileUpload = ({ onFileUploaded, selectedGalleryId = '' }: UseFil
       setFilePreview(null);
     }
     
-    // Set title to filename by default (without extension)
     const fileName = file.name.split('.').slice(0, -1).join('.');
     setMetadata(prev => ({
       ...prev,
@@ -124,7 +121,6 @@ export const useFileUpload = ({ onFileUploaded, selectedGalleryId = '' }: UseFil
       return;
     }
     
-    // Validate metadata fields
     if (!validateMetadata()) {
       return;
     }
@@ -132,31 +128,27 @@ export const useFileUpload = ({ onFileUploaded, selectedGalleryId = '' }: UseFil
     setIsUploading(true);
     
     try {
-      // In a real application, you would upload the file to a server here
-      // For now, we'll simulate the upload with a timeout
       await new Promise(resolve => setTimeout(resolve, 1500));
       
-      // Create a mock file info object
+      const selectedGalleryName = galleries.find(gallery => gallery.id === targetGalleryId)?.name || 'Unknown gallery';
+      
       const fileInfo: FileInfo = {
         id: Date.now().toString(),
         name: selectedFile.name,
         type: selectedFile.type,
-        size: Math.round(selectedFile.size / 1024), // Convert to KB
+        size: Math.round(selectedFile.size / 1024),
         url: filePreview || '/placeholder.svg',
         uploadedBy: userInfo?.email || 'unknown',
         uploadedOn: new Date().toISOString(),
         galleryId: targetGalleryId,
       };
       
-      // Add metadata for all files
       fileInfo.metadata = {
         ...metadata
       };
       
-      // Notify parent component about the new file
       onFileUploaded(fileInfo);
       
-      // Reset form
       setSelectedFile(null);
       setFilePreview(null);
       setIsImage(false);
@@ -167,10 +159,9 @@ export const useFileUpload = ({ onFileUploaded, selectedGalleryId = '' }: UseFil
         description: ''
       });
       
-      // Show success toast
       toast({
         title: "Upload successful",
-        description: `File "${selectedFile.name}" has been uploaded to gallery.`,
+        description: `File "${selectedFile.name}" has been uploaded to "${selectedGalleryName}".`,
       });
       
     } catch (error) {
