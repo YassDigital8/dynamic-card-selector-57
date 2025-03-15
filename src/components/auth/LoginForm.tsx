@@ -37,8 +37,8 @@ const LoginForm = () => {
     setIsLoading(true);
     
     try {
-      // Fixed URL - removed the duplicate https:// prefix
-      const response = await fetch('http://92.112.184.210:7182/api/Authentication/login', {
+      // Using HTTPS as requested
+      const response = await fetch('https://92.112.184.210:7182/api/Authentication/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -46,13 +46,43 @@ const useAuthentication = () => {
         if (storedUserInfo) {
           setUserInfo(JSON.parse(storedUserInfo));
         } else {
-          // If no user info is stored but we have a token, 
-          // we could validate with server or extract from token
-          const mockUserInfo = {
-            firstName: "User",
-            email: "user@example.com"
-          };
-          setUserInfo(mockUserInfo);
+          // If no user info is stored but we have a token, we could attempt to validate with server
+          try {
+            const response = await fetch('https://92.112.184.210:7182/api/Authentication/validate', {
+              method: 'GET',
+              headers: {
+                'Authorization': `Bearer ${storedToken}`,
+                'Content-Type': 'application/json',
+              },
+              signal: AbortSignal.timeout(10000)
+            });
+            
+            if (response.ok) {
+              const userData = await response.json();
+              if (userData) {
+                setUserInfo({
+                  firstName: userData.firstName || "User",
+                  email: userData.email || "user@example.com"
+                });
+                
+                // Update stored user info
+                localStorage.setItem('userInfo', JSON.stringify({
+                  firstName: userData.firstName || "User",
+                  email: userData.email || "user@example.com"
+                }));
+              }
+            } else {
+              // If validation fails, we'll set a default
+              const mockUserInfo = {
+                firstName: "User",
+                email: "user@example.com"
+              };
+              setUserInfo(mockUserInfo);
+            }
+          } catch (validationError) {
+            console.error('Token validation error:', validationError);
+            // Just use token without validation
+          }
         }
         
         setAuthToken(storedToken);
