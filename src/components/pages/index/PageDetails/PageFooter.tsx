@@ -26,13 +26,14 @@ const PageFooter = ({ onRefresh, onDelete, canDelete }: PageFooterProps) => {
   
   return (
     <CardFooter className="bg-gray-50 border-t">
-      <div className="w-full flex justify-between">
-        {onDelete && canDelete && (
+      <div className="w-full flex justify-between items-center gap-4">
+        {onDelete && (
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button 
                 variant="destructive" 
                 className="gap-2"
+                disabled={!canDelete}
               >
                 <Trash2 className="h-4 w-4" />
                 Delete Page
@@ -53,7 +54,7 @@ const PageFooter = ({ onRefresh, onDelete, canDelete }: PageFooterProps) => {
           </AlertDialog>
         )}
         
-        <div className={canDelete && onDelete ? "ml-auto" : "w-full flex justify-end"}>
+        <div className="ml-auto">
           <Button 
             variant="outline" 
             onClick={onRefresh}
