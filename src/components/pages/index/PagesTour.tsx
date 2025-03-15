@@ -87,6 +87,11 @@ const PagesTour: React.FC<PagesTourProps> = ({
     confirmStep();
   };
 
+  // Debug log current step and state
+  useEffect(() => {
+    console.log(`Tour state: Step ${currentStep}, Visible: ${showTour}, Active: ${isActive}, Needs Confirmation: ${needsConfirmation}`);
+  }, [currentStep, showTour, isActive, needsConfirmation]);
+
   const tourSteps = [
     {
       title: "Welcome to Pages Module",
@@ -140,11 +145,6 @@ const PagesTour: React.FC<PagesTourProps> = ({
   ];
 
   const currentTourStep = tourSteps[currentStep];
-
-  console.log("Current step:", currentStep);
-  console.log("Show tour:", showTour);
-  console.log("Is active:", isActive);
-  console.log("Needs confirmation:", needsConfirmation);
 
   const TourRestartButton = () => (
     <Button

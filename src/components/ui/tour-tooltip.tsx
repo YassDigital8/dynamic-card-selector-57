@@ -144,7 +144,7 @@ export const TourTooltip: React.FC<TourTooltipProps> = ({
             animate="visible"
             exit="hidden"
             variants={tooltipVariants}
-            className="pointer-events-auto"
+            className="pointer-events-auto max-w-[350px] z-[60]"
             onClick={(e) => e.stopPropagation()} // Prevent clicks from bubbling to parent
           >
             <TourContent

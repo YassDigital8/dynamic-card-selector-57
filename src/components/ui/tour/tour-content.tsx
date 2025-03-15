@@ -65,6 +65,7 @@ export const TourContent: React.FC<TourContentProps> = ({
                 variant="outline"
                 size="sm"
                 onClick={onPrev}
+                className="min-w-[80px]"
               >
                 Previous
               </Button>
@@ -74,7 +75,7 @@ export const TourContent: React.FC<TourContentProps> = ({
                 variant="default"
                 size="sm"
                 onClick={onConfirm}
-                className="bg-green-600 hover:bg-green-700"
+                className="bg-green-600 hover:bg-green-700 min-w-[120px]"
               >
                 I Understand
               </Button>
@@ -85,6 +86,7 @@ export const TourContent: React.FC<TourContentProps> = ({
                     variant="default"
                     size="sm"
                     onClick={onNext}
+                    className="min-w-[80px]"
                   >
                     Next
                   </Button>
@@ -93,6 +95,7 @@ export const TourContent: React.FC<TourContentProps> = ({
                     variant="default"
                     size="sm"
                     onClick={onClose}
+                    className="min-w-[80px]"
                   >
                     Finish
                   </Button>
