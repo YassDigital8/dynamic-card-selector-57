@@ -41,6 +41,7 @@ const GalleryPage: React.FC = () => {
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         onCreateGallery={() => setIsCreateGalleryOpen(true)}
+        selectedGallery={selectedGallery}
       >
         <GalleryTabContent
           activeTab={activeTab}

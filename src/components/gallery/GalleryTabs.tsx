@@ -9,14 +9,16 @@ interface GalleryTabsProps {
   activeTab: string;
   setActiveTab: (value: string) => void;
   onCreateGallery: () => void;
-  children: React.ReactNode; // Add children prop to the interface
+  children: React.ReactNode;
+  selectedGallery: Gallery | null; // Add this new prop
 }
 
 export const GalleryTabs: React.FC<GalleryTabsProps> = ({
   activeTab,
   setActiveTab,
   onCreateGallery,
-  children
+  children,
+  selectedGallery
 }) => {
   return (
     <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -25,9 +27,11 @@ export const GalleryTabs: React.FC<GalleryTabsProps> = ({
           <TabsTrigger value="galleries" className="data-[state=active]:bg-white gap-2 text-black dark:text-black">
             Galleries
           </TabsTrigger>
-          <TabsTrigger value="browse" className="data-[state=active]:bg-white gap-2 text-black dark:text-black">
-            Browse Files
-          </TabsTrigger>
+          {selectedGallery && (
+            <TabsTrigger value="browse" className="data-[state=active]:bg-white gap-2 text-black dark:text-black">
+              Browse Files
+            </TabsTrigger>
+          )}
           <TabsTrigger value="upload" className="data-[state=active]:bg-white gap-2 text-black dark:text-black">
             Upload
           </TabsTrigger>

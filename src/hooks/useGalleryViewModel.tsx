@@ -1,4 +1,5 @@
-import { useState, useMemo } from 'react';
+
+import { useState, useMemo, useEffect } from 'react';
 import { FileInfo, Gallery } from '@/models/FileModel';
 
 export const useGalleryViewModel = () => {
@@ -6,6 +7,13 @@ export const useGalleryViewModel = () => {
   const [isCreateGalleryOpen, setIsCreateGalleryOpen] = useState(false);
   const [selectedGallery, setSelectedGallery] = useState<Gallery | null>(null);
   const [selectedFile, setSelectedFile] = useState<FileInfo | null>(null);
+  
+  // When selectedGallery becomes null, switch back to galleries tab
+  useEffect(() => {
+    if (!selectedGallery && activeTab === "browse") {
+      setActiveTab("galleries");
+    }
+  }, [selectedGallery, activeTab]);
   
   // Sample data - in a real app this would come from an API
   const [galleries, setGalleries] = useState<Gallery[]>([
