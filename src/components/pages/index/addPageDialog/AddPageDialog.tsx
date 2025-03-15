@@ -1,6 +1,5 @@
 
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
 import { 
   Dialog, 
   DialogContent, 
@@ -10,7 +9,6 @@ import {
 } from '@/components/ui/dialog';
 import { AddPageFormValues } from '@/viewmodels/PageAdditionViewModel';
 import AddPageDialogForm from './AddPageDialogForm';
-import { dialogContentVariants } from './animations';
 
 interface AddPageDialogProps {
   open: boolean;
@@ -44,6 +42,7 @@ const AddPageDialog = ({
     
     try {
       await onAddPage(formValues);
+      onOpenChange(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to add page');
     } finally {
@@ -53,30 +52,23 @@ const AddPageDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[550px]" asChild>
-        <motion.div
-          variants={dialogContentVariants}
-          initial="hidden"
-          animate="visible"
-          exit="exit"
-        >
-          <DialogHeader>
-            <DialogTitle>Add New Page</DialogTitle>
-            <DialogDescription>
-              Create a new page for {pos} in {language}
-            </DialogDescription>
-          </DialogHeader>
+      <DialogContent className="sm:max-w-[550px]">
+        <DialogHeader>
+          <DialogTitle>Add New Page</DialogTitle>
+          <DialogDescription>
+            Create a new page for {pos} in {language}
+          </DialogDescription>
+        </DialogHeader>
 
-          <AddPageDialogForm
-            pos={pos}
-            language={language}
-            generatedUrlPath={generatedUrlPath}
-            onOpenChange={onOpenChange}
-            onAddPage={handleAddPage}
-            isSubmitting={isSubmitting}
-            error={error}
-          />
-        </motion.div>
+        <AddPageDialogForm
+          pos={pos}
+          language={language}
+          generatedUrlPath={generatedUrlPath}
+          onOpenChange={onOpenChange}
+          onAddPage={handleAddPage}
+          isSubmitting={isSubmitting}
+          error={error}
+        />
       </DialogContent>
     </Dialog>
   );

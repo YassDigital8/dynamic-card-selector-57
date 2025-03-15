@@ -63,7 +63,7 @@ const AddPageDialogForm = ({
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
         {error && (
-          <Alert variant="error" className="mb-4">
+          <Alert variant="destructive" className="mb-4">
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
@@ -121,7 +121,7 @@ const AddPageDialogForm = ({
           <Button 
             type="submit" 
             disabled={isSubmitting || !generatedUrlPath}
-            className="bg-blue-800 hover:bg-blue-900"
+            className="bg-blue-600 hover:bg-blue-700"
           >
             {isSubmitting ? (
               <>
