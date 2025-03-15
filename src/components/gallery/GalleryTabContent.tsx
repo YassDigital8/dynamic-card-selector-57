@@ -1,13 +1,12 @@
-
 import React, { useState } from 'react';
 import { Gallery, FileInfo } from '@/models/FileModel';
 import { GalleryList } from './GalleryList';
 import { UploadComponent } from './UploadComponent';
-import { FileList } from './FileList';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Plus, Edit, ArrowLeft } from 'lucide-react';
 import { EditGalleryDialog } from './EditGalleryDialog';
+import { FileList } from './FileList';
 
 interface GalleryTabContentProps {
   activeTab: string;
