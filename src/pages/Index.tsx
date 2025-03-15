@@ -1,26 +1,32 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
-import { toast } from '@/hooks/use-toast';
 import { useToast } from '@/hooks/use-toast';
 import { Search, ChevronDown, AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
+interface AuthResponse {
+  message: string;
+  isAuthenticated: boolean;
+  email: string;
+  firstName: string;
+  lastName: string | null;
+  token: string;
+  expiresOn: string;
+}
+
 const Index = () => {
-  // Authentication state
   const [authToken, setAuthToken] = useState('');
   const [authLoading, setAuthLoading] = useState(true);
   const [authError, setAuthError] = useState<string | null>(null);
+  const [userInfo, setUserInfo] = useState<{firstName: string, email: string} | null>(null);
   
-  // POS and language options
   const posOptions = ['SY', 'UAE', 'KWI'];
   const languageOptions = ['English', 'Arabic'];
   
-  // State for selected values
   const [selectedPOS, setSelectedPOS] = useState('');
   const [selectedLanguage, setSelectedLanguage] = useState('');
   const [availableSlugs, setAvailableSlugs] = useState([]);
@@ -31,35 +37,53 @@ const Index = () => {
   const [pageData, setPageData] = useState(null);
   const { toast } = useToast();
 
-  // Authenticate on page load
   useEffect(() => {
     const authenticate = async () => {
       setAuthLoading(true);
       setAuthError(null);
       try {
-        // For development purposes, instead of directly connecting to the HTTPS server with invalid cert,
-        // we'll simulate a successful authentication response
         console.log("Attempting authentication...");
         
-        // Simulate authentication response
-        // In a production environment, you would set up proper HTTPS certificates
-        // or use a proxy server to handle the requests
-        const mockToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0YXJlazMuZG9lQGV4YW1wbGUuY29tIiwibmFtZSI6IlRhcmVrIERvZSIsImlhdCI6MTUxNjIzOTAyMn0.mock_token";
+        const authResponse = await fetch('https://92.112.184.210:7182/api/Authentication/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: "tarek3.doe@example.com",
+            password: "Hi@2025"
+          }),
+        });
+
+        if (!authResponse.ok) {
+          throw new Error(`Authentication failed with status: ${authResponse.status}`);
+        }
         
-        // Store simulated token in state and localStorage
-        setAuthToken(mockToken);
-        localStorage.setItem('authToken', mockToken);
+        const authData: AuthResponse = await authResponse.json();
         
-        console.log("Authentication successful (simulated)");
+        if (!authData.isAuthenticated) {
+          throw new Error('Authentication failed: ' + authData.message);
+        }
+        
+        setAuthToken(authData.token);
+        localStorage.setItem('authToken', authData.token);
+        
+        setUserInfo({
+          firstName: authData.firstName,
+          email: authData.email
+        });
+        
+        console.log("Authentication successful!");
         toast({
           title: "Authentication successful",
-          description: "Connected to the API (simulated)",
+          description: `Welcome, ${authData.firstName || authData.email}`,
         });
       } catch (error) {
         console.error('Authentication error:', error);
-        setAuthError("Failed to connect to authentication server. Using simulated data for development purposes.");
         
-        // For development, still set a mock token to allow the app to function
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+        setAuthError(`Authentication error: ${errorMessage}. Using simulated data for development.`);
+        
         const mockToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0YXJlazMuZG9lQGV4YW1wbGUuY29tIiwibmFtZSI6IlRhcmVrIERvZSIsImlhdCI6MTUxNjIzOTAyMn0.mock_token";
         setAuthToken(mockToken);
         localStorage.setItem('authToken', mockToken);
@@ -77,7 +101,6 @@ const Index = () => {
     authenticate();
   }, []);
 
-  // Reset dependent fields when POS or language changes
   useEffect(() => {
     if (selectedPOS && selectedLanguage) {
       setSelectedSlug('');
@@ -88,7 +111,6 @@ const Index = () => {
     }
   }, [selectedPOS, selectedLanguage]);
 
-  // Reset sub-slugs when parent slug changes
   useEffect(() => {
     if (selectedSlug) {
       setSelectedSubSlug('');
@@ -97,97 +119,102 @@ const Index = () => {
     }
   }, [selectedSlug]);
 
-  // Fetch initial slugs based on POS and language
   const fetchSlugs = async () => {
     setLoading(true);
     try {
-      // Format language to lowercase for API
       const langFormatted = selectedLanguage.toLowerCase();
       
-      // Use token for API request if available
       const headers = {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${authToken}`
       };
-      
-      if (authToken) {
-        headers['Authorization'] = `Bearer ${authToken}`;
-      }
       
       console.log(`Fetching slugs for ${selectedPOS.toLowerCase()}/${langFormatted}/`);
       
-      // Simulating API response with a timeout since we can't connect to the actual API
-      await new Promise(resolve => setTimeout(resolve, 800));
+      const apiUrl = `https://92.112.184.210:7036/get-sub-path/${selectedPOS.toLowerCase()}/${langFormatted}/`;
       
-      // Mock response data
-      const mockSlugs = ['aboutus', 'contact', 'services', 'products', 'blog'];
-      
-      setAvailableSlugs(mockSlugs);
-      toast({
-        title: "Slugs retrieved",
-        description: `Retrieved slugs for ${selectedPOS}/${selectedLanguage}`,
-      });
-    } catch (error) {
-      console.error('Error fetching slugs:', error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to fetch page slugs. Using mock data.",
-      });
-      
-      // Still set mock data for development
-      const mockSlugs = ['aboutus', 'contact', 'services', 'products', 'blog'];
-      setAvailableSlugs(mockSlugs);
+      try {
+        const response = await fetch(apiUrl, {
+          method: 'GET',
+          headers: headers
+        });
+        
+        if (!response.ok) {
+          throw new Error(`API request failed with status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        setAvailableSlugs(data);
+        
+        toast({
+          title: "Slugs retrieved",
+          description: `Retrieved slugs for ${selectedPOS}/${selectedLanguage}`,
+        });
+      } catch (apiError) {
+        console.error('API Error:', apiError);
+        
+        const mockSlugs = ['aboutus', 'contact', 'services', 'products', 'blog'];
+        setAvailableSlugs(mockSlugs);
+        
+        toast({
+          variant: "destructive",
+          title: "API Error",
+          description: "Failed to fetch page slugs. Using mock data.",
+        });
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  // Fetch sub-slugs based on selected parent slug
   const fetchSubSlugs = async () => {
     setLoading(true);
     try {
-      // Format language to lowercase for API
       const langFormatted = selectedLanguage.toLowerCase();
       
-      // Use token for API request if available
       const headers = {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${authToken}`
       };
-      
-      if (authToken) {
-        headers['Authorization'] = `Bearer ${authToken}`;
-      }
       
       console.log(`Fetching sub-slugs for ${selectedPOS.toLowerCase()}/${langFormatted}/${selectedSlug}/`);
       
-      // Simulating API response with a timeout
-      await new Promise(resolve => setTimeout(resolve, 800));
+      const apiUrl = `https://92.112.184.210:7036/get-sub-path/${selectedPOS.toLowerCase()}/${langFormatted}/${selectedSlug}/`;
       
-      // Mock response data - would come from the API in a real app
-      const mockSubSlugs = ['subpage1', 'subpage2', 'subpage3'];
-      
-      setSubSlugs(mockSubSlugs);
-      toast({
-        title: "Sub-slugs retrieved",
-        description: `Retrieved sub-slugs for ${selectedSlug}`,
-      });
-    } catch (error) {
-      console.error('Error fetching sub-slugs:', error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to fetch sub-slugs. Using mock data.",
-      });
-      
-      // Still set mock data for development
-      const mockSubSlugs = ['subpage1', 'subpage2', 'subpage3'];
-      setSubSlugs(mockSubSlugs);
+      try {
+        const response = await fetch(apiUrl, {
+          method: 'GET',
+          headers: headers
+        });
+        
+        if (!response.ok) {
+          throw new Error(`API request failed with status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        setSubSlugs(data);
+        
+        toast({
+          title: "Sub-slugs retrieved",
+          description: `Retrieved sub-slugs for ${selectedSlug}`,
+        });
+      } catch (apiError) {
+        console.error('API Error:', apiError);
+        
+        const mockSubSlugs = ['subpage1', 'subpage2', 'subpage3'];
+        setSubSlugs(mockSubSlugs);
+        
+        toast({
+          variant: "destructive",
+          title: "API Error",
+          description: "Failed to fetch sub-slugs. Using mock data.",
+        });
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  // Fetch page data based on the complete path
   const fetchPageData = async () => {
     setLoading(true);
     try {
@@ -196,56 +223,52 @@ const Index = () => {
         ? `${selectedPOS.toLowerCase()}/${langFormatted}/${selectedSlug}/${selectedSubSlug}`
         : `${selectedPOS.toLowerCase()}/${langFormatted}/${selectedSlug}`;
       
-      // Use token for API request if available
       const headers = {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${authToken}`
       };
-      
-      if (authToken) {
-        headers['Authorization'] = `Bearer ${authToken}`;
-      }
       
       console.log(`Fetching page data for path: ${path}`);
       
-      // Simulating API response with a timeout
-      await new Promise(resolve => setTimeout(resolve, 800));
+      const apiUrl = `https://92.112.184.210:7036/get-sub-path/${path}`;
       
-      // Mock response data
-      const mockData = {
-        success: true,
-        data: {
-          title: `${selectedLanguage} page for ${selectedPOS}/${selectedSlug}${selectedSubSlug ? '/' + selectedSubSlug : ''}`,
-          content: 'This is the page content that would come from the API.'
+      try {
+        const response = await fetch(apiUrl, {
+          method: 'GET',
+          headers: headers
+        });
+        
+        if (!response.ok) {
+          throw new Error(`API request failed with status: ${response.status}`);
         }
-      };
-      
-      setPageData(mockData.data);
-      toast({
-        title: "Success",
-        description: "Page data fetched successfully",
-      });
-    } catch (error) {
-      console.error('Error fetching page data:', error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to fetch page data. Using mock data.",
-      });
-      
-      // Still set mock data for development
-      const mockData = {
-        data: {
+        
+        const data = await response.json();
+        setPageData(data);
+        
+        toast({
+          title: "Success",
+          description: "Page data fetched successfully",
+        });
+      } catch (apiError) {
+        console.error('API Error:', apiError);
+        
+        const mockData = {
           title: `${selectedLanguage} page for ${selectedPOS}/${selectedSlug}${selectedSubSlug ? '/' + selectedSubSlug : ''}`,
           content: 'This is mock page content since the API fetch failed.'
-        }
-      };
-      setPageData(mockData.data);
+        };
+        setPageData(mockData);
+        
+        toast({
+          variant: "destructive",
+          title: "API Error",
+          description: "Failed to fetch page data. Using mock data.",
+        });
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  // Handle the Get Pages button click
   const handleGetPages = () => {
     if (!selectedPOS || !selectedLanguage) {
       toast({
@@ -258,7 +281,6 @@ const Index = () => {
     fetchSlugs();
   };
 
-  // Handle the final fetch
   const handleFetchData = () => {
     if (!selectedSlug) {
       toast({
@@ -271,7 +293,6 @@ const Index = () => {
     fetchPageData();
   };
 
-  // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: { 
@@ -305,7 +326,6 @@ const Index = () => {
     }
   };
 
-  // Show loading state during authentication
   if (authLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 p-6 md:p-10 flex items-center justify-center">
@@ -348,6 +368,17 @@ const Index = () => {
           Navigate through pages across different POS and languages.
         </motion.p>
 
+        {userInfo && (
+          <motion.div variants={itemVariants} className="mb-6">
+            <Alert className="bg-blue-50 border-blue-100">
+              <AlertTitle className="text-blue-800">Welcome, {userInfo.firstName || userInfo.email}</AlertTitle>
+              <AlertDescription className="text-blue-600">
+                You are logged in and can access all page navigation features.
+              </AlertDescription>
+            </Alert>
+          </motion.div>
+        )}
+
         {authError && (
           <motion.div variants={itemVariants} className="mb-6">
             <Alert variant="destructive">
@@ -366,7 +397,6 @@ const Index = () => {
               <CardTitle className="text-gray-800 text-xl">General Elements</CardTitle>
             </CardHeader>
             <CardContent className="p-6">
-              {/* Show auth status */}
               <div className="mb-4 p-3 bg-green-50 border border-green-100 rounded-md">
                 <p className="text-green-700 text-sm">
                   {authToken ? 'Authentication successful ✓' : 'Not authenticated'}
@@ -516,7 +546,7 @@ const Index = () => {
           variants={itemVariants}
           className="mt-8 text-center text-sm text-gray-500"
         >
-          API Endpoint: <code className="bg-gray-100 p-1 rounded font-mono text-sm">https://URL:7036/get-sub-path/POS/Language/Slug/SubSlug</code>
+          API Endpoint: <code className="bg-gray-100 p-1 rounded font-mono text-sm">https://92.112.184.210:7036/get-sub-path/POS/Language/Slug/SubSlug</code>
         </motion.div>
       </motion.div>
     </div>
@@ -524,4 +554,3 @@ const Index = () => {
 };
 
 export default Index;
-
