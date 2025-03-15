@@ -24,12 +24,6 @@ export function Logo({ showText = false, className }: LogoProps) {
           <span>ADMIN DASHBOARD</span>
         </div>
       )}
-      
-      {!showText && (
-        <div className="text-xl font-bold transition-colors duration-300" style={{ color: '#0EA5E9' }}>
-          <span>AD</span>
-        </div>
-      )}
     </motion.div>
   );
 }
