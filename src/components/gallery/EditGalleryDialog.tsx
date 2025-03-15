@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Gallery } from '@/models/FileModel';
 import { FileDropzone } from '@/components/gallery/FileDropzone';
 import { Pencil } from 'lucide-react';
+import { useFileSelection } from '@/hooks/upload/useFileSelection';
 
 interface EditGalleryDialogProps {
   open: boolean;
@@ -25,6 +26,9 @@ export const EditGalleryDialog: React.FC<EditGalleryDialogProps> = ({
   const [name, setName] = useState(gallery?.name || '');
   const [description, setDescription] = useState(gallery?.description || '');
   const [coverImage, setCoverImage] = useState<string | undefined>(gallery?.coverImageUrl);
+  
+  // Use the file selection hook for cover image upload
+  const { selectedFile, filePreview, isImage, handleFile } = useFileSelection();
 
   // Reset form when gallery changes
   React.useEffect(() => {
@@ -110,6 +114,10 @@ export const EditGalleryDialog: React.FC<EditGalleryDialogProps> = ({
               </div>
             ) : (
               <FileDropzone
+                onFileSelected={handleFile}
+                selectedFile={selectedFile}
+                filePreview={filePreview}
+                isImage={isImage}
                 onImageUpload={handleImageUpload}
                 accept="image/*"
                 maxFiles={1}
