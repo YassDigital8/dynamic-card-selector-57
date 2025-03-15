@@ -11,9 +11,14 @@ import { formatDate } from '@/lib/date-utils';
 interface GalleryListProps {
   galleries: Gallery[];
   onSelectGallery: (gallery: Gallery) => void;
+  fileTypes?: Record<string, string[]>; // Map gallery IDs to the file types they contain
 }
 
-export const GalleryList: React.FC<GalleryListProps> = ({ galleries, onSelectGallery }) => {
+export const GalleryList: React.FC<GalleryListProps> = ({ 
+  galleries, 
+  onSelectGallery,
+  fileTypes = {} 
+}) => {
   const renderGalleryIcon = (gallery: Gallery) => {
     if (gallery.coverImageUrl) {
       return (
@@ -23,6 +28,14 @@ export const GalleryList: React.FC<GalleryListProps> = ({ galleries, onSelectGal
           className="w-full h-full object-cover"
         />
       );
+    }
+
+    // Check if we have file type information for this gallery
+    const galleryFileTypes = fileTypes[gallery.id] || [];
+    
+    // If we know it contains PDFs and no images, show PDF icon
+    if (galleryFileTypes.includes('application/pdf') && !galleryFileTypes.includes('image/')) {
+      return <FileText className="w-12 h-12 text-muted-foreground" />;
     }
 
     if (gallery.iconName) {
@@ -41,6 +54,8 @@ export const GalleryList: React.FC<GalleryListProps> = ({ galleries, onSelectGal
           return <Library className="w-12 h-12 text-muted-foreground" />;
         case 'BookImage':
           return <BookImage className="w-12 h-12 text-muted-foreground" />;
+        case 'FileText':
+          return <FileText className="w-12 h-12 text-muted-foreground" />;
         case 'FolderOpen':
         default:
           return <FolderOpen className="w-12 h-12 text-muted-foreground" />;
@@ -92,7 +107,11 @@ export const GalleryList: React.FC<GalleryListProps> = ({ galleries, onSelectGal
             )}
             <div className="flex items-center justify-between text-xs text-muted-foreground mt-2 pt-2 border-t border-border">
               <div className="flex items-center gap-1">
-                <Image className="h-4 w-4" />
+                {fileTypes[gallery.id]?.includes('application/pdf') && !fileTypes[gallery.id]?.includes('image/') ? (
+                  <FileText className="h-4 w-4" />
+                ) : (
+                  <Image className="h-4 w-4" />
+                )}
                 <span>{gallery.fileCount} files</span>
               </div>
               <span>{formatDate(gallery.createdOn)}</span>

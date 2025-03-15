@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React, { useState, useMemo } from 'react';
 import PageContainer from '@/components/pages/index/PageContainer';
 import AuthenticatedContent from '@/components/pages/index/AuthenticatedContent';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -71,6 +72,23 @@ const GalleryPage: React.FC = () => {
     }
   ]);
 
+  // Create a map of gallery IDs to file types they contain
+  const galleryFileTypes = useMemo(() => {
+    const typeMap: Record<string, string[]> = {};
+    
+    files.forEach(file => {
+      if (!typeMap[file.galleryId]) {
+        typeMap[file.galleryId] = [];
+      }
+      
+      if (!typeMap[file.galleryId].includes(file.type)) {
+        typeMap[file.galleryId].push(file.type);
+      }
+    });
+    
+    return typeMap;
+  }, [files]);
+
   const handleFileUpload = (newFile: FileInfo) => {
     setFiles(prevFiles => [newFile, ...prevFiles]);
     
@@ -128,6 +146,7 @@ const GalleryPage: React.FC = () => {
         <TabsContent value="galleries" className="mt-0">
           <GalleryList 
             galleries={galleries} 
+            fileTypes={galleryFileTypes}
             onSelectGallery={(gallery) => {
               setSelectedGallery(gallery);
               setActiveTab("browse");
