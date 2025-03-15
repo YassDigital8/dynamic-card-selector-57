@@ -89,7 +89,7 @@ const PageData = ({
         <CardContent className="p-6">
           <div className="flex flex-col items-center justify-center py-12 text-center text-gray-500">
             <p className="mb-4">Select a page to view its details</p>
-            {(selectedPOS && selectedLanguage && selectedSlug) && (
+            {(selectedPOS && selectedLanguage) && (
               <Button 
                 variant="outline" 
                 onClick={onRefresh}
@@ -163,7 +163,10 @@ const PageData = ({
           <div>
             <h3 className="text-sm font-medium text-gray-500 mb-2">Page URL</h3>
             <div className="bg-gray-50 border border-gray-200 rounded-md p-3 text-sm text-gray-800 font-mono overflow-x-auto">
-              {`${selectedPOS?.toLowerCase()}/${selectedLanguage?.toLowerCase()}/${selectedSlug}${selectedSubSlug ? '/' + selectedSubSlug : ''}`}
+              {selectedSlug 
+                ? `${selectedPOS?.toLowerCase()}/${selectedLanguage?.toLowerCase()}/${selectedSlug}${selectedSubSlug ? '/' + selectedSubSlug : ''}`
+                : `${selectedPOS?.toLowerCase()}/${selectedLanguage?.toLowerCase()}`
+              }
             </div>
           </div>
           

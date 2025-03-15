@@ -27,6 +27,7 @@ const usePageNavigation = ({ authToken = '' }: UsePageNavigationProps = {}) => {
       setSelectedSubSlug('');
       setPageData(null);
       fetchSlugs();
+      fetchInitialPageData(); // Fetch initial page data when POS and Language are selected
     }
   }, [selectedPOS, selectedLanguage]);
 
@@ -90,6 +91,51 @@ const usePageNavigation = ({ authToken = '' }: UsePageNavigationProps = {}) => {
       setLoading(false);
     }
   }, [selectedPOS, selectedLanguage, selectedSlug, toast]);
+
+  const fetchInitialPageData = useCallback(() => {
+    if (!selectedPOS || !selectedLanguage) {
+      return;
+    }
+    
+    setLoading(true);
+    setPageData(null);
+    
+    try {
+      // Mock API call for initial page data when only POS and Language are selected
+      setTimeout(() => {
+        const mockData = {
+          title: `${selectedLanguage} landing page for ${selectedPOS}`,
+          content: `This is the default landing page for ${selectedPOS} region in ${selectedLanguage} language.
+          
+Welcome to the content management system. Please select a page from the available options to view more details.
+
+• Main pages are listed in the "Select Parent Path" dropdown
+• Sub-pages will appear when a parent page is selected
+• You can add new pages using the "Add Page" button
+
+The real content would be fetched from the API endpoint:
+https://{{URL}}:7036/${selectedLanguage}/${selectedPOS}`,
+          lastUpdated: new Date().toISOString(),
+          status: 'published'
+        };
+        
+        setPageData(mockData);
+        setLoading(false);
+        
+        toast({
+          title: "Default Page Data Loaded",
+          description: "Using mock data until SSL certificate is fixed",
+        });
+      }, 1000);
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to fetch initial page data",
+      });
+      setLoading(false);
+    }
+  }, [selectedPOS, selectedLanguage, toast]);
 
   const fetchPageData = useCallback(() => {
     if (!selectedSlug) {
