@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { FileInfo } from '@/models/FileModel';
 import { Card, CardContent } from '@/components/ui/card';
@@ -93,7 +94,7 @@ export const FileDetails: React.FC<FileDetailsProps> = ({ file }) => {
         <CardContent className="p-4">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold">File Details</h2>
-            {isImage && (
+            {file.metadata && (
               <Button 
                 variant={isEditing ? "outline" : "default"}
                 size="sm"
@@ -114,7 +115,7 @@ export const FileDetails: React.FC<FileDetailsProps> = ({ file }) => {
             )}
           </div>
 
-          {isImage ? (
+          {file.metadata ? (
             <div className="space-y-4">
               <div>
                 <Label htmlFor="title">Title</Label>
@@ -127,24 +128,26 @@ export const FileDetails: React.FC<FileDetailsProps> = ({ file }) => {
                     className="mt-1"
                   />
                 ) : (
-                  <div className="mt-1 p-2 bg-gray-50 rounded border">{file.metadata?.title || '-'}</div>
+                  <div className="mt-1 p-2 bg-gray-50 rounded border">{file.metadata.title || '-'}</div>
                 )}
               </div>
               
-              <div>
-                <Label htmlFor="altText">Alternative Text</Label>
-                {isEditing ? (
-                  <Input
-                    id="altText"
-                    name="altText"
-                    value={editedMetadata.altText}
-                    onChange={handleInputChange}
-                    className="mt-1"
-                  />
-                ) : (
-                  <div className="mt-1 p-2 bg-gray-50 rounded border">{file.metadata?.altText || '-'}</div>
-                )}
-              </div>
+              {isImage && (
+                <div>
+                  <Label htmlFor="altText">Alternative Text</Label>
+                  {isEditing ? (
+                    <Input
+                      id="altText"
+                      name="altText"
+                      value={editedMetadata.altText}
+                      onChange={handleInputChange}
+                      className="mt-1"
+                    />
+                  ) : (
+                    <div className="mt-1 p-2 bg-gray-50 rounded border">{file.metadata.altText || '-'}</div>
+                  )}
+                </div>
+              )}
               
               <div>
                 <Label htmlFor="caption">Caption</Label>
@@ -157,7 +160,7 @@ export const FileDetails: React.FC<FileDetailsProps> = ({ file }) => {
                     className="mt-1"
                   />
                 ) : (
-                  <div className="mt-1 p-2 bg-gray-50 rounded border min-h-[60px]">{file.metadata?.caption || '-'}</div>
+                  <div className="mt-1 p-2 bg-gray-50 rounded border min-h-[60px]">{file.metadata.caption || '-'}</div>
                 )}
               </div>
               
@@ -173,7 +176,7 @@ export const FileDetails: React.FC<FileDetailsProps> = ({ file }) => {
                     rows={4}
                   />
                 ) : (
-                  <div className="mt-1 p-2 bg-gray-50 rounded border min-h-[100px]">{file.metadata?.description || '-'}</div>
+                  <div className="mt-1 p-2 bg-gray-50 rounded border min-h-[100px]">{file.metadata.description || '-'}</div>
                 )}
               </div>
 
@@ -186,7 +189,7 @@ export const FileDetails: React.FC<FileDetailsProps> = ({ file }) => {
             </div>
           ) : (
             <div className="text-center py-8 text-gray-500">
-              <p>Metadata details are only available for image files.</p>
+              <p>No metadata available for this file.</p>
             </div>
           )}
         </CardContent>

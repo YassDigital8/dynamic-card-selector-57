@@ -143,10 +143,9 @@ export const useFileUpload = ({ onFileUploaded, selectedGalleryId = '', gallerie
         uploadedBy: userInfo?.email || 'unknown',
         uploadedOn: new Date().toISOString(),
         galleryId: targetGalleryId,
-      };
-      
-      fileInfo.metadata = {
-        ...metadata
+        metadata: {
+          ...metadata
+        }
       };
       
       onFileUploaded(fileInfo);
