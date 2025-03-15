@@ -72,19 +72,16 @@ const GalleryPage: React.FC = () => {
   ]);
 
   const handleFileUpload = (newFile: FileInfo) => {
-    if (selectedGallery) {
-      const fileWithGallery = { ...newFile, galleryId: selectedGallery.id };
-      setFiles(prevFiles => [fileWithGallery, ...prevFiles]);
-      
-      // Update file count in gallery
-      setGalleries(prevGalleries => 
-        prevGalleries.map(gallery => 
-          gallery.id === selectedGallery.id 
-            ? { ...gallery, fileCount: gallery.fileCount + 1 } 
-            : gallery
-        )
-      );
-    }
+    setFiles(prevFiles => [newFile, ...prevFiles]);
+    
+    // Update file count in gallery
+    setGalleries(prevGalleries => 
+      prevGalleries.map(gallery => 
+        gallery.id === newFile.galleryId 
+          ? { ...gallery, fileCount: gallery.fileCount + 1 } 
+          : gallery
+      )
+    );
   };
 
   const handleCreateGallery = (gallery: Gallery) => {
@@ -112,11 +109,9 @@ const GalleryPage: React.FC = () => {
                 Browse Files
               </TabsTrigger>
             )}
-            {selectedGallery && (
-              <TabsTrigger value="upload" className="data-[state=active]:bg-white gap-2 text-black dark:text-black">
-                Upload
-              </TabsTrigger>
-            )}
+            <TabsTrigger value="upload" className="data-[state=active]:bg-white gap-2 text-black dark:text-black">
+              Upload
+            </TabsTrigger>
           </TabsList>
           
           {activeTab === "galleries" && (
@@ -154,14 +149,15 @@ const GalleryPage: React.FC = () => {
         </TabsContent>
         
         <TabsContent value="upload" className="mt-0">
-          {selectedGallery && (
-            <>
-              <div className="mb-4 p-4 bg-muted/30 rounded-lg">
-                <h2 className="text-lg font-semibold">Upload to: {selectedGallery.name}</h2>
-              </div>
-              <UploadComponent onFileUploaded={handleFileUpload} />
-            </>
-          )}
+          <div className="mb-4 p-4 bg-muted/30 rounded-lg">
+            <h2 className="text-lg font-semibold">Upload Files</h2>
+            <p className="text-sm text-muted-foreground">Select a gallery and upload files to it</p>
+          </div>
+          <UploadComponent 
+            onFileUploaded={handleFileUpload} 
+            galleries={galleries}
+            selectedGalleryId={selectedGallery?.id}
+          />
         </TabsContent>
       </Tabs>
       

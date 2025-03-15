@@ -1,21 +1,36 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { FileInfo } from '@/models/FileModel';
+import { FileInfo, Gallery } from '@/models/FileModel';
 import { useToast } from '@/hooks/use-toast';
 import { useAuthentication } from '@/hooks/useAuthentication';
 import { FileDropzone } from './FileDropzone';
 import { ImageMetadataForm } from './ImageMetadataForm';
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
 
 interface UploadComponentProps {
   onFileUploaded: (file: FileInfo) => void;
+  galleries: Gallery[];
+  selectedGalleryId?: string;
 }
 
-export const UploadComponent: React.FC<UploadComponentProps> = ({ onFileUploaded }) => {
+export const UploadComponent: React.FC<UploadComponentProps> = ({ 
+  onFileUploaded, 
+  galleries,
+  selectedGalleryId 
+}) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [filePreview, setFilePreview] = useState<string | null>(null);
   const [isImage, setIsImage] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [targetGalleryId, setTargetGalleryId] = useState<string>(selectedGalleryId || '');
   const [metadata, setMetadata] = useState({
     title: '',
     altText: '',
@@ -70,7 +85,14 @@ export const UploadComponent: React.FC<UploadComponentProps> = ({ onFileUploaded
   };
 
   const handleUpload = async () => {
-    if (!selectedFile) return;
+    if (!selectedFile || !targetGalleryId) {
+      toast({
+        variant: "destructive",
+        title: "Upload failed",
+        description: "Please select a file and a gallery to upload to.",
+      });
+      return;
+    }
     
     setIsUploading(true);
     
@@ -88,7 +110,7 @@ export const UploadComponent: React.FC<UploadComponentProps> = ({ onFileUploaded
         url: filePreview || '/placeholder.svg',
         uploadedBy: userInfo?.email || 'unknown',
         uploadedOn: new Date().toISOString(),
-        galleryId: '', // This will be set by the parent component
+        galleryId: targetGalleryId,
       };
       
       // Add metadata for images
@@ -115,7 +137,7 @@ export const UploadComponent: React.FC<UploadComponentProps> = ({ onFileUploaded
       // Show success toast
       toast({
         title: "Upload successful",
-        description: `File "${selectedFile.name}" has been uploaded.`,
+        description: `File "${selectedFile.name}" has been uploaded to gallery.`,
       });
       
     } catch (error) {
@@ -131,6 +153,33 @@ export const UploadComponent: React.FC<UploadComponentProps> = ({ onFileUploaded
 
   return (
     <div className="space-y-6">
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="gallery-select">Select Gallery</Label>
+          <Select
+            value={targetGalleryId}
+            onValueChange={setTargetGalleryId}
+            disabled={galleries.length === 0}
+          >
+            <SelectTrigger id="gallery-select" className="w-full">
+              <SelectValue placeholder="Select a gallery" />
+            </SelectTrigger>
+            <SelectContent>
+              {galleries.map((gallery) => (
+                <SelectItem key={gallery.id} value={gallery.id}>
+                  {gallery.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {galleries.length === 0 && (
+            <p className="text-sm text-muted-foreground">
+              No galleries available. Please create a gallery first.
+            </p>
+          )}
+        </div>
+      </div>
+
       <FileDropzone 
         onFileSelected={handleFile}
         selectedFile={selectedFile}
@@ -149,7 +198,7 @@ export const UploadComponent: React.FC<UploadComponentProps> = ({ onFileUploaded
         <div className="flex justify-end">
           <Button 
             onClick={handleUpload} 
-            disabled={isUploading}
+            disabled={isUploading || !targetGalleryId}
             className="bg-blue-600 hover:bg-blue-700"
           >
             {isUploading ? 'Uploading...' : 'Upload File'}
