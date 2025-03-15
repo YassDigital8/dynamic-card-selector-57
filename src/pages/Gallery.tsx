@@ -104,11 +104,9 @@ const GalleryPage: React.FC = () => {
             <TabsTrigger value="galleries" className="data-[state=active]:bg-white gap-2 text-black dark:text-black">
               Galleries
             </TabsTrigger>
-            {selectedGallery && (
-              <TabsTrigger value="browse" className="data-[state=active]:bg-white gap-2 text-black dark:text-black">
-                Browse Files
-              </TabsTrigger>
-            )}
+            <TabsTrigger value="browse" className="data-[state=active]:bg-white gap-2 text-black dark:text-black">
+              Browse Files
+            </TabsTrigger>
             <TabsTrigger value="upload" className="data-[state=active]:bg-white gap-2 text-black dark:text-black">
               Upload
             </TabsTrigger>
@@ -133,7 +131,7 @@ const GalleryPage: React.FC = () => {
         </TabsContent>
         
         <TabsContent value="browse" className="mt-0">
-          {selectedGallery && (
+          {selectedGallery ? (
             <>
               <div className="mb-4 p-4 bg-muted/30 rounded-lg">
                 <h2 className="text-lg font-semibold">{selectedGallery.name}</h2>
@@ -145,6 +143,14 @@ const GalleryPage: React.FC = () => {
                 files={files.filter(file => file.galleryId === selectedGallery.id)} 
               />
             </>
+          ) : (
+            <div className="p-4 bg-muted/30 rounded-lg mb-4">
+              <h2 className="text-lg font-semibold">All Files</h2>
+              <p className="text-sm text-muted-foreground">
+                Select a gallery from the Galleries tab for filtered results, or browse all files here.
+              </p>
+              <GalleryComponent files={files} />
+            </div>
           )}
         </TabsContent>
         
