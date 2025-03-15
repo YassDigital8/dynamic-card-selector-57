@@ -114,7 +114,8 @@ const usePageNavigation = ({ authToken = '' }: UsePageNavigationProps = {}) => {
     selectedSubSlug,
     setSelectedSubSlug,
     pageData,
-    handleFetchData
+    handleFetchData,
+    fetchSlugs  // Expose the fetchSlugs function
   };
 };
 
