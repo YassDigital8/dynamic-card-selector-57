@@ -22,10 +22,12 @@ interface PageFooterProps {
 }
 
 const PageFooter = ({ onRefresh, onDelete, canDelete }: PageFooterProps) => {
+  console.log('PageFooter props:', { onRefresh, onDelete, canDelete });
+  
   return (
     <CardFooter className="bg-gray-50 border-t">
       <div className="w-full flex justify-between">
-        {canDelete && onDelete && (
+        {onDelete && canDelete && (
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button 
@@ -51,7 +53,7 @@ const PageFooter = ({ onRefresh, onDelete, canDelete }: PageFooterProps) => {
           </AlertDialog>
         )}
         
-        <div className={canDelete ? "ml-auto" : "w-full flex justify-end"}>
+        <div className={canDelete && onDelete ? "ml-auto" : "w-full flex justify-end"}>
           <Button 
             variant="outline" 
             onClick={onRefresh}

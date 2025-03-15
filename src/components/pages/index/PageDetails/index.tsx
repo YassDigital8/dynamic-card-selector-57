@@ -102,7 +102,8 @@ const PageDetails = ({
   }
   
   // Determine if we can show the delete button - only for specific pages, not landing pages
-  const canDelete = !!selectedSlug;
+  const canDelete = Boolean(selectedSlug);
+  console.log('canDelete value:', canDelete, 'selectedSlug:', selectedSlug);
   
   return (
     <motion.div
