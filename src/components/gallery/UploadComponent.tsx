@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { FileInfo, Gallery } from '@/models/FileModel';
 import { FileDropzone } from './FileDropzone';
 import { ImageMetadataForm } from './ImageMetadataForm';
@@ -47,6 +47,27 @@ export const UploadComponent: React.FC<UploadComponentProps> = ({
       resetUploadedFile();
     }
   };
+  
+  useEffect(() => {
+    const handleViewUploadedFile = (e: CustomEvent) => {
+      if (onViewFile) {
+        onViewFile(e.detail);
+        resetUploadedFile();
+      }
+    };
+    
+    const handleResetUpload = () => {
+      resetUploadedFile();
+    };
+    
+    document.addEventListener('view-uploaded-file', handleViewUploadedFile as EventListener);
+    document.addEventListener('reset-upload', handleResetUpload);
+    
+    return () => {
+      document.removeEventListener('view-uploaded-file', handleViewUploadedFile as EventListener);
+      document.removeEventListener('reset-upload', handleResetUpload);
+    };
+  }, [onViewFile, resetUploadedFile]);
 
   return (
     <div className="space-y-6">
