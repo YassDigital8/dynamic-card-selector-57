@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { FileText, Settings, PlusCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -15,10 +15,17 @@ import PathSelectors from '@/components/pages/index/PathSelectors';
 import PageData from '@/components/pages/index/PageData';
 import AddPageDialog from '@/components/pages/index/AddPageDialog';
 import PageContainer from '@/components/pages/index/PageContainer';
+import PagesTour from '@/components/pages/index/PagesTour';
 
 const Index = () => {
   const [initialLoading, setInitialLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("pages");
+
+  // Refs for tour highlights
+  const pageSelectorsRef = useRef<HTMLDivElement>(null);
+  const pathSelectorsRef = useRef<HTMLDivElement>(null);
+  const pageDataRef = useRef<HTMLDivElement>(null);
+  const tabsRef = useRef<HTMLDivElement>(null);
   
   const pageNavigation = usePageNavigation();
   const pageAddition = usePageAddition({
@@ -48,7 +55,7 @@ const Index = () => {
   return (
     <PageContainer>
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <div className="flex items-center justify-between mb-6">
+        <div ref={tabsRef} className="flex items-center justify-between mb-6">
           <TabsList className="bg-gray-100">
             <TabsTrigger value="pages" className="data-[state=active]:bg-white gap-2 text-black dark:text-black">
               <FileText className="h-4 w-4" />
@@ -73,33 +80,37 @@ const Index = () => {
         <TabsContent value="pages" className="mt-0">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="md:col-span-1">
-              <PageSelectors 
-                posOptions={pageNavigation.posOptions}
-                languageOptions={pageNavigation.languageOptions}
-                selectedPOS={pageNavigation.selectedPOS}
-                selectedLanguage={pageNavigation.selectedLanguage}
-                setSelectedPOS={pageNavigation.setSelectedPOS}
-                setSelectedLanguage={pageNavigation.setSelectedLanguage}
-                loading={pageNavigation.loading}
-              />
+              <div ref={pageSelectorsRef}>
+                <PageSelectors 
+                  posOptions={pageNavigation.posOptions}
+                  languageOptions={pageNavigation.languageOptions}
+                  selectedPOS={pageNavigation.selectedPOS}
+                  selectedLanguage={pageNavigation.selectedLanguage}
+                  setSelectedPOS={pageNavigation.setSelectedPOS}
+                  setSelectedLanguage={pageNavigation.setSelectedLanguage}
+                  loading={pageNavigation.loading}
+                />
+              </div>
               
               <div className="h-6"></div>
               
-              <PathSelectors 
-                availableSlugs={pageNavigation.availableSlugs}
-                selectedSlug={pageNavigation.selectedSlug}
-                setSelectedSlug={pageNavigation.setSelectedSlug}
-                subSlugs={pageNavigation.subSlugs}
-                selectedSubSlug={pageNavigation.selectedSubSlug}
-                setSelectedSubSlug={pageNavigation.setSelectedSubSlug}
-                loading={pageNavigation.loading}
-                selectedPOS={pageNavigation.selectedPOS}
-                selectedLanguage={pageNavigation.selectedLanguage}
-                onAddPageClick={() => pageAddition.setAddPageDialogOpen(true)}
-              />
+              <div ref={pathSelectorsRef}>
+                <PathSelectors 
+                  availableSlugs={pageNavigation.availableSlugs}
+                  selectedSlug={pageNavigation.selectedSlug}
+                  setSelectedSlug={pageNavigation.setSelectedSlug}
+                  subSlugs={pageNavigation.subSlugs}
+                  selectedSubSlug={pageNavigation.selectedSubSlug}
+                  setSelectedSubSlug={pageNavigation.setSelectedSubSlug}
+                  loading={pageNavigation.loading}
+                  selectedPOS={pageNavigation.selectedPOS}
+                  selectedLanguage={pageNavigation.selectedLanguage}
+                  onAddPageClick={() => pageAddition.setAddPageDialogOpen(true)}
+                />
+              </div>
             </div>
             
-            <div className="md:col-span-2">
+            <div className="md:col-span-2" ref={pageDataRef}>
               <PageData 
                 pageData={pageNavigation.pageData} 
                 onRefresh={pageNavigation.refreshPageData}
@@ -130,6 +141,14 @@ const Index = () => {
         selectedSlug={pageNavigation.selectedSlug}
         selectedSubSlug={pageNavigation.selectedSubSlug}
         onAddPage={handleAddPage}
+      />
+
+      {/* Add the tour component */}
+      <PagesTour 
+        pageSelectorsRef={pageSelectorsRef}
+        pathSelectorsRef={pathSelectorsRef}
+        pageDataRef={pageDataRef}
+        tabsRef={tabsRef}
       />
     </PageContainer>
   );
