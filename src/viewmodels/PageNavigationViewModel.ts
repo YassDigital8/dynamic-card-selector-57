@@ -1,4 +1,3 @@
-
 import { useEffect, useCallback, useMemo } from 'react';
 import { usePageSelectionViewModel } from './PageSelectionViewModel';
 import { usePageSlugsViewModel } from './PageSlugsViewModel';
@@ -72,6 +71,30 @@ export function usePageNavigationViewModel({ authToken = '' }: PageNavigationVie
   }, [pageSlugs.selectedSlug, pageSlugs.selectedSubSlug, fetchPageData]);
 
   // Memoize the combined return values
+  const handleDeletePage = useCallback(async () => {
+    try {
+      await pageData.deletePage();
+      
+      // Reset the slug selections after successful deletion
+      pageSlugs.setSelectedSlug('');
+      pageSlugs.setSelectedSubSlug('');
+      
+      // Refresh the available slugs
+      pageSlugs.fetchSlugs();
+      
+      // Load the initial page data
+      fetchInitialPageData();
+    } catch (error) {
+      console.error('Failed to delete page:', error);
+    }
+  }, [
+    pageData.deletePage,
+    pageSlugs.setSelectedSlug,
+    pageSlugs.setSelectedSubSlug,
+    pageSlugs.fetchSlugs,
+    fetchInitialPageData
+  ]);
+
   const returnValue = useMemo(() => ({
     // Combine all the properties from the smaller ViewModels
     ...pageSelections,
@@ -80,12 +103,14 @@ export function usePageNavigationViewModel({ authToken = '' }: PageNavigationVie
     pageData: pageData.pageData,
     handleFetchData: pageData.fetchPageData, // Kept for backwards compatibility
     refreshPageData: pageData.fetchPageData,  // Added a named export for the refresh function
+    deletePage: handleDeletePage,  // Add the delete page function
   }), [
     pageSelections,
     pageSlugs,
     pageData.loading,
     pageData.pageData,
-    pageData.fetchPageData
+    pageData.fetchPageData,
+    handleDeletePage
   ]);
 
   return returnValue;

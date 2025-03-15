@@ -1,4 +1,3 @@
-
 import { useState, useCallback, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { PageData } from '../models/PageModel';
@@ -131,6 +130,36 @@ https://{{URL}}:7036/${selectedLanguage}/${selectedPOS}`,
     }
   }, [selectedPOS, selectedLanguage, selectedSlug, selectedSubSlug, toast]);
 
+  const deletePage = useCallback(() => {
+    if (!selectedPOS || !selectedLanguage || !selectedSlug) {
+      return Promise.reject(new Error("Cannot delete page: Missing required parameters"));
+    }
+    
+    return new Promise<void>((resolve, reject) => {
+      // Mock the API call for deleting a page
+      setTimeout(() => {
+        try {
+          // Reset page data
+          setPageData(null);
+          
+          toast({
+            title: "Page Deleted",
+            description: `Successfully deleted page: ${selectedSlug}${selectedSubSlug ? '/' + selectedSubSlug : ''}`,
+          });
+          
+          resolve();
+        } catch (error) {
+          toast({
+            variant: "destructive",
+            title: "Error",
+            description: "Failed to delete page",
+          });
+          reject(error);
+        }
+      }, 1000);
+    });
+  }, [selectedPOS, selectedLanguage, selectedSlug, selectedSubSlug, toast]);
+
   // Reset page data if the main selections change
   useEffect(() => {
     if (selectedPOS && selectedLanguage) {
@@ -143,6 +172,7 @@ https://{{URL}}:7036/${selectedLanguage}/${selectedPOS}`,
     loading,
     pageData,
     fetchInitialPageData,
-    fetchPageData
+    fetchPageData,
+    deletePage
   };
 }

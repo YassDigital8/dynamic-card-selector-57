@@ -14,6 +14,7 @@ import PageFooter from './PageFooter';
 interface PageDetailsProps {
   pageData: PageData | null;
   onRefresh?: () => void;
+  onDelete?: () => void;
   selectedPOS?: string;
   selectedLanguage?: string;
   selectedSlug?: string;
@@ -31,6 +32,7 @@ const fadeInVariants = {
 const PageDetails = ({ 
   pageData, 
   onRefresh,
+  onDelete,
   selectedPOS,
   selectedLanguage,
   selectedSlug,
@@ -99,6 +101,9 @@ const PageDetails = ({
     );
   }
   
+  // Determine if we can show the delete button - only for specific pages, not landing pages
+  const canDelete = !!selectedSlug;
+  
   return (
     <motion.div
       initial="hidden"
@@ -127,7 +132,11 @@ const PageDetails = ({
             selectedSubSlug={selectedSubSlug}
           />
         </CardContent>
-        <PageFooter onRefresh={onRefresh} />
+        <PageFooter 
+          onRefresh={onRefresh} 
+          onDelete={onDelete}
+          canDelete={canDelete}
+        />
       </Card>
     </motion.div>
   );
