@@ -20,5 +20,16 @@ export interface FileInfo {
   url: string;
   uploadedBy: string;
   uploadedOn: string;
+  galleryId: string; // Gallery this file belongs to
   metadata?: FileMetadata;
+}
+
+export interface Gallery {
+  id: string;
+  name: string;
+  description?: string;
+  createdBy: string;
+  createdOn: string;
+  coverImageUrl?: string;
+  fileCount: number;
 }

@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -114,7 +113,8 @@ export const UploadComponent: React.FC<UploadComponentProps> = ({ onFileUploaded
         size: Math.round(selectedFile.size / 1024), // Convert to KB
         url: filePreview || '/placeholder.svg',
         uploadedBy: userInfo?.email || 'unknown',
-        uploadedOn: new Date().toISOString()
+        uploadedOn: new Date().toISOString(),
+        galleryId: '', // This will be set by the parent component
       };
       
       // Add metadata for images
