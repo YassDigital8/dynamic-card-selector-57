@@ -61,8 +61,8 @@ const PathSelectors = ({
     : '';
   
   return (
-    <Card className="shadow-md bg-white dark:bg-gray-800">
-      <CardHeader className="bg-blue-50 dark:bg-blue-900/30 border-b">
+    <Card className="shadow-md bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
+      <CardHeader className="bg-blue-50 dark:bg-blue-900/30 border-b border-gray-200 dark:border-gray-700">
         <CardTitle className="text-blue-800 dark:text-blue-300 flex items-center gap-2">
           <FolderTree className="h-5 w-5" />
           Path Configuration
@@ -103,12 +103,12 @@ const PathSelectors = ({
                 value={selectedSlug}
                 onValueChange={setSelectedSlug}
               >
-                <SelectTrigger className="w-full bg-white dark:bg-gray-800 hover:border-purple-400 transition-colors text-black dark:text-white">
-                  <SelectValue placeholder="-- Select Parent --" className="text-black dark:text-white" />
+                <SelectTrigger className="w-full bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-purple-400 transition-colors">
+                  <SelectValue placeholder="-- Select Parent --" />
                 </SelectTrigger>
-                <SelectContent className="bg-white dark:bg-gray-800 text-black dark:text-white">
+                <SelectContent className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
                   {availableSlugs.map((slug) => (
-                    <SelectItem key={slug} value={slug} className="text-black dark:text-white">{slug}</SelectItem>
+                    <SelectItem key={slug} value={slug} className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">{slug}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -132,12 +132,12 @@ const PathSelectors = ({
                 value={selectedSubSlug}
                 onValueChange={setSelectedSubSlug}
               >
-                <SelectTrigger className="w-full bg-white dark:bg-gray-800 hover:border-amber-400 transition-colors text-black dark:text-white">
-                  <SelectValue placeholder="-- Select Sub Path --" className="text-black dark:text-white" />
+                <SelectTrigger className="w-full bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-amber-400 transition-colors">
+                  <SelectValue placeholder="-- Select Sub Path --" />
                 </SelectTrigger>
-                <SelectContent className="bg-white dark:bg-gray-800 text-black dark:text-white">
+                <SelectContent className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
                   {subSlugs.map((slug) => (
-                    <SelectItem key={slug} value={slug} className="text-black dark:text-white">{slug}</SelectItem>
+                    <SelectItem key={slug} value={slug} className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">{slug}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
