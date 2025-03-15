@@ -1,5 +1,5 @@
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
 interface UsePageDataProps {
@@ -65,7 +65,7 @@ https://{{URL}}:7036/${selectedLanguage}/${selectedPOS}`,
   }, [selectedPOS, selectedLanguage, toast]);
 
   const fetchPageData = useCallback(() => {
-    if (!selectedSlug && !selectedPOS && !selectedLanguage) {
+    if (!selectedPOS || !selectedLanguage) {
       return;
     }
     
@@ -81,15 +81,15 @@ https://{{URL}}:7036/${selectedLanguage}/${selectedPOS}`,
           // For specific page data when slug is selected
           mockData = {
             title: `${selectedLanguage} page for ${selectedPOS} - ${selectedSlug}${selectedSubSlug ? '/' + selectedSubSlug : ''}`,
-            content: `This is a mock content for the ${selectedSlug} page in ${selectedLanguage} language for ${selectedPOS} region.
+            content: `This is a mock content for the ${selectedSlug}${selectedSubSlug ? '/' + selectedSubSlug : ''} page in ${selectedLanguage} language for ${selectedPOS} region.
             
 Additional content details would go here.
-• Point 1
-• Point 2
-• Point 3
+• Path Selected: ${selectedSlug}${selectedSubSlug ? '/' + selectedSubSlug : ''}
+• POS: ${selectedPOS}
+• Language: ${selectedLanguage}
 
 The real content would be fetched from the API endpoint:
-https://{{URL}}:7036/${selectedLanguage}/${selectedSlug}`,
+https://{{URL}}:7036/${selectedLanguage}/${selectedPOS}/${selectedSlug}${selectedSubSlug ? '/' + selectedSubSlug : ''}`,
             lastUpdated: new Date().toISOString(),
             status: 'published'
           };
@@ -117,7 +117,7 @@ https://{{URL}}:7036/${selectedLanguage}/${selectedPOS}`,
         
         toast({
           title: "Page Data Loaded",
-          description: "Using mock data until SSL certificate is fixed",
+          description: `Loaded data for ${selectedSlug ? selectedSlug + (selectedSubSlug ? '/' + selectedSubSlug : '') : 'landing page'}`,
         });
       }, 1000);
     } catch (error) {
@@ -129,6 +129,14 @@ https://{{URL}}:7036/${selectedLanguage}/${selectedPOS}`,
       setLoading(false);
     }
   }, [selectedPOS, selectedLanguage, selectedSlug, selectedSubSlug, toast]);
+
+  // Reset page data if the main selections change
+  useEffect(() => {
+    if (selectedPOS && selectedLanguage) {
+      // Reset page data when main selections change
+      setPageData(null);
+    }
+  }, [selectedPOS, selectedLanguage]);
 
   return {
     loading,

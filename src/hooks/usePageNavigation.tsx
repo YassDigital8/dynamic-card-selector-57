@@ -49,21 +49,26 @@ const usePageNavigation = ({ authToken = '' }: UsePageNavigationProps = {}) => {
 
   // Memoize the fetch page data callback
   const fetchPageData = useCallback(() => {
-    if (pageSelections.selectedPOS && pageSelections.selectedLanguage && 
-        (pageSlugs.selectedSlug || (!pageSlugs.selectedSlug && pageData.pageData === null))) {
-      pageData.fetchPageData();
+    if (pageSelections.selectedPOS && pageSelections.selectedLanguage) {
+      // Force a data fetch anytime the slug or subSlug changes
+      if (pageSlugs.selectedSlug) {
+        // Fetch specific page data if a slug is selected
+        pageData.fetchPageData();
+      }
     }
   }, [
     pageSelections.selectedPOS, 
     pageSelections.selectedLanguage, 
-    pageSlugs.selectedSlug, 
-    pageData.pageData,
+    pageSlugs.selectedSlug,
+    pageSlugs.selectedSubSlug, 
     pageData.fetchPageData
   ]);
 
-  // Automatically fetch page data when slug is selected
+  // Automatically fetch page data when slug or subSlug changes
   useEffect(() => {
-    fetchPageData();
+    if (pageSlugs.selectedSlug || pageSlugs.selectedSubSlug) {
+      fetchPageData();
+    }
   }, [pageSlugs.selectedSlug, pageSlugs.selectedSubSlug, fetchPageData]);
 
   // Memoize the combined return values
