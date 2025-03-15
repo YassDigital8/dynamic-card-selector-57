@@ -53,6 +53,7 @@ const Index = () => {
             email: "tarek3.doe@example.com",
             password: "Hi@2025"
           }),
+          signal: AbortSignal.timeout(10000)
         });
 
         if (!authResponse.ok) {
@@ -60,6 +61,7 @@ const Index = () => {
         }
         
         const authData: AuthResponse = await authResponse.json();
+        console.log("Auth data received:", authData);
         
         if (!authData.isAuthenticated) {
           throw new Error('Authentication failed: ' + authData.message);
@@ -81,8 +83,15 @@ const Index = () => {
       } catch (error) {
         console.error('Authentication error:', error);
         
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-        setAuthError(`Authentication error: ${errorMessage}. Using simulated data for development.`);
+        let errorMessage = '';
+        if (error instanceof TypeError && error.message === 'Failed to fetch') {
+          errorMessage = 'Network error: Unable to connect to authentication server. ' +
+                        'This may be due to a certificate issue with the server or network connectivity problem.';
+        } else {
+          errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+        }
+        
+        setAuthError(`Authentication error: ${errorMessage}`);
         
         const mockToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0YXJlazMuZG9lQGV4YW1wbGUuY29tIiwibmFtZSI6IlRhcmVrIERvZSIsImlhdCI6MTUxNjIzOTAyMn0.mock_token";
         setAuthToken(mockToken);
@@ -91,7 +100,7 @@ const Index = () => {
         toast({
           variant: "destructive",
           title: "Authentication issue",
-          description: "Using simulated data for development",
+          description: "Using simulated data for development\n\nError: " + errorMessage.substring(0, 150),
         });
       } finally {
         setAuthLoading(false);
@@ -136,7 +145,8 @@ const Index = () => {
       try {
         const response = await fetch(apiUrl, {
           method: 'GET',
-          headers: headers
+          headers: headers,
+          signal: AbortSignal.timeout(15000)
         });
         
         if (!response.ok) {
@@ -153,13 +163,20 @@ const Index = () => {
       } catch (apiError) {
         console.error('API Error:', apiError);
         
-        const mockSlugs = ['aboutus', 'contact', 'services', 'products', 'blog'];
+        let errorMessage = '';
+        if (apiError instanceof TypeError && apiError.message === 'Failed to fetch') {
+          errorMessage = 'Network error: Unable to connect to API server. This may be due to HTTPS certificate issues.';
+        } else {
+          errorMessage = apiError instanceof Error ? apiError.message : 'Unknown API error';
+        }
+        
+        const mockSlugs = ['aboutus', 'contact', 'services', 'products', 'blog', 'parent1'];
         setAvailableSlugs(mockSlugs);
         
         toast({
           variant: "destructive",
           title: "API Error",
-          description: "Failed to fetch page slugs. Using mock data.",
+          description: `Failed to fetch page slugs. Using mock data.\nError: ${errorMessage}`,
         });
       }
     } finally {
@@ -184,7 +201,8 @@ const Index = () => {
       try {
         const response = await fetch(apiUrl, {
           method: 'GET',
-          headers: headers
+          headers: headers,
+          signal: AbortSignal.timeout(15000)
         });
         
         if (!response.ok) {
@@ -201,13 +219,20 @@ const Index = () => {
       } catch (apiError) {
         console.error('API Error:', apiError);
         
-        const mockSubSlugs = ['subpage1', 'subpage2', 'subpage3'];
+        let errorMessage = '';
+        if (apiError instanceof TypeError && apiError.message === 'Failed to fetch') {
+          errorMessage = 'Network error: Unable to connect to API server. This may be due to HTTPS certificate issues.';
+        } else {
+          errorMessage = apiError instanceof Error ? apiError.message : 'Unknown API error';
+        }
+        
+        const mockSubSlugs = ['subpage1', 'subpage2', 'subpage3', 'subparen1'];
         setSubSlugs(mockSubSlugs);
         
         toast({
           variant: "destructive",
           title: "API Error",
-          description: "Failed to fetch sub-slugs. Using mock data.",
+          description: `Failed to fetch sub-slugs. Using mock data.\nError: ${errorMessage}`,
         });
       }
     } finally {
@@ -235,7 +260,8 @@ const Index = () => {
       try {
         const response = await fetch(apiUrl, {
           method: 'GET',
-          headers: headers
+          headers: headers,
+          signal: AbortSignal.timeout(15000)
         });
         
         if (!response.ok) {
@@ -252,6 +278,13 @@ const Index = () => {
       } catch (apiError) {
         console.error('API Error:', apiError);
         
+        let errorMessage = '';
+        if (apiError instanceof TypeError && apiError.message === 'Failed to fetch') {
+          errorMessage = 'Network error: Unable to connect to API server. This may be due to HTTPS certificate issues.';
+        } else {
+          errorMessage = apiError instanceof Error ? apiError.message : 'Unknown API error';
+        }
+        
         const mockData = {
           title: `${selectedLanguage} page for ${selectedPOS}/${selectedSlug}${selectedSubSlug ? '/' + selectedSubSlug : ''}`,
           content: 'This is mock page content since the API fetch failed.'
@@ -261,7 +294,7 @@ const Index = () => {
         toast({
           variant: "destructive",
           title: "API Error",
-          description: "Failed to fetch page data. Using mock data.",
+          description: `Failed to fetch page data. Using mock data.\nError: ${errorMessage}`,
         });
       }
     } finally {
