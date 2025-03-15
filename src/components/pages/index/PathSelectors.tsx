@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -53,7 +52,7 @@ const PathSelectors = ({
   selectedLanguage
 }: PathSelectorsProps) => {
   
-  // Generate dynamic URL for display
+  // Generate dynamic URL for display - Now POS comes first, then language
   const dynamicUrl = selectedPOS && selectedLanguage ? 
     `${selectedPOS.toLowerCase()}/${selectedLanguage.toLowerCase()}${selectedSlug ? '/' + selectedSlug : ''}${selectedSubSlug ? '/' + selectedSubSlug : ''}` 
     : '';

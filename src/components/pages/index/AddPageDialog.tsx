@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -92,7 +91,7 @@ const AddPageDialog = ({
         <DialogHeader>
           <DialogTitle>Add New Page</DialogTitle>
           <DialogDescription>
-            Create a new page for {language} in {pos}
+            Create a new page for {pos} in {language}
           </DialogDescription>
         </DialogHeader>
 
@@ -107,7 +106,7 @@ const AddPageDialog = ({
             <div className="mb-4">
               <FormLabel>Page URL Path</FormLabel>
               <div className="p-3 bg-gray-50 border rounded-md text-gray-700">
-                {generatedUrlPath || "Please select parent and subparent paths"}
+                {pos && language ? `${pos.toLowerCase()}/${language.toLowerCase()}/${generatedUrlPath || ""}` : "Please select POS and language"}
               </div>
               <p className="text-xs text-gray-500 mt-1">
                 This path is automatically generated from your selected options.

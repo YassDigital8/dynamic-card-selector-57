@@ -51,26 +51,7 @@ const PageSelectors = ({
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <div className="space-y-2">
-          <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
-            <FileText className="h-4 w-4 text-blue-500" />
-            Select Language
-          </label>
-          <Select
-            value={selectedLanguage}
-            onValueChange={setSelectedLanguage}
-          >
-            <SelectTrigger className="w-full bg-white hover:border-blue-400 transition-colors">
-              <SelectValue placeholder="Select language" />
-            </SelectTrigger>
-            <SelectContent>
-              {languageOptions.map((lang) => (
-                <SelectItem key={lang} value={lang}>{lang}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
+        {/* POS Dropdown - Now first */}
         <div className="space-y-2">
           <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
             <FolderPlus className="h-4 w-4 text-green-500" />
@@ -86,6 +67,27 @@ const PageSelectors = ({
             <SelectContent>
               {posOptions.map((pos) => (
                 <SelectItem key={pos} value={pos}>{pos}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Language Dropdown - Now second */}
+        <div className="space-y-2">
+          <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+            <FileText className="h-4 w-4 text-blue-500" />
+            Select Language
+          </label>
+          <Select
+            value={selectedLanguage}
+            onValueChange={setSelectedLanguage}
+          >
+            <SelectTrigger className="w-full bg-white hover:border-blue-400 transition-colors">
+              <SelectValue placeholder="Select language" />
+            </SelectTrigger>
+            <SelectContent>
+              {languageOptions.map((lang) => (
+                <SelectItem key={lang} value={lang}>{lang}</SelectItem>
               ))}
             </SelectContent>
           </Select>
