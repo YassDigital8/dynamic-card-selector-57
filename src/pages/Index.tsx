@@ -1,8 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
+import { Button } from '@/components/ui/button';
+import { PlusCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 // Components
@@ -29,7 +29,6 @@ const Index = () => {
   const languageOptions = ['English', 'Arabic'];
 
   useEffect(() => {
-    // Simulate loading
     const timer = setTimeout(() => {
       setLoading(false);
     }, 1000);
@@ -58,7 +57,6 @@ const Index = () => {
   const fetchSlugs = () => {
     setLoading(true);
     try {
-      // Using mock data until SSL certificate is fixed
       const mockSlugs = ['aboutus', 'contact', 'services', 'products', 'blog', 'parent1'];
       setAvailableSlugs(mockSlugs);
       
@@ -74,7 +72,6 @@ const Index = () => {
   const fetchSubSlugs = () => {
     setLoading(true);
     try {
-      // Using mock data until SSL certificate is fixed
       const mockSubSlugs = ['subpage1', 'subpage2', 'subpage3', 'subparen1'];
       setSubSlugs(mockSubSlugs);
       
@@ -90,7 +87,6 @@ const Index = () => {
   const fetchPageData = () => {
     setLoading(true);
     try {
-      // Using mock data until SSL certificate is fixed
       const mockData = {
         title: `${selectedLanguage} page for ${selectedPOS}/${selectedSlug}${selectedSubSlug ? '/' + selectedSubSlug : ''}`,
         content: 'This is mock page content until the SSL certificate is fixed.'
@@ -145,24 +141,6 @@ const Index = () => {
       
       console.log('Sending page data:', pageData);
       
-      // Using mock response until SSL certificate is fixed
-      // In production, uncomment this code:
-      /*
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(pageData),
-      });
-      
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Failed to create page: ${response.status} ${errorText}`);
-      }
-      */
-      
-      // Simulate success response
       await new Promise(resolve => setTimeout(resolve, 800));
       
       toast({
@@ -170,7 +148,6 @@ const Index = () => {
         description: `Page "${formValues.title}" created successfully (mock)`,
       });
       
-      // Refresh the list of pages
       fetchSlugs();
     } catch (error) {
       console.error('Error adding page:', error);
@@ -207,6 +184,20 @@ const Index = () => {
         stiffness: 300, 
         damping: 24 
       }
+    }
+  };
+
+  const buttonVariants = {
+    hover: { 
+      scale: 1.03,
+      transition: { 
+        type: "spring", 
+        stiffness: 400, 
+        damping: 10
+      }
+    },
+    tap: { 
+      scale: 0.97
     }
   };
 
@@ -261,7 +252,6 @@ const Index = () => {
                 setSelectedLanguage={setSelectedLanguage}
                 loading={loading}
                 handleGetPages={handleGetPages}
-                onAddPageClick={() => setAddPageDialogOpen(true)}
               />
 
               <PathSelectors 
@@ -273,7 +263,33 @@ const Index = () => {
                 setSelectedSubSlug={setSelectedSubSlug}
                 loading={loading}
                 handleFetchData={handleFetchData}
+                selectedPOS={selectedPOS}
+                selectedLanguage={selectedLanguage}
               />
+
+              {selectedSlug && (
+                <motion.div 
+                  initial="hidden"
+                  animate="visible"
+                  variants={itemVariants}
+                  className="mb-6"
+                >
+                  <motion.div
+                    variants={buttonVariants}
+                    whileHover="hover"
+                    whileTap="tap"
+                  >
+                    <Button 
+                      onClick={() => setAddPageDialogOpen(true)}
+                      className="w-full gap-2 shadow-md bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white transition-all"
+                      disabled={loading || !selectedPOS || !selectedLanguage}
+                    >
+                      <PlusCircle className="h-5 w-5" />
+                      Add Page
+                    </Button>
+                  </motion.div>
+                </motion.div>
+              )}
 
               <PageData pageData={pageData} />
             </CardContent>

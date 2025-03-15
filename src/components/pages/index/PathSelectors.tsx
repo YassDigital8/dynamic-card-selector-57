@@ -3,7 +3,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { FolderTree, FolderDown, Database } from 'lucide-react';
+import { FolderTree, FolderDown, Database, Link } from 'lucide-react';
 
 interface PathSelectorsProps {
   availableSlugs: string[];
@@ -14,6 +14,8 @@ interface PathSelectorsProps {
   setSelectedSubSlug: (value: string) => void;
   loading: boolean;
   handleFetchData: () => void;
+  selectedPOS: string;
+  selectedLanguage: string;
 }
 
 const fadeInVariants = {
@@ -46,10 +48,36 @@ const PathSelectors = ({
   selectedSubSlug,
   setSelectedSubSlug,
   loading,
-  handleFetchData
+  handleFetchData,
+  selectedPOS,
+  selectedLanguage
 }: PathSelectorsProps) => {
+  
+  // Generate dynamic URL for display
+  const dynamicUrl = selectedPOS && selectedLanguage ? 
+    `${selectedPOS.toLowerCase()}/${selectedLanguage.toLowerCase()}${selectedSlug ? '/' + selectedSlug : ''}${selectedSubSlug ? '/' + selectedSubSlug : ''}` 
+    : '';
+  
   return (
     <>
+      {/* Dynamic URL Display */}
+      {(selectedPOS && selectedLanguage) && (
+        <motion.div 
+          initial="hidden"
+          animate="visible"
+          variants={fadeInVariants}
+          className="mb-6 overflow-hidden"
+        >
+          <div className="flex items-center gap-2 mb-1">
+            <Link className="h-4 w-4 text-blue-500" />
+            <span className="text-sm font-medium text-gray-700">Dynamic URL Path</span>
+          </div>
+          <div className="bg-gray-50 border border-gray-200 rounded-md p-3 text-sm text-gray-800 font-mono overflow-x-auto">
+            {dynamicUrl || "URL will appear here as you make selections"}
+          </div>
+        </motion.div>
+      )}
+
       {availableSlugs.length > 0 && (
         <motion.div 
           initial="hidden"
@@ -108,6 +136,7 @@ const PathSelectors = ({
         </motion.div>
       )}
 
+      {/* Fetch Data button is shown here (the other button will be in PageSelectors) */}
       {selectedSlug && (
         <motion.div 
           initial="hidden"

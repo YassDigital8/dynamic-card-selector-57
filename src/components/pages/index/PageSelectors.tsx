@@ -94,39 +94,30 @@ const PageSelectors = ({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+      {/* Only one button shown here - Get Pages */}
+      {selectedPOS && selectedLanguage && (
         <motion.div
-          variants={buttonVariants}
-          whileHover="hover"
-          whileTap="tap"
-          className="h-full"
+          initial="hidden"
+          animate="visible"
+          variants={fadeInVariants}
+          className="mb-6"
         >
-          <Button 
-            onClick={handleGetPages}
-            className="w-full h-full gap-2 shadow-md bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white transition-all"
-            disabled={loading || !selectedPOS || !selectedLanguage}
+          <motion.div
+            variants={buttonVariants}
+            whileHover="hover"
+            whileTap="tap"
           >
-            <Search className="h-5 w-5" />
-            {loading ? 'Processing...' : 'Get Pages'}
-          </Button>
+            <Button 
+              onClick={handleGetPages}
+              className="w-full gap-2 shadow-md bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white transition-all"
+              disabled={loading || !selectedPOS || !selectedLanguage}
+            >
+              <Search className="h-5 w-5" />
+              {loading ? 'Processing...' : 'Get Pages'}
+            </Button>
+          </motion.div>
         </motion.div>
-        
-        <motion.div
-          variants={buttonVariants}
-          whileHover="hover"
-          whileTap="tap"
-          className="h-full"
-        >
-          <Button 
-            onClick={onAddPageClick}
-            className="w-full h-full gap-2 shadow-md bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white transition-all"
-            disabled={loading || !selectedPOS || !selectedLanguage}
-          >
-            <PlusCircle className="h-5 w-5" />
-            Add Page
-          </Button>
-        </motion.div>
-      </div>
+      )}
     </>
   );
 };
