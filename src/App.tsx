@@ -16,11 +16,13 @@ const initializeTheme = () => {
     document.documentElement.classList.add('dark');
   } else if (savedTheme === 'light') {
     document.documentElement.classList.remove('dark');
-  } else {
-    // If no theme is saved, check system preference
+  } else if (savedTheme === 'system' || !savedTheme) {
+    // Check system preference
     const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     if (systemPrefersDark) {
       document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
     }
   }
 };
