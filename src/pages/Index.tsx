@@ -48,7 +48,7 @@ const Index = () => {
     );
   };
 
-  if (initialLoading && !pageNavigation.selectedPOS && !pageNavigation.selectedLanguage) {
+  if (initialLoading) {
     return <LoadingScreen />;
   }
 
@@ -78,48 +78,52 @@ const Index = () => {
         </div>
         
         <TabsContent value="pages" className="mt-0">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="md:col-span-1">
-              <div ref={pageSelectorsRef}>
-                <PageSelectors 
-                  posOptions={pageNavigation.posOptions}
-                  languageOptions={pageNavigation.languageOptions}
-                  selectedPOS={pageNavigation.selectedPOS}
-                  selectedLanguage={pageNavigation.selectedLanguage}
-                  setSelectedPOS={pageNavigation.setSelectedPOS}
-                  setSelectedLanguage={pageNavigation.setSelectedLanguage}
-                  loading={pageNavigation.loading}
-                />
-              </div>
-              
-              <div className="h-6"></div>
-              
-              <div ref={pathSelectorsRef}>
-                <PathSelectors 
-                  availableSlugs={pageNavigation.availableSlugs}
-                  selectedSlug={pageNavigation.selectedSlug}
-                  setSelectedSlug={pageNavigation.setSelectedSlug}
-                  subSlugs={pageNavigation.subSlugs}
-                  selectedSubSlug={pageNavigation.selectedSubSlug}
-                  setSelectedSubSlug={pageNavigation.setSelectedSubSlug}
-                  loading={pageNavigation.loading}
-                  selectedPOS={pageNavigation.selectedPOS}
-                  selectedLanguage={pageNavigation.selectedLanguage}
-                  onAddPageClick={() => pageAddition.setAddPageDialogOpen(true)}
-                />
-              </div>
-            </div>
-            
-            <div className="md:col-span-2" ref={pageDataRef}>
-              <PageData 
-                pageData={pageNavigation.pageData} 
-                onRefresh={pageNavigation.refreshPageData}
+          <div className="grid grid-cols-1 gap-6">
+            <div ref={pageSelectorsRef}>
+              <PageSelectors 
+                posOptions={pageNavigation.posOptions}
+                languageOptions={pageNavigation.languageOptions}
                 selectedPOS={pageNavigation.selectedPOS}
                 selectedLanguage={pageNavigation.selectedLanguage}
-                selectedSlug={pageNavigation.selectedSlug}
-                selectedSubSlug={pageNavigation.selectedSubSlug}
+                setSelectedPOS={pageNavigation.setSelectedPOS}
+                setSelectedLanguage={pageNavigation.setSelectedLanguage}
+                loading={pageNavigation.loading}
+                currentStep={pageNavigation.currentStep}
               />
             </div>
+            
+            {pageNavigation.currentStep === 'options' && (
+              <>
+                <div ref={pathSelectorsRef}>
+                  <PathSelectors 
+                    availableSlugs={pageNavigation.availableSlugs}
+                    selectedSlug={pageNavigation.selectedSlug}
+                    setSelectedSlug={pageNavigation.setSelectedSlug}
+                    subSlugs={pageNavigation.subSlugs}
+                    selectedSubSlug={pageNavigation.selectedSubSlug}
+                    setSelectedSubSlug={pageNavigation.setSelectedSubSlug}
+                    loading={pageNavigation.loading}
+                    selectedPOS={pageNavigation.selectedPOS}
+                    selectedLanguage={pageNavigation.selectedLanguage}
+                    onAddPageClick={() => pageAddition.setAddPageDialogOpen(true)}
+                    currentStep={pageNavigation.currentStep}
+                  />
+                </div>
+            
+                {(pageNavigation.selectedSlug || pageNavigation.pageData) && (
+                  <div ref={pageDataRef}>
+                    <PageData 
+                      pageData={pageNavigation.pageData} 
+                      onRefresh={pageNavigation.refreshPageData}
+                      selectedPOS={pageNavigation.selectedPOS}
+                      selectedLanguage={pageNavigation.selectedLanguage}
+                      selectedSlug={pageNavigation.selectedSlug}
+                      selectedSubSlug={pageNavigation.selectedSubSlug}
+                    />
+                  </div>
+                )}
+              </>
+            )}
           </div>
         </TabsContent>
         

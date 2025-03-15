@@ -1,6 +1,6 @@
 
 import { useEffect, useCallback, useMemo } from 'react';
-import { usePageSelections } from './usePageSelections';
+import { usePageSelections, SelectionStep } from './usePageSelections';
 import { usePageSlugs } from './usePageSlugs';
 import { usePageData } from './usePageData';
 
