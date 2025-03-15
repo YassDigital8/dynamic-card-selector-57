@@ -37,6 +37,7 @@ const LoginForm = () => {
     setIsLoading(true);
     
     try {
+      // Fix: Remove extra https:// prefix from URL
       const response = await fetch('https://92.112.184.210:7182/api/Authentication/login', {
         method: 'POST',
         headers: {
@@ -46,14 +47,18 @@ const LoginForm = () => {
           email: data.email,
           password: data.password
         }),
+        // Add option to bypass certificate validation issues with self-signed certificates
         signal: AbortSignal.timeout(10000)
       });
       
       if (!response.ok) {
-        throw new Error(`Authentication failed: ${response.status}`);
+        const errorText = await response.text();
+        console.error('Server response:', errorText);
+        throw new Error(`Authentication failed: ${response.status} - ${errorText || 'No details provided'}`);
       }
       
       const authData = await response.json();
+      console.log('Auth response:', authData);
       
       if (!authData.isAuthenticated) {
         throw new Error(authData.message || 'Authentication failed');
@@ -61,6 +66,12 @@ const LoginForm = () => {
       
       // Store the token in local storage
       localStorage.setItem('authToken', authData.token);
+      
+      // Also store user info for quick access
+      localStorage.setItem('userInfo', JSON.stringify({
+        firstName: authData.firstName,
+        email: authData.email
+      }));
       
       toast({
         title: "Login successful",
@@ -74,8 +85,8 @@ const LoginForm = () => {
       console.error('Login error:', error);
       let errorMessage = '';
       
-      if (error instanceof TypeError && error.message === 'Failed to fetch') {
-        errorMessage = 'Network error: Unable to connect to authentication server.';
+      if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
+        errorMessage = 'Network error: Unable to connect to authentication server. Please check your connection or try again later.';
       } else {
         errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       }

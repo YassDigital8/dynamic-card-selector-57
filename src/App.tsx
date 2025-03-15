@@ -75,6 +75,7 @@ const App = () => {
         <Sonner />
         <BrowserRouter>
           <Routes>
+            {/* Public routes */}
             <Route path="/login" element={<Login />} />
             
             {/* Protected routes */}
@@ -99,8 +100,12 @@ const App = () => {
               </ProtectedRoute>
             } />
             
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
+            {/* Catch-all route - also protected */}
+            <Route path="*" element={
+              <ProtectedRoute>
+                <NotFound />
+              </ProtectedRoute>
+            } />
           </Routes>
         </BrowserRouter>
       </TooltipProvider>

@@ -40,26 +40,30 @@ const useAuthentication = () => {
       
       try {
         console.log("Validating stored authentication token...");
-        // We could check token validity with the server here if needed
-        // For now, we'll just set it as valid
+        
+        // Get stored user info if available
+        const storedUserInfo = localStorage.getItem('userInfo');
+        if (storedUserInfo) {
+          setUserInfo(JSON.parse(storedUserInfo));
+        } else {
+          // If no user info is stored but we have a token, 
+          // we could validate with server or extract from token
+          const mockUserInfo = {
+            firstName: "User",
+            email: "user@example.com"
+          };
+          setUserInfo(mockUserInfo);
+        }
         
         setAuthToken(storedToken);
-        
-        // Extract user info from the token or fetch it from the server
-        // This is a mock implementation
-        const mockUserInfo = {
-          firstName: "User",
-          email: "user@example.com"
-        };
-        
-        setUserInfo(mockUserInfo);
         console.log("Authentication successful with stored token");
         
       } catch (error) {
         console.error('Authentication validation error:', error);
         
-        // Clear invalid token
+        // Clear invalid token and user info
         localStorage.removeItem('authToken');
+        localStorage.removeItem('userInfo');
         
         let errorMessage = '';
         if (error instanceof Error) {
@@ -79,6 +83,7 @@ const useAuthentication = () => {
 
   const logout = () => {
     localStorage.removeItem('authToken');
+    localStorage.removeItem('userInfo');
     setAuthToken('');
     setUserInfo(null);
     
