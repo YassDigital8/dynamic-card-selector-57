@@ -3,6 +3,7 @@ import React from "react";
 import { Button } from "../button";
 import { Card } from "../card";
 import { X, CheckCircle } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface TourContentProps {
   step: number;
@@ -27,6 +28,8 @@ export const TourContent: React.FC<TourContentProps> = ({
   needsConfirmation = false,
   onConfirm
 }) => {
+  const isMobile = useIsMobile();
+  
   return (
     <Card className="bg-white dark:bg-gray-900 shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden w-full max-w-md">
       <div className="relative">
@@ -55,12 +58,14 @@ export const TourContent: React.FC<TourContentProps> = ({
             </div>
           )}
         </div>
-        <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
-          <div className="text-sm text-gray-500 dark:text-gray-400">
-            Step {step + 1} of {totalSteps}
-          </div>
-          <div className="flex gap-2">
-            {step > 0 && (
+        <div className={`flex ${isMobile ? "flex-col-reverse gap-2" : "justify-between"} items-center p-3 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700`}>
+          <div className={`flex ${isMobile ? "w-full justify-between" : "gap-2"}`}>
+            <div className="text-sm text-gray-500 dark:text-gray-400">
+              Step {step + 1} of {totalSteps}
+            </div>
+            
+            {/* On mobile, show "Previous" button on the right side of step count */}
+            {isMobile && step > 0 && (
               <Button
                 variant="outline"
                 size="sm"
@@ -70,12 +75,27 @@ export const TourContent: React.FC<TourContentProps> = ({
                 Previous
               </Button>
             )}
+          </div>
+          
+          <div className={`flex gap-2 ${isMobile ? "w-full" : ""}`}>
+            {/* On desktop, show "Previous" button here */}
+            {!isMobile && step > 0 && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onPrev}
+                className="min-w-[80px]"
+              >
+                Previous
+              </Button>
+            )}
+            
             {needsConfirmation ? (
               <Button
                 variant="default"
                 size="sm"
                 onClick={onConfirm}
-                className="bg-green-600 hover:bg-green-700 min-w-[120px]"
+                className={`bg-green-600 hover:bg-green-700 min-w-[120px] ${isMobile ? "w-full" : ""}`}
               >
                 I Understand
               </Button>
@@ -86,7 +106,7 @@ export const TourContent: React.FC<TourContentProps> = ({
                     variant="default"
                     size="sm"
                     onClick={onNext}
-                    className="min-w-[80px]"
+                    className={`min-w-[80px] ${isMobile ? "w-full" : ""}`}
                   >
                     Next
                   </Button>
@@ -95,7 +115,7 @@ export const TourContent: React.FC<TourContentProps> = ({
                     variant="default"
                     size="sm"
                     onClick={onClose}
-                    className="min-w-[80px]"
+                    className={`min-w-[80px] ${isMobile ? "w-full" : ""}`}
                   >
                     Finish
                   </Button>
