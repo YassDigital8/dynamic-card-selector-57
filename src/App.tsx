@@ -25,6 +25,9 @@ const initializeTheme = () => {
       document.documentElement.classList.remove('dark');
     }
   }
+  
+  // Set application title
+  document.title = "Cham Wings Admin Portal";
 };
 
 const queryClient = new QueryClient({

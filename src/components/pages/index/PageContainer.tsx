@@ -16,13 +16,13 @@ import {
   SidebarGroupContent
 } from '@/components/ui/sidebar';
 import { 
-  LayoutDashboard, 
   FileText, 
   Settings, 
   Users, 
   HelpCircle,
 } from 'lucide-react';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
+import { Logo } from '@/components/ui/logo';
 
 interface PageContainerProps {
   children: React.ReactNode;
@@ -47,10 +47,7 @@ const PageContainer: React.FC<PageContainerProps> = ({ children }) => {
         <Sidebar>
           <SidebarHeader className="border-b border-sidebar-border">
             <div className="flex items-center justify-between px-3 py-4">
-              <div className="flex items-center gap-2">
-                <LayoutDashboard className="h-6 w-6 text-sidebar-primary" />
-                <span className="text-xl font-bold text-sidebar-primary">Admin Portal</span>
-              </div>
+              <Logo showText={true} />
               <ThemeToggle />
             </div>
           </SidebarHeader>
@@ -62,7 +59,7 @@ const PageContainer: React.FC<PageContainerProps> = ({ children }) => {
                 <SidebarMenu>
                   <SidebarMenuItem>
                     <SidebarMenuButton isActive={true} tooltip="Dashboard">
-                      <LayoutDashboard />
+                      <FileText />
                       <span>Dashboard</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -113,9 +110,11 @@ const PageContainer: React.FC<PageContainerProps> = ({ children }) => {
                   <h1 className="text-3xl font-bold text-foreground">Page Navigator</h1>
                   <p className="text-muted-foreground mt-1">Manage pages across different POS and languages</p>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-primary bg-secondary px-3 py-1 rounded-full">
-                  <span className="inline-block w-2 h-2 bg-primary rounded-full"></span>
-                  Demo Mode
+                <div className="flex items-center gap-2">
+                  <Logo showText={false} className="mr-2" />
+                  <span className="text-sm text-primary bg-secondary px-3 py-1 rounded-full">
+                    Demo Mode
+                  </span>
                 </div>
               </div>
               
