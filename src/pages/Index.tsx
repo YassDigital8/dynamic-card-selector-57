@@ -1,41 +1,131 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-
-// Hooks
-import useAuthentication from '@/hooks/useAuthentication';
-import usePageNavigation from '@/hooks/usePageNavigation';
+import { useToast } from '@/hooks/use-toast';
 
 // Components
 import LoadingScreen from '@/components/pages/index/LoadingScreen';
-import AuthenticatedContent from '@/components/pages/index/AuthenticatedContent';
-import AuthErrorAlert from '@/components/pages/index/AuthErrorAlert';
 import PageSelectors from '@/components/pages/index/PageSelectors';
 import PathSelectors from '@/components/pages/index/PathSelectors';
 import PageData from '@/components/pages/index/PageData';
 
 const Index = () => {
-  const { authToken, authLoading, authError, userInfo } = useAuthentication();
-  const {
-    posOptions,
-    languageOptions,
-    selectedPOS,
-    setSelectedPOS,
-    selectedLanguage,
-    setSelectedLanguage,
-    availableSlugs,
-    selectedSlug,
-    setSelectedSlug,
-    subSlugs,
-    selectedSubSlug,
-    setSelectedSubSlug,
-    loading,
-    pageData,
-    handleGetPages,
-    handleFetchData
-  } = usePageNavigation({ authToken });
+  const [loading, setLoading] = useState(true);
+  const [selectedPOS, setSelectedPOS] = useState('');
+  const [selectedLanguage, setSelectedLanguage] = useState('');
+  const [availableSlugs, setAvailableSlugs] = useState<string[]>([]);
+  const [selectedSlug, setSelectedSlug] = useState('');
+  const [subSlugs, setSubSlugs] = useState<string[]>([]);
+  const [selectedSubSlug, setSelectedSubSlug] = useState('');
+  const [pageData, setPageData] = useState<any>(null);
+  const { toast } = useToast();
+  
+  const posOptions = ['SY', 'UAE', 'KWI'];
+  const languageOptions = ['English', 'Arabic'];
+
+  useEffect(() => {
+    // Simulate loading
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    if (selectedPOS && selectedLanguage) {
+      setSelectedSlug('');
+      setSubSlugs([]);
+      setSelectedSubSlug('');
+      setPageData(null);
+      fetchSlugs();
+    }
+  }, [selectedPOS, selectedLanguage]);
+
+  useEffect(() => {
+    if (selectedSlug) {
+      setSelectedSubSlug('');
+      setPageData(null);
+      fetchSubSlugs();
+    }
+  }, [selectedSlug]);
+
+  const fetchSlugs = () => {
+    setLoading(true);
+    try {
+      // Using mock data until SSL certificate is fixed
+      const mockSlugs = ['aboutus', 'contact', 'services', 'products', 'blog', 'parent1'];
+      setAvailableSlugs(mockSlugs);
+      
+      toast({
+        title: "Development Mode",
+        description: "Using mock data until SSL certificate is fixed",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchSubSlugs = () => {
+    setLoading(true);
+    try {
+      // Using mock data until SSL certificate is fixed
+      const mockSubSlugs = ['subpage1', 'subpage2', 'subpage3', 'subparen1'];
+      setSubSlugs(mockSubSlugs);
+      
+      toast({
+        title: "Development Mode",
+        description: "Using mock data until SSL certificate is fixed",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchPageData = () => {
+    setLoading(true);
+    try {
+      // Using mock data until SSL certificate is fixed
+      const mockData = {
+        title: `${selectedLanguage} page for ${selectedPOS}/${selectedSlug}${selectedSubSlug ? '/' + selectedSubSlug : ''}`,
+        content: 'This is mock page content until the SSL certificate is fixed.'
+      };
+      setPageData(mockData);
+      
+      toast({
+        title: "Development Mode",
+        description: "Using mock data until SSL certificate is fixed",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGetPages = () => {
+    if (!selectedPOS || !selectedLanguage) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Please select both POS and language",
+      });
+      return;
+    }
+    fetchSlugs();
+  };
+
+  const handleFetchData = () => {
+    if (!selectedSlug) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Please select a page slug",
+      });
+      return;
+    }
+    fetchPageData();
+  };
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -62,7 +152,7 @@ const Index = () => {
     }
   };
 
-  if (authLoading) {
+  if (loading && !selectedPOS && !selectedLanguage) {
     return <LoadingScreen />;
   }
 
@@ -92,19 +182,15 @@ const Index = () => {
           Navigate through pages across different POS and languages.
         </motion.p>
 
-        <AuthenticatedContent userInfo={userInfo} />
-        <AuthErrorAlert error={authError} />
-
         <motion.div variants={itemVariants}>
           <Card className="border border-gray-200 shadow-sm bg-white overflow-hidden">
             <CardHeader className="bg-yellow-400 border-b border-gray-100">
               <CardTitle className="text-gray-800 text-xl">General Elements</CardTitle>
             </CardHeader>
             <CardContent className="p-6">
-              <div className="mb-4 p-3 bg-green-50 border border-green-100 rounded-md">
-                <p className="text-green-700 text-sm">
-                  {authToken ? 'Authentication successful ✓' : 'Not authenticated'}
-                  {authError && ' (simulated for development)'}
+              <div className="mb-4 p-3 bg-blue-50 border border-blue-100 rounded-md">
+                <p className="text-blue-700 text-sm">
+                  Authentication temporarily disabled. Using mock data until SSL certificate is fixed.
                 </p>
               </div>
               
@@ -139,7 +225,7 @@ const Index = () => {
           variants={itemVariants}
           className="mt-8 text-center text-sm text-gray-500"
         >
-          API Endpoint: <code className="bg-gray-100 p-1 rounded font-mono text-sm">https://92.112.184.210:7036/get-sub-path/POS/Language/Slug/SubSlug</code>
+          <p>Authentication module temporarily disabled. Using mock data until SSL certificate is fixed.</p>
         </motion.div>
       </motion.div>
     </div>

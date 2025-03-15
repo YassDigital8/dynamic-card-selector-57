@@ -11,8 +11,8 @@ const LoadingScreen = () => {
         className="text-center"
       >
         <div className="w-16 h-16 border-t-4 border-blue-500 border-solid rounded-full animate-spin mx-auto mb-4"></div>
-        <h2 className="text-xl font-medium text-gray-700">Authenticating...</h2>
-        <p className="text-gray-500 mt-2">Connecting to the server</p>
+        <h2 className="text-xl font-medium text-gray-700">Loading...</h2>
+        <p className="text-gray-500 mt-2">Please wait</p>
       </motion.div>
     </div>
   );
