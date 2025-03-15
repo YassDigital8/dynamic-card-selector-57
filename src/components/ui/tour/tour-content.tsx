@@ -45,7 +45,7 @@ export const TourContent: React.FC<TourContentProps> = ({
           <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
             {title}
           </h3>
-          <div className="text-gray-600 dark:text-gray-300 text-sm">
+          <div className="text-gray-600 dark:text-gray-300 text-sm max-h-[50vh] overflow-y-auto">
             {content}
           </div>
           

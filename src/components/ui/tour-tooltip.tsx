@@ -10,6 +10,7 @@ import {
   TargetPosition,
   TooltipPosition
 } from "./tour/tour-position-utils";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export interface TourTooltipProps {
   step: number;
@@ -51,6 +52,8 @@ export const TourTooltip: React.FC<TourTooltipProps> = ({
     width: 0,
     height: 0
   });
+
+  const isMobile = useIsMobile();
 
   // Handle next click with prevention of event bubbling
   const handleNextClick = (e: React.MouseEvent) => {
@@ -97,7 +100,8 @@ export const TourTooltip: React.FC<TourTooltipProps> = ({
         });
 
         // Calculate tooltip position based on target element and desired position
-        setTooltipPosition(calculateTooltipPosition(rect, position));
+        const adjustedPosition = isMobile && (position === "left" || position === "right") ? "bottom" : position;
+        setTooltipPosition(calculateTooltipPosition(rect, adjustedPosition));
       };
 
       updatePosition();
@@ -109,22 +113,35 @@ export const TourTooltip: React.FC<TourTooltipProps> = ({
         window.removeEventListener("scroll", updatePosition, true);
       };
     }
-  }, [targetRef, position, isVisible]);
+  }, [targetRef, position, isVisible, isMobile]);
 
   const tooltipVariants = {
     hidden: { opacity: 0, scale: 0.8 },
     visible: { opacity: 1, scale: 1 }
   };
 
+  // Log positions for debugging
+  React.useEffect(() => {
+    if (isVisible) {
+      console.log("Tooltip position:", tooltipPosition);
+      console.log("Highlight position:", highlightPosition);
+      console.log("Is mobile:", isMobile);
+      console.log("Viewport size:", window.innerWidth, "x", window.innerHeight);
+    }
+  }, [tooltipPosition, highlightPosition, isVisible, isMobile]);
+
   if (!isVisible) {
     return null;
   }
+
+  // Determine effective position based on device
+  const effectivePosition = isMobile && (position === "left" || position === "right") ? "bottom" : position;
 
   return (
     <AnimatePresence>
       {isVisible && (
         <motion.div
-          className="fixed inset-0 bg-black/30 z-50 pointer-events-auto"
+          className="fixed inset-0 bg-black/30 z-[99] pointer-events-auto"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -139,12 +156,12 @@ export const TourTooltip: React.FC<TourTooltipProps> = ({
           <TourHighlight position={highlightPosition} isVisible={isVisible} />
 
           <motion.div
-            style={getTooltipStyles(tooltipPosition, position)}
+            style={getTooltipStyles(tooltipPosition, effectivePosition)}
             initial="hidden"
             animate="visible"
             exit="hidden"
             variants={tooltipVariants}
-            className="pointer-events-auto max-w-[350px] z-[60]"
+            className="pointer-events-auto z-[100]"
             onClick={(e) => e.stopPropagation()} // Prevent clicks from bubbling to parent
           >
             <TourContent
@@ -158,7 +175,7 @@ export const TourTooltip: React.FC<TourTooltipProps> = ({
               needsConfirmation={needsConfirmation}
               onConfirm={handleConfirmClick}
             />
-            <TourArrow position={position} />
+            <TourArrow position={effectivePosition} />
           </motion.div>
         </motion.div>
       )}
