@@ -44,7 +44,7 @@
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
     
-    --logo-text: 211 100% 26%; /* Blue color for light mode */
+    --logo-text: 211 100% 49%; /* Blue color for light mode */
   }
 
   .dark {
@@ -97,6 +97,17 @@
   body {
     @apply bg-background text-foreground;
   }
+  
+  /* Improve form field readability on small screens */
+  @media (max-width: 640px) {
+    input, select, textarea {
+      @apply text-sm;
+    }
+    
+    button {
+      @apply py-1.5 px-2.5 text-xs;
+    }
+  }
 }
 
 /* Custom styles for dropdown text in dark mode */
@@ -121,4 +132,19 @@
 .logo-text {
   @apply transition-colors duration-300;
   color: hsl(var(--logo-text));
+}
+
+/* Mobile optimizations */
+@media (max-width: 640px) {
+  .mobile-p-reduced {
+    @apply p-2;
+  }
+  
+  .mobile-text-reduced {
+    @apply text-xs;
+  }
+  
+  .mobile-space-reduced {
+    @apply space-y-2;
+  }
 }

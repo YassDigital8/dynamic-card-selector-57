@@ -22,7 +22,7 @@ export function Logo({ showText = false, className }: LogoProps) {
       transition={{ duration: 0.5 }}
     >
       {showText && (
-        <div className="text-base md:text-xl font-bold transition-colors duration-300" style={{ color: '#0EA5E9' }}>
+        <div className="text-sm md:text-xl font-bold transition-colors duration-300 logo-text">
           <span>{isMobile ? "ADMIN" : "ADMIN DASHBOARD"}</span>
         </div>
       )}

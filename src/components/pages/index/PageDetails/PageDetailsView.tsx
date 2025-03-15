@@ -34,10 +34,10 @@ const PageDetailsView = ({
   const isMobile = useIsMobile();
   
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       <div>
-        <h3 className="text-sm font-medium text-gray-500 mb-2">Page URL</h3>
-        <div className={`bg-gray-50 border border-gray-200 rounded-md p-3 text-sm text-gray-800 font-mono overflow-x-auto ${isMobile ? 'text-xs' : ''}`}>
+        <h3 className="text-xs md:text-sm font-medium text-gray-500 mb-1 md:mb-2">Page URL</h3>
+        <div className={`bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md p-2 md:p-3 font-mono overflow-x-auto ${isMobile ? 'text-[10px]' : 'text-xs md:text-sm'}`}>
           {selectedSlug 
             ? `${selectedPOS?.toLowerCase()}/${selectedLanguage?.toLowerCase()}/${selectedSlug}${selectedSubSlug ? '/' + selectedSubSlug : ''}`
             : `${selectedPOS?.toLowerCase()}/${selectedLanguage?.toLowerCase()}`
@@ -48,29 +48,29 @@ const PageDetailsView = ({
       <Separator />
       
       <div>
-        <h3 className="text-sm font-medium text-gray-500 mb-2">Title</h3>
+        <h3 className="text-xs md:text-sm font-medium text-gray-500 mb-1 md:mb-2">Title</h3>
         {isEditing ? (
           <Input 
             value={editedTitle}
             onChange={(e) => setEditedTitle(e.target.value)}
-            className="font-medium"
+            className="font-medium text-sm md:text-base"
           />
         ) : (
-          <div className="text-base sm:text-lg font-medium text-gray-800 break-words">{pageData.title}</div>
+          <div className="text-sm md:text-lg font-medium text-gray-800 dark:text-gray-200 break-words">{pageData.title}</div>
         )}
       </div>
       
       <div>
-        <h3 className="text-sm font-medium text-gray-500 mb-2">Content</h3>
+        <h3 className="text-xs md:text-sm font-medium text-gray-500 mb-1 md:mb-2">Content</h3>
         {isEditing ? (
           <Textarea 
             value={editedContent}
             onChange={(e) => setEditedContent(e.target.value)}
             rows={isMobile ? 4 : 6}
-            className="resize-y"
+            className="resize-y text-xs md:text-sm"
           />
         ) : (
-          <div className="p-3 sm:p-4 bg-gray-50 rounded-md border border-gray-100 text-gray-700 whitespace-pre-wrap text-sm sm:text-base overflow-x-auto">
+          <div className="p-2 md:p-4 bg-gray-50 dark:bg-gray-700 rounded-md border border-gray-100 dark:border-gray-600 text-gray-700 dark:text-gray-300 whitespace-pre-wrap text-xs md:text-sm overflow-x-auto">
             {pageData.content}
           </div>
         )}

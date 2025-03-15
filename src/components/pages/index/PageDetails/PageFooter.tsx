@@ -26,30 +26,31 @@ const PageFooter = ({ onRefresh, onDelete, canDelete }: PageFooterProps) => {
   const isMobile = useIsMobile();
   
   return (
-    <CardFooter className="bg-gray-50 border-t p-4">
-      <div className="w-full flex flex-col sm:flex-row justify-between items-center gap-4">
+    <CardFooter className="bg-gray-50 dark:bg-gray-800 border-t p-3 md:p-4">
+      <div className="w-full flex flex-col sm:flex-row justify-between items-center gap-3">
         {onDelete && (
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button 
                 variant="destructive" 
-                className="gap-2 w-full sm:w-auto"
+                className="gap-1.5 md:gap-2 text-xs md:text-sm w-full sm:w-auto"
                 disabled={!canDelete}
+                size={isMobile ? "sm" : "default"}
               >
-                <Trash2 className="h-4 w-4" />
+                <Trash2 className="h-3.5 w-3.5 md:h-4 md:w-4" />
                 {isMobile ? "Delete" : "Delete Page"}
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent className="max-w-[90vw] sm:max-w-md">
               <AlertDialogHeader>
                 <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                <AlertDialogDescription>
+                <AlertDialogDescription className="text-xs md:text-sm">
                   This action cannot be undone. This will permanently delete the current page.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter className="flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2">
-                <AlertDialogCancel className="w-full sm:w-auto">Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={onDelete} className="w-full sm:w-auto">Delete</AlertDialogAction>
+                <AlertDialogCancel className="w-full sm:w-auto text-xs md:text-sm">Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={onDelete} className="w-full sm:w-auto text-xs md:text-sm">Delete</AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
@@ -58,9 +59,10 @@ const PageFooter = ({ onRefresh, onDelete, canDelete }: PageFooterProps) => {
         <Button 
           variant="outline" 
           onClick={onRefresh}
-          className="gap-2 w-full sm:w-auto sm:ml-auto"
+          className="gap-1.5 md:gap-2 text-xs md:text-sm w-full sm:w-auto sm:ml-auto"
+          size={isMobile ? "sm" : "default"}
         >
-          <RefreshCw className="h-4 w-4" />
+          <RefreshCw className="h-3.5 w-3.5 md:h-4 md:w-4" />
           {isMobile ? "Refresh" : "Refresh Data"}
         </Button>
       </div>
