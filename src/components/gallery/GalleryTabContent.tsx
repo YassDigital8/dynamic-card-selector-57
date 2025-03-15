@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Gallery, FileInfo } from '@/models/FileModel';
 import { GalleryList } from './GalleryList';
@@ -42,6 +41,12 @@ export const GalleryTabContent: React.FC<GalleryTabContentProps> = ({
     ? files.filter(file => file.galleryId === selectedGallery.id)
     : [];
 
+  // Handler for the "Add Files" button
+  const handleAddFiles = () => {
+    // Switch to upload tab while keeping the selected gallery
+    setActiveTab('upload');
+  };
+
   return (
     <div className="space-y-4">
       {activeTab === 'galleries' && (
@@ -56,6 +61,7 @@ export const GalleryTabContent: React.FC<GalleryTabContentProps> = ({
         <UploadComponent 
           onFileUploaded={onFileUploaded}
           galleries={galleries}
+          selectedGalleryId={selectedGallery?.id}
           onViewFile={onViewFile}
         />
       )}
@@ -89,9 +95,7 @@ export const GalleryTabContent: React.FC<GalleryTabContentProps> = ({
               <Button 
                 variant="outline" 
                 size="sm"
-                onClick={() => {
-                  // TODO: Implement file upload specific to this gallery
-                }}
+                onClick={handleAddFiles}
               >
                 <Plus className="h-4 w-4 mr-1" />
                 Add Files
@@ -114,9 +118,7 @@ export const GalleryTabContent: React.FC<GalleryTabContentProps> = ({
             <div className="flex flex-col items-center justify-center p-12 border rounded-md">
               <p className="text-muted-foreground mb-4">No files in this gallery</p>
               <Button
-                onClick={() => {
-                  // TODO: Implement file upload specific to this gallery
-                }}
+                onClick={handleAddFiles}
               >
                 <Plus className="h-4 w-4 mr-1" />
                 Add Files
