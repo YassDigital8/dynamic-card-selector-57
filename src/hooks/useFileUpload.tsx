@@ -1,7 +1,10 @@
-import { useState } from 'react';
+
 import { FileInfo, Gallery } from '@/models/FileModel';
-import { useToast } from '@/hooks/use-toast';
 import { useAuthentication } from '@/hooks/useAuthentication';
+import { useFileSelection } from './upload/useFileSelection';
+import { useFileMetadata } from './upload/useFileMetadata';
+import { useFileUploadState } from './upload/useFileUploadState';
+import { useUploadNotification } from './upload/useUploadNotification';
 
 interface UseFileUploadProps {
   onFileUploaded: (file: FileInfo) => void;
@@ -10,119 +13,56 @@ interface UseFileUploadProps {
 }
 
 export const useFileUpload = ({ onFileUploaded, selectedGalleryId = '', galleries }: UseFileUploadProps) => {
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [filePreview, setFilePreview] = useState<string | null>(null);
-  const [isImage, setIsImage] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
-  const [targetGalleryId, setTargetGalleryId] = useState<string>(selectedGalleryId);
-  const [uploadedFile, setUploadedFile] = useState<FileInfo | null>(null);
-  const [metadata, setMetadata] = useState({
-    title: '',
-    altText: '',
-    caption: '',
-    description: ''
-  });
-  
-  const { toast } = useToast();
   const { userInfo } = useAuthentication();
+  
+  const {
+    selectedFile,
+    filePreview,
+    isImage,
+    handleFile: baseHandleFile,
+    resetFileSelection
+  } = useFileSelection();
+  
+  const {
+    metadata,
+    handleMetadataChange,
+    updateTitleFromFileName,
+    resetMetadata,
+    validateMetadata
+  } = useFileMetadata();
+  
+  const {
+    isUploading,
+    setIsUploading,
+    targetGalleryId,
+    setTargetGalleryId,
+    uploadedFile,
+    setUploadedFile,
+    resetUploadedFile
+  } = useFileUploadState({ selectedGalleryId, galleries });
+  
+  const {
+    showUploadSuccessNotification,
+    showUploadErrorNotification
+  } = useUploadNotification();
 
   const handleFile = (file: File | null) => {
-    if (!file) {
-      setSelectedFile(null);
-      setFilePreview(null);
-      setIsImage(false);
-      setMetadata({
-        title: '',
-        altText: '',
-        caption: '',
-        description: ''
-      });
-      return;
-    }
+    const { fileName } = baseHandleFile(file);
     
-    setSelectedFile(file);
-    
-    const isImageFile = file.type.startsWith('image/');
-    setIsImage(isImageFile);
-    
-    if (isImageFile) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        if (e.target?.result) {
-          setFilePreview(e.target.result as string);
-        }
-      };
-      reader.readAsDataURL(file);
+    if (fileName) {
+      updateTitleFromFileName(fileName);
     } else {
-      setFilePreview(null);
+      resetMetadata();
     }
-    
-    const fileName = file.name.split('.').slice(0, -1).join('.');
-    setMetadata(prev => ({
-      ...prev,
-      title: fileName
-    }));
-  };
-
-  const handleMetadataChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setMetadata(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const validateMetadata = () => {
-    if (!metadata.title.trim()) {
-      toast({
-        variant: "destructive",
-        title: "Validation Error",
-        description: "Title is required.",
-      });
-      return false;
-    }
-    
-    if (!metadata.caption.trim()) {
-      toast({
-        variant: "destructive",
-        title: "Validation Error",
-        description: "Caption is required.",
-      });
-      return false;
-    }
-    
-    if (!metadata.description.trim()) {
-      toast({
-        variant: "destructive",
-        title: "Validation Error",
-        description: "Description is required.",
-      });
-      return false;
-    }
-    
-    if (isImage && !metadata.altText.trim()) {
-      toast({
-        variant: "destructive",
-        title: "Validation Error",
-        description: "Alternative text is required for images.",
-      });
-      return false;
-    }
-    
-    return true;
   };
 
   const handleUpload = async () => {
     if (!selectedFile || !targetGalleryId) {
-      toast({
-        variant: "destructive",
-        title: "Upload failed",
-        description: "Please select a file and a gallery to upload to.",
-      });
+      showUploadErrorNotification();
       return;
     }
     
-    if (!validateMetadata()) {
+    if (!validateMetadata(isImage)) {
       return;
     }
     
@@ -130,8 +70,6 @@ export const useFileUpload = ({ onFileUploaded, selectedGalleryId = '', gallerie
     
     try {
       await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      const selectedGalleryName = galleries.find(gallery => gallery.id === targetGalleryId)?.name || 'Unknown gallery';
       
       const fileInfo: FileInfo = {
         id: Date.now().toString(),
@@ -150,51 +88,16 @@ export const useFileUpload = ({ onFileUploaded, selectedGalleryId = '', gallerie
       onFileUploaded(fileInfo);
       setUploadedFile(fileInfo);
       
-      setSelectedFile(null);
-      setFilePreview(null);
-      setIsImage(false);
-      setMetadata({
-        title: '',
-        altText: '',
-        caption: '',
-        description: ''
-      });
+      resetFileSelection();
+      resetMetadata();
       
-      toast({
-        description: (
-          <div className="py-2 -mx-4 px-4 -my-2 text-center">
-            <p className="text-gray-700 mb-3">
-              Your file "{selectedFile.name}" has been uploaded.
-            </p>
-            <div className="flex justify-center">
-              <button 
-                onClick={() => document.dispatchEvent(new CustomEvent('view-uploaded-file', { detail: fileInfo }))}
-                className="bg-gray-800 text-white px-3 py-1.5 rounded-md flex items-center gap-2 text-sm"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
-                  <circle cx="12" cy="12" r="3" />
-                </svg>
-                View File
-              </button>
-            </div>
-          </div>
-        ),
-      });
+      showUploadSuccessNotification(fileInfo, selectedFile.name);
       
     } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Upload failed",
-        description: "There was an error uploading your file.",
-      });
+      showUploadErrorNotification();
     } finally {
       setIsUploading(false);
     }
-  };
-
-  const resetUploadedFile = () => {
-    setUploadedFile(null);
   };
 
   return {
