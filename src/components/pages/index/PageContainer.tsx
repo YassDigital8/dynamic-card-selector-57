@@ -1,13 +1,34 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { 
+  SidebarProvider, 
+  Sidebar, 
+  SidebarContent, 
+  SidebarHeader,
+  SidebarFooter,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarInset,
+  SidebarGroupContent
+} from '@/components/ui/sidebar';
+import { 
+  LayoutDashboard, 
+  FileText, 
+  Settings, 
+  Users, 
+  HelpCircle,
+  PlusCircle 
+} from 'lucide-react';
 
 interface PageContainerProps {
   children: React.ReactNode;
 }
 
-const containerVariants = {
+const fadeInVariants = {
   hidden: { opacity: 0 },
   visible: { 
     opacity: 1,
@@ -19,71 +40,91 @@ const containerVariants = {
   }
 };
 
-const itemVariants = {
-  hidden: { y: 20, opacity: 0 },
-  visible: { 
-    y: 0, 
-    opacity: 1,
-    transition: { 
-      type: "spring", 
-      stiffness: 300, 
-      damping: 24 
-    }
-  }
-};
-
 const PageContainer: React.FC<PageContainerProps> = ({ children }) => {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 p-6 md:p-10">
-      <motion.div 
-        className="max-w-4xl mx-auto"
-        initial="hidden"
-        animate="visible"
-        variants={containerVariants}
-      >
-        <motion.div variants={itemVariants} className="mb-2">
-          <span className="text-sm font-medium text-blue-500 tracking-wide">PAGE MANAGEMENT</span>
-        </motion.div>
+    <SidebarProvider defaultOpen={true}>
+      <div className="flex min-h-screen w-full bg-gray-50">
+        <Sidebar>
+          <SidebarHeader className="border-b border-gray-200">
+            <div className="flex items-center gap-2 px-3 py-4">
+              <LayoutDashboard className="h-6 w-6 text-blue-600" />
+              <span className="text-xl font-bold text-blue-600">Admin Portal</span>
+            </div>
+          </SidebarHeader>
+          
+          <SidebarContent>
+            <SidebarGroup>
+              <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton isActive={true} tooltip="Dashboard">
+                      <LayoutDashboard />
+                      <span>Dashboard</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  
+                  <SidebarMenuItem>
+                    <SidebarMenuButton tooltip="Pages">
+                      <FileText />
+                      <span>Pages</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  
+                  <SidebarMenuItem>
+                    <SidebarMenuButton tooltip="Users">
+                      <Users />
+                      <span>Users</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  
+                  <SidebarMenuItem>
+                    <SidebarMenuButton tooltip="Settings">
+                      <Settings />
+                      <span>Settings</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          </SidebarContent>
+          
+          <SidebarFooter className="border-t border-gray-200 p-4">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <HelpCircle className="h-4 w-4" />
+              <span>Need help?</span>
+            </div>
+          </SidebarFooter>
+        </Sidebar>
         
-        <motion.h1 
-          variants={itemVariants}
-          className="text-4xl md:text-5xl font-bold mb-6 text-gray-900 tracking-tight"
-        >
-          Page Navigator
-        </motion.h1>
-        
-        <motion.p 
-          variants={itemVariants}
-          className="text-lg text-gray-600 mb-10 leading-relaxed"
-        >
-          Navigate through pages across different POS and languages.
-        </motion.p>
-
-        <motion.div variants={itemVariants}>
-          <Card className="border border-gray-200 shadow-sm bg-white overflow-hidden">
-            <CardHeader className="bg-yellow-400 border-b border-gray-100">
-              <CardTitle className="text-gray-800 text-xl">General Elements</CardTitle>
-            </CardHeader>
-            <CardContent className="p-6">
-              <div className="mb-4 p-3 bg-blue-50 border border-blue-100 rounded-md">
-                <p className="text-blue-700 text-sm">
-                  Authentication temporarily disabled. Using mock data until SSL certificate is fixed.
-                </p>
+        <SidebarInset>
+          <div className="p-6 md:p-10">
+            <motion.div 
+              className="max-w-6xl mx-auto"
+              initial="hidden"
+              animate="visible"
+              variants={fadeInVariants}
+            >
+              <div className="flex justify-between items-center mb-8">
+                <div>
+                  <h1 className="text-3xl font-bold text-gray-800">Page Navigator</h1>
+                  <p className="text-gray-500 mt-1">Manage pages across different POS and languages</p>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
+                  <span className="inline-block w-2 h-2 bg-blue-600 rounded-full"></span>
+                  Demo Mode
+                </div>
               </div>
               
-              {children}
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        <motion.div 
-          variants={itemVariants}
-          className="mt-8 text-center text-sm text-gray-500"
-        >
-          <p>Authentication module temporarily disabled. Using mock data until SSL certificate is fixed.</p>
-        </motion.div>
-      </motion.div>
-    </div>
+              <div className="grid grid-cols-1 gap-6">
+                {children}
+              </div>
+              
+            </motion.div>
+          </div>
+        </SidebarInset>
+      </div>
+    </SidebarProvider>
   );
 };
 
