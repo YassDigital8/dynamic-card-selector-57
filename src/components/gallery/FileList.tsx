@@ -6,7 +6,7 @@ import { FileText, Image, File, Eye, Trash2, X } from 'lucide-react';
 import { formatDate } from '@/lib/date-utils';
 import { Button } from '@/components/ui/button';
 import { FileDetails } from './FileDetails';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { FilePreview } from './FilePreview';
 
 interface FileListProps {
@@ -86,9 +86,9 @@ export const FileList: React.FC<FileListProps> = ({ files, onViewFile, onDeleteF
                 <span>{formatFileSize(file.size)}</span>
                 <span>{formatDate(file.uploadedOn)}</span>
               </div>
-              {file.metadata?.title && (
-                <p className="text-sm mt-2 truncate" title={file.metadata.title}>
-                  {file.metadata.title}
+              {file.metadata && (
+                <p className="text-sm mt-2 truncate" title={file.metadata.title || ''}>
+                  {file.metadata.title || 'No title'}
                 </p>
               )}
               <div className="flex items-center justify-end gap-2 mt-3 pt-2 border-t border-gray-100">
@@ -124,8 +124,11 @@ export const FileList: React.FC<FileListProps> = ({ files, onViewFile, onDeleteF
         <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-y-auto">
           {previewFile && (
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold">{previewFile.metadata?.title || previewFile.name}</h2>
+              <DialogTitle className="text-xl font-semibold">
+                {previewFile.metadata?.title || previewFile.name}
+              </DialogTitle>
+              
+              <div className="flex items-end justify-end">
                 <Button variant="ghost" size="icon" onClick={closePreview}>
                   <X className="h-5 w-5" />
                 </Button>
