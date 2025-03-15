@@ -74,6 +74,46 @@ export const useFileUpload = ({ onFileUploaded, selectedGalleryId = '' }: UseFil
     }));
   };
 
+  const validateMetadata = () => {
+    if (!metadata.title.trim()) {
+      toast({
+        variant: "destructive",
+        title: "Validation Error",
+        description: "Title is required.",
+      });
+      return false;
+    }
+    
+    if (!metadata.caption.trim()) {
+      toast({
+        variant: "destructive",
+        title: "Validation Error",
+        description: "Caption is required.",
+      });
+      return false;
+    }
+    
+    if (!metadata.description.trim()) {
+      toast({
+        variant: "destructive",
+        title: "Validation Error",
+        description: "Description is required.",
+      });
+      return false;
+    }
+    
+    if (isImage && !metadata.altText.trim()) {
+      toast({
+        variant: "destructive",
+        title: "Validation Error",
+        description: "Alternative text is required for images.",
+      });
+      return false;
+    }
+    
+    return true;
+  };
+
   const handleUpload = async () => {
     if (!selectedFile || !targetGalleryId) {
       toast({
@@ -81,6 +121,11 @@ export const useFileUpload = ({ onFileUploaded, selectedGalleryId = '' }: UseFil
         title: "Upload failed",
         description: "Please select a file and a gallery to upload to.",
       });
+      return;
+    }
+    
+    // Validate metadata fields
+    if (!validateMetadata()) {
       return;
     }
     

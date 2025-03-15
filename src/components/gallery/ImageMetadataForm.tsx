@@ -34,7 +34,9 @@ export const ImageMetadataForm: React.FC<ImageMetadataFormProps> = ({
         
         <div className="space-y-4">
           <div>
-            <Label htmlFor="title">Title</Label>
+            <Label htmlFor="title" className="flex items-center">
+              Title <span className="text-red-500 ml-1">*</span>
+            </Label>
             <Input
               id="title"
               name="title"
@@ -42,12 +44,15 @@ export const ImageMetadataForm: React.FC<ImageMetadataFormProps> = ({
               onChange={onMetadataChange}
               className="mt-1"
               placeholder="Enter file title"
+              required
             />
           </div>
           
           {isImage && (
             <div>
-              <Label htmlFor="altText">Alternative Text</Label>
+              <Label htmlFor="altText" className="flex items-center">
+                Alternative Text <span className="text-red-500 ml-1">*</span>
+              </Label>
               <Input
                 id="altText"
                 name="altText"
@@ -55,12 +60,15 @@ export const ImageMetadataForm: React.FC<ImageMetadataFormProps> = ({
                 onChange={onMetadataChange}
                 className="mt-1"
                 placeholder="Describe the image for accessibility"
+                required
               />
             </div>
           )}
           
           <div>
-            <Label htmlFor="caption">Caption</Label>
+            <Label htmlFor="caption" className="flex items-center">
+              Caption <span className="text-red-500 ml-1">*</span>
+            </Label>
             <Input
               id="caption"
               name="caption"
@@ -68,11 +76,14 @@ export const ImageMetadataForm: React.FC<ImageMetadataFormProps> = ({
               onChange={onMetadataChange}
               className="mt-1"
               placeholder="Enter a caption for the file"
+              required
             />
           </div>
           
           <div>
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description" className="flex items-center">
+              Description <span className="text-red-500 ml-1">*</span>
+            </Label>
             <Textarea
               id="description"
               name="description"
@@ -81,6 +92,7 @@ export const ImageMetadataForm: React.FC<ImageMetadataFormProps> = ({
               className="mt-1"
               placeholder="Enter a detailed description"
               rows={4}
+              required
             />
           </div>
         </div>

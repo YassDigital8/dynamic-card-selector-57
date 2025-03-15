@@ -22,6 +22,9 @@ export const UploadButton: React.FC<UploadButtonProps> = ({
       >
         {isUploading ? 'Uploading...' : 'Upload File'}
       </Button>
+      <p className="text-xs text-gray-500 mt-2 ml-auto">
+        * All fields are required
+      </p>
     </div>
   );
 };
