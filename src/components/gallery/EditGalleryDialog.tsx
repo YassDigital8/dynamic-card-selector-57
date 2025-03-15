@@ -12,6 +12,7 @@ import { useFileSelection } from '@/hooks/upload/useFileSelection';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent } from '@/components/ui/card';
 import { IconSelector } from '@/components/gallery/IconSelector';
+import { useToast } from '@/hooks/use-toast';
 
 interface EditGalleryDialogProps {
   open: boolean;
@@ -38,6 +39,7 @@ export const EditGalleryDialog: React.FC<EditGalleryDialogProps> = ({
   
   // Use the file selection hook for cover image upload
   const { selectedFile, filePreview, isImage, handleFile, resetFileSelection } = useFileSelection();
+  const { toast } = useToast();
 
   // Reset form when gallery changes
   React.useEffect(() => {
@@ -65,11 +67,20 @@ export const EditGalleryDialog: React.FC<EditGalleryDialogProps> = ({
     
     if (!gallery) return;
     
+    if (!name.trim()) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Gallery name is required",
+      });
+      return;
+    }
+    
     // Create updated gallery object based on the selected source
     const updatedGallery = {
       ...gallery,
-      name,
-      description: description || undefined,
+      name: name.trim(),
+      description: description.trim() || undefined,
     };
     
     if (coverImageSource === 'upload' || coverImageSource === 'gallery') {
@@ -81,6 +92,12 @@ export const EditGalleryDialog: React.FC<EditGalleryDialogProps> = ({
     }
     
     onUpdateGallery(updatedGallery);
+    
+    toast({
+      title: "Gallery updated",
+      description: `"${name}" gallery has been updated successfully.`,
+    });
+    
     onOpenChange(false);
   };
 
@@ -93,7 +110,6 @@ export const EditGalleryDialog: React.FC<EditGalleryDialogProps> = ({
   
   // Handle icon selection
   const handleIconSelect = (iconName: string) => {
-    console.log("Icon selected:", iconName);
     setSelectedIconName(iconName);
     setCoverImage(undefined);
     setCoverImageSource('icon');
@@ -103,7 +119,7 @@ export const EditGalleryDialog: React.FC<EditGalleryDialogProps> = ({
   const handleGalleryImageSelect = (file: FileInfo) => {
     setCoverImage(file.url);
     setSelectedIconName(undefined);
-    setCoverImageSource('upload');
+    setCoverImageSource('gallery');
   };
 
   if (!gallery) return null;
