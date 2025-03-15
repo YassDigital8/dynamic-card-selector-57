@@ -1,9 +1,12 @@
 
 import React from 'react';
 import { Separator } from '@/components/ui/separator';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { PageData } from '@/models/PageModel';
 
 interface PageDetailsViewProps {
-  pageData: any;
+  pageData: PageData;
   isEditing: boolean;
   editedTitle: string;
   editedContent: string;
@@ -14,9 +17,6 @@ interface PageDetailsViewProps {
   selectedSlug?: string;
   selectedSubSlug?: string;
 }
-
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 
 const PageDetailsView = ({
   pageData,

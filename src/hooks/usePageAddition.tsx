@@ -1,62 +1,11 @@
 
-import { useState } from 'react';
-import { useToast } from '@/hooks/use-toast';
-import { AddPageFormValues } from '@/components/pages/index/AddPageDialog';
+import { usePageAdditionViewModel, AddPageFormValues } from '../viewmodels/PageAdditionViewModel';
 
-interface UsePageAdditionProps {
-  authToken?: string;
-  onSuccess?: () => void;
-}
+// Re-export the type for backward compatibility
+export type { AddPageFormValues };
 
-const usePageAddition = ({ authToken = '', onSuccess }: UsePageAdditionProps = {}) => {
-  const [addPageDialogOpen, setAddPageDialogOpen] = useState(false);
-  const [isAddingPage, setIsAddingPage] = useState(false);
-  const { toast } = useToast();
-
-  const handleAddPage = async (formValues: AddPageFormValues, pos: string, language: string) => {
-    setIsAddingPage(true);
-    try {
-      const apiUrl = 'https://92.112.184.210:7036/Page';
-      
-      const pageData = {
-        pageUrlName: formValues.pageUrlName,
-        language: language,
-        pos: pos.toLowerCase(),
-        title: formValues.title,
-        description: formValues.description
-      };
-      
-      console.log('Sending page data:', pageData);
-      
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
-      toast({
-        title: "Success",
-        description: `Page "${formValues.title}" created successfully (mock)`,
-      });
-
-      if (onSuccess) {
-        onSuccess();
-      }
-    } catch (error) {
-      console.error('Error adding page:', error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to add page",
-      });
-      throw error;
-    } finally {
-      setIsAddingPage(false);
-    }
-  };
-
-  return {
-    addPageDialogOpen,
-    setAddPageDialogOpen,
-    isAddingPage,
-    handleAddPage
-  };
+const usePageAddition = (props: Parameters<typeof usePageAdditionViewModel>[0] = {}) => {
+  return usePageAdditionViewModel(props);
 };
 
 export default usePageAddition;

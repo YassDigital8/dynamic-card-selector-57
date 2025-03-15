@@ -23,6 +23,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { AddPageFormValues } from '@/viewmodels/PageAdditionViewModel';
 
 interface AddPageDialogProps {
   open: boolean;
@@ -53,7 +54,6 @@ const AddPageDialog = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Generate URL path from selected dropdowns
   const generatedUrlPath = selectedSlug && selectedSubSlug 
     ? `${selectedSlug}/${selectedSubSlug}` 
     : selectedSlug || '';
@@ -71,7 +71,6 @@ const AddPageDialog = ({
     setError(null);
     
     try {
-      // Include the generated URL path in the submitted data
       await onAddPage({
         ...values, 
         pageUrlName: generatedUrlPath

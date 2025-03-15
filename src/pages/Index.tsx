@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { FileText, Settings, PlusCircle } from 'lucide-react';
@@ -147,7 +146,6 @@ const Index = () => {
         onAddPage={handleAddPage}
       />
 
-      {/* Add the tour component */}
       <PagesTour 
         pageSelectorsRef={pageSelectorsRef}
         pathSelectorsRef={pathSelectorsRef}

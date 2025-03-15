@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
+import { PageData } from '@/models/PageModel';
 
 // Components
 import PageHeader from './PageHeader';
@@ -11,7 +12,7 @@ import EmptyPageState from './EmptyPageState';
 import PageFooter from './PageFooter';
 
 interface PageDetailsProps {
-  pageData: any | null;
+  pageData: PageData | null;
   onRefresh?: () => void;
   selectedPOS?: string;
   selectedLanguage?: string;
