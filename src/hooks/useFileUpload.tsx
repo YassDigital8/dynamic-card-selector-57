@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { FileInfo, Gallery } from '@/models/FileModel';
 import { useToast } from '@/hooks/use-toast';
@@ -15,6 +16,7 @@ export const useFileUpload = ({ onFileUploaded, selectedGalleryId = '', gallerie
   const [isImage, setIsImage] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [targetGalleryId, setTargetGalleryId] = useState<string>(selectedGalleryId);
+  const [uploadedFile, setUploadedFile] = useState<FileInfo | null>(null);
   const [metadata, setMetadata] = useState({
     title: '',
     altText: '',
@@ -148,6 +150,7 @@ export const useFileUpload = ({ onFileUploaded, selectedGalleryId = '', gallerie
       };
       
       onFileUploaded(fileInfo);
+      setUploadedFile(fileInfo);
       
       setSelectedFile(null);
       setFilePreview(null);
@@ -175,6 +178,10 @@ export const useFileUpload = ({ onFileUploaded, selectedGalleryId = '', gallerie
     }
   };
 
+  const resetUploadedFile = () => {
+    setUploadedFile(null);
+  };
+
   return {
     selectedFile,
     filePreview,
@@ -182,9 +189,11 @@ export const useFileUpload = ({ onFileUploaded, selectedGalleryId = '', gallerie
     isUploading,
     targetGalleryId,
     metadata,
+    uploadedFile,
     handleFile,
     handleMetadataChange,
     handleUpload,
-    setTargetGalleryId
+    setTargetGalleryId,
+    resetUploadedFile
   };
 };

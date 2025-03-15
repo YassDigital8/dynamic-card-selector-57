@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import PageContainer from '@/components/pages/index/PageContainer';
 import AuthenticatedContent from '@/components/pages/index/AuthenticatedContent';
@@ -17,6 +16,7 @@ const GalleryPage: React.FC = () => {
   const { userInfo } = useAuthentication();
   const [isCreateGalleryOpen, setIsCreateGalleryOpen] = useState(false);
   const [selectedGallery, setSelectedGallery] = useState<Gallery | null>(null);
+  const [selectedFile, setSelectedFile] = useState<FileInfo | null>(null);
   
   const [galleries, setGalleries] = useState<Gallery[]>([
     {
@@ -74,7 +74,6 @@ const GalleryPage: React.FC = () => {
   const handleFileUpload = (newFile: FileInfo) => {
     setFiles(prevFiles => [newFile, ...prevFiles]);
     
-    // Update file count in gallery
     setGalleries(prevGalleries => 
       prevGalleries.map(gallery => 
         gallery.id === newFile.galleryId 
@@ -87,6 +86,12 @@ const GalleryPage: React.FC = () => {
   const handleCreateGallery = (gallery: Gallery) => {
     setGalleries(prev => [gallery, ...prev]);
     setIsCreateGalleryOpen(false);
+  };
+
+  const handleViewFile = (file: FileInfo) => {
+    setSelectedFile(file);
+    setSelectedGallery(galleries.find(g => g.id === file.galleryId) || null);
+    setActiveTab("browse");
   };
 
   return (
@@ -163,6 +168,7 @@ const GalleryPage: React.FC = () => {
             onFileUploaded={handleFileUpload} 
             galleries={galleries}
             selectedGalleryId={selectedGallery?.id}
+            onViewFile={handleViewFile}
           />
         </TabsContent>
       </Tabs>
