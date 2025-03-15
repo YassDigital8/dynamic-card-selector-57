@@ -17,6 +17,7 @@ const GalleryPage: React.FC = () => {
     isCreateGalleryOpen,
     setIsCreateGalleryOpen,
     selectedGallery,
+    setSelectedGallery,
     galleries,
     files,
     galleryFileTypes,
@@ -43,9 +44,11 @@ const GalleryPage: React.FC = () => {
       >
         <GalleryTabContent
           activeTab={activeTab}
+          setActiveTab={setActiveTab}
           galleries={galleries}
           files={files}
           selectedGallery={selectedGallery}
+          setSelectedGallery={setSelectedGallery}
           galleryFileTypes={galleryFileTypes}
           onSelectGallery={handleSelectGallery}
           onFileUploaded={handleFileUpload}

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Gallery, FileInfo } from '@/models/FileModel';
 import { GalleryList } from './GalleryList';
@@ -10,9 +11,11 @@ import { FileList } from './FileList';
 
 interface GalleryTabContentProps {
   activeTab: string;
+  setActiveTab: (tab: string) => void;
   galleries: Gallery[];
   files: FileInfo[];
   selectedGallery: Gallery | null;
+  setSelectedGallery: (gallery: Gallery | null) => void;
   galleryFileTypes: Record<string, string[]>;
   onSelectGallery: (gallery: Gallery) => void;
   onFileUploaded: (file: FileInfo) => void;
@@ -22,9 +25,11 @@ interface GalleryTabContentProps {
 
 export const GalleryTabContent: React.FC<GalleryTabContentProps> = ({
   activeTab,
+  setActiveTab,
   galleries,
   files,
   selectedGallery,
+  setSelectedGallery,
   galleryFileTypes,
   onSelectGallery,
   onFileUploaded,
@@ -62,7 +67,10 @@ export const GalleryTabContent: React.FC<GalleryTabContentProps> = ({
               <Button 
                 variant="outline" 
                 size="sm" 
-                onClick={() => onSelectGallery(selectedGallery)}
+                onClick={() => {
+                  setSelectedGallery(null);
+                  setActiveTab('galleries');
+                }}
               >
                 <ArrowLeft className="h-4 w-4 mr-1" />
                 Back

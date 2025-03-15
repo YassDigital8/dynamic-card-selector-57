@@ -124,6 +124,7 @@ export const useGalleryViewModel = () => {
     isCreateGalleryOpen,
     setIsCreateGalleryOpen,
     selectedGallery,
+    setSelectedGallery,
     selectedFile,
     galleries,
     files,
