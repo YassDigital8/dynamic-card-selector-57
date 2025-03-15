@@ -8,15 +8,20 @@ import { useEffect } from "react";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 
-// Initialize theme from localStorage or system preference
+// Initialize theme from localStorage or default to light
 const initializeTheme = () => {
   const savedTheme = localStorage.getItem('theme');
   
   if (savedTheme === 'dark') {
     document.documentElement.classList.add('dark');
-  } else if (savedTheme === 'light') {
+  } else if (savedTheme === 'light' || !savedTheme) {
+    // Default to light theme
     document.documentElement.classList.remove('dark');
-  } else if (savedTheme === 'system' || !savedTheme) {
+    // If no theme was saved, set it to light
+    if (!savedTheme) {
+      localStorage.setItem('theme', 'light');
+    }
+  } else if (savedTheme === 'system') {
     // Check system preference
     const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     if (systemPrefersDark) {

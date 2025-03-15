@@ -12,8 +12,8 @@ export function useTheme() {
       return savedTheme;
     }
     
-    // Default to system if no valid theme is saved
-    return 'system';
+    // Default to light if no valid theme is saved
+    return 'light';
   });
 
   // Get the effective theme (resolving 'system' to either 'light' or 'dark')
