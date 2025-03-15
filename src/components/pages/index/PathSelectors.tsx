@@ -138,30 +138,28 @@ const PathSelectors = ({
         </motion.div>
       )}
 
-      {/* Add Page button appears after Sub Path selection when it exists */}
-      {selectedSlug && (subSlugs.length === 0 || (subSlugs.length > 0 && selectedSubSlug)) && (
+      {/* Add Page button - Now always appears at the end regardless of other elements */}
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={fadeInVariants}
+        className="mb-6"
+      >
         <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={fadeInVariants}
-          className="mb-6"
+          variants={buttonVariants}
+          whileHover="hover"
+          whileTap="tap"
         >
-          <motion.div
-            variants={buttonVariants}
-            whileHover="hover"
-            whileTap="tap"
+          <Button 
+            onClick={onAddPageClick}
+            className="w-full gap-2 shadow-md bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white transition-all"
+            disabled={loading || !selectedPOS || !selectedLanguage}
           >
-            <Button 
-              onClick={onAddPageClick}
-              className="w-full gap-2 shadow-md bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white transition-all"
-              disabled={loading || !selectedPOS || !selectedLanguage}
-            >
-              <PlusCircle className="h-5 w-5" />
-              Add Page
-            </Button>
-          </motion.div>
+            <PlusCircle className="h-5 w-5" />
+            Add Page
+          </Button>
         </motion.div>
-      )}
+      </motion.div>
     </>
   );
 };
