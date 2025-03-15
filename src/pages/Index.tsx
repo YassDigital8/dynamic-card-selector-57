@@ -1,7 +1,10 @@
+
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
+
+// Custom hooks
+import usePageNavigation from '@/hooks/usePageNavigation';
+import usePageAddition from '@/hooks/usePageAddition';
 
 // Components
 import LoadingScreen from '@/components/pages/index/LoadingScreen';
@@ -9,273 +12,73 @@ import PageSelectors from '@/components/pages/index/PageSelectors';
 import PathSelectors from '@/components/pages/index/PathSelectors';
 import PageData from '@/components/pages/index/PageData';
 import AddPageDialog from '@/components/pages/index/AddPageDialog';
-import { AddPageFormValues } from '@/components/pages/index/AddPageDialog';
+import PageContainer from '@/components/pages/index/PageContainer';
 
 const Index = () => {
-  const [loading, setLoading] = useState(true);
-  const [selectedPOS, setSelectedPOS] = useState('');
-  const [selectedLanguage, setSelectedLanguage] = useState('');
-  const [availableSlugs, setAvailableSlugs] = useState<string[]>([]);
-  const [selectedSlug, setSelectedSlug] = useState('');
-  const [subSlugs, setSubSlugs] = useState<string[]>([]);
-  const [selectedSubSlug, setSelectedSubSlug] = useState('');
-  const [pageData, setPageData] = useState<any>(null);
-  const [addPageDialogOpen, setAddPageDialogOpen] = useState(false);
-  const { toast } = useToast();
+  const [initialLoading, setInitialLoading] = useState(true);
+  const pageNavigation = usePageNavigation();
+  const pageAddition = usePageAddition({
+    onSuccess: pageNavigation.fetchSlugs
+  });
   
-  const posOptions = ['SY', 'UAE', 'KWI'];
-  const languageOptions = ['English', 'Arabic'];
-
   useEffect(() => {
     const timer = setTimeout(() => {
-      setLoading(false);
+      setInitialLoading(false);
     }, 1000);
     
     return () => clearTimeout(timer);
   }, []);
 
-  useEffect(() => {
-    if (selectedPOS && selectedLanguage) {
-      setSelectedSlug('');
-      setSubSlugs([]);
-      setSelectedSubSlug('');
-      setPageData(null);
-      fetchSlugs();
-    }
-  }, [selectedPOS, selectedLanguage]);
-
-  useEffect(() => {
-    if (selectedSlug) {
-      setSelectedSubSlug('');
-      setPageData(null);
-      fetchSubSlugs();
-    }
-  }, [selectedSlug]);
-
-  const fetchSlugs = () => {
-    setLoading(true);
-    try {
-      const mockSlugs = ['aboutus', 'contact', 'services', 'products', 'blog', 'parent1'];
-      setAvailableSlugs(mockSlugs);
-      
-      toast({
-        title: "Development Mode",
-        description: "Using mock data until SSL certificate is fixed",
-      });
-    } finally {
-      setLoading(false);
-    }
+  const handleAddPage = async (formValues: any) => {
+    return pageAddition.handleAddPage(
+      formValues, 
+      pageNavigation.selectedPOS, 
+      pageNavigation.selectedLanguage
+    );
   };
 
-  const fetchSubSlugs = () => {
-    setLoading(true);
-    try {
-      const mockSubSlugs = ['subpage1', 'subpage2', 'subpage3', 'subparen1'];
-      setSubSlugs(mockSubSlugs);
-      
-      toast({
-        title: "Development Mode",
-        description: "Using mock data until SSL certificate is fixed",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchPageData = () => {
-    setLoading(true);
-    try {
-      const mockData = {
-        title: `${selectedLanguage} page for ${selectedPOS}/${selectedSlug}${selectedSubSlug ? '/' + selectedSubSlug : ''}`,
-        content: 'This is mock page content until the SSL certificate is fixed.'
-      };
-      setPageData(mockData);
-      
-      toast({
-        title: "Development Mode",
-        description: "Using mock data until SSL certificate is fixed",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleFetchData = () => {
-    if (!selectedSlug) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Please select a page slug",
-      });
-      return;
-    }
-    fetchPageData();
-  };
-
-  const handleAddPage = async (formValues: AddPageFormValues) => {
-    setLoading(true);
-    try {
-      const apiUrl = 'https://92.112.184.210:7036/Page';
-      
-      const pageData = {
-        pageUrlName: formValues.pageUrlName,
-        language: selectedLanguage,
-        pos: selectedPOS.toLowerCase(),
-        title: formValues.title,
-        description: formValues.description
-      };
-      
-      console.log('Sending page data:', pageData);
-      
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
-      toast({
-        title: "Success",
-        description: `Page "${formValues.title}" created successfully (mock)`,
-      });
-      
-      fetchSlugs();
-    } catch (error) {
-      console.error('Error adding page:', error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to add page",
-      });
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: { 
-      opacity: 1,
-      transition: { 
-        duration: 0.5,
-        when: "beforeChildren",
-        staggerChildren: 0.1
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: { 
-      y: 0, 
-      opacity: 1,
-      transition: { 
-        type: "spring", 
-        stiffness: 300, 
-        damping: 24 
-      }
-    }
-  };
-
-  const buttonVariants = {
-    hover: { 
-      scale: 1.03,
-      transition: { 
-        type: "spring", 
-        stiffness: 400, 
-        damping: 10
-      }
-    },
-    tap: { 
-      scale: 0.97
-    }
-  };
-
-  if (loading && !selectedPOS && !selectedLanguage) {
+  if (initialLoading && !pageNavigation.selectedPOS && !pageNavigation.selectedLanguage) {
     return <LoadingScreen />;
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 p-6 md:p-10">
-      <motion.div 
-        className="max-w-4xl mx-auto"
-        initial="hidden"
-        animate="visible"
-        variants={containerVariants}
-      >
-        <motion.div variants={itemVariants} className="mb-2">
-          <span className="text-sm font-medium text-blue-500 tracking-wide">PAGE MANAGEMENT</span>
-        </motion.div>
-        
-        <motion.h1 
-          variants={itemVariants}
-          className="text-4xl md:text-5xl font-bold mb-6 text-gray-900 tracking-tight"
-        >
-          Page Navigator
-        </motion.h1>
-        
-        <motion.p 
-          variants={itemVariants}
-          className="text-lg text-gray-600 mb-10 leading-relaxed"
-        >
-          Navigate through pages across different POS and languages.
-        </motion.p>
+    <PageContainer>
+      <PageSelectors 
+        posOptions={pageNavigation.posOptions}
+        languageOptions={pageNavigation.languageOptions}
+        selectedPOS={pageNavigation.selectedPOS}
+        selectedLanguage={pageNavigation.selectedLanguage}
+        setSelectedPOS={pageNavigation.setSelectedPOS}
+        setSelectedLanguage={pageNavigation.setSelectedLanguage}
+        loading={pageNavigation.loading}
+        onAddPageClick={() => pageAddition.setAddPageDialogOpen(true)}
+      />
 
-        <motion.div variants={itemVariants}>
-          <Card className="border border-gray-200 shadow-sm bg-white overflow-hidden">
-            <CardHeader className="bg-yellow-400 border-b border-gray-100">
-              <CardTitle className="text-gray-800 text-xl">General Elements</CardTitle>
-            </CardHeader>
-            <CardContent className="p-6">
-              <div className="mb-4 p-3 bg-blue-50 border border-blue-100 rounded-md">
-                <p className="text-blue-700 text-sm">
-                  Authentication temporarily disabled. Using mock data until SSL certificate is fixed.
-                </p>
-              </div>
-              
-              <PageSelectors 
-                posOptions={posOptions}
-                languageOptions={languageOptions}
-                selectedPOS={selectedPOS}
-                selectedLanguage={selectedLanguage}
-                setSelectedPOS={setSelectedPOS}
-                setSelectedLanguage={setSelectedLanguage}
-                loading={loading}
-                onAddPageClick={() => setAddPageDialogOpen(true)}
-              />
+      <PathSelectors 
+        availableSlugs={pageNavigation.availableSlugs}
+        selectedSlug={pageNavigation.selectedSlug}
+        setSelectedSlug={pageNavigation.setSelectedSlug}
+        subSlugs={pageNavigation.subSlugs}
+        selectedSubSlug={pageNavigation.selectedSubSlug}
+        setSelectedSubSlug={pageNavigation.setSelectedSubSlug}
+        loading={pageNavigation.loading}
+        handleFetchData={pageNavigation.handleFetchData}
+        selectedPOS={pageNavigation.selectedPOS}
+        selectedLanguage={pageNavigation.selectedLanguage}
+      />
 
-              <PathSelectors 
-                availableSlugs={availableSlugs}
-                selectedSlug={selectedSlug}
-                setSelectedSlug={setSelectedSlug}
-                subSlugs={subSlugs}
-                selectedSubSlug={selectedSubSlug}
-                setSelectedSubSlug={setSelectedSubSlug}
-                loading={loading}
-                handleFetchData={handleFetchData}
-                selectedPOS={selectedPOS}
-                selectedLanguage={selectedLanguage}
-              />
-
-              <PageData pageData={pageData} />
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        <motion.div 
-          variants={itemVariants}
-          className="mt-8 text-center text-sm text-gray-500"
-        >
-          <p>Authentication module temporarily disabled. Using mock data until SSL certificate is fixed.</p>
-        </motion.div>
-      </motion.div>
-
+      <PageData pageData={pageNavigation.pageData} />
+      
       <AddPageDialog 
-        open={addPageDialogOpen}
-        onOpenChange={setAddPageDialogOpen}
-        pos={selectedPOS}
-        language={selectedLanguage}
-        selectedSlug={selectedSlug}
-        selectedSubSlug={selectedSubSlug}
+        open={pageAddition.addPageDialogOpen}
+        onOpenChange={pageAddition.setAddPageDialogOpen}
+        pos={pageNavigation.selectedPOS}
+        language={pageNavigation.selectedLanguage}
+        selectedSlug={pageNavigation.selectedSlug}
+        selectedSubSlug={pageNavigation.selectedSubSlug}
         onAddPage={handleAddPage}
       />
-    </div>
+    </PageContainer>
   );
 };
 
