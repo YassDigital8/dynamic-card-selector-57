@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,6 +8,10 @@ import { toast } from 'sonner';
 import { Search, ChevronDown } from 'lucide-react';
 
 const Index = () => {
+  // Authentication state
+  const [authToken, setAuthToken] = useState('');
+  const [authLoading, setAuthLoading] = useState(true);
+  
   // POS and language options
   const posOptions = ['SY', 'UAE', 'KWI'];
   const languageOptions = ['English', 'Arabic'];
@@ -22,6 +25,47 @@ const Index = () => {
   const [selectedSubSlug, setSelectedSubSlug] = useState('');
   const [loading, setLoading] = useState(false);
   const [pageData, setPageData] = useState(null);
+
+  // Authenticate on page load
+  useEffect(() => {
+    const authenticate = async () => {
+      setAuthLoading(true);
+      try {
+        const response = await fetch('https://92.112.184.210:7182/api/Authentication/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: 'tarek3.doe@example.com',
+            password: 'Hi@2025'
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error('Authentication failed');
+        }
+
+        const data = await response.json();
+        
+        // Store token in state and localStorage for persistence
+        if (data.token) {
+          setAuthToken(data.token);
+          localStorage.setItem('authToken', data.token);
+          toast.success('Authentication successful');
+        } else {
+          throw new Error('No token received');
+        }
+      } catch (error) {
+        console.error('Authentication error:', error);
+        toast.error('Authentication failed: ' + error.message);
+      } finally {
+        setAuthLoading(false);
+      }
+    };
+
+    authenticate();
+  }, []);
 
   // Reset dependent fields when POS or language changes
   useEffect(() => {
@@ -50,8 +94,18 @@ const Index = () => {
       // Format language to lowercase for API
       const langFormatted = selectedLanguage.toLowerCase();
       
-      // Mock API call to get initial slugs
-      // In a real scenario: const response = await fetch(`https://URL:7036/get-sub-path/${selectedPOS.toLowerCase()}/${langFormatted}/`);
+      // Use token for API request if available
+      const headers = {
+        'Content-Type': 'application/json'
+      };
+      
+      if (authToken) {
+        headers['Authorization'] = `Bearer ${authToken}`;
+      }
+      
+      // Actual API call to get initial slugs
+      // const response = await fetch(`https://URL:7036/get-sub-path/${selectedPOS.toLowerCase()}/${langFormatted}/`, { headers });
+      // const data = await response.json();
       
       // Simulating API response with a timeout
       await new Promise(resolve => setTimeout(resolve, 800));
@@ -76,8 +130,18 @@ const Index = () => {
       // Format language to lowercase for API
       const langFormatted = selectedLanguage.toLowerCase();
       
-      // Mock API call to get sub-slugs
-      // In a real scenario: const response = await fetch(`https://URL:7036/get-sub-path/${selectedPOS.toLowerCase()}/${langFormatted}/${selectedSlug}/`);
+      // Use token for API request if available
+      const headers = {
+        'Content-Type': 'application/json'
+      };
+      
+      if (authToken) {
+        headers['Authorization'] = `Bearer ${authToken}`;
+      }
+      
+      // Actual API call to get sub-slugs
+      // const response = await fetch(`https://URL:7036/get-sub-path/${selectedPOS.toLowerCase()}/${langFormatted}/${selectedSlug}/`, { headers });
+      // const data = await response.json();
       
       // Simulating API response with a timeout
       await new Promise(resolve => setTimeout(resolve, 800));
@@ -104,8 +168,18 @@ const Index = () => {
         ? `${selectedPOS.toLowerCase()}/${langFormatted}/${selectedSlug}/${selectedSubSlug}`
         : `${selectedPOS.toLowerCase()}/${langFormatted}/${selectedSlug}`;
       
-      // Mock API call to get page data
-      // In a real scenario: const response = await fetch(`https://URL:7036/get-sub-path/${path}`);
+      // Use token for API request if available
+      const headers = {
+        'Content-Type': 'application/json'
+      };
+      
+      if (authToken) {
+        headers['Authorization'] = `Bearer ${authToken}`;
+      }
+      
+      // Actual API call to get page data
+      // const response = await fetch(`https://URL:7036/get-sub-path/${path}`, { headers });
+      // const data = await response.json();
       
       // Simulating API response with a timeout
       await new Promise(resolve => setTimeout(resolve, 800));
@@ -181,6 +255,23 @@ const Index = () => {
     }
   };
 
+  // Show loading state during authentication
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 p-6 md:p-10 flex items-center justify-center">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-center"
+        >
+          <div className="w-16 h-16 border-t-4 border-blue-500 border-solid rounded-full animate-spin mx-auto mb-4"></div>
+          <h2 className="text-xl font-medium text-gray-700">Authenticating...</h2>
+          <p className="text-gray-500 mt-2">Connecting to the server</p>
+        </motion.div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 p-6 md:p-10">
       <motion.div 
@@ -213,6 +304,13 @@ const Index = () => {
               <CardTitle className="text-gray-800 text-xl">General Elements</CardTitle>
             </CardHeader>
             <CardContent className="p-6">
+              {/* Show auth status */}
+              <div className="mb-4 p-3 bg-green-50 border border-green-100 rounded-md">
+                <p className="text-green-700 text-sm">
+                  {authToken ? 'Authentication successful ✓' : 'Not authenticated'}
+                </p>
+              </div>
+              
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div className="space-y-2">
                   <label className="block text-sm font-medium text-gray-700">
