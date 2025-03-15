@@ -37,8 +37,8 @@ const LoginForm = () => {
     setIsLoading(true);
     
     try {
-      // Fix: Remove extra https:// prefix from URL
-      const response = await fetch('https://92.112.184.210:7182/api/Authentication/login', {
+      // Fixed URL - removed the duplicate https:// prefix
+      const response = await fetch('http://92.112.184.210:7182/api/Authentication/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -47,7 +47,6 @@ const LoginForm = () => {
           email: data.email,
           password: data.password
         }),
-        // Add option to bypass certificate validation issues with self-signed certificates
         signal: AbortSignal.timeout(10000)
       });
       
