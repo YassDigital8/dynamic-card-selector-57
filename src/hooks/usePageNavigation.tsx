@@ -1,8 +1,8 @@
 
 import { useEffect, useCallback, useMemo } from 'react';
-import { usePageSelections } from '@/hooks/usePageSelections';
-import { usePageSlugs } from '@/hooks/usePageSlugs';
-import { usePageData } from '@/hooks/usePageData';
+import { usePageSelections } from './usePageSelections';
+import { usePageSlugs } from './usePageSlugs';
+import { usePageData } from './usePageData';
 
 interface UsePageNavigationProps {
   authToken?: string;
