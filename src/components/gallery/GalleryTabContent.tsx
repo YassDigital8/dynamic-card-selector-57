@@ -1,24 +1,24 @@
 
 import React, { useState } from 'react';
-import { TabsContent } from '@/components/ui/tabs';
-import { Gallery as GalleryModel, FileInfo } from '@/models/FileModel';
-import { GalleryList } from '@/components/gallery/GalleryList';
-import { Gallery } from '@/components/gallery/Gallery';
-import { UploadComponent } from '@/components/gallery/UploadComponent';
+import { Gallery, FileInfo } from '@/models/FileModel';
+import { GalleryList } from './GalleryList';
+import { UploadComponent } from './UploadComponent';
+import { FileList } from './FileList';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { Pencil } from 'lucide-react';
-import { EditGalleryDialog } from '@/components/gallery/EditGalleryDialog';
+import { Plus, Edit, ArrowLeft } from 'lucide-react';
+import { EditGalleryDialog } from './EditGalleryDialog';
 
 interface GalleryTabContentProps {
   activeTab: string;
-  galleries: GalleryModel[];
+  galleries: Gallery[];
   files: FileInfo[];
-  selectedGallery: GalleryModel | null;
+  selectedGallery: Gallery | null;
   galleryFileTypes: Record<string, string[]>;
-  onSelectGallery: (gallery: GalleryModel) => void;
+  onSelectGallery: (gallery: Gallery) => void;
   onFileUploaded: (file: FileInfo) => void;
   onViewFile: (file: FileInfo) => void;
-  onUpdateGallery: (gallery: GalleryModel) => void;
+  onUpdateGallery: (gallery: Gallery) => void;
 }
 
 export const GalleryTabContent: React.FC<GalleryTabContentProps> = ({
@@ -32,74 +32,100 @@ export const GalleryTabContent: React.FC<GalleryTabContentProps> = ({
   onViewFile,
   onUpdateGallery
 }) => {
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isEditGalleryOpen, setIsEditGalleryOpen] = useState(false);
   
-  const filteredFiles = selectedGallery 
+  const filteredFiles = selectedGallery
     ? files.filter(file => file.galleryId === selectedGallery.id)
-    : files;
+    : [];
 
   return (
-    <>
-      <TabsContent value="galleries" className="mt-0">
+    <div className="space-y-4">
+      {activeTab === 'galleries' && (
         <GalleryList 
-          galleries={galleries} 
+          galleries={galleries}
+          onSelectGallery={onSelectGallery}
           fileTypes={galleryFileTypes}
-          onSelectGallery={onSelectGallery} 
         />
-      </TabsContent>
+      )}
       
-      <TabsContent value="browse" className="mt-0">
-        {selectedGallery ? (
-          <>
-            <div className="mb-4 p-4 bg-muted/30 rounded-lg flex justify-between items-start">
-              <div>
-                <h2 className="text-lg font-semibold">{selectedGallery.name}</h2>
-                {selectedGallery.description && (
-                  <p className="text-sm text-muted-foreground">{selectedGallery.description}</p>
-                )}
-              </div>
+      {activeTab === 'upload' && (
+        <UploadComponent 
+          onFileUploaded={onFileUploaded}
+          galleries={galleries}
+          onViewFile={onViewFile}
+        />
+      )}
+      
+      {activeTab === 'browse' && selectedGallery && (
+        <>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
               <Button 
                 variant="outline" 
                 size="sm" 
-                onClick={() => setIsEditDialogOpen(true)}
-                className="gap-2"
+                onClick={() => onSelectGallery(selectedGallery)}
               >
-                <Pencil className="h-4 w-4" />
+                <ArrowLeft className="h-4 w-4 mr-1" />
+                Back
+              </Button>
+              <h2 className="text-xl font-semibold">{selectedGallery.name}</h2>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => setIsEditGalleryOpen(true)}
+              >
+                <Edit className="h-4 w-4 mr-1" />
                 Edit Gallery
               </Button>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => {
+                  // TODO: Implement file upload specific to this gallery
+                }}
+              >
+                <Plus className="h-4 w-4 mr-1" />
+                Add Files
+              </Button>
             </div>
-            <Gallery files={filteredFiles} />
-            
-            <EditGalleryDialog
-              open={isEditDialogOpen}
-              onOpenChange={setIsEditDialogOpen}
-              gallery={selectedGallery}
-              onUpdateGallery={onUpdateGallery}
-            />
-          </>
-        ) : (
-          <div className="p-4 bg-muted/30 rounded-lg mb-4">
-            <h2 className="text-lg font-semibold">All Files</h2>
-            <p className="text-sm text-muted-foreground">
-              Select a gallery from the Galleries tab for filtered results, or browse all files here.
-            </p>
-            <Gallery files={files} />
           </div>
-        )}
-      </TabsContent>
-      
-      <TabsContent value="upload" className="mt-0">
-        <div className="mb-4 p-4 bg-muted/30 rounded-lg">
-          <h2 className="text-lg font-semibold">Upload Files</h2>
-          <p className="text-sm text-muted-foreground">Select a gallery and upload files to it</p>
-        </div>
-        <UploadComponent 
-          onFileUploaded={onFileUploaded} 
-          galleries={galleries}
-          selectedGalleryId={selectedGallery?.id}
-          onViewFile={onViewFile}
-        />
-      </TabsContent>
-    </>
+          
+          {selectedGallery.description && (
+            <Alert className="mb-4">
+              <AlertDescription>{selectedGallery.description}</AlertDescription>
+            </Alert>
+          )}
+          
+          {filteredFiles.length > 0 ? (
+            <FileList 
+              files={filteredFiles}
+              onViewFile={onViewFile}
+            />
+          ) : (
+            <div className="flex flex-col items-center justify-center p-12 border rounded-md">
+              <p className="text-muted-foreground mb-4">No files in this gallery</p>
+              <Button
+                onClick={() => {
+                  // TODO: Implement file upload specific to this gallery
+                }}
+              >
+                <Plus className="h-4 w-4 mr-1" />
+                Add Files
+              </Button>
+            </div>
+          )}
+          
+          <EditGalleryDialog
+            open={isEditGalleryOpen}
+            onOpenChange={setIsEditGalleryOpen}
+            gallery={selectedGallery}
+            onUpdateGallery={onUpdateGallery}
+            files={files}
+          />
+        </>
+      )}
+    </div>
   );
 };
