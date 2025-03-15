@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { FileDropzone } from '@/components/gallery/FileDropzone';
@@ -7,7 +6,6 @@ import { Button } from '@/components/ui/button';
 import { Upload, Image, FileImage } from 'lucide-react';
 import { IconSelector } from '@/components/gallery/IconSelector';
 import { FileInfo } from '@/models/FileModel';
-
 interface CoverImageSelectorProps {
   coverImage?: string;
   selectedIconName?: string;
@@ -22,7 +20,6 @@ interface CoverImageSelectorProps {
   handleFile: (file: File | null) => void;
   galleryImageFiles: FileInfo[];
 }
-
 export const CoverImageSelector: React.FC<CoverImageSelectorProps> = ({
   coverImage,
   selectedIconName,
@@ -35,10 +32,9 @@ export const CoverImageSelector: React.FC<CoverImageSelectorProps> = ({
   filePreview,
   isImage,
   handleFile,
-  galleryImageFiles,
+  galleryImageFiles
 }) => {
-  return (
-    <Tabs value={coverImageSource} onValueChange={(value) => onCoverImageSourceChange(value as any)}>
+  return <Tabs value={coverImageSource} onValueChange={value => onCoverImageSourceChange(value as any)} className="it should be under Gallery name and Description ">
       <TabsList className="grid w-full grid-cols-3">
         <TabsTrigger value="upload" className="flex items-center gap-2">
           <Upload className="h-4 w-4" />
@@ -55,71 +51,34 @@ export const CoverImageSelector: React.FC<CoverImageSelectorProps> = ({
       </TabsList>
       
       <TabsContent value="upload" className="mt-4">
-        {coverImage && coverImageSource === 'upload' ? (
-          <div className="relative w-full h-40 mb-2 border rounded-md overflow-hidden">
+        {coverImage && coverImageSource === 'upload' ? <div className="relative w-full h-40 mb-2 border rounded-md overflow-hidden">
             <img src={coverImage} alt="Cover preview" className="w-full h-full object-cover" />
-            <Button 
-              type="button"
-              variant="destructive" 
-              size="sm"
-              className="absolute top-2 right-2"
-              onClick={() => onImageUpload('')}
-            >
+            <Button type="button" variant="destructive" size="sm" className="absolute top-2 right-2" onClick={() => onImageUpload('')}>
               Remove
             </Button>
-          </div>
-        ) : (
-          <FileDropzone
-            onFileSelected={handleFile}
-            selectedFile={selectedFile}
-            filePreview={filePreview}
-            isImage={isImage}
-            onImageUpload={onImageUpload}
-            accept="image/*"
-            maxFiles={1}
-            className="h-40"
-          />
-        )}
+          </div> : <FileDropzone onFileSelected={handleFile} selectedFile={selectedFile} filePreview={filePreview} isImage={isImage} onImageUpload={onImageUpload} accept="image/*" maxFiles={1} className="h-40" />}
       </TabsContent>
       
       <TabsContent value="icon" className="mt-4">
-        <IconSelector 
-          selectedIcon={selectedIconName} 
-          onSelectIcon={onIconSelect} 
-        />
+        <IconSelector selectedIcon={selectedIconName} onSelectIcon={onIconSelect} />
       </TabsContent>
       
       <TabsContent value="gallery" className="mt-4">
-        {galleryImageFiles.length > 0 ? (
-          <div className="grid grid-cols-3 gap-2 max-h-60 overflow-y-auto p-2">
-            {galleryImageFiles.map((file) => (
-              <div 
-                key={file.id}
-                className={`relative border rounded-md overflow-hidden cursor-pointer transition-all ${
-                  coverImage === file.url ? 'ring-2 ring-primary' : 'hover:opacity-80'
-                }`}
-                onClick={() => onGalleryImageSelect(file)}
-              >
+        {galleryImageFiles.length > 0 ? <div className="grid grid-cols-3 gap-2 max-h-60 overflow-y-auto p-2">
+            {galleryImageFiles.map(file => <div key={file.id} className={`relative border rounded-md overflow-hidden cursor-pointer transition-all ${coverImage === file.url ? 'ring-2 ring-primary' : 'hover:opacity-80'}`} onClick={() => onGalleryImageSelect(file)}>
                 <div className="aspect-square">
                   <img src={file.url} alt={file.name} className="w-full h-full object-cover" />
                 </div>
-                {coverImage === file.url && (
-                  <div className="absolute inset-0 bg-primary/20 flex items-center justify-center">
+                {coverImage === file.url && <div className="absolute inset-0 bg-primary/20 flex items-center justify-center">
                     <div className="bg-primary text-primary-foreground text-xs px-2 py-1 rounded">Selected</div>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        ) : (
-          <Card>
+                  </div>}
+              </div>)}
+          </div> : <Card>
             <CardContent className="flex flex-col items-center justify-center p-6 text-center">
               <FileImage className="h-8 w-8 text-muted-foreground mb-2" />
               <p className="text-sm text-muted-foreground">No image files in your galleries</p>
             </CardContent>
-          </Card>
-        )}
+          </Card>}
       </TabsContent>
-    </Tabs>
-  );
+    </Tabs>;
 };
