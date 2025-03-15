@@ -6,7 +6,7 @@ import { FolderPlus, FileText, Globe, Folder, HelpCircle, Languages, Flag } from
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { SelectionStep } from '@/hooks/usePageSelections';
+import { SelectionStep } from '@/models/PageModel';
 
 interface PageSelectorsProps {
   posOptions: string[];
@@ -16,7 +16,7 @@ interface PageSelectorsProps {
   setSelectedPOS: (value: string) => void;
   setSelectedLanguage: (value: string) => void;
   loading: boolean;
-  currentStep: SelectionStep;
+  currentStep: SelectionStep; // Added currentStep prop to match usage in Index.tsx
 }
 
 const fadeInVariants = {

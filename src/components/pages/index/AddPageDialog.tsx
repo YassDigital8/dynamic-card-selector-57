@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -40,7 +41,8 @@ const formSchema = z.object({
   description: z.string().min(1, "Description is required"),
 });
 
-export type AddPageFormValues = z.infer<typeof formSchema> & { pageUrlName: string };
+// Removed duplicate type declaration
+// Using the imported type instead
 
 const AddPageDialog = ({ 
   open, 

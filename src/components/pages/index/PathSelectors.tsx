@@ -6,7 +6,7 @@ import { FolderTree, FolderDown, Link, PlusCircle, ArrowRight, HelpCircle, Route
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { SelectionStep } from '@/hooks/usePageSelections';
+import { SelectionStep } from '@/models/PageModel';
 
 interface PathSelectorsProps {
   availableSlugs: string[];
@@ -19,7 +19,7 @@ interface PathSelectorsProps {
   selectedPOS: string;
   selectedLanguage: string;
   onAddPageClick?: () => void;
-  currentStep: SelectionStep;
+  currentStep: SelectionStep; // Added currentStep prop to match usage in Index.tsx
 }
 
 const fadeInVariants = {
