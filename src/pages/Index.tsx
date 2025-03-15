@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { FileText, Settings, PlusCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable';
 
 // Custom hooks
 import usePageNavigation from '@/hooks/usePageNavigation';
@@ -93,36 +94,45 @@ const Index = () => {
             </div>
             
             {pageNavigation.currentStep === 'options' && (
-              <>
-                <div ref={pathSelectorsRef}>
-                  <PathSelectors 
-                    availableSlugs={pageNavigation.availableSlugs}
-                    selectedSlug={pageNavigation.selectedSlug}
-                    setSelectedSlug={pageNavigation.setSelectedSlug}
-                    subSlugs={pageNavigation.subSlugs}
-                    selectedSubSlug={pageNavigation.selectedSubSlug}
-                    setSelectedSubSlug={pageNavigation.setSelectedSubSlug}
-                    loading={pageNavigation.loading}
-                    selectedPOS={pageNavigation.selectedPOS}
-                    selectedLanguage={pageNavigation.selectedLanguage}
-                    onAddPageClick={() => pageAddition.setAddPageDialogOpen(true)}
-                    currentStep={pageNavigation.currentStep}
-                  />
-                </div>
-            
-                {(pageNavigation.selectedSlug || pageNavigation.pageData) && (
-                  <div ref={pageDataRef}>
-                    <PageData 
-                      pageData={pageNavigation.pageData} 
-                      onRefresh={pageNavigation.refreshPageData}
+              <ResizablePanelGroup 
+                direction="horizontal" 
+                className="min-h-[500px] rounded-lg border"
+              >
+                <ResizablePanel defaultSize={40} minSize={30}>
+                  <div ref={pathSelectorsRef} className="h-full p-4 overflow-auto">
+                    <PathSelectors 
+                      availableSlugs={pageNavigation.availableSlugs}
+                      selectedSlug={pageNavigation.selectedSlug}
+                      setSelectedSlug={pageNavigation.setSelectedSlug}
+                      subSlugs={pageNavigation.subSlugs}
+                      selectedSubSlug={pageNavigation.selectedSubSlug}
+                      setSelectedSubSlug={pageNavigation.setSelectedSubSlug}
+                      loading={pageNavigation.loading}
                       selectedPOS={pageNavigation.selectedPOS}
                       selectedLanguage={pageNavigation.selectedLanguage}
-                      selectedSlug={pageNavigation.selectedSlug}
-                      selectedSubSlug={pageNavigation.selectedSubSlug}
+                      onAddPageClick={() => pageAddition.setAddPageDialogOpen(true)}
+                      currentStep={pageNavigation.currentStep}
                     />
                   </div>
-                )}
-              </>
+                </ResizablePanel>
+                
+                <ResizableHandle withHandle />
+                
+                <ResizablePanel defaultSize={60}>
+                  <div ref={pageDataRef} className="h-full p-4 overflow-auto">
+                    {(pageNavigation.selectedSlug || pageNavigation.pageData) && (
+                      <PageData 
+                        pageData={pageNavigation.pageData} 
+                        onRefresh={pageNavigation.refreshPageData}
+                        selectedPOS={pageNavigation.selectedPOS}
+                        selectedLanguage={pageNavigation.selectedLanguage}
+                        selectedSlug={pageNavigation.selectedSlug}
+                        selectedSubSlug={pageNavigation.selectedSubSlug}
+                      />
+                    )}
+                  </div>
+                </ResizablePanel>
+              </ResizablePanelGroup>
             )}
           </div>
         </TabsContent>

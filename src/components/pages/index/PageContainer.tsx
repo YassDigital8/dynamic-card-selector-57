@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -23,6 +24,7 @@ import {
 } from 'lucide-react';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { Logo } from '@/components/ui/logo';
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable';
 
 interface PageContainerProps {
   children: React.ReactNode;
@@ -128,10 +130,7 @@ const PageContainer: React.FC<PageContainerProps> = ({ children }) => {
                 </div>
               </div>
               
-              <div className="grid grid-cols-1 gap-6">
-                {children}
-              </div>
-              
+              {children}
             </motion.div>
           </div>
         </SidebarInset>
