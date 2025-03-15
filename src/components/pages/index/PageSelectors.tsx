@@ -3,7 +3,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Search, PlusCircle, FileText, FolderPlus } from 'lucide-react';
+import { FileText, FolderPlus, PlusCircle } from 'lucide-react';
 
 interface PageSelectorsProps {
   posOptions: string[];
@@ -13,7 +13,6 @@ interface PageSelectorsProps {
   setSelectedPOS: (value: string) => void;
   setSelectedLanguage: (value: string) => void;
   loading: boolean;
-  handleGetPages: () => void;
   onAddPageClick?: () => void;
 }
 
@@ -47,7 +46,6 @@ const PageSelectors = ({
   setSelectedPOS,
   setSelectedLanguage,
   loading,
-  handleGetPages,
   onAddPageClick
 }: PageSelectorsProps) => {
   return (
@@ -94,7 +92,7 @@ const PageSelectors = ({
         </div>
       </div>
 
-      {/* Only one button shown here - Get Pages */}
+      {/* Add Page button appears right after selecting language and POS */}
       {selectedPOS && selectedLanguage && (
         <motion.div
           initial="hidden"
@@ -108,12 +106,12 @@ const PageSelectors = ({
             whileTap="tap"
           >
             <Button 
-              onClick={handleGetPages}
-              className="w-full gap-2 shadow-md bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white transition-all"
+              onClick={onAddPageClick}
+              className="w-full gap-2 shadow-md bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white transition-all"
               disabled={loading || !selectedPOS || !selectedLanguage}
             >
-              <Search className="h-5 w-5" />
-              {loading ? 'Processing...' : 'Get Pages'}
+              <PlusCircle className="h-5 w-5" />
+              Add Page
             </Button>
           </motion.div>
         </motion.div>

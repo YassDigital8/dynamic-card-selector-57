@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { PlusCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 // Components
@@ -100,18 +98,6 @@ const Index = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleGetPages = () => {
-    if (!selectedPOS || !selectedLanguage) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Please select both POS and language",
-      });
-      return;
-    }
-    fetchSlugs();
   };
 
   const handleFetchData = () => {
@@ -251,7 +237,7 @@ const Index = () => {
                 setSelectedPOS={setSelectedPOS}
                 setSelectedLanguage={setSelectedLanguage}
                 loading={loading}
-                handleGetPages={handleGetPages}
+                onAddPageClick={() => setAddPageDialogOpen(true)}
               />
 
               <PathSelectors 
@@ -266,30 +252,6 @@ const Index = () => {
                 selectedPOS={selectedPOS}
                 selectedLanguage={selectedLanguage}
               />
-
-              {selectedSlug && (
-                <motion.div 
-                  initial="hidden"
-                  animate="visible"
-                  variants={itemVariants}
-                  className="mb-6"
-                >
-                  <motion.div
-                    variants={buttonVariants}
-                    whileHover="hover"
-                    whileTap="tap"
-                  >
-                    <Button 
-                      onClick={() => setAddPageDialogOpen(true)}
-                      className="w-full gap-2 shadow-md bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white transition-all"
-                      disabled={loading || !selectedPOS || !selectedLanguage}
-                    >
-                      <PlusCircle className="h-5 w-5" />
-                      Add Page
-                    </Button>
-                  </motion.div>
-                </motion.div>
-              )}
 
               <PageData pageData={pageData} />
             </CardContent>
