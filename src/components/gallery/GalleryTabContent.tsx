@@ -1,10 +1,13 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { TabsContent } from '@/components/ui/tabs';
 import { Gallery as GalleryModel, FileInfo } from '@/models/FileModel';
 import { GalleryList } from '@/components/gallery/GalleryList';
 import { Gallery } from '@/components/gallery/Gallery';
 import { UploadComponent } from '@/components/gallery/UploadComponent';
+import { Button } from '@/components/ui/button';
+import { Pencil } from 'lucide-react';
+import { EditGalleryDialog } from '@/components/gallery/EditGalleryDialog';
 
 interface GalleryTabContentProps {
   activeTab: string;
@@ -15,6 +18,7 @@ interface GalleryTabContentProps {
   onSelectGallery: (gallery: GalleryModel) => void;
   onFileUploaded: (file: FileInfo) => void;
   onViewFile: (file: FileInfo) => void;
+  onUpdateGallery: (gallery: GalleryModel) => void;
 }
 
 export const GalleryTabContent: React.FC<GalleryTabContentProps> = ({
@@ -25,8 +29,11 @@ export const GalleryTabContent: React.FC<GalleryTabContentProps> = ({
   galleryFileTypes,
   onSelectGallery,
   onFileUploaded,
-  onViewFile
+  onViewFile,
+  onUpdateGallery
 }) => {
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  
   const filteredFiles = selectedGallery 
     ? files.filter(file => file.galleryId === selectedGallery.id)
     : files;
@@ -44,13 +51,31 @@ export const GalleryTabContent: React.FC<GalleryTabContentProps> = ({
       <TabsContent value="browse" className="mt-0">
         {selectedGallery ? (
           <>
-            <div className="mb-4 p-4 bg-muted/30 rounded-lg">
-              <h2 className="text-lg font-semibold">{selectedGallery.name}</h2>
-              {selectedGallery.description && (
-                <p className="text-sm text-muted-foreground">{selectedGallery.description}</p>
-              )}
+            <div className="mb-4 p-4 bg-muted/30 rounded-lg flex justify-between items-start">
+              <div>
+                <h2 className="text-lg font-semibold">{selectedGallery.name}</h2>
+                {selectedGallery.description && (
+                  <p className="text-sm text-muted-foreground">{selectedGallery.description}</p>
+                )}
+              </div>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => setIsEditDialogOpen(true)}
+                className="gap-2"
+              >
+                <Pencil className="h-4 w-4" />
+                Edit Gallery
+              </Button>
             </div>
             <Gallery files={filteredFiles} />
+            
+            <EditGalleryDialog
+              open={isEditDialogOpen}
+              onOpenChange={setIsEditDialogOpen}
+              gallery={selectedGallery}
+              onUpdateGallery={onUpdateGallery}
+            />
           </>
         ) : (
           <div className="p-4 bg-muted/30 rounded-lg mb-4">

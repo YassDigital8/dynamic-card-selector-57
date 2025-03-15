@@ -1,4 +1,3 @@
-
 import { useState, useMemo } from 'react';
 import { FileInfo, Gallery } from '@/models/FileModel';
 
@@ -107,6 +106,18 @@ export const useGalleryViewModel = () => {
     setActiveTab("browse");
   };
 
+  const handleUpdateGallery = (updatedGallery: Gallery) => {
+    setGalleries(prev => 
+      prev.map(gallery => 
+        gallery.id === updatedGallery.id ? updatedGallery : gallery
+      )
+    );
+    
+    if (selectedGallery?.id === updatedGallery.id) {
+      setSelectedGallery(updatedGallery);
+    }
+  };
+
   return {
     activeTab,
     setActiveTab,
@@ -120,6 +131,7 @@ export const useGalleryViewModel = () => {
     handleFileUpload,
     handleCreateGallery,
     handleViewFile,
-    handleSelectGallery
+    handleSelectGallery,
+    handleUpdateGallery
   };
 };
