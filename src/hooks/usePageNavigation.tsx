@@ -1,211 +1,50 @@
 
-import { useState, useEffect, useCallback } from 'react';
-import { useToast } from '@/hooks/use-toast';
+import { useEffect } from 'react';
+import { usePageSelections } from './usePageSelections';
+import { usePageSlugs } from './usePageSlugs';
+import { usePageData } from './usePageData';
 
 interface UsePageNavigationProps {
   authToken?: string;
 }
 
 const usePageNavigation = ({ authToken = '' }: UsePageNavigationProps = {}) => {
-  const [loading, setLoading] = useState(false);
-  const [selectedPOS, setSelectedPOS] = useState('');
-  const [selectedLanguage, setSelectedLanguage] = useState('');
-  const [availableSlugs, setAvailableSlugs] = useState<string[]>([]);
-  const [selectedSlug, setSelectedSlug] = useState('');
-  const [subSlugs, setSubSlugs] = useState<string[]>([]);
-  const [selectedSubSlug, setSelectedSubSlug] = useState('');
-  const [pageData, setPageData] = useState<any>(null);
-  const { toast } = useToast();
-  
-  const posOptions = ['SY', 'UAE', 'KWI'];
-  const languageOptions = ['English', 'Arabic'];
+  // Use the smaller hooks
+  const pageSelections = usePageSelections();
+  const pageSlugs = usePageSlugs({
+    selectedPOS: pageSelections.selectedPOS,
+    selectedLanguage: pageSelections.selectedLanguage
+  });
+  const pageData = usePageData({
+    selectedPOS: pageSelections.selectedPOS,
+    selectedLanguage: pageSelections.selectedLanguage,
+    selectedSlug: pageSlugs.selectedSlug,
+    selectedSubSlug: pageSlugs.selectedSubSlug
+  });
 
+  // Fetch initial page data when POS and Language are selected
   useEffect(() => {
-    if (selectedPOS && selectedLanguage) {
-      setSelectedSlug('');
-      setSubSlugs([]);
-      setSelectedSubSlug('');
-      setPageData(null);
-      fetchSlugs();
-      fetchInitialPageData(); // Fetch initial page data when POS and Language are selected
+    if (pageSelections.selectedPOS && pageSelections.selectedLanguage) {
+      pageData.fetchInitialPageData();
     }
-  }, [selectedPOS, selectedLanguage]);
-
-  useEffect(() => {
-    if (selectedSlug) {
-      setSelectedSubSlug('');
-      setPageData(null);
-      fetchSubSlugs();
-    }
-  }, [selectedSlug]);
+  }, [pageSelections.selectedPOS, pageSelections.selectedLanguage]);
 
   // Automatically fetch page data when slug is selected
   useEffect(() => {
-    if (selectedPOS && selectedLanguage && selectedSlug) {
-      fetchPageData();
+    if (pageSelections.selectedPOS && pageSelections.selectedLanguage && 
+        (pageSlugs.selectedSlug || (!pageSlugs.selectedSlug && pageData.pageData === null))) {
+      pageData.fetchPageData();
     }
-  }, [selectedSlug, selectedSubSlug]);
-
-  const fetchSlugs = useCallback(() => {
-    setLoading(true);
-    try {
-      // In real implementation, this would be an API call
-      // Example: GET https://api.example.com/{selectedPOS}/{selectedLanguage}/pages
-      const mockSlugs = ['aboutus', 'contact', 'services', 'products', 'blog', 'parent1'];
-      setAvailableSlugs(mockSlugs);
-      
-      toast({
-        title: "Development Mode",
-        description: "Using mock data until SSL certificate is fixed",
-      });
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to fetch page slugs",
-      });
-    } finally {
-      setLoading(false);
-    }
-  }, [selectedPOS, selectedLanguage, toast]);
-
-  const fetchSubSlugs = useCallback(() => {
-    setLoading(true);
-    try {
-      // In real implementation, this would be an API call
-      // Example: GET https://api.example.com/{selectedPOS}/{selectedLanguage}/{selectedSlug}/subpages
-      const mockSubSlugs = ['subpage1', 'subpage2', 'subpage3', 'subparen1'];
-      setSubSlugs(mockSubSlugs);
-      
-      toast({
-        title: "Development Mode",
-        description: "Using mock data until SSL certificate is fixed",
-      });
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to fetch sub-page slugs",
-      });
-    } finally {
-      setLoading(false);
-    }
-  }, [selectedPOS, selectedLanguage, selectedSlug, toast]);
-
-  const fetchInitialPageData = useCallback(() => {
-    if (!selectedPOS || !selectedLanguage) {
-      return;
-    }
-    
-    setLoading(true);
-    setPageData(null);
-    
-    try {
-      // Mock API call for initial page data when only POS and Language are selected
-      setTimeout(() => {
-        const mockData = {
-          title: `${selectedLanguage} landing page for ${selectedPOS}`,
-          content: `This is the default landing page for ${selectedPOS} region in ${selectedLanguage} language.
-          
-Welcome to the content management system. Please select a page from the available options to view more details.
-
-• Main pages are listed in the "Select Parent Path" dropdown
-• Sub-pages will appear when a parent page is selected
-• You can add new pages using the "Add Page" button
-
-The real content would be fetched from the API endpoint:
-https://{{URL}}:7036/${selectedLanguage}/${selectedPOS}`,
-          lastUpdated: new Date().toISOString(),
-          status: 'published'
-        };
-        
-        setPageData(mockData);
-        setLoading(false);
-        
-        toast({
-          title: "Default Page Data Loaded",
-          description: "Using mock data until SSL certificate is fixed",
-        });
-      }, 1000);
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to fetch initial page data",
-      });
-      setLoading(false);
-    }
-  }, [selectedPOS, selectedLanguage, toast]);
-
-  const fetchPageData = useCallback(() => {
-    if (!selectedSlug) {
-      return;
-    }
-    
-    setLoading(true);
-    setPageData(null);
-    
-    try {
-      // Mock API call using the format specified: https://{{URL}}:7036/English/test/aboutus
-      // In a real implementation, we would use:
-      // const url = `https://${apiBaseUrl}:7036/${selectedLanguage}/${selectedPOS}/${selectedSlug}${selectedSubSlug ? '/' + selectedSubSlug : ''}`;
-      // const response = await fetch(url);
-      // const data = await response.json();
-      
-      // For now, generate mock data based on the selections
-      setTimeout(() => {
-        const mockData = {
-          title: `${selectedLanguage} page for ${selectedPOS} - ${selectedSlug}${selectedSubSlug ? '/' + selectedSubSlug : ''}`,
-          content: `This is a mock content for the ${selectedSlug} page in ${selectedLanguage} language for ${selectedPOS} region.
-          
-Additional content details would go here.
-• Point 1
-• Point 2
-• Point 3
-
-The real content would be fetched from the API endpoint:
-https://{{URL}}:7036/${selectedLanguage}/${selectedSlug}`,
-          lastUpdated: new Date().toISOString(),
-          status: 'published'
-        };
-        
-        setPageData(mockData);
-        setLoading(false);
-        
-        toast({
-          title: "Page Data Loaded",
-          description: "Using mock data until SSL certificate is fixed",
-        });
-      }, 1000);
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to fetch page data",
-      });
-      setLoading(false);
-    }
-  }, [selectedPOS, selectedLanguage, selectedSlug, selectedSubSlug, toast]);
+  }, [pageSlugs.selectedSlug, pageSlugs.selectedSubSlug]);
 
   return {
-    loading,
-    setLoading,
-    posOptions,
-    languageOptions,
-    selectedPOS,
-    setSelectedPOS,
-    selectedLanguage,
-    setSelectedLanguage,
-    availableSlugs,
-    selectedSlug,
-    setSelectedSlug,
-    subSlugs,
-    selectedSubSlug,
-    setSelectedSubSlug,
-    pageData,
-    handleFetchData: fetchPageData, // Kept for backwards compatibility
-    fetchSlugs,
-    refreshPageData: fetchPageData,  // Added a named export for the refresh function
+    // Combine all the properties from the smaller hooks
+    ...pageSelections,
+    ...pageSlugs,
+    loading: pageSlugs.loading || pageData.loading,
+    pageData: pageData.pageData,
+    handleFetchData: pageData.fetchPageData, // Kept for backwards compatibility
+    refreshPageData: pageData.fetchPageData,  // Added a named export for the refresh function
   };
 };
 
