@@ -102,7 +102,14 @@ const Index = () => {
             </div>
             
             <div className="md:col-span-2">
-              <PageData pageData={pageNavigation.pageData} />
+              <PageData 
+                pageData={pageNavigation.pageData} 
+                onRefresh={pageNavigation.refreshPageData}
+                selectedPOS={pageNavigation.selectedPOS}
+                selectedLanguage={pageNavigation.selectedLanguage}
+                selectedSlug={pageNavigation.selectedSlug}
+                selectedSubSlug={pageNavigation.selectedSubSlug}
+              />
             </div>
           </div>
         </TabsContent>

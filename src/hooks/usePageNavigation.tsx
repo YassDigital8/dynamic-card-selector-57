@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
 interface UsePageNavigationProps {
@@ -38,9 +38,11 @@ const usePageNavigation = ({ authToken = '' }: UsePageNavigationProps = {}) => {
     }
   }, [selectedSlug]);
 
-  const fetchSlugs = () => {
+  const fetchSlugs = useCallback(() => {
     setLoading(true);
     try {
+      // In real implementation, this would be an API call
+      // Example: GET https://api.example.com/{selectedPOS}/{selectedLanguage}/pages
       const mockSlugs = ['aboutus', 'contact', 'services', 'products', 'blog', 'parent1'];
       setAvailableSlugs(mockSlugs);
       
@@ -48,14 +50,22 @@ const usePageNavigation = ({ authToken = '' }: UsePageNavigationProps = {}) => {
         title: "Development Mode",
         description: "Using mock data until SSL certificate is fixed",
       });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to fetch page slugs",
+      });
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedPOS, selectedLanguage, toast]);
 
-  const fetchSubSlugs = () => {
+  const fetchSubSlugs = useCallback(() => {
     setLoading(true);
     try {
+      // In real implementation, this would be an API call
+      // Example: GET https://api.example.com/{selectedPOS}/{selectedLanguage}/{selectedSlug}/subpages
       const mockSubSlugs = ['subpage1', 'subpage2', 'subpage3', 'subparen1'];
       setSubSlugs(mockSubSlugs);
       
@@ -63,30 +73,18 @@ const usePageNavigation = ({ authToken = '' }: UsePageNavigationProps = {}) => {
         title: "Development Mode",
         description: "Using mock data until SSL certificate is fixed",
       });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchPageData = () => {
-    setLoading(true);
-    try {
-      const mockData = {
-        title: `${selectedLanguage} page for ${selectedPOS}/${selectedSlug}${selectedSubSlug ? '/' + selectedSubSlug : ''}`,
-        content: 'This is mock page content until the SSL certificate is fixed.'
-      };
-      setPageData(mockData);
-      
+    } catch (error) {
       toast({
-        title: "Development Mode",
-        description: "Using mock data until SSL certificate is fixed",
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to fetch sub-page slugs",
       });
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedPOS, selectedLanguage, selectedSlug, toast]);
 
-  const handleFetchData = () => {
+  const fetchPageData = useCallback(() => {
     if (!selectedSlug) {
       toast({
         variant: "destructive",
@@ -95,8 +93,55 @@ const usePageNavigation = ({ authToken = '' }: UsePageNavigationProps = {}) => {
       });
       return;
     }
+    
+    setLoading(true);
+    setPageData(null);
+    
+    try {
+      // Mock API call using the format specified: https://{{URL}}:7036/English/test/aboutus
+      // In a real implementation, we would use:
+      // const url = `https://${apiBaseUrl}:7036/${selectedLanguage}/${selectedPOS}/${selectedSlug}${selectedSubSlug ? '/' + selectedSubSlug : ''}`;
+      // const response = await fetch(url);
+      // const data = await response.json();
+      
+      // For now, generate mock data based on the selections
+      setTimeout(() => {
+        const mockData = {
+          title: `${selectedLanguage} page for ${selectedPOS} - ${selectedSlug}${selectedSubSlug ? '/' + selectedSubSlug : ''}`,
+          content: `This is a mock content for the ${selectedSlug} page in ${selectedLanguage} language for ${selectedPOS} region.
+          
+Additional content details would go here.
+• Point 1
+• Point 2
+• Point 3
+
+The real content would be fetched from the API endpoint:
+https://{{URL}}:7036/${selectedLanguage}/${selectedSlug}`,
+          lastUpdated: new Date().toISOString(),
+          status: 'published'
+        };
+        
+        setPageData(mockData);
+        setLoading(false);
+        
+        toast({
+          title: "Page Data Loaded",
+          description: "Using mock data until SSL certificate is fixed",
+        });
+      }, 1000);
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to fetch page data",
+      });
+      setLoading(false);
+    }
+  }, [selectedPOS, selectedLanguage, selectedSlug, selectedSubSlug, toast]);
+
+  const handleFetchData = useCallback(() => {
     fetchPageData();
-  };
+  }, [fetchPageData]);
 
   return {
     loading,
@@ -115,7 +160,8 @@ const usePageNavigation = ({ authToken = '' }: UsePageNavigationProps = {}) => {
     setSelectedSubSlug,
     pageData,
     handleFetchData,
-    fetchSlugs  // Expose the fetchSlugs function
+    fetchSlugs,
+    refreshPageData: fetchPageData,  // Added a named export for the refresh function
   };
 };
 
