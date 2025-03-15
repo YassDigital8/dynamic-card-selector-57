@@ -1,6 +1,5 @@
 
 import React, { useState, useEffect } from 'react';
-import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { FileText, Settings, PlusCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -94,7 +93,6 @@ const Index = () => {
                 selectedSubSlug={pageNavigation.selectedSubSlug}
                 setSelectedSubSlug={pageNavigation.setSelectedSubSlug}
                 loading={pageNavigation.loading}
-                handleFetchData={pageNavigation.handleFetchData}
                 selectedPOS={pageNavigation.selectedPOS}
                 selectedLanguage={pageNavigation.selectedLanguage}
                 onAddPageClick={() => pageAddition.setAddPageDialogOpen(true)}

@@ -38,6 +38,13 @@ const usePageNavigation = ({ authToken = '' }: UsePageNavigationProps = {}) => {
     }
   }, [selectedSlug]);
 
+  // Automatically fetch page data when slug is selected
+  useEffect(() => {
+    if (selectedPOS && selectedLanguage && selectedSlug) {
+      fetchPageData();
+    }
+  }, [selectedSlug, selectedSubSlug]);
+
   const fetchSlugs = useCallback(() => {
     setLoading(true);
     try {
@@ -86,11 +93,6 @@ const usePageNavigation = ({ authToken = '' }: UsePageNavigationProps = {}) => {
 
   const fetchPageData = useCallback(() => {
     if (!selectedSlug) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Please select a page slug",
-      });
       return;
     }
     
@@ -139,10 +141,6 @@ https://{{URL}}:7036/${selectedLanguage}/${selectedSlug}`,
     }
   }, [selectedPOS, selectedLanguage, selectedSlug, selectedSubSlug, toast]);
 
-  const handleFetchData = useCallback(() => {
-    fetchPageData();
-  }, [fetchPageData]);
-
   return {
     loading,
     setLoading,
@@ -159,7 +157,7 @@ https://{{URL}}:7036/${selectedLanguage}/${selectedSlug}`,
     selectedSubSlug,
     setSelectedSubSlug,
     pageData,
-    handleFetchData,
+    handleFetchData: fetchPageData, // Kept for backwards compatibility
     fetchSlugs,
     refreshPageData: fetchPageData,  // Added a named export for the refresh function
   };

@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { FolderTree, FolderDown, Link, PlusCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,7 +13,7 @@ interface PathSelectorsProps {
   selectedSubSlug: string;
   setSelectedSubSlug: (value: string) => void;
   loading: boolean;
-  handleFetchData: () => void;
+  handleFetchData?: () => void; // Made optional since we won't need it anymore
   selectedPOS: string;
   selectedLanguage: string;
   onAddPageClick?: () => void;
@@ -50,7 +49,6 @@ const PathSelectors = ({
   selectedSubSlug,
   setSelectedSubSlug,
   loading,
-  handleFetchData,
   selectedPOS,
   selectedLanguage,
   onAddPageClick
