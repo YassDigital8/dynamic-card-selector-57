@@ -20,10 +20,10 @@ export function Logo({ showText = false, className }: LogoProps) {
       transition={{ duration: 0.5 }}
     >
       <div className="relative h-8 w-8">
-        {/* Gold bird logo for both themes */}
+        {/* New Cham Wings Airlines logo */}
         <img 
-          src="/lovable-uploads/07012bd6-4cd0-4959-bc2a-1caa5128aba0.png" 
-          alt="Cham Wings Logo" 
+          src="/lovable-uploads/8d41fa29-3180-4df3-9844-3322321967de.png" 
+          alt="Cham Wings Airlines Logo" 
           className="h-full w-full object-contain"
         />
       </div>
