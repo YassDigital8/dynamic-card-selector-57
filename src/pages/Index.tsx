@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { FileText, Settings, PlusCircle } from 'lucide-react';
@@ -12,7 +13,7 @@ import LoadingScreen from '@/components/pages/index/LoadingScreen';
 import PageSelectors from '@/components/pages/index/PageSelectors';
 import PathSelectors from '@/components/pages/index/PathSelectors';
 import PageData from '@/components/pages/index/PageData';
-import AddPageDialog from '@/components/pages/index/AddPageDialog';
+import AddPageDialog from '@/components/pages/index/addPageDialog';
 import PageContainer from '@/components/pages/index/PageContainer';
 import PagesTour from '@/components/pages/index/PagesTour';
 
