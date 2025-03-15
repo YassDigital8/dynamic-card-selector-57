@@ -19,18 +19,15 @@ export function Logo({ showText = false, className }: LogoProps) {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <div className={cn("relative", showText ? "h-8 w-8" : "h-10 w-10")}>
-        {/* New Cham Wings Airlines logo */}
-        <img 
-          src="/lovable-uploads/8d41fa29-3180-4df3-9844-3322321967de.png" 
-          alt="Cham Wings Airlines Logo" 
-          className="h-full w-full object-contain"
-        />
-      </div>
+      {showText && (
+        <div className="text-xl font-bold transition-colors duration-300" style={{ color: '#0EA5E9' }}>
+          <span>ADMIN DASHBOARD</span>
+        </div>
+      )}
       
-      {showText && effectiveTheme === 'dark' && (
-        <div className="text-xl font-bold text-sidebar-primary transition-colors duration-300">
-          <span>Admin Portal</span>
+      {!showText && (
+        <div className="text-xl font-bold transition-colors duration-300" style={{ color: '#0EA5E9' }}>
+          <span>AD</span>
         </div>
       )}
     </motion.div>
