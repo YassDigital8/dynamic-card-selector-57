@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { FileText, Settings, PlusCircle } from 'lucide-react';
@@ -7,6 +8,7 @@ import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/componen
 // Custom hooks
 import usePageNavigation from '@/hooks/usePageNavigation';
 import usePageAddition from '@/hooks/usePageAddition';
+import useAuthentication from '@/hooks/useAuthentication';
 
 // Components
 import LoadingScreen from '@/components/pages/index/LoadingScreen';
@@ -16,10 +18,12 @@ import PageData from '@/components/pages/index/PageData';
 import AddPageDialog from '@/components/pages/index/addPageDialog';
 import PageContainer from '@/components/pages/index/PageContainer';
 import PagesTour from '@/components/pages/index/PagesTour';
+import AuthenticatedContent from '@/components/pages/index/AuthenticatedContent';
 
 const Index = () => {
   const [initialLoading, setInitialLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("pages");
+  const { userInfo } = useAuthentication();
 
   // Refs for tour highlights
   const pageSelectorsRef = useRef<HTMLDivElement>(null);
@@ -54,6 +58,8 @@ const Index = () => {
 
   return (
     <PageContainer>
+      <AuthenticatedContent userInfo={userInfo} />
+      
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <div ref={tabsRef} className="flex items-center justify-between mb-6">
           <TabsList className="bg-gray-100">
