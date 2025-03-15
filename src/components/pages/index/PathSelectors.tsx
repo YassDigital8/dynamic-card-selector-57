@@ -1,8 +1,8 @@
+
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { FolderTree, FolderDown, Database, Link } from 'lucide-react';
+import { FolderTree, FolderDown, Link } from 'lucide-react';
 
 interface PathSelectorsProps {
   availableSlugs: string[];
@@ -22,20 +22,6 @@ const fadeInVariants = {
   visible: { 
     opacity: 1,
     transition: { duration: 0.8 }
-  }
-};
-
-const buttonVariants = {
-  hover: { 
-    scale: 1.03,
-    transition: { 
-      type: "spring", 
-      stiffness: 400, 
-      damping: 10
-    }
-  },
-  tap: { 
-    scale: 0.97
   }
 };
 
@@ -135,30 +121,7 @@ const PathSelectors = ({
         </motion.div>
       )}
 
-      {/* Fetch Data button is shown here (the other button will be in PageSelectors) */}
-      {selectedSlug && (
-        <motion.div 
-          initial="hidden"
-          animate="visible"
-          variants={fadeInVariants}
-          className="mb-6"
-        >
-          <motion.div
-            variants={buttonVariants}
-            whileHover="hover"
-            whileTap="tap"
-          >
-            <Button 
-              onClick={handleFetchData}
-              className="w-full gap-2 shadow-md bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white transition-all"
-              disabled={loading}
-            >
-              <Database className="h-5 w-5" />
-              {loading ? 'Fetching...' : 'Fetch Page Data'}
-            </Button>
-          </motion.div>
-        </motion.div>
-      )}
+      {/* Fetch Data button has been removed as requested */}
     </>
   );
 };
