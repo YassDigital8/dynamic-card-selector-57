@@ -96,6 +96,7 @@
 
   body {
     @apply bg-background text-foreground;
+    min-width: 320px; /* Prevent extreme narrow viewport issues */
   }
   
   /* Improve form field readability on small screens */
@@ -105,7 +106,12 @@
     }
     
     button {
-      @apply py-1.5 px-2.5 text-xs;
+      @apply py-1 px-2 text-xs;
+    }
+    
+    /* Prevent horizontal overflow */
+    .overflow-x-auto {
+      max-width: 100vw;
     }
   }
 }
@@ -137,14 +143,54 @@
 /* Mobile optimizations */
 @media (max-width: 640px) {
   .mobile-p-reduced {
-    @apply p-2;
+    @apply p-1;
   }
   
   .mobile-text-reduced {
-    @apply text-xs;
+    @apply text-[10px];
   }
   
   .mobile-space-reduced {
-    @apply space-y-2;
+    @apply space-y-1;
+  }
+  
+  /* Prevent horizontal overflow */
+  .container, .max-w-6xl, .max-w-full {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+    overflow-x: hidden !important;
+  }
+  
+  /* Reduce the size of select triggers */
+  .select-trigger {
+    @apply h-7 text-[10px];
+  }
+  
+  /* Make cards more compact */
+  .card-content {
+    @apply p-2;
+  }
+  
+  /* Reduce gap in flex layouts */
+  .flex.gap-2, .flex.gap-3, .flex.gap-4 {
+    @apply gap-1;
+  }
+  
+  /* Better handle long URLs and paths */
+  .font-mono {
+    font-size: 8px !important;
+    word-break: break-all;
+  }
+  
+  /* Fix resizable panels from causing horizontal scroll */
+  .ResizablePanel {
+    min-width: 0 !important;
+  }
+  
+  /* Adjust sidebar for mobile */
+  .SidebarContent {
+    padding: 0.5rem;
   }
 }

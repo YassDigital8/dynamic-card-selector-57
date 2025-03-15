@@ -16,14 +16,14 @@ export function Logo({ showText = false, className }: LogoProps) {
   
   return (
     <motion.div 
-      className={cn("flex items-center gap-2", className)}
+      className={cn("flex items-center gap-1 md:gap-2", className)}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
       {showText && (
-        <div className="text-sm md:text-xl font-bold transition-colors duration-300 logo-text">
-          <span>{isMobile ? "ADMIN" : "ADMIN DASHBOARD"}</span>
+        <div className="text-[10px] md:text-sm lg:text-xl font-bold transition-colors duration-300 logo-text whitespace-nowrap">
+          {isMobile ? "ADMIN" : "ADMIN DASHBOARD"}
         </div>
       )}
     </motion.div>

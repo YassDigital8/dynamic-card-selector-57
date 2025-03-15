@@ -17,8 +17,16 @@ export const calculateTooltipPosition = (
 ): TooltipPosition => {
   let top = 0;
   let left = 0;
+  
+  // Check if we're on mobile
+  const isMobile = window.innerWidth < 768;
 
-  switch (position) {
+  // On mobile, prefer top/bottom positioning
+  const effectivePosition = isMobile && (position === "left" || position === "right") 
+    ? "bottom" 
+    : position;
+
+  switch (effectivePosition) {
     case "top":
       top = targetRect.top - 10;
       left = targetRect.left + targetRect.width / 2;
@@ -44,26 +52,34 @@ export const getTooltipStyles = (
   tooltipPosition: TooltipPosition,
   position: "top" | "bottom" | "left" | "right"
 ): React.CSSProperties => {
+  const isMobile = window.innerWidth < 768;
+  const maxWidth = isMobile ? window.innerWidth * 0.85 : 320;
+  
+  // On mobile, prefer top/bottom positioning
+  const effectivePosition = isMobile && (position === "left" || position === "right") 
+    ? "bottom" 
+    : position;
+  
   const baseStyles = {
     position: "fixed",
     zIndex: 100,
     transform: "translate(-50%, -50%)",
-    maxWidth: "320px",
+    maxWidth: `${maxWidth}px`,
     width: "100%"
   } as React.CSSProperties;
 
-  switch (position) {
+  switch (effectivePosition) {
     case "top":
       return {
         ...baseStyles,
-        top: tooltipPosition.top - 100,
+        top: tooltipPosition.top - (isMobile ? 80 : 100),
         left: tooltipPosition.left,
         transform: "translate(-50%, 0)"
       };
     case "bottom":
       return {
         ...baseStyles,
-        top: tooltipPosition.top + 30,
+        top: tooltipPosition.top + (isMobile ? 20 : 30),
         left: tooltipPosition.left,
         transform: "translate(-50%, 0)"
       };
@@ -71,14 +87,14 @@ export const getTooltipStyles = (
       return {
         ...baseStyles,
         top: tooltipPosition.top,
-        left: tooltipPosition.left - 180,
+        left: tooltipPosition.left - (isMobile ? 120 : 180),
         transform: "translate(0, -50%)"
       };
     case "right":
       return {
         ...baseStyles,
         top: tooltipPosition.top,
-        left: tooltipPosition.left + 180,
+        left: tooltipPosition.left + (isMobile ? 120 : 180),
         transform: "translate(0, -50%)"
       };
     default:

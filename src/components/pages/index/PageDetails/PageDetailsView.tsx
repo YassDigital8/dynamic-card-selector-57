@@ -34,10 +34,10 @@ const PageDetailsView = ({
   const isMobile = useIsMobile();
   
   return (
-    <div className="space-y-4 md:space-y-6">
+    <div className="space-y-3 md:space-y-6">
       <div>
-        <h3 className="text-xs md:text-sm font-medium text-gray-500 mb-1 md:mb-2">Page URL</h3>
-        <div className={`bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md p-2 md:p-3 font-mono overflow-x-auto ${isMobile ? 'text-[10px]' : 'text-xs md:text-sm'}`}>
+        <h3 className="text-[10px] md:text-sm font-medium text-gray-500 mb-1 md:mb-2">Page URL</h3>
+        <div className={`bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md p-1.5 md:p-3 font-mono overflow-x-auto text-[8px] md:text-xs`}>
           {selectedSlug 
             ? `${selectedPOS?.toLowerCase()}/${selectedLanguage?.toLowerCase()}/${selectedSlug}${selectedSubSlug ? '/' + selectedSubSlug : ''}`
             : `${selectedPOS?.toLowerCase()}/${selectedLanguage?.toLowerCase()}`
@@ -48,29 +48,29 @@ const PageDetailsView = ({
       <Separator />
       
       <div>
-        <h3 className="text-xs md:text-sm font-medium text-gray-500 mb-1 md:mb-2">Title</h3>
+        <h3 className="text-[10px] md:text-sm font-medium text-gray-500 mb-1 md:mb-2">Title</h3>
         {isEditing ? (
           <Input 
             value={editedTitle}
             onChange={(e) => setEditedTitle(e.target.value)}
-            className="font-medium text-sm md:text-base"
+            className="font-medium text-xs md:text-base"
           />
         ) : (
-          <div className="text-sm md:text-lg font-medium text-gray-800 dark:text-gray-200 break-words">{pageData.title}</div>
+          <div className="text-xs md:text-lg font-medium text-gray-800 dark:text-gray-200 break-words">{pageData.title}</div>
         )}
       </div>
       
       <div>
-        <h3 className="text-xs md:text-sm font-medium text-gray-500 mb-1 md:mb-2">Content</h3>
+        <h3 className="text-[10px] md:text-sm font-medium text-gray-500 mb-1 md:mb-2">Content</h3>
         {isEditing ? (
           <Textarea 
             value={editedContent}
             onChange={(e) => setEditedContent(e.target.value)}
-            rows={isMobile ? 4 : 6}
-            className="resize-y text-xs md:text-sm"
+            rows={isMobile ? 3 : 6}
+            className="resize-y text-[10px] md:text-sm"
           />
         ) : (
-          <div className="p-2 md:p-4 bg-gray-50 dark:bg-gray-700 rounded-md border border-gray-100 dark:border-gray-600 text-gray-700 dark:text-gray-300 whitespace-pre-wrap text-xs md:text-sm overflow-x-auto">
+          <div className="p-1.5 md:p-4 bg-gray-50 dark:bg-gray-700 rounded-md border border-gray-100 dark:border-gray-600 text-gray-700 dark:text-gray-300 whitespace-pre-wrap text-[9px] md:text-sm overflow-x-auto">
             {pageData.content}
           </div>
         )}
