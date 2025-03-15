@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { FileInfo } from '@/models/FileModel';
 import { Card, CardContent } from '@/components/ui/card';
@@ -7,7 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { FilePreview } from './FilePreview';
-import { Pencil, Save, X, Download, Trash2, FilePdf } from 'lucide-react';
+import { Pencil, Save, X, Download, Trash2, FileText } from 'lucide-react';
 import { formatDate } from '@/lib/date-utils';
 
 interface FileDetailsProps {

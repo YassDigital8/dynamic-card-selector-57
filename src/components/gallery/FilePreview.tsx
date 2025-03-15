@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { FileInfo } from '@/models/FileModel';
-import { FileText, Music, Image, Film, FileType, File, FileCode, FilePdf } from 'lucide-react';
+import { FileText, Music, Image, Film, FileType, File, FileCode, FileIcon } from 'lucide-react';
 
 interface FilePreviewProps {
   file: FileInfo;
@@ -20,7 +20,7 @@ export const FilePreview: React.FC<FilePreviewProps> = ({ file, size = 'md' }) =
     } else if (file.type.startsWith('audio/')) {
       return <Music className={iconClass} />;
     } else if (file.type.includes('pdf')) {
-      return <FilePdf className={iconClass} />;
+      return <FileText className={`${iconClass} text-red-500`} />;
     } else if (file.type.includes('text/')) {
       return <FileText className={iconClass} />;
     } else if (file.type.includes('application/json') || file.type.includes('application/xml')) {
@@ -47,7 +47,7 @@ export const FilePreview: React.FC<FilePreviewProps> = ({ file, size = 'md' }) =
     return (
       <div className="w-full h-full flex items-center justify-center bg-gray-50">
         <div className="w-full h-full flex flex-col items-center justify-center">
-          <FilePdf className="h-16 w-16 text-red-500 mb-2" />
+          <FileText className="h-16 w-16 text-red-500 mb-2" />
           <span className="text-sm text-gray-500">PDF Document</span>
         </div>
       </div>

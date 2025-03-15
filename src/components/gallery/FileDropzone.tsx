@@ -1,8 +1,7 @@
-
 import React, { useState, useRef } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Upload, FileText, FilePdf, FileImage, Music, Video, File } from 'lucide-react';
+import { Upload, FileText, FileImage, Music, Video, File } from 'lucide-react';
 
 interface FileDropzoneProps {
   onFileSelected: (file: File) => void;
@@ -61,7 +60,7 @@ export const FileDropzone: React.FC<FileDropzoneProps> = ({
     } else if (fileType.startsWith('audio/')) {
       return <Music className="h-8 w-8 text-green-500" />;
     } else if (fileType.includes('pdf')) {
-      return <FilePdf className="h-8 w-8 text-red-500" />;
+      return <FileText className="h-8 w-8 text-red-500" />;
     } else if (fileType.includes('text/')) {
       return <FileText className="h-8 w-8 text-amber-500" />;
     } else {
