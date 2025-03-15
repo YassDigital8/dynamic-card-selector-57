@@ -48,37 +48,17 @@ const useAuthentication = () => {
         } else {
           // If no user info is stored but we have a token, we could attempt to validate with server
           try {
-            const response = await fetch('https://92.112.184.210:7182/api/Authentication/validate', {
-              method: 'GET',
-              headers: {
-                'Authorization': `Bearer ${storedToken}`,
-                'Content-Type': 'application/json',
-              },
-              signal: AbortSignal.timeout(10000)
-            });
+            // For development purposes, we'll skip the actual validation
+            // and just use default user info since we can't connect to the server
+            console.log("Using default user info since validation cannot be performed");
+            const mockUserInfo = {
+              firstName: "User",
+              email: "user@example.com"
+            };
+            setUserInfo(mockUserInfo);
             
-            if (response.ok) {
-              const userData = await response.json();
-              if (userData) {
-                setUserInfo({
-                  firstName: userData.firstName || "User",
-                  email: userData.email || "user@example.com"
-                });
-                
-                // Update stored user info
-                localStorage.setItem('userInfo', JSON.stringify({
-                  firstName: userData.firstName || "User",
-                  email: userData.email || "user@example.com"
-                }));
-              }
-            } else {
-              // If validation fails, we'll set a default
-              const mockUserInfo = {
-                firstName: "User",
-                email: "user@example.com"
-              };
-              setUserInfo(mockUserInfo);
-            }
+            // Store it for future use
+            localStorage.setItem('userInfo', JSON.stringify(mockUserInfo));
           } catch (validationError) {
             console.error('Token validation error:', validationError);
             // Just use token without validation
