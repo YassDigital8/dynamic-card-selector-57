@@ -50,11 +50,11 @@ const Index = () => {
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <div className="flex items-center justify-between mb-6">
           <TabsList className="bg-gray-100">
-            <TabsTrigger value="pages" className="data-[state=active]:bg-white gap-2">
+            <TabsTrigger value="pages" className="data-[state=active]:bg-white gap-2 text-black dark:text-black">
               <FileText className="h-4 w-4" />
               Pages
             </TabsTrigger>
-            <TabsTrigger value="settings" className="data-[state=active]:bg-white gap-2">
+            <TabsTrigger value="settings" className="data-[state=active]:bg-white gap-2 text-black dark:text-black">
               <Settings className="h-4 w-4" />
               Settings
             </TabsTrigger>

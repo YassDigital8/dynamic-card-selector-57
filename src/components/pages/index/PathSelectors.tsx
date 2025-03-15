@@ -61,9 +61,9 @@ const PathSelectors = ({
     : '';
   
   return (
-    <Card className="shadow-md bg-white">
-      <CardHeader className="bg-blue-50 border-b">
-        <CardTitle className="text-blue-800 flex items-center gap-2">
+    <Card className="shadow-md bg-white dark:bg-gray-800">
+      <CardHeader className="bg-blue-50 dark:bg-blue-900/30 border-b">
+        <CardTitle className="text-blue-800 dark:text-blue-300 flex items-center gap-2">
           <FolderTree className="h-5 w-5" />
           Path Configuration
         </CardTitle>
@@ -79,9 +79,9 @@ const PathSelectors = ({
           >
             <div className="flex items-center gap-2 mb-1">
               <Link className="h-4 w-4 text-blue-500" />
-              <span className="text-sm font-medium text-gray-700">Dynamic URL Path</span>
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Dynamic URL Path</span>
             </div>
-            <div className="bg-gray-50 border border-gray-200 rounded-md p-3 text-sm text-gray-800 font-mono overflow-x-auto">
+            <div className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-md p-3 text-sm text-gray-800 dark:text-gray-200 font-mono overflow-x-auto">
               {dynamicUrl || "URL will appear here as you make selections"}
             </div>
           </motion.div>
@@ -95,7 +95,7 @@ const PathSelectors = ({
             className="mb-6"
           >
             <div className="space-y-2">
-              <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+              <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                 <FolderTree className="h-4 w-4 text-purple-500" />
                 Select Parent Path
               </label>
@@ -103,12 +103,12 @@ const PathSelectors = ({
                 value={selectedSlug}
                 onValueChange={setSelectedSlug}
               >
-                <SelectTrigger className="w-full bg-white hover:border-purple-400 transition-colors">
-                  <SelectValue placeholder="-- Select Parent --" />
+                <SelectTrigger className="w-full bg-white dark:bg-gray-800 hover:border-purple-400 transition-colors text-black dark:text-white">
+                  <SelectValue placeholder="-- Select Parent --" className="text-black dark:text-white" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-white dark:bg-gray-800 text-black dark:text-white">
                   {availableSlugs.map((slug) => (
-                    <SelectItem key={slug} value={slug}>{slug}</SelectItem>
+                    <SelectItem key={slug} value={slug} className="text-black dark:text-white">{slug}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -124,7 +124,7 @@ const PathSelectors = ({
             className="mb-6"
           >
             <div className="space-y-2">
-              <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+              <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                 <FolderDown className="h-4 w-4 text-amber-500" />
                 Select Sub Path
               </label>
@@ -132,12 +132,12 @@ const PathSelectors = ({
                 value={selectedSubSlug}
                 onValueChange={setSelectedSubSlug}
               >
-                <SelectTrigger className="w-full bg-white hover:border-amber-400 transition-colors">
-                  <SelectValue placeholder="-- Select Sub Path --" />
+                <SelectTrigger className="w-full bg-white dark:bg-gray-800 hover:border-amber-400 transition-colors text-black dark:text-white">
+                  <SelectValue placeholder="-- Select Sub Path --" className="text-black dark:text-white" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-white dark:bg-gray-800 text-black dark:text-white">
                   {subSlugs.map((slug) => (
-                    <SelectItem key={slug} value={slug}>{slug}</SelectItem>
+                    <SelectItem key={slug} value={slug} className="text-black dark:text-white">{slug}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>

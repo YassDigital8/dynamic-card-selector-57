@@ -36,7 +36,7 @@ const PageSelectors = ({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         {/* POS Dropdown - Now first */}
         <div className="space-y-2">
-          <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+          <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
             <FolderPlus className="h-4 w-4 text-green-500" />
             Select POS
           </label>
@@ -44,12 +44,12 @@ const PageSelectors = ({
             value={selectedPOS}
             onValueChange={setSelectedPOS}
           >
-            <SelectTrigger className="w-full bg-white hover:border-green-400 transition-colors">
+            <SelectTrigger className="w-full bg-white dark:bg-gray-800 hover:border-green-400 transition-colors text-black dark:text-white">
               <SelectValue placeholder="Select POS" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-white dark:bg-gray-800 text-black dark:text-white">
               {posOptions.map((pos) => (
-                <SelectItem key={pos} value={pos}>{pos}</SelectItem>
+                <SelectItem key={pos} value={pos} className="text-black dark:text-white">{pos}</SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -57,7 +57,7 @@ const PageSelectors = ({
 
         {/* Language Dropdown - Now second */}
         <div className="space-y-2">
-          <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+          <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
             <FileText className="h-4 w-4 text-blue-500" />
             Select Language
           </label>
@@ -65,12 +65,12 @@ const PageSelectors = ({
             value={selectedLanguage}
             onValueChange={setSelectedLanguage}
           >
-            <SelectTrigger className="w-full bg-white hover:border-blue-400 transition-colors">
+            <SelectTrigger className="w-full bg-white dark:bg-gray-800 hover:border-blue-400 transition-colors text-black dark:text-white">
               <SelectValue placeholder="Select language" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-white dark:bg-gray-800 text-black dark:text-white">
               {languageOptions.map((lang) => (
-                <SelectItem key={lang} value={lang}>{lang}</SelectItem>
+                <SelectItem key={lang} value={lang} className="text-black dark:text-white">{lang}</SelectItem>
               ))}
             </SelectContent>
           </Select>
