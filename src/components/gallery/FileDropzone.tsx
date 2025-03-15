@@ -1,20 +1,29 @@
+
 import React, { useState, useRef } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Upload, FileText, FileImage, Music, Video, File } from 'lucide-react';
 
 interface FileDropzoneProps {
-  onFileSelected: (file: File) => void;
+  onFileSelected: (file: File | null) => void;
   selectedFile: File | null;
   filePreview: string | null;
   isImage: boolean;
+  onImageUpload?: (imageUrl: string) => void;
+  accept?: string;
+  maxFiles?: number;
+  className?: string;
 }
 
 export const FileDropzone: React.FC<FileDropzoneProps> = ({
   onFileSelected,
   selectedFile,
   filePreview,
-  isImage
+  isImage,
+  onImageUpload,
+  accept,
+  maxFiles,
+  className
 }) => {
   const [dragActive, setDragActive] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -36,7 +45,19 @@ export const FileDropzone: React.FC<FileDropzoneProps> = ({
     setDragActive(false);
     
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      onFileSelected(e.dataTransfer.files[0]);
+      const file = e.dataTransfer.files[0];
+      onFileSelected(file);
+      
+      // If this is being used for image upload and the onImageUpload prop exists
+      if (onImageUpload && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          if (event.target?.result && typeof event.target.result === 'string') {
+            onImageUpload(event.target.result);
+          }
+        };
+        reader.readAsDataURL(file);
+      }
     }
   };
 
@@ -44,7 +65,19 @@ export const FileDropzone: React.FC<FileDropzoneProps> = ({
     e.preventDefault();
     
     if (e.target.files && e.target.files[0]) {
-      onFileSelected(e.target.files[0]);
+      const file = e.target.files[0];
+      onFileSelected(file);
+      
+      // If this is being used for image upload and the onImageUpload prop exists
+      if (onImageUpload && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          if (event.target?.result && typeof event.target.result === 'string') {
+            onImageUpload(event.target.result);
+          }
+        };
+        reader.readAsDataURL(file);
+      }
     }
   };
 
@@ -69,7 +102,7 @@ export const FileDropzone: React.FC<FileDropzoneProps> = ({
   };
 
   return (
-    <Card>
+    <Card className={className}>
       <CardContent className="p-6">
         <div 
           className={`border-2 border-dashed rounded-lg p-10 text-center ${dragActive ? 'border-primary bg-primary/5' : 'border-gray-300'}`}
@@ -123,6 +156,7 @@ export const FileDropzone: React.FC<FileDropzoneProps> = ({
                 type="file"
                 className="hidden"
                 onChange={handleChange}
+                accept={accept}
               />
             </div>
           )}
