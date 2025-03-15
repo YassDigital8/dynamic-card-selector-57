@@ -33,9 +33,23 @@ export const GalleryList: React.FC<GalleryListProps> = ({
     // Check if we have file type information for this gallery
     const galleryFileTypes = fileTypes[gallery.id] || [];
     
-    // If we know it contains PDFs and no images, show PDF icon
-    if (galleryFileTypes.includes('application/pdf') && !galleryFileTypes.includes('image/')) {
+    // Check for mixed content
+    const hasPdfs = galleryFileTypes.some(type => type === 'application/pdf');
+    const hasImages = galleryFileTypes.some(type => type.startsWith('image/'));
+    
+    // Mixed content (both PDFs and images)
+    if (hasPdfs && hasImages) {
+      return <Images className="w-12 h-12 text-muted-foreground" />;
+    }
+    
+    // Only PDFs
+    if (hasPdfs && !hasImages) {
       return <FileText className="w-12 h-12 text-muted-foreground" />;
+    }
+    
+    // Only images
+    if (hasImages && !hasPdfs) {
+      return <Image className="w-12 h-12 text-muted-foreground" />;
     }
 
     if (gallery.iconName) {
@@ -63,6 +77,22 @@ export const GalleryList: React.FC<GalleryListProps> = ({
     }
 
     return <FolderOpen className="w-12 h-12 text-muted-foreground" />;
+  };
+
+  // Helper to determine the icon for the file count indicator
+  const getFileCountIcon = (galleryId: string) => {
+    const galleryFileTypes = fileTypes[galleryId] || [];
+    
+    const hasPdfs = galleryFileTypes.some(type => type === 'application/pdf');
+    const hasImages = galleryFileTypes.some(type => type.startsWith('image/'));
+    
+    if (hasPdfs && hasImages) {
+      return <Images className="h-4 w-4" />;
+    } else if (hasPdfs) {
+      return <FileText className="h-4 w-4" />;
+    } else {
+      return <Image className="h-4 w-4" />;
+    }
   };
 
   if (galleries.length === 0) {
@@ -107,11 +137,7 @@ export const GalleryList: React.FC<GalleryListProps> = ({
             )}
             <div className="flex items-center justify-between text-xs text-muted-foreground mt-2 pt-2 border-t border-border">
               <div className="flex items-center gap-1">
-                {fileTypes[gallery.id]?.includes('application/pdf') && !fileTypes[gallery.id]?.includes('image/') ? (
-                  <FileText className="h-4 w-4" />
-                ) : (
-                  <Image className="h-4 w-4" />
-                )}
+                {getFileCountIcon(gallery.id)}
                 <span>{gallery.fileCount} files</span>
               </div>
               <span>{formatDate(gallery.createdOn)}</span>
