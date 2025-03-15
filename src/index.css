@@ -102,7 +102,7 @@
   /* Improve form field readability on small screens */
   @media (max-width: 640px) {
     input, select, textarea {
-      @apply text-sm;
+      @apply text-xs;
     }
     
     button {
@@ -158,24 +158,24 @@
   .container, .max-w-6xl, .max-w-full {
     width: 100% !important;
     max-width: 100% !important;
-    padding-left: 0.5rem !important;
-    padding-right: 0.5rem !important;
+    padding-left: 0.25rem !important;
+    padding-right: 0.25rem !important;
     overflow-x: hidden !important;
   }
   
   /* Reduce the size of select triggers */
   .select-trigger {
-    @apply h-7 text-[10px];
+    @apply h-6 text-[10px] py-0 px-1;
   }
   
   /* Make cards more compact */
   .card-content {
-    @apply p-2;
+    @apply p-1;
   }
   
   /* Reduce gap in flex layouts */
   .flex.gap-2, .flex.gap-3, .flex.gap-4 {
-    @apply gap-1;
+    @apply gap-0.5;
   }
   
   /* Better handle long URLs and paths */
@@ -191,6 +191,52 @@
   
   /* Adjust sidebar for mobile */
   .SidebarContent {
-    padding: 0.5rem;
+    padding: 0.25rem;
+  }
+  
+  /* More compact buttons on mobile */
+  button {
+    @apply py-0.5 px-1 text-[10px];
+  }
+  
+  /* More compact card headers and content */
+  .card > .p-6 {
+    @apply p-2;
+  }
+  
+  /* Smaller inputs on mobile */
+  input {
+    @apply h-6 py-0 px-1 text-[10px];
+  }
+  
+  /* Smaller text on mobile */
+  .text-sm {
+    @apply text-[10px];
+  }
+  
+  /* Smaller select dropdown */
+  [data-radix-select-viewport] {
+    @apply p-0.5;
+  }
+}
+
+/* Extra compact mode for very small screens */
+@media (max-width: 375px) {
+  .container, .max-w-6xl, .max-w-full {
+    padding-left: 0.125rem !important;
+    padding-right: 0.125rem !important;
+  }
+  
+  .card-content {
+    @apply p-0.5;
+  }
+  
+  .mobile-text-reduced {
+    @apply text-[8px];
+  }
+  
+  /* Stack horizontal layouts */
+  .flex.flex-row {
+    @apply flex-col;
   }
 }

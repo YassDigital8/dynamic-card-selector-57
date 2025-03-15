@@ -1,7 +1,7 @@
 
 import * as React from "react"
 
-const MOBILE_BREAKPOINT = 768
+const MOBILE_BREAKPOINT = 640 // Changed from 768 to 640 to match Tailwind's sm breakpoint
 
 export function useIsMobile() {
   const [isMobile, setIsMobile] = React.useState<boolean>(() => {
@@ -37,6 +37,11 @@ export function useIsMobile() {
       window.removeEventListener("resize", handleResize)
     }
   }, [])
+
+  // Add a console log to help with debugging
+  React.useEffect(() => {
+    console.log(`Current device mode: ${isMobile ? 'Mobile' : 'Desktop'}`);
+  }, [isMobile]);
 
   return isMobile
 }
