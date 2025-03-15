@@ -32,7 +32,9 @@ export const EditGalleryDialog: React.FC<EditGalleryDialogProps> = ({
   const [description, setDescription] = useState(gallery?.description || '');
   const [coverImage, setCoverImage] = useState<string | undefined>(gallery?.coverImageUrl);
   const [selectedIconName, setSelectedIconName] = useState<string | undefined>(gallery?.iconName);
-  const [coverImageSource, setCoverImageSource] = useState<'upload' | 'icon' | 'gallery'>('upload');
+  const [coverImageSource, setCoverImageSource] = useState<'upload' | 'icon' | 'gallery'>(
+    gallery?.coverImageUrl ? 'upload' : gallery?.iconName ? 'icon' : 'upload'
+  );
   
   // Use the file selection hook for cover image upload
   const { selectedFile, filePreview, isImage, handleFile, resetFileSelection } = useFileSelection();
@@ -63,14 +65,22 @@ export const EditGalleryDialog: React.FC<EditGalleryDialogProps> = ({
     
     if (!gallery) return;
     
-    onUpdateGallery({
+    // Create updated gallery object based on the selected source
+    const updatedGallery = {
       ...gallery,
       name,
-      description,
-      coverImageUrl: coverImageSource === 'upload' ? coverImage : undefined,
-      iconName: coverImageSource === 'icon' ? selectedIconName : undefined
-    });
+      description: description || undefined,
+    };
     
+    if (coverImageSource === 'upload' || coverImageSource === 'gallery') {
+      updatedGallery.coverImageUrl = coverImage;
+      updatedGallery.iconName = undefined;
+    } else if (coverImageSource === 'icon') {
+      updatedGallery.iconName = selectedIconName;
+      updatedGallery.coverImageUrl = undefined;
+    }
+    
+    onUpdateGallery(updatedGallery);
     onOpenChange(false);
   };
 
@@ -83,6 +93,7 @@ export const EditGalleryDialog: React.FC<EditGalleryDialogProps> = ({
   
   // Handle icon selection
   const handleIconSelect = (iconName: string) => {
+    console.log("Icon selected:", iconName);
     setSelectedIconName(iconName);
     setCoverImage(undefined);
     setCoverImageSource('icon');
@@ -139,7 +150,7 @@ export const EditGalleryDialog: React.FC<EditGalleryDialogProps> = ({
           <div className="space-y-2">
             <Label>Cover Image</Label>
             
-            <Tabs defaultValue={coverImageSource} onValueChange={(value) => setCoverImageSource(value as any)}>
+            <Tabs value={coverImageSource} onValueChange={(value) => setCoverImageSource(value as any)}>
               <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="upload" className="flex items-center gap-2">
                   <Upload className="h-4 w-4" />
@@ -184,7 +195,10 @@ export const EditGalleryDialog: React.FC<EditGalleryDialogProps> = ({
               </TabsContent>
               
               <TabsContent value="icon" className="mt-4">
-                <IconSelector selectedIcon={selectedIconName} onSelectIcon={handleIconSelect} />
+                <IconSelector 
+                  selectedIcon={selectedIconName} 
+                  onSelectIcon={handleIconSelect} 
+                />
               </TabsContent>
               
               <TabsContent value="gallery" className="mt-4">

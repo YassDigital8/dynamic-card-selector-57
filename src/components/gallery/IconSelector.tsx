@@ -34,8 +34,8 @@ export const IconSelector: React.FC<IconSelectorProps> = ({ selectedIcon, onSele
         return (
           <Card 
             key={icon.name}
-            className={`cursor-pointer transition-all p-2 hover:bg-muted ${
-              selectedIcon === icon.name ? 'ring-2 ring-primary' : ''
+            className={`cursor-pointer transition-all hover:bg-muted ${
+              selectedIcon === icon.name ? 'ring-2 ring-primary bg-primary/10' : ''
             }`}
             onClick={() => onSelectIcon(icon.name)}
           >
