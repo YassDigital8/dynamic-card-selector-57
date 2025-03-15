@@ -126,6 +126,27 @@ export const useGalleryViewModel = () => {
     }
   };
 
+  const handleDeleteFile = (fileToDelete: FileInfo) => {
+    // Remove the file from the files array
+    setFiles(prevFiles => 
+      prevFiles.filter(file => file.id !== fileToDelete.id)
+    );
+    
+    // Update the file count in the gallery
+    setGalleries(prevGalleries => 
+      prevGalleries.map(gallery => 
+        gallery.id === fileToDelete.galleryId 
+          ? { ...gallery, fileCount: Math.max(0, gallery.fileCount - 1) } 
+          : gallery
+      )
+    );
+    
+    // If the deleted file was the selected file, clear the selection
+    if (selectedFile?.id === fileToDelete.id) {
+      setSelectedFile(null);
+    }
+  };
+
   return {
     activeTab,
     setActiveTab,
@@ -141,6 +162,7 @@ export const useGalleryViewModel = () => {
     handleCreateGallery,
     handleViewFile,
     handleSelectGallery,
-    handleUpdateGallery
+    handleUpdateGallery,
+    handleDeleteFile
   };
 };

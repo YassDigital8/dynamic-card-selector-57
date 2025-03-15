@@ -5,9 +5,10 @@ import { GalleryList } from './GalleryList';
 import { UploadComponent } from './UploadComponent';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { Plus, Edit, ArrowLeft } from 'lucide-react';
+import { Plus, Edit, ArrowLeft, Trash2 } from 'lucide-react';
 import { EditGalleryDialog } from './EditGalleryDialog';
 import { FileList } from './FileList';
+import { useToast } from '@/hooks/use-toast';
 
 interface GalleryTabContentProps {
   activeTab: string;
@@ -21,6 +22,7 @@ interface GalleryTabContentProps {
   onFileUploaded: (file: FileInfo) => void;
   onViewFile: (file: FileInfo) => void;
   onUpdateGallery: (gallery: Gallery) => void;
+  onDeleteFile?: (file: FileInfo) => void;
 }
 
 export const GalleryTabContent: React.FC<GalleryTabContentProps> = ({
@@ -34,9 +36,11 @@ export const GalleryTabContent: React.FC<GalleryTabContentProps> = ({
   onSelectGallery,
   onFileUploaded,
   onViewFile,
-  onUpdateGallery
+  onUpdateGallery,
+  onDeleteFile
 }) => {
   const [isEditGalleryOpen, setIsEditGalleryOpen] = useState(false);
+  const { toast } = useToast();
   
   const filteredFiles = selectedGallery
     ? files.filter(file => file.galleryId === selectedGallery.id)
@@ -61,6 +65,23 @@ export const GalleryTabContent: React.FC<GalleryTabContentProps> = ({
     
     // Switch to browse tab
     setActiveTab('browse');
+  };
+
+  // Handler for deleting a file
+  const handleDeleteFile = (file: FileInfo) => {
+    if (onDeleteFile) {
+      onDeleteFile(file);
+      
+      // Show a toast notification for successful deletion
+      toast({
+        description: (
+          <div className="flex items-center gap-2">
+            <Trash2 className="h-4 w-4 text-destructive" />
+            <span>File deleted successfully</span>
+          </div>
+        ),
+      });
+    }
   };
 
   return (
@@ -129,6 +150,7 @@ export const GalleryTabContent: React.FC<GalleryTabContentProps> = ({
             <FileList 
               files={filteredFiles}
               onViewFile={onViewFile}
+              onDeleteFile={handleDeleteFile}
             />
           ) : (
             <div className="flex flex-col items-center justify-center p-12 border rounded-md">
