@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { FileInfo } from '@/models/FileModel';
 import { Card, CardContent } from '@/components/ui/card';
@@ -127,12 +126,6 @@ export const FileList: React.FC<FileListProps> = ({ files, onViewFile, onDeleteF
               <DialogTitle className="text-xl font-semibold">
                 {previewFile.metadata?.title || previewFile.name}
               </DialogTitle>
-              
-              <div className="flex items-end justify-end">
-                <Button variant="ghost" size="icon" onClick={closePreview}>
-                  <X className="h-5 w-5" />
-                </Button>
-              </div>
               
               <div className="bg-muted rounded-md max-h-[50vh] flex items-center justify-center overflow-hidden">
                 <FilePreview file={previewFile} size="lg" />
