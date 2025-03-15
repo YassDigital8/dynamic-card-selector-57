@@ -30,36 +30,53 @@ interface AddPageDialogProps {
   onOpenChange: (open: boolean) => void;
   pos: string;
   language: string;
+  selectedSlug: string;
+  selectedSubSlug: string;
   onAddPage: (pageData: AddPageFormValues) => Promise<void>;
 }
 
 const formSchema = z.object({
-  pageUrlName: z.string().min(1, "Page URL is required"),
   title: z.string().min(1, "Title is required"),
   description: z.string().min(1, "Description is required"),
 });
 
-export type AddPageFormValues = z.infer<typeof formSchema>;
+export type AddPageFormValues = z.infer<typeof formSchema> & { pageUrlName: string };
 
-const AddPageDialog = ({ open, onOpenChange, pos, language, onAddPage }: AddPageDialogProps) => {
+const AddPageDialog = ({ 
+  open, 
+  onOpenChange, 
+  pos, 
+  language, 
+  selectedSlug,
+  selectedSubSlug,
+  onAddPage 
+}: AddPageDialogProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const form = useForm<AddPageFormValues>({
+  // Generate URL path from selected dropdowns
+  const generatedUrlPath = selectedSlug && selectedSubSlug 
+    ? `${selectedSlug}/${selectedSubSlug}` 
+    : selectedSlug || '';
+
+  const form = useForm<Omit<AddPageFormValues, 'pageUrlName'>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      pageUrlName: '',
       title: '',
       description: '',
     },
   });
 
-  const handleSubmit = async (values: AddPageFormValues) => {
+  const handleSubmit = async (values: Omit<AddPageFormValues, 'pageUrlName'>) => {
     setIsSubmitting(true);
     setError(null);
     
     try {
-      await onAddPage(values);
+      // Include the generated URL path in the submitted data
+      await onAddPage({
+        ...values, 
+        pageUrlName: generatedUrlPath
+      });
       form.reset();
       onOpenChange(false);
     } catch (err) {
@@ -87,22 +104,15 @@ const AddPageDialog = ({ open, onOpenChange, pos, language, onAddPage }: AddPage
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="pageUrlName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Page URL Path</FormLabel>
-                  <FormControl>
-                    <Input 
-                      placeholder="parent/subparent/slug" 
-                      {...field} 
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="mb-4">
+              <FormLabel>Page URL Path</FormLabel>
+              <div className="p-3 bg-gray-50 border rounded-md text-gray-700">
+                {generatedUrlPath || "Please select parent and subparent paths"}
+              </div>
+              <p className="text-xs text-gray-500 mt-1">
+                This path is automatically generated from your selected options.
+              </p>
+            </div>
 
             <FormField
               control={form.control}
@@ -148,7 +158,11 @@ const AddPageDialog = ({ open, onOpenChange, pos, language, onAddPage }: AddPage
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={isSubmitting}>
+              <Button 
+                type="submit" 
+                disabled={isSubmitting || !generatedUrlPath}
+                className="bg-blue-800 hover:bg-blue-900"
+              >
                 {isSubmitting ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />

@@ -293,6 +293,8 @@ const Index = () => {
         onOpenChange={setAddPageDialogOpen}
         pos={selectedPOS}
         language={selectedLanguage}
+        selectedSlug={selectedSlug}
+        selectedSubSlug={selectedSubSlug}
         onAddPage={handleAddPage}
       />
     </div>
