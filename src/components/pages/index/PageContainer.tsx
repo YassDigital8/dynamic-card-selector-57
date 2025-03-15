@@ -22,6 +22,7 @@ import {
   Settings, 
   Users, 
   HelpCircle,
+  Image
 } from 'lucide-react';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { Logo } from '@/components/ui/logo';
@@ -89,6 +90,19 @@ const PageContainer: React.FC<PageContainerProps> = ({ children }) => {
                       >
                         <FileText className="h-3.5 w-3.5 md:h-4 md:w-4" />
                         <span className="text-xs md:text-sm">Pages</span>
+                      </SidebarMenuButton>
+                    </Link>
+                  </SidebarMenuItem>
+                  
+                  <SidebarMenuItem>
+                    <Link to="/gallery" className="w-full">
+                      <SidebarMenuButton 
+                        tooltip="Gallery" 
+                        isActive={window.location.pathname === '/gallery'}
+                        size={isMobile ? "sm" : "default"}
+                      >
+                        <Image className="h-3.5 w-3.5 md:h-4 md:w-4" />
+                        <span className="text-xs md:text-sm">Gallery</span>
                       </SidebarMenuButton>
                     </Link>
                   </SidebarMenuItem>
