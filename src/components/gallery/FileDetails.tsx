@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { FilePreview } from './FilePreview';
-import { Pencil, Save, X, Download, Trash2 } from 'lucide-react';
+import { Pencil, Save, X, Download, Trash2, FilePdf } from 'lucide-react';
 import { formatDate } from '@/lib/date-utils';
 
 interface FileDetailsProps {
@@ -38,6 +38,7 @@ export const FileDetails: React.FC<FileDetailsProps> = ({ file }) => {
   };
 
   const isImage = file.type.startsWith('image/');
+  const isPdf = file.type.includes('pdf');
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -50,7 +51,7 @@ export const FileDetails: React.FC<FileDetailsProps> = ({ file }) => {
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
               <span className="text-gray-500">File name:</span>
-              <span className="font-medium">{file.name}</span>
+              <span className="font-medium overflow-hidden text-ellipsis">{file.name}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-500">File type:</span>

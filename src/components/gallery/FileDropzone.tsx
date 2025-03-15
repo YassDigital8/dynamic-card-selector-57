@@ -2,7 +2,7 @@
 import React, { useState, useRef } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Upload, FileText } from 'lucide-react';
+import { Upload, FileText, FilePdf, FileImage, Music, Video, File } from 'lucide-react';
 
 interface FileDropzoneProps {
   onFileSelected: (file: File) => void;
@@ -49,6 +49,26 @@ export const FileDropzone: React.FC<FileDropzoneProps> = ({
     }
   };
 
+  const getFileIcon = () => {
+    if (!selectedFile) return <Upload className="h-8 w-8 text-gray-400" />;
+    
+    const fileType = selectedFile.type;
+    
+    if (fileType.startsWith('image/')) {
+      return <FileImage className="h-8 w-8 text-blue-500" />;
+    } else if (fileType.startsWith('video/')) {
+      return <Video className="h-8 w-8 text-purple-500" />;
+    } else if (fileType.startsWith('audio/')) {
+      return <Music className="h-8 w-8 text-green-500" />;
+    } else if (fileType.includes('pdf')) {
+      return <FilePdf className="h-8 w-8 text-red-500" />;
+    } else if (fileType.includes('text/')) {
+      return <FileText className="h-8 w-8 text-amber-500" />;
+    } else {
+      return <File className="h-8 w-8 text-gray-500" />;
+    }
+  };
+
   return (
     <Card>
       <CardContent className="p-6">
@@ -62,7 +82,7 @@ export const FileDropzone: React.FC<FileDropzoneProps> = ({
           {selectedFile ? (
             <div className="space-y-4">
               <div className="flex flex-col items-center justify-center">
-                {filePreview ? (
+                {filePreview && isImage ? (
                   <div className="mb-4 max-w-xs max-h-64 overflow-hidden">
                     <img
                       src={filePreview}
@@ -72,7 +92,7 @@ export const FileDropzone: React.FC<FileDropzoneProps> = ({
                   </div>
                 ) : (
                   <div className="mb-4 w-16 h-16 flex items-center justify-center bg-gray-100 rounded-lg">
-                    <FileText className="h-8 w-8 text-gray-400" />
+                    {getFileIcon()}
                   </div>
                 )}
                 <p className="font-medium">{selectedFile.name}</p>
