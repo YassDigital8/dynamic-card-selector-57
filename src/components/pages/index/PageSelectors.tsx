@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
+import { PlusCircle } from 'lucide-react';
 
 interface PageSelectorsProps {
   posOptions: string[];
@@ -14,6 +15,7 @@ interface PageSelectorsProps {
   setSelectedLanguage: (value: string) => void;
   loading: boolean;
   handleGetPages: () => void;
+  onAddPageClick?: () => void;
 }
 
 const fadeInVariants = {
@@ -32,7 +34,8 @@ const PageSelectors = ({
   setSelectedPOS,
   setSelectedLanguage,
   loading,
-  handleGetPages
+  handleGetPages,
+  onAddPageClick
 }: PageSelectorsProps) => {
   return (
     <>
@@ -76,13 +79,22 @@ const PageSelectors = ({
         </div>
       </div>
 
-      <div className="mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
         <Button 
           onClick={handleGetPages}
           className="w-full bg-blue-600 hover:bg-blue-700 text-white transition-all"
           disabled={loading || !selectedPOS || !selectedLanguage}
         >
           {loading ? 'Processing...' : 'Get Pages'}
+        </Button>
+        
+        <Button 
+          onClick={onAddPageClick}
+          className="w-full bg-green-600 hover:bg-green-700 text-white transition-all"
+          disabled={loading || !selectedPOS || !selectedLanguage}
+        >
+          <PlusCircle className="mr-2 h-4 w-4" />
+          Add Page
         </Button>
       </div>
     </>

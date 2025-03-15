@@ -10,6 +10,8 @@ import LoadingScreen from '@/components/pages/index/LoadingScreen';
 import PageSelectors from '@/components/pages/index/PageSelectors';
 import PathSelectors from '@/components/pages/index/PathSelectors';
 import PageData from '@/components/pages/index/PageData';
+import AddPageDialog from '@/components/pages/index/AddPageDialog';
+import { AddPageFormValues } from '@/components/pages/index/AddPageDialog';
 
 const Index = () => {
   const [loading, setLoading] = useState(true);
@@ -20,6 +22,7 @@ const Index = () => {
   const [subSlugs, setSubSlugs] = useState<string[]>([]);
   const [selectedSubSlug, setSelectedSubSlug] = useState('');
   const [pageData, setPageData] = useState<any>(null);
+  const [addPageDialogOpen, setAddPageDialogOpen] = useState(false);
   const { toast } = useToast();
   
   const posOptions = ['SY', 'UAE', 'KWI'];
@@ -127,6 +130,61 @@ const Index = () => {
     fetchPageData();
   };
 
+  const handleAddPage = async (formValues: AddPageFormValues) => {
+    setLoading(true);
+    try {
+      const apiUrl = 'https://92.112.184.210:7036/Page';
+      
+      const pageData = {
+        pageUrlName: formValues.pageUrlName,
+        language: selectedLanguage,
+        pos: selectedPOS.toLowerCase(),
+        title: formValues.title,
+        description: formValues.description
+      };
+      
+      console.log('Sending page data:', pageData);
+      
+      // Using mock response until SSL certificate is fixed
+      // In production, uncomment this code:
+      /*
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(pageData),
+      });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Failed to create page: ${response.status} ${errorText}`);
+      }
+      */
+      
+      // Simulate success response
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      toast({
+        title: "Success",
+        description: `Page "${formValues.title}" created successfully (mock)`,
+      });
+      
+      // Refresh the list of pages
+      fetchSlugs();
+    } catch (error) {
+      console.error('Error adding page:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to add page",
+      });
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: { 
@@ -203,6 +261,7 @@ const Index = () => {
                 setSelectedLanguage={setSelectedLanguage}
                 loading={loading}
                 handleGetPages={handleGetPages}
+                onAddPageClick={() => setAddPageDialogOpen(true)}
               />
 
               <PathSelectors 
@@ -228,6 +287,14 @@ const Index = () => {
           <p>Authentication module temporarily disabled. Using mock data until SSL certificate is fixed.</p>
         </motion.div>
       </motion.div>
+
+      <AddPageDialog 
+        open={addPageDialogOpen}
+        onOpenChange={setAddPageDialogOpen}
+        pos={selectedPOS}
+        language={selectedLanguage}
+        onAddPage={handleAddPage}
+      />
     </div>
   );
 };
