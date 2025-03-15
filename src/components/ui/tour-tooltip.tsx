@@ -3,7 +3,7 @@ import * as React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "./button";
 import { Card } from "./card";
-import { X } from "lucide-react";
+import { X, MousePointerClick } from "lucide-react";
 
 export interface TourTooltipProps {
   step: number;
@@ -34,12 +34,27 @@ export const TourTooltip: React.FC<TourTooltipProps> = ({
     top: 0,
     left: 0
   });
+  
+  const [highlightPosition, setHighlightPosition] = React.useState({
+    top: 0,
+    left: 0,
+    width: 0,
+    height: 0
+  });
 
   React.useEffect(() => {
     if (targetRef.current && isVisible) {
       const updatePosition = () => {
         const rect = targetRef.current?.getBoundingClientRect();
         if (!rect) return;
+
+        // Update highlight position
+        setHighlightPosition({
+          top: rect.top,
+          left: rect.left,
+          width: rect.width,
+          height: rect.height
+        });
 
         let top = 0;
         let left = 0;
@@ -68,7 +83,12 @@ export const TourTooltip: React.FC<TourTooltipProps> = ({
 
       updatePosition();
       window.addEventListener("resize", updatePosition);
-      return () => window.removeEventListener("resize", updatePosition);
+      window.addEventListener("scroll", updatePosition, true);
+      
+      return () => {
+        window.removeEventListener("resize", updatePosition);
+        window.removeEventListener("scroll", updatePosition, true);
+      };
     }
   }, [targetRef, position, isVisible]);
 
@@ -187,6 +207,40 @@ export const TourTooltip: React.FC<TourTooltipProps> = ({
             // Allow clicking through the backdrop
           }}
         >
+          {/* Highlight effect around the target element */}
+          <motion.div
+            className="absolute rounded-md pointer-events-none"
+            style={{
+              top: highlightPosition.top - 4,
+              left: highlightPosition.left - 4,
+              width: highlightPosition.width + 8,
+              height: highlightPosition.height + 8,
+              boxShadow: "0 0 0 9999px rgba(0, 0, 0, 0.5), 0 0 15px 5px rgba(59, 130, 246, 0.8)",
+              zIndex: 51
+            }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          />
+          
+          {/* Animated cursor pointer */}
+          <motion.div
+            className="absolute z-52 pointer-events-none"
+            style={{
+              top: highlightPosition.top + highlightPosition.height / 2,
+              left: highlightPosition.left + highlightPosition.width / 2,
+            }}
+            initial={{ opacity: 0, x: -50, y: -50 }}
+            animate={{ 
+              opacity: 1,
+              x: 0,
+              y: 0,
+              transition: { duration: 0.8, repeat: Infinity, repeatType: "reverse" }
+            }}
+          >
+            <MousePointerClick className="h-8 w-8 text-white drop-shadow-lg" />
+          </motion.div>
+
           <motion.div
             style={getTooltipStyles()}
             initial="hidden"

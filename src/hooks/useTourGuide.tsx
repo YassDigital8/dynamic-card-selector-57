@@ -5,6 +5,7 @@ interface TourState {
   showTour: boolean;
   currentStep: number;
   completedTours: string[];
+  isActive: boolean;
 }
 
 export const useTourGuide = (tourId: string) => {
@@ -17,7 +18,8 @@ export const useTourGuide = (tourId: string) => {
     return {
       showTour: true,
       currentStep: 0,
-      completedTours: []
+      completedTours: [],
+      isActive: true
     };
   });
 
@@ -27,7 +29,7 @@ export const useTourGuide = (tourId: string) => {
   // Set showTour based on whether this tour has been completed
   useEffect(() => {
     if (!isTourCompleted) {
-      setTourState(prev => ({ ...prev, showTour: true }));
+      setTourState(prev => ({ ...prev, showTour: true, isActive: true }));
     }
   }, [isTourCompleted]);
 
@@ -55,6 +57,7 @@ export const useTourGuide = (tourId: string) => {
       ...prev,
       showTour: false,
       currentStep: 0,
+      isActive: false,
       completedTours: [...prev.completedTours, tourId]
     }));
   };
@@ -64,16 +67,34 @@ export const useTourGuide = (tourId: string) => {
       ...prev,
       showTour: true,
       currentStep: 0,
+      isActive: true,
       completedTours: prev.completedTours.filter(id => id !== tourId)
+    }));
+  };
+
+  const pauseTour = () => {
+    setTourState(prev => ({
+      ...prev,
+      isActive: false
+    }));
+  };
+
+  const resumeTour = () => {
+    setTourState(prev => ({
+      ...prev,
+      isActive: true
     }));
   };
 
   return {
     showTour: tourState.showTour && !isTourCompleted,
     currentStep: tourState.currentStep,
+    isActive: tourState.isActive,
     nextStep,
     prevStep,
     closeTour,
-    resetTour
+    resetTour,
+    pauseTour,
+    resumeTour
   };
 };

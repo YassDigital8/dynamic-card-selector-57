@@ -1,9 +1,9 @@
 
-import React, { useRef } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { TourTooltip } from '@/components/ui/tour-tooltip';
 import { useTourGuide } from '@/hooks/useTourGuide';
 import { Button } from '@/components/ui/button';
-import { HelpCircle } from 'lucide-react';
+import { HelpCircle, Navigation } from 'lucide-react';
 
 interface PagesTourProps {
   pageSelectorsRef: React.RefObject<HTMLDivElement>;
@@ -21,11 +21,37 @@ const PagesTour: React.FC<PagesTourProps> = ({
   const {
     showTour,
     currentStep,
+    isActive,
     nextStep,
     prevStep,
     closeTour,
-    resetTour
+    resetTour,
+    pauseTour,
+    resumeTour
   } = useTourGuide('pages-module-tour');
+  
+  const [interactionSimulation, setInteractionSimulation] = useState(false);
+
+  // Simulate user interaction when moving between steps
+  useEffect(() => {
+    if (showTour && isActive) {
+      const simulateInteraction = async () => {
+        if (currentStep === 1) {
+          // Simulate interaction with POS selectors
+          setInteractionSimulation(true);
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          setInteractionSimulation(false);
+        } else if (currentStep === 2) {
+          // Simulate interaction with page paths
+          setInteractionSimulation(true);
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          setInteractionSimulation(false);
+        }
+      };
+      
+      simulateInteraction();
+    }
+  }, [currentStep, showTour, isActive]);
 
   const tourSteps = [
     {
@@ -33,6 +59,7 @@ const PagesTour: React.FC<PagesTourProps> = ({
       content: (
         <div>
           <p>This tour will guide you through the main features of the Pages management module. Let's get started!</p>
+          <p className="mt-2 text-blue-500 font-medium">You'll see interactive highlights that show you exactly where to click.</p>
         </div>
       ),
       target: tabsRef,
@@ -43,6 +70,7 @@ const PagesTour: React.FC<PagesTourProps> = ({
       content: (
         <div>
           <p>Start by selecting the Point of Sale (POS) and Language. This filters the pages you'll be working with.</p>
+          <p className="mt-2 text-blue-500">{interactionSimulation ? "Watch as we interact with this component!" : "Try clicking on these dropdowns to see available options."}</p>
         </div>
       ),
       target: pageSelectorsRef,
@@ -54,6 +82,7 @@ const PagesTour: React.FC<PagesTourProps> = ({
         <div>
           <p>Once you've selected a POS and Language, you can navigate through available pages using these dropdowns.</p>
           <p className="mt-2">You can also add new pages using the "Add Page" button.</p>
+          <p className="mt-2 text-blue-500">{interactionSimulation ? "Watch as we select different page paths!" : "Try clicking on these dropdowns to navigate through pages."}</p>
         </div>
       ),
       target: pathSelectorsRef,
@@ -65,6 +94,7 @@ const PagesTour: React.FC<PagesTourProps> = ({
         <div>
           <p>This area displays the content of the selected page. You can view and edit the page details here.</p>
           <p className="mt-2">Use the edit button to make changes to the page content.</p>
+          <p className="mt-2 text-green-500 font-medium">Try editing a page to see how it works!</p>
         </div>
       ),
       target: pageDataRef,
@@ -89,18 +119,31 @@ const PagesTour: React.FC<PagesTourProps> = ({
   return (
     <>
       {showTour && currentTourStep ? (
-        <TourTooltip
-          step={currentStep}
-          totalSteps={tourSteps.length}
-          title={currentTourStep.title}
-          content={currentTourStep.content}
-          targetRef={currentTourStep.target}
-          onNext={nextStep}
-          onPrev={prevStep}
-          onClose={closeTour}
-          position={currentTourStep.position}
-          isVisible={showTour}
-        />
+        <>
+          <TourTooltip
+            step={currentStep}
+            totalSteps={tourSteps.length}
+            title={currentTourStep.title}
+            content={currentTourStep.content}
+            targetRef={currentTourStep.target}
+            onNext={nextStep}
+            onPrev={prevStep}
+            onClose={closeTour}
+            position={currentTourStep.position}
+            isVisible={showTour && isActive}
+          />
+          {!isActive && (
+            <Button
+              variant="default"
+              size="sm"
+              className="fixed bottom-4 right-4 flex items-center gap-2 z-40 bg-green-600 hover:bg-green-700"
+              onClick={resumeTour}
+            >
+              <Navigation className="h-4 w-4" />
+              <span>Resume Tour</span>
+            </Button>
+          )}
+        </>
       ) : !showTour && (
         <TourRestartButton />
       )}
