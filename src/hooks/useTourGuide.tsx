@@ -6,6 +6,7 @@ interface TourState {
   currentStep: number;
   completedTours: string[];
   isActive: boolean;
+  needsConfirmation: boolean;
 }
 
 // Helper function to get initial tour state from localStorage
@@ -18,7 +19,8 @@ const getInitialTourState = (): TourState => {
     showTour: true,
     currentStep: 0,
     completedTours: [],
-    isActive: true
+    isActive: true,
+    needsConfirmation: false
   };
 };
 
@@ -49,14 +51,16 @@ export const useTourGuide = (tourId: string) => {
   const nextStep = useCallback(() => {
     setTourState(prev => ({
       ...prev,
-      currentStep: prev.currentStep + 1
+      currentStep: prev.currentStep + 1,
+      needsConfirmation: false
     }));
   }, []);
 
   const prevStep = useCallback(() => {
     setTourState(prev => ({
       ...prev,
-      currentStep: Math.max(0, prev.currentStep - 1)
+      currentStep: Math.max(0, prev.currentStep - 1),
+      needsConfirmation: false
     }));
   }, []);
 
@@ -67,6 +71,7 @@ export const useTourGuide = (tourId: string) => {
       showTour: false,
       currentStep: 0,
       isActive: false,
+      needsConfirmation: false,
       completedTours: [...prev.completedTours, tourId]
     }));
   }, [tourId]);
@@ -77,6 +82,7 @@ export const useTourGuide = (tourId: string) => {
       showTour: true,
       currentStep: 0,
       isActive: true,
+      needsConfirmation: false,
       completedTours: prev.completedTours.filter(id => id !== tourId)
     }));
   }, [tourId]);
@@ -96,15 +102,33 @@ export const useTourGuide = (tourId: string) => {
     }));
   }, []);
 
+  // New confirmation action
+  const requireConfirmation = useCallback(() => {
+    setTourState(prev => ({
+      ...prev,
+      needsConfirmation: true
+    }));
+  }, []);
+
+  const confirmStep = useCallback(() => {
+    setTourState(prev => ({
+      ...prev,
+      needsConfirmation: false
+    }));
+  }, []);
+
   return {
     showTour: tourState.showTour && !isTourCompleted,
     currentStep: tourState.currentStep,
     isActive: tourState.isActive,
+    needsConfirmation: tourState.needsConfirmation,
     nextStep,
     prevStep,
     closeTour,
     resetTour,
     pauseTour,
-    resumeTour
+    resumeTour,
+    requireConfirmation,
+    confirmStep
   };
 };

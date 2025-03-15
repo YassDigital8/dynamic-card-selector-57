@@ -21,6 +21,16 @@ export const TourHighlight: React.FC<TourHighlightProps> = ({
 
   return (
     <>
+      {/* Cutout effect - transparent area where the highlight will be */}
+      <div 
+        className="fixed inset-0 z-51 pointer-events-none" 
+        style={{
+          backgroundColor: 'transparent',
+          maskImage: `radial-gradient(circle at ${position.left + position.width/2}px ${position.top + position.height/2}px, transparent ${Math.max(position.width, position.height) * 0.5}px, black ${Math.max(position.width, position.height) * 0.5 + 10}px)`,
+          WebkitMaskImage: `radial-gradient(circle at ${position.left + position.width/2}px ${position.top + position.height/2}px, transparent ${Math.max(position.width, position.height) * 0.5}px, black ${Math.max(position.width, position.height) * 0.5 + 10}px)`
+        }}
+      />
+      
       {/* Highlight effect around the target element */}
       <motion.div
         className="absolute rounded-md pointer-events-none"
@@ -29,11 +39,21 @@ export const TourHighlight: React.FC<TourHighlightProps> = ({
           left: position.left - 4,
           width: position.width + 8,
           height: position.height + 8,
-          boxShadow: "0 0 0 9999px rgba(0, 0, 0, 0.5), 0 0 15px 5px rgba(59, 130, 246, 0.8)",
-          zIndex: 51
+          boxShadow: "0 0 0 4px rgba(59, 130, 246, 0.8)",
+          zIndex: 52
         }}
         initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
+        animate={{ 
+          opacity: 1,
+          boxShadow: ["0 0 0 4px rgba(59, 130, 246, 0.4)", "0 0 0 4px rgba(59, 130, 246, 0.8)"],
+          transition: {
+            boxShadow: {
+              duration: 1.5,
+              repeat: Infinity,
+              repeatType: "reverse"
+            }
+          }
+        }}
         exit={{ opacity: 0 }}
       />
       

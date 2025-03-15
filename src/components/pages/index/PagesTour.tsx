@@ -22,15 +22,25 @@ const PagesTour: React.FC<PagesTourProps> = ({
     showTour,
     currentStep,
     isActive,
+    needsConfirmation,
     nextStep,
     prevStep,
     closeTour,
     resetTour,
     pauseTour,
-    resumeTour
+    resumeTour,
+    requireConfirmation,
+    confirmStep
   } = useTourGuide('pages-module-tour');
   
   const [interactionSimulation, setInteractionSimulation] = useState(false);
+
+  // Effect to require user confirmation on steps that need extra attention
+  useEffect(() => {
+    if (showTour && isActive && [1, 2].includes(currentStep) && !needsConfirmation) {
+      requireConfirmation();
+    }
+  }, [showTour, isActive, currentStep, needsConfirmation, requireConfirmation]);
 
   // Simulate user interaction when moving between steps
   useEffect(() => {
@@ -60,6 +70,7 @@ const PagesTour: React.FC<PagesTourProps> = ({
         <div>
           <p>This tour will guide you through the main features of the Pages management module. Let's get started!</p>
           <p className="mt-2 text-blue-500 font-medium">You'll see interactive highlights that show you exactly where to click.</p>
+          <p className="mt-2 text-orange-500">For some steps, you'll need to confirm your understanding by clicking the "I Understand" button.</p>
         </div>
       ),
       target: tabsRef,
@@ -71,6 +82,7 @@ const PagesTour: React.FC<PagesTourProps> = ({
         <div>
           <p>Start by selecting the Point of Sale (POS) and Language. This filters the pages you'll be working with.</p>
           <p className="mt-2 text-blue-500">{interactionSimulation ? "Watch as we interact with this component!" : "Try clicking on these dropdowns to see available options."}</p>
+          <p className="mt-2 text-red-500 font-medium">This is an important step! You must select both a POS and Language before proceeding.</p>
         </div>
       ),
       target: pageSelectorsRef,
@@ -83,6 +95,7 @@ const PagesTour: React.FC<PagesTourProps> = ({
           <p>Once you've selected a POS and Language, you can navigate through available pages using these dropdowns.</p>
           <p className="mt-2">You can also add new pages using the "Add Page" button.</p>
           <p className="mt-2 text-blue-500">{interactionSimulation ? "Watch as we select different page paths!" : "Try clicking on these dropdowns to navigate through pages."}</p>
+          <p className="mt-2 text-red-500 font-medium">Please confirm you understand how to navigate page paths before continuing.</p>
         </div>
       ),
       target: pathSelectorsRef,
@@ -131,6 +144,8 @@ const PagesTour: React.FC<PagesTourProps> = ({
             onClose={closeTour}
             position={currentTourStep.position}
             isVisible={showTour && isActive}
+            needsConfirmation={needsConfirmation}
+            onConfirm={confirmStep}
           />
           {!isActive && (
             <Button

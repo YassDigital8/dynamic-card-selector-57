@@ -2,7 +2,7 @@
 import React from "react";
 import { Button } from "../button";
 import { Card } from "../card";
-import { X } from "lucide-react";
+import { X, CheckCircle } from "lucide-react";
 
 interface TourContentProps {
   step: number;
@@ -12,6 +12,8 @@ interface TourContentProps {
   onNext: () => void;
   onPrev: () => void;
   onClose: () => void;
+  needsConfirmation?: boolean;
+  onConfirm?: () => void;
 }
 
 export const TourContent: React.FC<TourContentProps> = ({
@@ -21,10 +23,12 @@ export const TourContent: React.FC<TourContentProps> = ({
   content,
   onNext,
   onPrev,
-  onClose
+  onClose,
+  needsConfirmation = false,
+  onConfirm
 }) => {
   return (
-    <Card className="bg-white dark:bg-gray-900 shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+    <Card className="bg-white dark:bg-gray-900 shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden w-full max-w-md">
       <div className="relative">
         <Button
           variant="ghost"
@@ -41,6 +45,15 @@ export const TourContent: React.FC<TourContentProps> = ({
           <div className="text-gray-600 dark:text-gray-300 text-sm">
             {content}
           </div>
+          
+          {needsConfirmation && (
+            <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/30 border border-blue-100 dark:border-blue-800 rounded-md">
+              <p className="text-blue-700 dark:text-blue-300 text-sm font-medium flex items-center gap-2">
+                <CheckCircle size={16} className="text-blue-500" />
+                Please confirm you understand this step before continuing
+              </p>
+            </div>
+          )}
         </div>
         <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
           <div className="text-sm text-gray-500 dark:text-gray-400">
@@ -56,22 +69,35 @@ export const TourContent: React.FC<TourContentProps> = ({
                 Previous
               </Button>
             )}
-            {step < totalSteps - 1 ? (
+            {needsConfirmation ? (
               <Button
                 variant="default"
                 size="sm"
-                onClick={onNext}
+                onClick={onConfirm}
+                className="bg-green-600 hover:bg-green-700"
               >
-                Next
+                I Understand
               </Button>
             ) : (
-              <Button
-                variant="default"
-                size="sm"
-                onClick={onClose}
-              >
-                Finish
-              </Button>
+              <>
+                {step < totalSteps - 1 ? (
+                  <Button
+                    variant="default"
+                    size="sm"
+                    onClick={onNext}
+                  >
+                    Next
+                  </Button>
+                ) : (
+                  <Button
+                    variant="default"
+                    size="sm"
+                    onClick={onClose}
+                  >
+                    Finish
+                  </Button>
+                )}
+              </>
             )}
           </div>
         </div>

@@ -22,6 +22,8 @@ export interface TourTooltipProps {
   onClose: () => void;
   position?: "top" | "bottom" | "left" | "right";
   isVisible: boolean;
+  needsConfirmation?: boolean;
+  onConfirm?: () => void;
 }
 
 export const TourTooltip: React.FC<TourTooltipProps> = ({
@@ -34,7 +36,9 @@ export const TourTooltip: React.FC<TourTooltipProps> = ({
   onPrev,
   onClose,
   position = "bottom",
-  isVisible
+  isVisible,
+  needsConfirmation = false,
+  onConfirm
 }) => {
   const [tooltipPosition, setTooltipPosition] = React.useState<TooltipPosition>({
     top: 0,
@@ -90,13 +94,16 @@ export const TourTooltip: React.FC<TourTooltipProps> = ({
     <AnimatePresence>
       {isVisible && (
         <motion.div
-          className="fixed inset-0 bg-black/20 backdrop-blur-sm z-50 pointer-events-auto"
+          className="fixed inset-0 bg-black/30 z-50 pointer-events-auto"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={(e) => {
             e.stopPropagation();
-            // Allow clicking through the backdrop
+            // Allow clicking through the backdrop only if we don't need confirmation
+            if (!needsConfirmation) {
+              onClose();
+            }
           }}
         >
           <TourHighlight position={highlightPosition} isVisible={isVisible} />
@@ -117,6 +124,8 @@ export const TourTooltip: React.FC<TourTooltipProps> = ({
               onNext={onNext}
               onPrev={onPrev}
               onClose={onClose}
+              needsConfirmation={needsConfirmation}
+              onConfirm={onConfirm}
             />
             <TourArrow position={position} />
           </motion.div>
