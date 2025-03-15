@@ -14,7 +14,8 @@ import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarInset,
-  SidebarGroupContent
+  SidebarGroupContent,
+  SidebarTrigger
 } from '@/components/ui/sidebar';
 import { 
   FileText, 
@@ -24,7 +25,7 @@ import {
 } from 'lucide-react';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { Logo } from '@/components/ui/logo';
-import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface PageContainerProps {
   children: React.ReactNode;
@@ -43,16 +44,21 @@ const fadeInVariants = {
 };
 
 const PageContainer: React.FC<PageContainerProps> = ({ children }) => {
+  const isMobile = useIsMobile();
+  
   return (
-    <SidebarProvider defaultOpen={true}>
+    <SidebarProvider defaultOpen={!isMobile}>
       <div className="flex min-h-screen w-full bg-background text-foreground">
         <Sidebar>
           <SidebarHeader className="border-b border-sidebar-border">
             <div className="flex items-center justify-between px-3 py-4">
               <Link to="/">
-                <Logo showText={true} />
+                <Logo showText={!isMobile} />
               </Link>
-              <ThemeToggle />
+              <div className="flex items-center gap-2">
+                <ThemeToggle />
+                {!isMobile && <SidebarTrigger />}
+              </div>
             </div>
           </SidebarHeader>
           
@@ -110,19 +116,19 @@ const PageContainer: React.FC<PageContainerProps> = ({ children }) => {
         </Sidebar>
         
         <SidebarInset>
-          <div className="p-6 md:p-10">
+          <div className="p-3 sm:p-6 md:p-10">
             <motion.div 
               className="max-w-6xl mx-auto"
               initial="hidden"
               animate="visible"
               variants={fadeInVariants}
             >
-              <div className="flex justify-between items-center mb-8">
-                <div>
-                  <h1 className="text-3xl font-bold text-foreground">Page Navigator</h1>
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-8">
+                <div className="mb-4 md:mb-0">
+                  <h1 className="text-2xl md:text-3xl font-bold text-foreground">Page Navigator</h1>
                   <p className="text-muted-foreground mt-1">Manage pages across different POS and languages</p>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 self-start">
                   <Logo showText={false} className="mr-2" />
                   <span className="text-sm text-primary bg-secondary px-3 py-1 rounded-full">
                     Demo Mode

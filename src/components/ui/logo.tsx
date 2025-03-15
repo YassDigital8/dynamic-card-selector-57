@@ -3,6 +3,7 @@ import React from 'react';
 import { useTheme } from '@/hooks/useTheme';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface LogoProps {
   showText?: boolean;
@@ -11,6 +12,7 @@ interface LogoProps {
 
 export function Logo({ showText = false, className }: LogoProps) {
   const { effectiveTheme } = useTheme();
+  const isMobile = useIsMobile();
   
   return (
     <motion.div 
@@ -20,8 +22,8 @@ export function Logo({ showText = false, className }: LogoProps) {
       transition={{ duration: 0.5 }}
     >
       {showText && (
-        <div className="text-xl font-bold transition-colors duration-300" style={{ color: '#0EA5E9' }}>
-          <span>ADMIN DASHBOARD</span>
+        <div className="text-base md:text-xl font-bold transition-colors duration-300" style={{ color: '#0EA5E9' }}>
+          <span>{isMobile ? "ADMIN" : "ADMIN DASHBOARD"}</span>
         </div>
       )}
     </motion.div>

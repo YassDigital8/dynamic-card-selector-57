@@ -4,6 +4,7 @@ import { Separator } from '@/components/ui/separator';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { PageData } from '@/models/PageModel';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface PageDetailsViewProps {
   pageData: PageData;
@@ -30,11 +31,13 @@ const PageDetailsView = ({
   selectedSlug,
   selectedSubSlug
 }: PageDetailsViewProps) => {
+  const isMobile = useIsMobile();
+  
   return (
     <div className="space-y-6">
       <div>
         <h3 className="text-sm font-medium text-gray-500 mb-2">Page URL</h3>
-        <div className="bg-gray-50 border border-gray-200 rounded-md p-3 text-sm text-gray-800 font-mono overflow-x-auto">
+        <div className={`bg-gray-50 border border-gray-200 rounded-md p-3 text-sm text-gray-800 font-mono overflow-x-auto ${isMobile ? 'text-xs' : ''}`}>
           {selectedSlug 
             ? `${selectedPOS?.toLowerCase()}/${selectedLanguage?.toLowerCase()}/${selectedSlug}${selectedSubSlug ? '/' + selectedSubSlug : ''}`
             : `${selectedPOS?.toLowerCase()}/${selectedLanguage?.toLowerCase()}`
@@ -53,7 +56,7 @@ const PageDetailsView = ({
             className="font-medium"
           />
         ) : (
-          <div className="text-lg font-medium text-gray-800">{pageData.title}</div>
+          <div className="text-base sm:text-lg font-medium text-gray-800 break-words">{pageData.title}</div>
         )}
       </div>
       
@@ -63,11 +66,11 @@ const PageDetailsView = ({
           <Textarea 
             value={editedContent}
             onChange={(e) => setEditedContent(e.target.value)}
-            rows={6}
+            rows={isMobile ? 4 : 6}
             className="resize-y"
           />
         ) : (
-          <div className="p-4 bg-gray-50 rounded-md border border-gray-100 text-gray-700 whitespace-pre-wrap">
+          <div className="p-3 sm:p-4 bg-gray-50 rounded-md border border-gray-100 text-gray-700 whitespace-pre-wrap text-sm sm:text-base overflow-x-auto">
             {pageData.content}
           </div>
         )}
