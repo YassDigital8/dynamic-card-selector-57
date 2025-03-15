@@ -21,6 +21,7 @@ export interface FileInfo {
   uploadedBy: string;
   uploadedOn: string;
   galleryId: string; // Gallery this file belongs to
+  galleryName?: string; // Name of the gallery
   metadata?: FileMetadata;
 }
 

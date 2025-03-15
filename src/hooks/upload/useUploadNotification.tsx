@@ -7,26 +7,15 @@ export const useUploadNotification = () => {
   const { toast } = useToast();
 
   const showUploadSuccessNotification = (fileInfo: FileInfo, fileName: string) => {
+    // Get gallery name using the ID from the fileInfo
+    const galleryName = fileInfo.galleryName || 'Unknown Gallery';
+    
     toast({
       description: (
         <div className="py-1">
-          <div className="flex items-center gap-2 mb-1">
+          <div className="flex items-center gap-2">
             <CheckCircle className="h-4 w-4 text-green-500" />
-            <div>
-              <span className="font-medium">Upload Successful</span>
-              <span className="mx-1.5">·</span>
-              <span className="text-sm text-muted-foreground truncate max-w-[180px] inline-block align-bottom">
-                {fileName}
-              </span>
-            </div>
-          </div>
-          <div>
-            <button 
-              onClick={() => document.dispatchEvent(new CustomEvent('view-uploaded-file', { detail: fileInfo }))}
-              className="text-blue-500 hover:text-blue-600 hover:underline text-sm font-medium transition-colors"
-            >
-              View File
-            </button>
+            <span className="font-medium">Uploaded to: {galleryName}</span>
           </div>
         </div>
       ),

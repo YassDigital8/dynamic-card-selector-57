@@ -1,4 +1,3 @@
-
 import { FileInfo, Gallery } from '@/models/FileModel';
 import { useAuthentication } from '@/hooks/useAuthentication';
 import { useFileSelection } from './upload/useFileSelection';
@@ -71,6 +70,9 @@ export const useFileUpload = ({ onFileUploaded, selectedGalleryId = '', gallerie
     try {
       await new Promise(resolve => setTimeout(resolve, 1500));
       
+      const selectedGallery = galleries.find(g => g.id === targetGalleryId);
+      const galleryName = selectedGallery ? selectedGallery.name : 'Unknown Gallery';
+      
       const fileInfo: FileInfo = {
         id: Date.now().toString(),
         name: selectedFile.name,
@@ -80,6 +82,7 @@ export const useFileUpload = ({ onFileUploaded, selectedGalleryId = '', gallerie
         uploadedBy: userInfo?.email || 'unknown',
         uploadedOn: new Date().toISOString(),
         galleryId: targetGalleryId,
+        galleryName: galleryName,
         metadata: {
           ...metadata
         }
