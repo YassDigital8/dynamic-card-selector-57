@@ -6,16 +6,34 @@ import { Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import EmptyGalleryState from '../EmptyGalleryState';
 import { FilterControls } from '../file-list';
-import { FileInfo } from '@/models/FileModel';
+import { FileInfo, Gallery } from '@/models/FileModel';
 
 interface GalleryBrowseViewProps {
   onOpenUploadDialog: () => void;
   files?: FileInfo[];
+  selectedGallery?: Gallery;
+  onBackToGalleries?: () => void;
+  onAddFiles?: () => void;
+  galleries?: Gallery[];
+  galleryFileTypes?: Record<string, string[]>;
+  onViewFile?: (file: FileInfo) => void;
+  onDeleteFile?: (file: FileInfo) => void;
+  onMoveFile?: (file: FileInfo, toGalleryId: string) => void;
+  onUpdateGallery?: (gallery: Gallery) => void;
 }
 
 const GalleryBrowseView: React.FC<GalleryBrowseViewProps> = ({ 
   onOpenUploadDialog,
-  files = []
+  files = [],
+  selectedGallery,
+  onBackToGalleries,
+  onAddFiles,
+  galleries,
+  galleryFileTypes,
+  onViewFile,
+  onDeleteFile,
+  onMoveFile,
+  onUpdateGallery
 }) => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedType, setSelectedType] = useState<string>('');
