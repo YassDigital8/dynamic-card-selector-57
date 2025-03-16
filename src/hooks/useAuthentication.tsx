@@ -1,99 +1,45 @@
-import { useState, useEffect, useCallback } from 'react';
+
+import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
-
-interface AuthResponse {
-  message: string;
-  isAuthenticated: boolean;
-  email: string;
-  firstName: string;
-  lastName: string | null;
-  token: string;
-  expiresOn: string;
-}
-
-interface UserInfo {
-  firstName: string;
-  email: string;
-}
-
-interface LoginCredentials {
-  email: string;
-  password: string;
-}
-
-// Session duration in milliseconds (1 hour)
-const SESSION_DURATION = 60 * 60 * 1000;
+import { UserInfo, LoginCredentials } from '@/types/auth.types';
+import { loginUser } from '@/services/authService';
+import { useAuthSession } from '@/hooks/useAuthSession';
 
 export const useAuthentication = () => {
   const [authToken, setAuthToken] = useState<string>('');
   const [authLoading, setAuthLoading] = useState<boolean>(true);
   const [authError, setAuthError] = useState<string | null>(null);
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
-  const [sessionExpiresAt, setSessionExpiresAt] = useState<number | null>(null);
-  const [remainingTime, setRemainingTime] = useState<number | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
   
-  // Start session timer
-  const startSessionTimer = useCallback(() => {
-    const expiryTime = Date.now() + SESSION_DURATION;
-    setSessionExpiresAt(expiryTime);
+  // Define logout function here to pass to useAuthSession
+  const logout = () => {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('userInfo');
+    localStorage.removeItem('sessionExpiresAt');
+    setAuthToken('');
+    setUserInfo(null);
     
-    // Store session expiry in localStorage
-    localStorage.setItem('sessionExpiresAt', expiryTime.toString());
-    
-    console.log(`Session started, will expire at ${new Date(expiryTime).toLocaleTimeString()}`);
-  }, []);
-  
-  // Reset session timer (e.g., on user activity)
-  const resetSessionTimer = useCallback(() => {
-    if (authToken) {
-      startSessionTimer();
-      console.log('Session timer reset due to user activity');
-    }
-  }, [authToken, startSessionTimer]);
-  
-  // Handle checking session expiration
-  useEffect(() => {
-    if (!authToken || !sessionExpiresAt) return;
-    
-    const interval = setInterval(() => {
-      const now = Date.now();
-      const timeLeft = sessionExpiresAt - now;
-      
-      if (timeLeft <= 0) {
-        clearInterval(interval);
-        logout();
-        toast({
-          title: "Session Expired",
-          description: "Your session has expired. Please log in again.",
-        });
-      } else {
-        setRemainingTime(timeLeft);
-      }
-    }, 1000);
-    
-    return () => clearInterval(interval);
-  }, [authToken, sessionExpiresAt, toast]);
-  
-  // User activity listener
-  useEffect(() => {
-    if (!authToken) return;
-    
-    const activityEvents = ['mousedown', 'keypress', 'scroll', 'touchstart'];
-    const handleUserActivity = () => resetSessionTimer();
-    
-    activityEvents.forEach(event => {
-      window.addEventListener(event, handleUserActivity);
+    toast({
+      title: "Logged out",
+      description: "You have been successfully logged out",
     });
     
-    return () => {
-      activityEvents.forEach(event => {
-        window.removeEventListener(event, handleUserActivity);
-      });
-    };
-  }, [authToken, resetSessionTimer]);
+    // Redirect to login page after logout
+    navigate('/login', { replace: true });
+  };
+  
+  // Use the session management hook
+  const { 
+    remainingTime, 
+    startSessionTimer, 
+    resetSessionTimer 
+  } = useAuthSession({ 
+    authToken, 
+    logout 
+  });
   
   useEffect(() => {
     const checkAuthentication = async () => {
@@ -129,7 +75,7 @@ export const useAuthentication = () => {
             throw new Error('Session expired');
           } else {
             // Valid session, continue with remaining time
-            setSessionExpiresAt(expiryTime);
+            // setSessionExpiresAt handled in useAuthSession
           }
         } else {
           // No session timer found, start a new one
@@ -168,69 +114,33 @@ export const useAuthentication = () => {
     setAuthError(null);
     
     try {
-      console.log('Attempting to authenticate with:', credentials.email);
+      const authData = await loginUser(credentials);
       
-      // First try the staging URL
-      const authEndpoint = 'https://staging.sa3d.online:7182/api/Authentication/login';
-      console.log('Using authentication endpoint:', authEndpoint);
+      // Store the token and user info
+      localStorage.setItem('authToken', authData.token);
       
-      try {
-        const response = await fetch(authEndpoint, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-          },
-          body: JSON.stringify({
-            email: credentials.email,
-            password: credentials.password
-          }),
-        });
-        
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          throw new Error(errorData.message || `Authentication failed: ${response.status}`);
-        }
-        
-        const authData: AuthResponse = await response.json();
-        
-        if (!authData.token) {
-          throw new Error('Invalid authentication response: no token received');
-        }
-        
-        // Store the token and user info
-        localStorage.setItem('authToken', authData.token);
-        
-        const userInfoToStore = {
-          firstName: authData.firstName,
-          email: authData.email
-        };
-        
-        localStorage.setItem('userInfo', JSON.stringify(userInfoToStore));
-        
-        // Start session timer
-        startSessionTimer();
-        
-        // Update state
-        setAuthToken(authData.token);
-        setUserInfo(userInfoToStore);
-        setAuthLoading(false); // Set loading to false immediately
-        
-        toast({
-          title: "Login successful",
-          description: `Welcome back, ${authData.firstName || authData.email}`,
-        });
-        
-        console.log("Authentication successful, token set");
-        return authData;
-      } catch (fetchError) {
-        // Convert the fetch error to a more specific error
-        if (fetchError instanceof TypeError && fetchError.message.includes('Failed to fetch')) {
-          // This is likely a CORS or certificate issue
-          throw new Error('SSL Certificate Error: The server uses an invalid SSL certificate. If you trust this server, please add an exception in your browser or contact your administrator.');
-        }
-        throw fetchError;
-      }
+      const userInfoToStore = {
+        firstName: authData.firstName,
+        email: authData.email
+      };
+      
+      localStorage.setItem('userInfo', JSON.stringify(userInfoToStore));
+      
+      // Start session timer
+      startSessionTimer();
+      
+      // Update state
+      setAuthToken(authData.token);
+      setUserInfo(userInfoToStore);
+      setAuthLoading(false); // Set loading to false immediately
+      
+      toast({
+        title: "Login successful",
+        description: `Welcome back, ${authData.firstName || authData.email}`,
+      });
+      
+      console.log("Authentication successful, token set");
+      return authData;
     } catch (error) {
       console.error('Login error:', error);
       
@@ -251,24 +161,6 @@ export const useAuthentication = () => {
     } finally {
       setAuthLoading(false);
     }
-  };
-
-  const logout = () => {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('userInfo');
-    localStorage.removeItem('sessionExpiresAt');
-    setAuthToken('');
-    setUserInfo(null);
-    setSessionExpiresAt(null);
-    setRemainingTime(null);
-    
-    toast({
-      title: "Logged out",
-      description: "You have been successfully logged out",
-    });
-    
-    // Redirect to login page after logout
-    navigate('/login', { replace: true });
   };
 
   return { 
