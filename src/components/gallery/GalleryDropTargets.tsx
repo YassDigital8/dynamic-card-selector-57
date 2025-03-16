@@ -2,7 +2,7 @@
 import React from 'react';
 import { Gallery, FileInfo } from '@/models/FileModel';
 import { Card } from '@/components/ui/card';
-import { FolderOpen, Image, FileText, Images } from 'lucide-react';
+import { FolderOpen, Image, FileText, Images, Move } from 'lucide-react';
 import { useDrop, useGlobalDragState } from '@/hooks/gallery/useDragAndDrop';
 import { useToast } from '@/hooks/use-toast';
 
@@ -20,7 +20,7 @@ export const GalleryDropTargets: React.FC<GalleryDropTargetsProps> = ({
   fileTypes
 }) => {
   const { toast } = useToast();
-  const { isDragging, draggedItem, resetDragState } = useGlobalDragState();
+  const { isDragging, draggedItem, cursorPosition, resetDragState } = useGlobalDragState();
 
   // If not dragging, don't render the component
   if (!isDragging) return null;
@@ -62,53 +62,70 @@ export const GalleryDropTargets: React.FC<GalleryDropTargetsProps> = ({
   };
 
   return (
-    <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-background/95 backdrop-blur-sm p-4 rounded-lg shadow-lg border border-border">
-      <h3 className="font-semibold text-center mb-4">Drop into gallery:</h3>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 max-h-[60vh] overflow-y-auto p-2">
-        {galleries
-          .filter(gallery => gallery.id !== currentGalleryId) // Don't show current gallery
-          .map(gallery => {
-            const createDropHandler = (gallery: Gallery) => {
-              return (file: FileInfo) => {
-                if (file.galleryId === gallery.id) {
-                  return; // File is already in this gallery
-                }
-                
-                onMoveFile(file, gallery.id);
-                toast({
-                  description: `File moved to "${gallery.name}" gallery`,
-                });
-                
-                // Explicitly reset the drag state after successful move
-                resetDragState();
-              };
-            };
-
-            const { dropRef, isOver } = useDrop<FileInfo>(createDropHandler(gallery));
-            
-            return (
-              <Card 
-                key={gallery.id} 
-                ref={dropRef}
-                className={`overflow-hidden cursor-pointer transition-all flex items-center p-3 gap-3 ${
-                  isOver ? 'ring-2 ring-primary shadow-lg bg-primary/10' : 'hover:bg-accent'
-                }`}
-              >
-                <div className="flex-shrink-0 w-12 h-12 bg-muted rounded-md flex items-center justify-center overflow-hidden">
-                  {renderGalleryIcon(gallery)}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h4 className="font-medium text-sm truncate" title={gallery.name}>
-                    {gallery.name}
-                  </h4>
-                  <p className="text-xs text-muted-foreground truncate">
-                    {gallery.fileCount} files
-                  </p>
-                </div>
-              </Card>
-            );
-          })}
+    <>
+      {/* Floating cursor icon */}
+      <div 
+        className="fixed z-[100] pointer-events-none"
+        style={{
+          left: `${cursorPosition.x}px`,
+          top: `${cursorPosition.y}px`,
+          transform: 'translate(-50%, -50%)'
+        }}
+      >
+        <div className="bg-primary/20 backdrop-blur-sm rounded-full p-2 flex items-center justify-center shadow-lg">
+          <Move className="h-6 w-6 text-primary animate-pulse" />
+        </div>
       </div>
-    </div>
+
+      {/* Drop targets */}
+      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-background/95 backdrop-blur-sm p-4 rounded-lg shadow-lg border border-border">
+        <h3 className="font-semibold text-center mb-4">Drop into gallery:</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 max-h-[60vh] overflow-y-auto p-2">
+          {galleries
+            .filter(gallery => gallery.id !== currentGalleryId) // Don't show current gallery
+            .map(gallery => {
+              const createDropHandler = (gallery: Gallery) => {
+                return (file: FileInfo) => {
+                  if (file.galleryId === gallery.id) {
+                    return; // File is already in this gallery
+                  }
+                  
+                  onMoveFile(file, gallery.id);
+                  toast({
+                    description: `File moved to "${gallery.name}" gallery`,
+                  });
+                  
+                  // Explicitly reset the drag state after successful move
+                  resetDragState();
+                };
+              };
+
+              const { dropRef, isOver } = useDrop<FileInfo>(createDropHandler(gallery));
+              
+              return (
+                <Card 
+                  key={gallery.id} 
+                  ref={dropRef}
+                  className={`overflow-hidden cursor-pointer transition-all flex items-center p-3 gap-3 ${
+                    isOver ? 'ring-2 ring-primary shadow-lg bg-primary/10' : 'hover:bg-accent'
+                  }`}
+                >
+                  <div className="flex-shrink-0 w-12 h-12 bg-muted rounded-md flex items-center justify-center overflow-hidden">
+                    {renderGalleryIcon(gallery)}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-medium text-sm truncate" title={gallery.name}>
+                      {gallery.name}
+                    </h4>
+                    <p className="text-xs text-muted-foreground truncate">
+                      {gallery.fileCount} files
+                    </p>
+                  </div>
+                </Card>
+              );
+            })}
+        </div>
+      </div>
+    </>
   );
 };

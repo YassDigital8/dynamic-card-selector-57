@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { FileInfo } from '@/models/FileModel';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Eye, Download, Trash2, Share2, Move } from 'lucide-react';
+import { Eye, Download, Trash2, Share2 } from 'lucide-react';
 import { FilePreview } from './FilePreview';
 import { useDrag, useGlobalDragState } from '@/hooks/gallery/useDragAndDrop';
 
@@ -36,21 +36,13 @@ export const DraggableFileCard: React.FC<DraggableFileCardProps> = ({
     <Card 
       ref={dragRef}
       className={`overflow-hidden h-full flex flex-col transition-all ${
-        isThisCardDragging ? 'opacity-50 shadow-lg scale-95' : ''
+        isThisCardDragging ? 'opacity-50 scale-95 shadow-lg' : ''
       }`}
       data-file-id={file.id}
       draggable="true"
     >
       <div className="relative h-40 bg-gray-100 flex items-center justify-center overflow-hidden">
         <FilePreview file={file} />
-        {isThisCardDragging && (
-          <div className="absolute inset-0 bg-primary/10 flex items-center justify-center">
-            <Move className="h-12 w-12 text-primary/80" />
-            <div className="absolute bottom-2 left-0 right-0 text-center text-xs font-medium text-primary">
-              Drop onto a gallery
-            </div>
-          </div>
-        )}
       </div>
       <CardContent className="p-3 flex-1 flex flex-col">
         <div className="mb-2 flex-1">

@@ -6,32 +6,55 @@ import { FileInfo } from '@/models/FileModel';
 const globalDragState = {
   isDragging: false,
   draggedItem: null as any,
-  subscribers: new Set<(isDragging: boolean, item: any) => void>(),
-  setDragState: (isDragging: boolean, item: any) => {
+  cursorPosition: { x: 0, y: 0 },
+  subscribers: new Set<(isDragging: boolean, item: any, position: {x: number, y: number}) => void>(),
+  setDragState: (isDragging: boolean, item: any, position = { x: 0, y: 0 }) => {
     globalDragState.isDragging = isDragging;
     globalDragState.draggedItem = item;
-    globalDragState.subscribers.forEach(fn => fn(isDragging, item));
+    globalDragState.cursorPosition = position;
+    globalDragState.subscribers.forEach(fn => fn(isDragging, item, position));
+  },
+  updateCursorPosition: (x: number, y: number) => {
+    globalDragState.cursorPosition = { x, y };
+    if (globalDragState.isDragging) {
+      globalDragState.subscribers.forEach(fn => 
+        fn(globalDragState.isDragging, globalDragState.draggedItem, { x, y })
+      );
+    }
   },
   resetDragState: () => {
     globalDragState.setDragState(false, null);
   }
 };
 
+// Track cursor movement globally
+if (typeof window !== 'undefined') {
+  window.addEventListener('mousemove', (e) => {
+    globalDragState.updateCursorPosition(e.clientX, e.clientY);
+  });
+}
+
 // Subscribe to global drag state changes
 export function useGlobalDragState() {
   const [isDragging, setIsDragging] = useState(globalDragState.isDragging);
   const [draggedItem, setDraggedItem] = useState(globalDragState.draggedItem);
+  const [cursorPosition, setCursorPosition] = useState(globalDragState.cursorPosition);
 
   useEffect(() => {
-    const handleChange = (newIsDragging: boolean, newItem: any) => {
+    const handleChange = (newIsDragging: boolean, newItem: any, newPosition: {x: number, y: number}) => {
       setIsDragging(newIsDragging);
       setDraggedItem(newItem);
+      setCursorPosition(newPosition);
     };
 
     globalDragState.subscribers.add(handleChange);
     
     // Set initial state
-    handleChange(globalDragState.isDragging, globalDragState.draggedItem);
+    handleChange(
+      globalDragState.isDragging, 
+      globalDragState.draggedItem, 
+      globalDragState.cursorPosition
+    );
     
     return () => {
       globalDragState.subscribers.delete(handleChange);
@@ -41,6 +64,7 @@ export function useGlobalDragState() {
   return { 
     isDragging, 
     draggedItem,
+    cursorPosition,
     resetDragState: globalDragState.resetDragState 
   };
 }
@@ -56,32 +80,25 @@ export function useDrag<T>(item: T) {
     const handleDragStart = (e: DragEvent) => {
       setIsDragging(true);
       
-      // Update global drag state
-      globalDragState.setDragState(true, item);
+      // Update global drag state with current cursor position
+      globalDragState.setDragState(true, item, {
+        x: e.clientX,
+        y: e.clientY
+      });
       
       if (e.dataTransfer) {
         e.dataTransfer.setData('application/json', JSON.stringify(item));
         e.dataTransfer.effectAllowed = 'move';
         
-        // Create a ghost drag image
-        const dragImage = document.createElement('div');
-        dragImage.textContent = 'Moving...';
-        dragImage.style.position = 'absolute';
-        dragImage.style.top = '-1000px';
-        document.body.appendChild(dragImage);
-        e.dataTransfer.setDragImage(dragImage, 0, 0);
-        
-        // Clean up the ghost element after a short delay
-        setTimeout(() => {
-          document.body.removeChild(dragImage);
-        }, 100);
+        // Use a transparent image as drag image to hide the browser's default drag image
+        const transparentImg = new Image();
+        transparentImg.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+        e.dataTransfer.setDragImage(transparentImg, 0, 0);
       }
     };
 
     const handleDragEnd = () => {
       setIsDragging(false);
-      
-      // Update global drag state
       globalDragState.resetDragState();
     };
 
