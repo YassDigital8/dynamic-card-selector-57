@@ -1,26 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { FileInfo, Gallery } from '@/models/FileModel';
-import { Card, CardContent } from '@/components/ui/card';
-import { FileText, Image, File, Eye, Trash2, Share2, ArrowUpDown, ArrowDownAZ, ArrowDownUp, CalendarDays } from 'lucide-react';
-import { formatDate } from '@/lib/date-utils';
-import { Button } from '@/components/ui/button';
-import { FileDetails } from './FileDetails';
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
-import { FilePreview } from './FilePreview';
-import { ShareDialog } from './ShareDialog';
-import { DraggableFileCard } from './DraggableFileCard';
-import { GalleryDropTargets } from './GalleryDropTargets';
 import { useGlobalDragState } from '@/hooks/gallery/useDragAndDrop';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-
-type SortField = 'name' | 'size' | 'type' | 'uploadedOn';
-type SortDirection = 'asc' | 'desc';
-
-interface SortConfig {
-  field: SortField;
-  direction: SortDirection;
-}
+import { GalleryDropTargets } from './GalleryDropTargets';
+import { ShareDialog } from './ShareDialog';
+import { SortControls, FilePreviewDialog, FileGrid, useSortedFiles } from './file-list';
 
 interface FileListProps {
   files: FileInfo[];
@@ -44,28 +28,13 @@ export const FileList: React.FC<FileListProps> = ({
   const [previewFile, setPreviewFile] = useState<FileInfo | null>(null);
   const [shareFile, setShareFile] = useState<FileInfo | null>(null);
   const { isDragging, draggedItem } = useGlobalDragState();
-  const [sortConfig, setSortConfig] = useState<SortConfig>({ field: 'uploadedOn', direction: 'desc' });
+  const [sortConfig, setSortConfig] = useState({ field: 'uploadedOn' as const, direction: 'desc' as const });
   
   // Sort files based on current sort configuration
-  const sortedFiles = [...files].sort((a, b) => {
-    const direction = sortConfig.direction === 'asc' ? 1 : -1;
-    
-    switch (sortConfig.field) {
-      case 'name':
-        return (a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1) * direction;
-      case 'size':
-        return (a.size - b.size) * direction;
-      case 'type':
-        return (a.type.toLowerCase() > b.type.toLowerCase() ? 1 : -1) * direction;
-      case 'uploadedOn':
-        return (new Date(a.uploadedOn).getTime() - new Date(b.uploadedOn).getTime()) * direction;
-      default:
-        return 0;
-    }
-  });
+  const sortedFiles = useSortedFiles(files, sortConfig);
   
   // Change sort field and direction
-  const handleSort = (field: SortField) => {
+  const handleSort = (field: 'name' | 'size' | 'type' | 'uploadedOn') => {
     setSortConfig(current => ({
       field,
       direction: current.field === field && current.direction === 'desc' ? 'asc' : 'desc'
@@ -80,24 +49,6 @@ export const FileList: React.FC<FileListProps> = ({
     // This effect runs whenever isDragging or draggedItem changes
     // It ensures the component re-renders when the drag state changes
   }, [isDragging, draggedItem]);
-  
-  const getFileIcon = (fileType: string) => {
-    if (fileType.startsWith('image/')) {
-      return <Image className="h-10 w-10 text-muted-foreground" />;
-    } else if (fileType === 'application/pdf') {
-      return <FileText className="h-10 w-10 text-muted-foreground" />;
-    } else {
-      return <File className="h-10 w-10 text-muted-foreground" />;
-    }
-  };
-
-  const formatFileSize = (sizeInKB: number) => {
-    if (sizeInKB < 1024) {
-      return `${sizeInKB} KB`;
-    } else {
-      return `${(sizeInKB / 1024).toFixed(2)} MB`;
-    }
-  };
 
   const handleViewFile = (file: FileInfo) => {
     setPreviewFile(file);
@@ -129,64 +80,15 @@ export const FileList: React.FC<FileListProps> = ({
   return (
     <>
       <div className="mb-4 flex justify-end">
-        <div className="flex items-center space-x-2">
-          <span className="text-sm text-muted-foreground mr-2">Sort by:</span>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="h-8">
-                {sortConfig.field === 'name' && <ArrowDownAZ className="h-4 w-4 mr-2" />}
-                {sortConfig.field === 'size' && <ArrowDownUp className="h-4 w-4 mr-2" />}
-                {sortConfig.field === 'type' && <File className="h-4 w-4 mr-2" />}
-                {sortConfig.field === 'uploadedOn' && <CalendarDays className="h-4 w-4 mr-2" />}
-                {sortConfig.field.charAt(0).toUpperCase() + sortConfig.field.slice(1)}
-                <ArrowUpDown className={`h-4 w-4 ml-2 ${sortConfig.direction === 'asc' ? 'rotate-180' : ''}`} />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => handleSort('name')}>
-                <ArrowDownAZ className="h-4 w-4 mr-2" />
-                Name
-                {sortConfig.field === 'name' && (
-                  <ArrowUpDown className={`h-4 w-4 ml-2 ${sortConfig.direction === 'asc' ? 'rotate-180' : ''}`} />
-                )}
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleSort('size')}>
-                <ArrowDownUp className="h-4 w-4 mr-2" />
-                Size
-                {sortConfig.field === 'size' && (
-                  <ArrowUpDown className={`h-4 w-4 ml-2 ${sortConfig.direction === 'asc' ? 'rotate-180' : ''}`} />
-                )}
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleSort('type')}>
-                <File className="h-4 w-4 mr-2" />
-                Type
-                {sortConfig.field === 'type' && (
-                  <ArrowUpDown className={`h-4 w-4 ml-2 ${sortConfig.direction === 'asc' ? 'rotate-180' : ''}`} />
-                )}
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleSort('uploadedOn')}>
-                <CalendarDays className="h-4 w-4 mr-2" />
-                Upload Date
-                {sortConfig.field === 'uploadedOn' && (
-                  <ArrowUpDown className={`h-4 w-4 ml-2 ${sortConfig.direction === 'asc' ? 'rotate-180' : ''}`} />
-                )}
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+        <SortControls sortConfig={sortConfig} onSortChange={handleSort} />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {sortedFiles.map((file) => (
-          <DraggableFileCard
-            key={file.id}
-            file={file}
-            onView={() => handleViewFile(file)}
-            onShare={(e) => handleShareFile(file, e)}
-            onDelete={(e) => handleDeleteFile(file, e)}
-          />
-        ))}
-      </div>
+      <FileGrid 
+        files={sortedFiles}
+        onViewFile={handleViewFile}
+        onShareFile={handleShareFile}
+        onDeleteFile={handleDeleteFile}
+      />
 
       {/* Gallery Drop Targets - Shows when dragging */}
       {showDropTargets && onMoveFile && (
@@ -199,23 +101,7 @@ export const FileList: React.FC<FileListProps> = ({
       )}
 
       {/* File Preview Dialog */}
-      <Dialog open={previewFile !== null} onOpenChange={(open) => !open && closePreview()}>
-        <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-y-auto">
-          {previewFile && (
-            <div className="space-y-4">
-              <DialogTitle className="text-xl font-semibold">
-                {previewFile.metadata?.title || previewFile.name}
-              </DialogTitle>
-              
-              <div className="bg-muted rounded-md max-h-[50vh] flex items-center justify-center overflow-hidden">
-                <FilePreview file={previewFile} size="lg" />
-              </div>
-              
-              <FileDetails file={previewFile} />
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
+      <FilePreviewDialog file={previewFile} onClose={closePreview} />
 
       {/* Share Dialog */}
       <ShareDialog
