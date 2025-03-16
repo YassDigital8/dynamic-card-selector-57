@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -14,6 +15,11 @@ interface AuthResponse {
 interface UserInfo {
   firstName: string;
   email: string;
+}
+
+interface LoginCredentials {
+  email: string;
+  password: string;
 }
 
 export const useAuthentication = () => {
@@ -44,24 +50,6 @@ export const useAuthentication = () => {
         const storedUserInfo = localStorage.getItem('userInfo');
         if (storedUserInfo) {
           setUserInfo(JSON.parse(storedUserInfo));
-        } else {
-          // If no user info is stored but we have a token, we could attempt to validate with server
-          try {
-            // For development purposes, we'll skip the actual validation
-            // and just use default user info since we can't connect to the server
-            console.log("Using default user info since validation cannot be performed");
-            const mockUserInfo = {
-              firstName: "User",
-              email: "user@example.com"
-            };
-            setUserInfo(mockUserInfo);
-            
-            // Store it for future use
-            localStorage.setItem('userInfo', JSON.stringify(mockUserInfo));
-          } catch (validationError) {
-            console.error('Token validation error:', validationError);
-            // Just use token without validation
-          }
         }
         
         setAuthToken(storedToken);
@@ -90,6 +78,74 @@ export const useAuthentication = () => {
     checkAuthentication();
   }, []);
 
+  const login = async (credentials: LoginCredentials) => {
+    setAuthLoading(true);
+    setAuthError(null);
+    
+    try {
+      const response = await fetch('https://92.112.184.210:7182/api/Authentication/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: credentials.email,
+          password: credentials.password
+        }),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `Authentication failed: ${response.status}`);
+      }
+      
+      const authData: AuthResponse = await response.json();
+      
+      if (!authData.token) {
+        throw new Error('Invalid authentication response: no token received');
+      }
+      
+      // Store the token and user info
+      localStorage.setItem('authToken', authData.token);
+      
+      const userInfoToStore = {
+        firstName: authData.firstName,
+        email: authData.email
+      };
+      
+      localStorage.setItem('userInfo', JSON.stringify(userInfoToStore));
+      
+      // Update state
+      setAuthToken(authData.token);
+      setUserInfo(userInfoToStore);
+      
+      toast({
+        title: "Login successful",
+        description: `Welcome back, ${authData.firstName || authData.email}`,
+      });
+      
+      return authData;
+    } catch (error) {
+      console.error('Login error:', error);
+      
+      let errorMessage = '';
+      if (error instanceof Error) {
+        if (error.message.includes('Failed to fetch')) {
+          errorMessage = 'Network error: Unable to connect to authentication server. Please check your connection or try again later.';
+        } else {
+          errorMessage = error.message;
+        }
+      } else {
+        errorMessage = 'Unknown error occurred during authentication';
+      }
+      
+      setAuthError(errorMessage);
+      throw error;
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
   const logout = () => {
     localStorage.removeItem('authToken');
     localStorage.removeItem('userInfo');
@@ -111,6 +167,7 @@ export const useAuthentication = () => {
     authError, 
     userInfo,
     isAuthenticated: !!authToken,
+    login,
     logout 
   };
 };

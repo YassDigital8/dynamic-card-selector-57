@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
+import useAuthentication from '@/hooks/useAuthentication';
 
 // Define the schema for the login form
 const loginSchema = z.object({
@@ -20,6 +21,7 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const { login } = useAuthentication();
   
   const {
     register,
@@ -37,36 +39,14 @@ const LoginForm = () => {
     setIsLoading(true);
     
     try {
-      // Simulating authentication response for development
-      // This is a temporary workaround for the HTTPS certificate issue
-      console.log('Simulating authentication for:', data.email);
+      console.log('Attempting to authenticate with:', data.email);
       
-      // Create a mock auth response
-      const mockAuthData = {
-        isAuthenticated: true,
-        token: "mock-jwt-token-" + Math.random().toString(36).substring(2, 15),
-        firstName: data.email.split('@')[0],
+      await login({
         email: data.email,
-        message: "Authentication successful",
-        lastName: null,
-        expiresOn: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() // 24 hours from now
-      };
-      
-      // Store the token in local storage
-      localStorage.setItem('authToken', mockAuthData.token);
-      
-      // Also store user info for quick access
-      localStorage.setItem('userInfo', JSON.stringify({
-        firstName: mockAuthData.firstName,
-        email: mockAuthData.email
-      }));
-      
-      toast({
-        title: "Login successful",
-        description: `Welcome back, ${mockAuthData.firstName || data.email}`,
+        password: data.password
       });
       
-      // Force a page reload to update authentication state
+      // Redirect to homepage on successful login
       window.location.href = '/';
       
     } catch (error) {
