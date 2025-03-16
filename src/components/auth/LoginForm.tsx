@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import useAuthentication from '@/hooks/useAuthentication';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { useNavigate } from 'react-router-dom';
 
 // Define the schema for the login form
 const loginSchema = z.object({
@@ -24,6 +25,7 @@ const LoginForm = () => {
   const [loginError, setLoginError] = useState<string | null>(null);
   const { toast } = useToast();
   const { login } = useAuthentication();
+  const navigate = useNavigate();
   
   const {
     register,
@@ -44,12 +46,15 @@ const LoginForm = () => {
     try {
       console.log('Attempting to authenticate with:', data.email);
       
-      await login({
+      const authResult = await login({
         email: data.email,
         password: data.password
       });
       
-      console.log('Login successful, should redirect soon');
+      console.log('Login successful, navigating to home page');
+      
+      // Force navigation after successful login
+      navigate('/', { replace: true });
       
     } catch (error) {
       console.error('Login error:', error);

@@ -126,6 +126,7 @@ export const useAuthentication = () => {
         // Update state
         setAuthToken(authData.token);
         setUserInfo(userInfoToStore);
+        setAuthLoading(false); // Set loading to false immediately
         
         toast({
           title: "Login successful",

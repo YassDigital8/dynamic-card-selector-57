@@ -1,6 +1,6 @@
 
-import React from 'react';
-import { Navigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Navigate, useNavigate } from 'react-router-dom';
 import LoginForm from '@/components/auth/LoginForm';
 import useAuthentication from '@/hooks/useAuthentication';
 import AuthErrorAlert from '@/components/pages/index/AuthErrorAlert';
@@ -10,6 +10,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 const Login = () => {
   const { authToken, authLoading, authError } = useAuthentication();
+  const navigate = useNavigate();
 
   // Helper to check if the error is related to SSL certificates
   const isCertificateError = (error: string | null): boolean => {
@@ -19,9 +20,17 @@ const Login = () => {
            error.includes('Failed to fetch');
   };
 
-  // If authenticated, redirect to the homepage
+  // Use effect to handle redirection when auth state changes
+  useEffect(() => {
+    if (authToken && !authLoading) {
+      console.log("Auth token detected in Login component, redirecting to home page");
+      navigate('/', { replace: true });
+    }
+  }, [authToken, authLoading, navigate]);
+
+  // If authenticated, also try immediate redirect
   if (authToken && !authLoading) {
-    console.log("Authenticated, redirecting to home page");
+    console.log("Authenticated, immediate redirect attempted to home page");
     return <Navigate to="/" replace />;
   }
 
