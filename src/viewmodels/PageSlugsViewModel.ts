@@ -7,19 +7,30 @@ interface PageSlugsViewModelProps {
   selectedLanguage: string;
 }
 
+interface PagePath {
+  id: number;
+  pageUrlName: string;
+}
+
 export function usePageSlugsViewModel({ selectedPOS, selectedLanguage }: PageSlugsViewModelProps) {
   const [loading, setLoading] = useState(false);
   const [availableSlugs, setAvailableSlugs] = useState<string[]>([]);
+  const [slugsWithIds, setSlugsWithIds] = useState<PagePath[]>([]);
   const [selectedSlug, setSelectedSlug] = useState('');
+  const [selectedPathId, setSelectedPathId] = useState<number | null>(null);
   const [subSlugs, setSubSlugs] = useState<string[]>([]);
+  const [subSlugsWithIds, setSubSlugsWithIds] = useState<PagePath[]>([]);
   const [selectedSubSlug, setSelectedSubSlug] = useState('');
+  const [selectedSubPathId, setSelectedSubPathId] = useState<number | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
     if (selectedPOS && selectedLanguage) {
       setSelectedSlug('');
+      setSelectedPathId(null);
       setSubSlugs([]);
       setSelectedSubSlug('');
+      setSelectedSubPathId(null);
       fetchSlugs();
     }
   }, [selectedPOS, selectedLanguage]);
@@ -27,9 +38,26 @@ export function usePageSlugsViewModel({ selectedPOS, selectedLanguage }: PageSlu
   useEffect(() => {
     if (selectedSlug) {
       setSelectedSubSlug('');
+      setSelectedSubPathId(null);
       fetchSubSlugs();
     }
   }, [selectedSlug]);
+
+  // Handle slug selection with ID
+  const handleSlugSelection = useCallback((slug: string) => {
+    setSelectedSlug(slug);
+    // Find the corresponding ID from the slugsWithIds array
+    const selectedPath = slugsWithIds.find(path => path.pageUrlName === slug);
+    setSelectedPathId(selectedPath?.id || null);
+  }, [slugsWithIds]);
+
+  // Handle sub-slug selection with ID
+  const handleSubSlugSelection = useCallback((subSlug: string) => {
+    setSelectedSubSlug(subSlug);
+    // Find the corresponding ID from the subSlugsWithIds array
+    const selectedSubPath = subSlugsWithIds.find(path => path.pageUrlName === subSlug);
+    setSelectedSubPathId(selectedSubPath?.id || null);
+  }, [subSlugsWithIds]);
 
   const fetchSlugs = useCallback(async () => {
     if (!selectedPOS || !selectedLanguage) return;
@@ -60,32 +88,29 @@ export function usePageSlugsViewModel({ selectedPOS, selectedLanguage }: PageSlu
       const data = await response.json();
       console.log('Parent paths response:', data);
       
-      // Assuming the API returns an array of strings or objects with a path property
-      let paths: string[] = [];
+      // Process the API response which contains objects with id and pageUrlName
       if (Array.isArray(data)) {
-        // If it returns an array of strings
-        if (typeof data[0] === 'string') {
-          paths = data;
-        } 
-        // If it returns an array of objects with path property
-        else if (data[0] && typeof data[0] === 'object') {
-          paths = data.map((item: any) => item.path || item.name || item.slug || item.id);
-        }
+        // Store the full objects for reference
+        setSlugsWithIds(data);
+        
+        // Extract just the pageUrlName values for the dropdown
+        const paths = data.map((item: PagePath) => item.pageUrlName);
+        setAvailableSlugs(paths);
+      } else {
+        throw new Error('Invalid data format received from API');
       }
-      
-      setAvailableSlugs(paths);
     } catch (error) {
       console.error('Error fetching parent paths:', error);
-      
-      // Fallback to mock data in case of API failure
-      const mockSlugs = ['aboutus', 'contact', 'services', 'products', 'blog', 'parent1'];
-      setAvailableSlugs(mockSlugs);
       
       toast({
         variant: "destructive",
         title: "API Error",
         description: error instanceof Error ? error.message : "Failed to fetch parent paths",
       });
+      
+      // Clear the available slugs to show there was an error
+      setAvailableSlugs([]);
+      setSlugsWithIds([]);
     } finally {
       setLoading(false);
     }
@@ -120,29 +145,29 @@ export function usePageSlugsViewModel({ selectedPOS, selectedLanguage }: PageSlu
       const data = await response.json();
       console.log('Sub-paths response:', data);
       
-      // Process the response similar to fetchSlugs
-      let paths: string[] = [];
+      // Process the API response which contains objects with id and pageUrlName
       if (Array.isArray(data)) {
-        if (typeof data[0] === 'string') {
-          paths = data;
-        } else if (data[0] && typeof data[0] === 'object') {
-          paths = data.map((item: any) => item.path || item.name || item.slug || item.id);
-        }
+        // Store the full objects for reference
+        setSubSlugsWithIds(data);
+        
+        // Extract just the pageUrlName values for the dropdown
+        const paths = data.map((item: PagePath) => item.pageUrlName);
+        setSubSlugs(paths);
+      } else {
+        throw new Error('Invalid data format received from API');
       }
-      
-      setSubSlugs(paths);
     } catch (error) {
       console.error('Error fetching sub-paths:', error);
-      
-      // Fallback to mock data in case of API failure
-      const mockSubSlugs = ['subpage1', 'subpage2', 'subpage3', 'subparen1'];
-      setSubSlugs(mockSubSlugs);
       
       toast({
         variant: "destructive",
         title: "API Error",
         description: error instanceof Error ? error.message : "Failed to fetch sub-paths",
       });
+      
+      // Clear the sub slugs to show there was an error
+      setSubSlugs([]);
+      setSubSlugsWithIds([]);
     } finally {
       setLoading(false);
     }
@@ -153,10 +178,14 @@ export function usePageSlugsViewModel({ selectedPOS, selectedLanguage }: PageSlu
     setLoading,
     availableSlugs,
     selectedSlug,
-    setSelectedSlug,
+    setSelectedSlug: handleSlugSelection,
+    selectedPathId,
     subSlugs,
     selectedSubSlug,
-    setSelectedSubSlug,
-    fetchSlugs
+    setSelectedSubSlug: handleSubSlugSelection,
+    selectedSubPathId,
+    fetchSlugs,
+    slugsWithIds,
+    subSlugsWithIds
   };
 }

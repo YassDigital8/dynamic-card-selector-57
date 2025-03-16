@@ -11,6 +11,11 @@ import AddPageOption from './pathSelector/AddPageOption';
 import { fadeInVariants } from './pathSelector/animations';
 import { useIsMobile } from '@/hooks/use-mobile';
 
+interface PagePath {
+  id: number;
+  pageUrlName: string;
+}
+
 interface PathSelectorsProps {
   availableSlugs: string[];
   selectedSlug: string;
@@ -18,6 +23,10 @@ interface PathSelectorsProps {
   subSlugs: string[];
   selectedSubSlug: string;
   setSelectedSubSlug: (value: string) => void;
+  selectedPathId: number | null;
+  selectedSubPathId: number | null;
+  slugsWithIds?: PagePath[];
+  subSlugsWithIds?: PagePath[];
   loading: boolean;
   selectedPOS: string;
   selectedLanguage: string;
@@ -32,6 +41,10 @@ const PathSelectors = ({
   subSlugs,
   selectedSubSlug,
   setSelectedSubSlug,
+  selectedPathId,
+  selectedSubPathId,
+  slugsWithIds,
+  subSlugsWithIds,
   loading,
   selectedPOS,
   selectedLanguage,
@@ -89,6 +102,10 @@ const PathSelectors = ({
                 subSlugs={subSlugs}
                 selectedSubSlug={selectedSubSlug}
                 setSelectedSubSlug={setSelectedSubSlug}
+                selectedPathId={selectedPathId}
+                selectedSubPathId={selectedSubPathId}
+                slugsWithIds={slugsWithIds}
+                subSlugsWithIds={subSlugsWithIds}
               />
 
               {/* Option 2: Add New Page Directly */}

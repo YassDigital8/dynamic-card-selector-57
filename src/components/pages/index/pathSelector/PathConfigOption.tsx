@@ -6,6 +6,11 @@ import { FolderTree, FolderDown, GitBranch } from 'lucide-react';
 import { buttonVariants } from './animations';
 import { useIsMobile } from '@/hooks/use-mobile';
 
+interface PagePath {
+  id: number;
+  pageUrlName: string;
+}
+
 interface PathConfigOptionProps {
   availableSlugs: string[];
   selectedSlug: string;
@@ -13,6 +18,10 @@ interface PathConfigOptionProps {
   subSlugs: string[];
   selectedSubSlug: string;
   setSelectedSubSlug: (value: string) => void;
+  selectedPathId: number | null;
+  selectedSubPathId: number | null;
+  slugsWithIds?: PagePath[];
+  subSlugsWithIds?: PagePath[];
 }
 
 const PathConfigOption = ({
@@ -21,7 +30,11 @@ const PathConfigOption = ({
   setSelectedSlug,
   subSlugs,
   selectedSubSlug,
-  setSelectedSubSlug
+  setSelectedSubSlug,
+  selectedPathId,
+  selectedSubPathId,
+  slugsWithIds = [],
+  subSlugsWithIds = []
 }: PathConfigOptionProps) => {
   const isMobile = useIsMobile();
 
@@ -57,10 +70,18 @@ const PathConfigOption = ({
                 </SelectTrigger>
                 <SelectContent className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
                   {availableSlugs.map((slug) => (
-                    <SelectItem key={slug} value={slug} className={`text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 ${isMobile ? 'text-[10px]' : ''}`}>{slug}</SelectItem>
+                    <SelectItem key={slug} value={slug} className={`text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 ${isMobile ? 'text-[10px]' : ''}`}>
+                      {slug}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
+              
+              {selectedPathId !== null && (
+                <div className="text-[9px] md:text-xs text-gray-500 mt-1">
+                  Selected ID: {selectedPathId}
+                </div>
+              )}
             </div>
 
             {subSlugs.length > 0 && selectedSlug && (
@@ -78,10 +99,18 @@ const PathConfigOption = ({
                   </SelectTrigger>
                   <SelectContent className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
                     {subSlugs.map((slug) => (
-                      <SelectItem key={slug} value={slug} className={`text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 ${isMobile ? 'text-[10px]' : ''}`}>{slug}</SelectItem>
+                      <SelectItem key={slug} value={slug} className={`text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 ${isMobile ? 'text-[10px]' : ''}`}>
+                        {slug}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
+                
+                {selectedSubPathId !== null && (
+                  <div className="text-[9px] md:text-xs text-gray-500 mt-1">
+                    Selected Sub ID: {selectedSubPathId}
+                  </div>
+                )}
               </div>
             )}
           </div>

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { FileText, Settings, PlusCircle } from 'lucide-react';
@@ -29,7 +30,7 @@ const Index = () => {
   
   const pageNavigation = usePageNavigation();
   const pageAddition = usePageAddition({
-    onSuccess: pageNavigation.fetchSlugs
+    onSuccess: pageNavigation.refreshSlugs  // Use the new refreshSlugs function
   });
   
   useEffect(() => {
@@ -103,6 +104,10 @@ const Index = () => {
                       subSlugs={pageNavigation.subSlugs}
                       selectedSubSlug={pageNavigation.selectedSubSlug}
                       setSelectedSubSlug={pageNavigation.setSelectedSubSlug}
+                      selectedPathId={pageNavigation.selectedPathId}
+                      selectedSubPathId={pageNavigation.selectedSubPathId}
+                      slugsWithIds={pageNavigation.slugsWithIds}
+                      subSlugsWithIds={pageNavigation.subSlugsWithIds}
                       loading={pageNavigation.loading}
                       selectedPOS={pageNavigation.selectedPOS}
                       selectedLanguage={pageNavigation.selectedLanguage}
