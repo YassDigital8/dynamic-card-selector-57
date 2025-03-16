@@ -32,9 +32,7 @@ const PageDetailsView = ({
   selectedPOS,
   selectedLanguage,
   selectedSlug,
-  selectedSubSlug,
-  selectedPathId,
-  selectedSubPathId
+  selectedSubSlug
 }: PageDetailsViewProps) => {
   const isMobile = useIsMobile();
   
@@ -49,17 +47,6 @@ const PageDetailsView = ({
           }
         </div>
       </div>
-      
-      {(selectedPathId !== null || selectedSubPathId !== null) && (
-        <div>
-          <h3 className="text-[10px] md:text-sm font-medium text-gray-500 mb-1 md:mb-2">Path IDs</h3>
-          <div className={`bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md p-1.5 md:p-3 font-mono overflow-x-auto text-[8px] md:text-xs`}>
-            {selectedPathId !== null && `Parent Path ID: ${selectedPathId}`}
-            {selectedPathId !== null && selectedSubPathId !== null && <br />}
-            {selectedSubPathId !== null && `Sub Path ID: ${selectedSubPathId}`}
-          </div>
-        </div>
-      )}
       
       <Separator />
       
@@ -97,12 +84,6 @@ const PageDetailsView = ({
           </div>
         )}
       </div>
-      
-      {pageData.id && (
-        <div className="text-[8px] md:text-xs text-gray-500 mt-2">
-          Page ID: {pageData.id}
-        </div>
-      )}
     </div>
   );
 };
