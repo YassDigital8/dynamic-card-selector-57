@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { PageData } from '@/models/PageModel';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { Badge } from '@/components/ui/badge';
 
 interface PageDetailsViewProps {
   pageData: PageData;
@@ -62,18 +63,24 @@ const PageDetailsView = ({
       
       <Separator />
       
-      <div>
+      <div className="flex items-center justify-between">
         <h3 className="text-[10px] md:text-sm font-medium text-gray-500 mb-1 md:mb-2">Title</h3>
-        {isEditing ? (
-          <Input 
-            value={editedTitle}
-            onChange={(e) => setEditedTitle(e.target.value)}
-            className="font-medium text-xs md:text-base"
-          />
-        ) : (
-          <div className="text-xs md:text-lg font-medium text-gray-800 dark:text-gray-200 break-words">{pageData.title}</div>
+        {pageData.status && (
+          <Badge variant={pageData.status === 'published' ? 'default' : 'secondary'} className="capitalize">
+            {pageData.status}
+          </Badge>
         )}
       </div>
+      
+      {isEditing ? (
+        <Input 
+          value={editedTitle}
+          onChange={(e) => setEditedTitle(e.target.value)}
+          className="font-medium text-xs md:text-base"
+        />
+      ) : (
+        <div className="text-xs md:text-lg font-medium text-gray-800 dark:text-gray-200 break-words">{pageData.title}</div>
+      )}
       
       <div>
         <h3 className="text-[10px] md:text-sm font-medium text-gray-500 mb-1 md:mb-2">Content</h3>
@@ -90,6 +97,12 @@ const PageDetailsView = ({
           </div>
         )}
       </div>
+      
+      {pageData.id && (
+        <div className="text-[8px] md:text-xs text-gray-500 mt-2">
+          Page ID: {pageData.id}
+        </div>
+      )}
     </div>
   );
 };

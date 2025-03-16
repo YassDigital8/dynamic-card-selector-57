@@ -10,6 +10,8 @@ interface PageDataProps {
   selectedLanguage?: string;
   selectedSlug?: string;
   selectedSubSlug?: string;
+  selectedPathId?: number | null;
+  selectedSubPathId?: number | null;
 }
 
 const PageData = (props: PageDataProps) => {

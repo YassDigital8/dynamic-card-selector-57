@@ -19,6 +19,8 @@ interface PageDetailsProps {
   selectedLanguage?: string;
   selectedSlug?: string;
   selectedSubSlug?: string;
+  selectedPathId?: number | null;
+  selectedSubPathId?: number | null;
 }
 
 const fadeInVariants = {
@@ -36,7 +38,9 @@ const PageDetails = ({
   selectedPOS,
   selectedLanguage,
   selectedSlug,
-  selectedSubSlug
+  selectedSubSlug,
+  selectedPathId,
+  selectedSubPathId
 }: PageDetailsProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState('');
@@ -131,6 +135,8 @@ const PageDetails = ({
             selectedLanguage={selectedLanguage}
             selectedSlug={selectedSlug}
             selectedSubSlug={selectedSubSlug}
+            selectedPathId={selectedPathId}
+            selectedSubPathId={selectedSubPathId}
           />
         </CardContent>
         <PageFooter 

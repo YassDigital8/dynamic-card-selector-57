@@ -25,12 +25,16 @@ export function usePageNavigationViewModel({ authToken = '' }: PageNavigationVie
     selectedPOS: pageSelections.selectedPOS,
     selectedLanguage: pageSelections.selectedLanguage,
     selectedSlug: pageSlugs.selectedSlug,
-    selectedSubSlug: pageSlugs.selectedSubSlug
+    selectedSubSlug: pageSlugs.selectedSubSlug,
+    selectedPathId: pageSlugs.selectedPathId,
+    selectedSubPathId: pageSlugs.selectedSubPathId
   }), [
     pageSelections.selectedPOS, 
     pageSelections.selectedLanguage, 
     pageSlugs.selectedSlug, 
-    pageSlugs.selectedSubSlug
+    pageSlugs.selectedSubSlug,
+    pageSlugs.selectedPathId,
+    pageSlugs.selectedSubPathId
   ]);
   
   const pageData = usePageDataViewModel(pageDataProps);
@@ -51,25 +55,27 @@ export function usePageNavigationViewModel({ authToken = '' }: PageNavigationVie
   const fetchPageData = useCallback(() => {
     if (pageSelections.selectedPOS && pageSelections.selectedLanguage) {
       // Force a data fetch anytime the slug or subSlug changes
-      if (pageSlugs.selectedSlug) {
-        // Fetch specific page data if a slug is selected
-        pageData.fetchPageData();
-      }
+      pageData.fetchPageData();
     }
   }, [
     pageSelections.selectedPOS, 
-    pageSelections.selectedLanguage, 
-    pageSlugs.selectedSlug,
-    pageSlugs.selectedSubSlug, 
+    pageSelections.selectedLanguage,
     pageData.fetchPageData
   ]);
 
-  // Automatically fetch page data when slug or subSlug changes
+  // Automatically fetch page data when slug, subSlug, or any path ID changes
   useEffect(() => {
-    if (pageSlugs.selectedSlug || pageSlugs.selectedSubSlug) {
+    if ((pageSlugs.selectedSlug || pageSlugs.selectedSubSlug) && 
+        (pageSlugs.selectedPathId !== null || pageSlugs.selectedSubPathId !== null)) {
       fetchPageData();
     }
-  }, [pageSlugs.selectedSlug, pageSlugs.selectedSubSlug, fetchPageData]);
+  }, [
+    pageSlugs.selectedSlug, 
+    pageSlugs.selectedSubSlug, 
+    pageSlugs.selectedPathId,
+    pageSlugs.selectedSubPathId,
+    fetchPageData
+  ]);
 
   // Memoize the combined return values
   const handleDeletePage = useCallback(async () => {
