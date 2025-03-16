@@ -1,6 +1,6 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 interface AuthResponse {
   message: string;
@@ -33,6 +33,7 @@ export const useAuthentication = () => {
   const [sessionExpiresAt, setSessionExpiresAt] = useState<number | null>(null);
   const [remainingTime, setRemainingTime] = useState<number | null>(null);
   const { toast } = useToast();
+  const navigate = useNavigate();
   
   // Start session timer
   const startSessionTimer = useCallback(() => {
@@ -265,6 +266,9 @@ export const useAuthentication = () => {
       title: "Logged out",
       description: "You have been successfully logged out",
     });
+    
+    // Redirect to login page after logout
+    navigate('/login', { replace: true });
   };
 
   return { 
