@@ -26,6 +26,7 @@ export function usePageEdit({
   const [editedContent, setEditedContent] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
+  const [isTogglingStatus, setIsTogglingStatus] = useState(false);
   const { toast } = useToast();
   
   // Start editing with current values
@@ -81,6 +82,43 @@ export function usePageEdit({
     setIsSaving(false);
   };
 
+  // Toggle page status between published/draft
+  const handleToggleStatus = async () => {
+    if (!pageData) return;
+    
+    const newStatus = pageData.status === 'published' ? 'draft' : 'published';
+    
+    setIsTogglingStatus(true);
+    
+    const success = await updatePage({
+      pageData,
+      newStatus,
+      selectedPOS,
+      selectedLanguage,
+      selectedSlug,
+      selectedSubSlug,
+    });
+    
+    if (success) {
+      toast({
+        title: "Success",
+        description: `Page status changed to ${newStatus}`,
+      });
+      
+      // Update the local pageData
+      if (pageData) {
+        pageData.status = newStatus;
+      }
+      
+      // Refresh the page data to get the latest from the server
+      if (onRefresh) {
+        onRefresh();
+      }
+    }
+    
+    setIsTogglingStatus(false);
+  };
+
   // Change page status from draft to published
   const handlePublish = async () => {
     if (!pageData) return;
@@ -130,11 +168,13 @@ export function usePageEdit({
     editedContent,
     isSaving,
     isPublishing,
+    isTogglingStatus,
     setEditedTitle,
     setEditedContent,
     handleEdit,
     handleCancel,
     handleSave,
-    handlePublish
+    handlePublish,
+    handleToggleStatus
   };
 }

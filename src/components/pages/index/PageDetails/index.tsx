@@ -48,12 +48,14 @@ const PageDetails = ({
     editedContent,
     isSaving,
     isPublishing,
+    isTogglingStatus,
     setEditedTitle,
     setEditedContent,
     handleEdit,
     handleCancel,
     handleSave,
-    handlePublish
+    handlePublish,
+    handleToggleStatus
   } = usePageEdit({
     pageData,
     onRefresh,
@@ -94,7 +96,9 @@ const PageDetails = ({
           onCancel={handleCancel}
           onSave={handleSave}
           onPublish={handlePublish}
+          onToggleStatus={handleToggleStatus}
           isPublishing={isPublishing}
+          isTogglingStatus={isTogglingStatus}
           pageStatus={pageData.status}
         />
         <CardContent className="p-6">
