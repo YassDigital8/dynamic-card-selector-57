@@ -8,6 +8,7 @@ import { FileList } from '../FileList';
 import { EditGalleryDialog } from '../EditGalleryDialog';
 import { ShareDialog } from '../ShareDialog';
 import { FilterComponent } from '../FilterComponent';
+import { Input } from '@/components/ui/input';
 
 interface GalleryBrowseViewProps {
   selectedGallery: Gallery;
@@ -110,7 +111,15 @@ export const GalleryBrowseView: React.FC<GalleryBrowseViewProps> = ({
       )}
       
       {galleryFiles.length > 0 && (
-        <div className="mb-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-4 gap-4">
+          <div className="w-full md:w-auto">
+            <Input
+              placeholder="Search files..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full md:w-[300px]"
+            />
+          </div>
           <FilterComponent
             selectedType={fileTypeFilter}
             onTypeChange={setFileTypeFilter}
@@ -121,22 +130,20 @@ export const GalleryBrowseView: React.FC<GalleryBrowseViewProps> = ({
             fileTypes={fileTypeFilters}
             hasActiveFilters={fileTypeFilter !== 'all' || searchQuery !== ''}
           />
-          
-          <FileList 
-            files={filteredFiles}
-            galleries={galleries}
-            galleryFileTypes={galleryFileTypes}
-            currentGalleryId={selectedGallery.id}
-            onViewFile={onViewFile}
-            onDeleteFile={onDeleteFile}
-            onMoveFile={onMoveFile}
-            searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
-          />
         </div>
       )}
       
-      {filteredFiles.length === 0 && (
+      {filteredFiles.length > 0 ? (
+        <FileList 
+          files={filteredFiles}
+          galleries={galleries}
+          galleryFileTypes={galleryFileTypes}
+          currentGalleryId={selectedGallery.id}
+          onViewFile={onViewFile}
+          onDeleteFile={onDeleteFile}
+          onMoveFile={onMoveFile}
+        />
+      ) : (
         <div className="flex flex-col items-center justify-center p-12 border rounded-md">
           {galleryFiles.length > 0 ? (
             <p className="text-muted-foreground mb-4">No matching files found</p>
