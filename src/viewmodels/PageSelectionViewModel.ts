@@ -1,6 +1,17 @@
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { SelectionStep } from '../models/PageModel';
+
+interface POSOption {
+  id: number;
+  key: string;
+  arabicName: string;
+  englishName: string;
+  createdDate: string;
+  createdBy: string;
+  modifiedDate: string | null;
+  modifiedBy: string | null;
+}
 
 export function usePageSelectionViewModel() {
   // Base state selections
@@ -11,8 +22,45 @@ export function usePageSelectionViewModel() {
   const [currentStep, setCurrentStep] = useState<SelectionStep>('pos');
   const [showingOptions, setShowingOptions] = useState(false);
   
-  const posOptions = ['SY', 'UAE', 'KWI'];
+  // Data state
+  const [posOptions, setPosOptions] = useState<POSOption[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  
   const languageOptions = ['English', 'Arabic'];
+
+  // Fetch POS options from API
+  useEffect(() => {
+    const fetchPOSOptions = async () => {
+      setLoading(true);
+      setError(null);
+      
+      try {
+        // Replace with your actual API endpoint
+        const response = await fetch('https://your-api-endpoint.com/api/pos');
+        
+        if (!response.ok) {
+          throw new Error(`Error fetching POS options: ${response.status}`);
+        }
+        
+        const data: POSOption[] = await response.json();
+        setPosOptions(data);
+      } catch (err) {
+        console.error('Failed to fetch POS options:', err);
+        setError(err instanceof Error ? err.message : 'Unknown error occurred');
+        // Fallback to default values in case of API failure
+        setPosOptions([
+          { id: 1, key: 'SY', englishName: 'Syria', arabicName: 'سوريا', createdDate: '', createdBy: '', modifiedDate: null, modifiedBy: null },
+          { id: 2, key: 'UAE', englishName: 'UAE', arabicName: 'الإمارات', createdDate: '', createdBy: '', modifiedDate: null, modifiedBy: null },
+          { id: 3, key: 'KWI', englishName: 'Kuwait', arabicName: 'الكويت', createdDate: '', createdBy: '', modifiedDate: null, modifiedBy: null }
+        ]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchPOSOptions();
+  }, []);
 
   // Flow control methods
   const handlePOSSelection = useCallback((pos: string) => {
@@ -42,6 +90,8 @@ export function usePageSelectionViewModel() {
     showingOptions,
     posOptions,
     languageOptions,
+    loading,
+    error,
     
     // Selection setters
     setSelectedPOS: handlePOSSelection,

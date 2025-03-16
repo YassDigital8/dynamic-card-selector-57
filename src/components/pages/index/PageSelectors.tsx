@@ -8,8 +8,19 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { SelectionStep } from '@/models/PageModel';
 import { useIsMobile } from '@/hooks/use-mobile';
 
+interface POSOption {
+  id: number;
+  key: string;
+  arabicName: string;
+  englishName: string;
+  createdDate: string;
+  createdBy: string;
+  modifiedDate: string | null;
+  modifiedBy: string | null;
+}
+
 interface PageSelectorsProps {
-  posOptions: string[];
+  posOptions: POSOption[];
   languageOptions: string[];
   selectedPOS: string;
   selectedLanguage: string;
@@ -17,6 +28,7 @@ interface PageSelectorsProps {
   setSelectedLanguage: (value: string) => void;
   loading: boolean;
   currentStep: SelectionStep;
+  error?: string | null;
 }
 
 const fadeInVariants = {
@@ -41,7 +53,8 @@ const PageSelectors = ({
   setSelectedPOS,
   setSelectedLanguage,
   loading,
-  currentStep
+  currentStep,
+  error
 }: PageSelectorsProps) => {
   const isMobile = useIsMobile();
   
@@ -72,6 +85,14 @@ const PageSelectors = ({
                 </AlertDescription>
               </Alert>
               
+              {error && (
+                <Alert className="bg-red-50 dark:bg-red-900/20 border-red-100 dark:border-red-800/30 text-red-800 dark:text-red-300 p-1.5 sm:p-2 md:p-4">
+                  <AlertDescription className="text-[10px] sm:text-xs md:text-sm">
+                    {error}
+                  </AlertDescription>
+                </Alert>
+              )}
+              
               <div className="space-y-1 md:space-y-2">
                 <label className="flex items-center gap-1.5 text-[10px] sm:text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300">
                   <Flag className="h-3 w-3 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4 text-green-500" />
@@ -80,13 +101,20 @@ const PageSelectors = ({
                 <Select
                   value={selectedPOS}
                   onValueChange={setSelectedPOS}
+                  disabled={loading || posOptions.length === 0}
                 >
                   <SelectTrigger className="w-full bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-green-400 transition-colors text-[10px] sm:text-xs md:text-sm h-8 md:h-10">
-                    <SelectValue placeholder="Select POS" />
+                    <SelectValue placeholder={loading ? "Loading..." : "Select POS"} />
                   </SelectTrigger>
                   <SelectContent className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 max-h-[40vh]">
                     {posOptions.map((pos) => (
-                      <SelectItem key={pos} value={pos} className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 text-[10px] sm:text-xs md:text-sm">{pos}</SelectItem>
+                      <SelectItem 
+                        key={pos.id} 
+                        value={pos.key} 
+                        className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 text-[10px] sm:text-xs md:text-sm"
+                      >
+                        {pos.englishName}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -112,7 +140,9 @@ const PageSelectors = ({
               </Alert>
               
               <div className="text-[10px] sm:text-xs md:text-sm font-medium mb-1 sm:mb-2 md:mb-4">
-                Selected POS: <span className="text-green-600 dark:text-green-400 font-bold">{selectedPOS}</span>
+                Selected POS: <span className="text-green-600 dark:text-green-400 font-bold">
+                  {posOptions.find(pos => pos.key === selectedPOS)?.englishName || selectedPOS}
+                </span>
               </div>
               
               <div className="space-y-1 md:space-y-2">
@@ -150,12 +180,14 @@ const PageSelectors = ({
               <Alert className="bg-green-50 dark:bg-green-900/20 border-green-100 dark:border-green-800/30 text-green-800 dark:text-green-300 p-1.5 sm:p-2 md:p-4">
                 <HelpCircle className="h-3 w-3 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4" />
                 <AlertDescription className="text-[10px] sm:text-xs md:text-sm">
-                  Great! You have selected {selectedPOS} - {selectedLanguage}. Now choose how to proceed:
+                  Great! You have selected {posOptions.find(pos => pos.key === selectedPOS)?.englishName || selectedPOS} - {selectedLanguage}. Now choose how to proceed:
                 </AlertDescription>
               </Alert>
               
               <div className="flex flex-col space-y-0.5 sm:space-y-1 md:space-y-2 text-[10px] sm:text-xs md:text-sm font-medium mb-1 sm:mb-2">
-                <div>Selected POS: <span className="text-green-600 dark:text-green-400 font-bold">{selectedPOS}</span></div>
+                <div>Selected POS: <span className="text-green-600 dark:text-green-400 font-bold">
+                  {posOptions.find(pos => pos.key === selectedPOS)?.englishName || selectedPOS}
+                </span></div>
                 <div>Selected Language: <span className="text-blue-600 dark:text-blue-400 font-bold">{selectedLanguage}</span></div>
               </div>
             </motion.div>
