@@ -1,6 +1,7 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { SelectionStep } from '../models/PageModel';
+import useAuthentication from '../hooks/useAuthentication';
 
 interface POSOption {
   id: number;
@@ -14,6 +15,9 @@ interface POSOption {
 }
 
 export function usePageSelectionViewModel() {
+  // Get authentication token
+  const { authToken } = useAuthentication();
+  
   // Base state selections
   const [selectedPOS, setSelectedPOS] = useState('');
   const [selectedLanguage, setSelectedLanguage] = useState('');
@@ -36,8 +40,14 @@ export function usePageSelectionViewModel() {
       setError(null);
       
       try {
-        // Replace with your actual API endpoint
-        const response = await fetch('https://your-api-endpoint.com/api/pos');
+        // Use the correct API endpoint and include auth token
+        const response = await fetch('https://staging.sa3d.online:7036/POS', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          }
+        });
         
         if (!response.ok) {
           throw new Error(`Error fetching POS options: ${response.status}`);
@@ -59,8 +69,11 @@ export function usePageSelectionViewModel() {
       }
     };
     
-    fetchPOSOptions();
-  }, []);
+    // Only fetch when we have an auth token
+    if (authToken) {
+      fetchPOSOptions();
+    }
+  }, [authToken]); // Add authToken as a dependency
 
   // Flow control methods
   const handlePOSSelection = useCallback((pos: string) => {
