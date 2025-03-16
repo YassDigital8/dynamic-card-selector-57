@@ -1,12 +1,14 @@
+
 import React, { useState } from 'react';
 import { FileInfo } from '@/models/FileModel';
 import { Card, CardContent } from '@/components/ui/card';
-import { FileText, Image, File, Eye, Trash2, X } from 'lucide-react';
+import { FileText, Image, File, Eye, Trash2, Share2 } from 'lucide-react';
 import { formatDate } from '@/lib/date-utils';
 import { Button } from '@/components/ui/button';
 import { FileDetails } from './FileDetails';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { FilePreview } from './FilePreview';
+import { ShareDialog } from './ShareDialog';
 
 interface FileListProps {
   files: FileInfo[];
@@ -16,6 +18,7 @@ interface FileListProps {
 
 export const FileList: React.FC<FileListProps> = ({ files, onViewFile, onDeleteFile }) => {
   const [previewFile, setPreviewFile] = useState<FileInfo | null>(null);
+  const [shareFile, setShareFile] = useState<FileInfo | null>(null);
   
   const getFileIcon = (fileType: string) => {
     if (fileType.startsWith('image/')) {
@@ -42,6 +45,11 @@ export const FileList: React.FC<FileListProps> = ({ files, onViewFile, onDeleteF
 
   const closePreview = () => {
     setPreviewFile(null);
+  };
+
+  const handleShareFile = (file: FileInfo, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShareFile(file);
   };
 
   if (files.length === 0) {
@@ -103,6 +111,15 @@ export const FileList: React.FC<FileListProps> = ({ files, onViewFile, onDeleteF
                 <Button 
                   variant="ghost" 
                   size="icon" 
+                  className="h-8 w-8" 
+                  onClick={(e) => handleShareFile(file, e)}
+                  title="Share file"
+                >
+                  <Share2 className="h-4 w-4" />
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
                   className="h-8 w-8 text-red-500 hover:text-red-600" 
                   onClick={(e) => {
                     e.stopPropagation();
@@ -136,6 +153,14 @@ export const FileList: React.FC<FileListProps> = ({ files, onViewFile, onDeleteF
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Share Dialog */}
+      <ShareDialog
+        open={shareFile !== null}
+        onOpenChange={(open) => !open && setShareFile(null)}
+        item={shareFile}
+        itemType="file"
+      />
     </>
   );
 };

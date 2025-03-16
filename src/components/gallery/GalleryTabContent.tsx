@@ -5,9 +5,10 @@ import { GalleryList } from './GalleryList';
 import { UploadComponent } from './UploadComponent';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { Plus, Edit, ArrowLeft, Trash2 } from 'lucide-react';
+import { Plus, Edit, ArrowLeft, Trash2, Share2 } from 'lucide-react';
 import { EditGalleryDialog } from './EditGalleryDialog';
 import { FileList } from './FileList';
+import { ShareDialog } from './ShareDialog';
 import { useToast } from '@/hooks/use-toast';
 
 interface GalleryTabContentProps {
@@ -40,6 +41,7 @@ export const GalleryTabContent: React.FC<GalleryTabContentProps> = ({
   onDeleteFile
 }) => {
   const [isEditGalleryOpen, setIsEditGalleryOpen] = useState(false);
+  const [isShareGalleryOpen, setIsShareGalleryOpen] = useState(false);
   const { toast } = useToast();
   
   const filteredFiles = selectedGallery
@@ -124,6 +126,14 @@ export const GalleryTabContent: React.FC<GalleryTabContentProps> = ({
               <Button 
                 variant="outline" 
                 size="sm"
+                onClick={() => setIsShareGalleryOpen(true)}
+              >
+                <Share2 className="h-4 w-4 mr-1" />
+                Share
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm"
                 onClick={() => setIsEditGalleryOpen(true)}
               >
                 <Edit className="h-4 w-4 mr-1" />
@@ -170,6 +180,13 @@ export const GalleryTabContent: React.FC<GalleryTabContentProps> = ({
             gallery={selectedGallery}
             onUpdateGallery={onUpdateGallery}
             files={files}
+          />
+          
+          <ShareDialog
+            open={isShareGalleryOpen}
+            onOpenChange={setIsShareGalleryOpen}
+            item={selectedGallery}
+            itemType="gallery"
           />
         </>
       )}

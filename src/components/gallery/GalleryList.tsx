@@ -1,12 +1,13 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { Gallery } from '@/models/FileModel';
 import { Card, CardContent } from '@/components/ui/card';
 import { 
   FolderOpen, Image, FileText, Images, Folder, 
-  GalleryHorizontal, GalleryVertical, Library, BookImage 
+  GalleryHorizontal, GalleryVertical, Library, BookImage, Share2
 } from 'lucide-react';
 import { formatDate } from '@/lib/date-utils';
+import { Button } from '@/components/ui/button';
+import { ShareDialog } from './ShareDialog';
 
 interface GalleryListProps {
   galleries: Gallery[];
@@ -19,6 +20,8 @@ export const GalleryList: React.FC<GalleryListProps> = ({
   onSelectGallery,
   fileTypes = {} 
 }) => {
+  const [galleryToShare, setGalleryToShare] = useState<Gallery | null>(null);
+
   const renderGalleryIcon = (gallery: Gallery) => {
     if (gallery.coverImageUrl) {
       return (
@@ -95,6 +98,11 @@ export const GalleryList: React.FC<GalleryListProps> = ({
     }
   };
 
+  const handleShareGallery = (gallery: Gallery, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setGalleryToShare(gallery);
+  };
+
   if (galleries.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center p-12 text-center">
@@ -106,45 +114,78 @@ export const GalleryList: React.FC<GalleryListProps> = ({
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-      {galleries.map((gallery) => (
-        <Card 
-          key={gallery.id} 
-          className="overflow-hidden cursor-pointer transition-all hover:shadow-md"
-          onClick={() => onSelectGallery(gallery)}
-        >
-          <div className="h-40 bg-muted flex items-center justify-center overflow-hidden">
-            {gallery.coverImageUrl ? (
-              <img 
-                src={gallery.coverImageUrl} 
-                alt={gallery.name} 
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <div className="flex flex-col items-center justify-center">
-                {renderGalleryIcon(gallery)}
-              </div>
-            )}
-          </div>
-          <CardContent className="p-4">
-            <h3 className="font-semibold text-lg mb-1 truncate" title={gallery.name}>
-              {gallery.name}
-            </h3>
-            {gallery.description && (
-              <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
-                {gallery.description}
-              </p>
-            )}
-            <div className="flex items-center justify-between text-xs text-muted-foreground mt-2 pt-2 border-t border-border">
-              <div className="flex items-center gap-1">
-                {getFileCountIcon(gallery.id)}
-                <span>{gallery.fileCount} files</span>
-              </div>
-              <span>{formatDate(gallery.createdOn)}</span>
+    <>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        {galleries.map((gallery) => (
+          <Card 
+            key={gallery.id} 
+            className="overflow-hidden cursor-pointer transition-all hover:shadow-md"
+          >
+            <div 
+              className="h-40 bg-muted flex items-center justify-center overflow-hidden"
+              onClick={() => onSelectGallery(gallery)}
+            >
+              {gallery.coverImageUrl ? (
+                <img 
+                  src={gallery.coverImageUrl} 
+                  alt={gallery.name} 
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="flex flex-col items-center justify-center">
+                  {renderGalleryIcon(gallery)}
+                </div>
+              )}
             </div>
-          </CardContent>
-        </Card>
-      ))}
-    </div>
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <h3 
+                  className="font-semibold text-lg mb-1 truncate" 
+                  title={gallery.name}
+                  onClick={() => onSelectGallery(gallery)}
+                >
+                  {gallery.name}
+                </h3>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="h-8 w-8 -mr-2" 
+                  onClick={(e) => handleShareGallery(gallery, e)}
+                  title="Share gallery"
+                >
+                  <Share2 className="h-4 w-4" />
+                </Button>
+              </div>
+              {gallery.description && (
+                <p 
+                  className="text-sm text-muted-foreground mb-3 line-clamp-2"
+                  onClick={() => onSelectGallery(gallery)}
+                >
+                  {gallery.description}
+                </p>
+              )}
+              <div 
+                className="flex items-center justify-between text-xs text-muted-foreground mt-2 pt-2 border-t border-border"
+                onClick={() => onSelectGallery(gallery)}
+              >
+                <div className="flex items-center gap-1">
+                  {getFileCountIcon(gallery.id)}
+                  <span>{gallery.fileCount} files</span>
+                </div>
+                <span>{formatDate(gallery.createdOn)}</span>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Share Gallery Dialog */}
+      <ShareDialog
+        open={galleryToShare !== null}
+        onOpenChange={(open) => !open && setGalleryToShare(null)}
+        item={galleryToShare}
+        itemType="gallery"
+      />
+    </>
   );
 };
