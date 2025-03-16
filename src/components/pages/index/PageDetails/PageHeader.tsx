@@ -3,7 +3,6 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Edit2, Save, X, RefreshCw, CheckCircle } from 'lucide-react';
 import { CardHeader, CardTitle } from '@/components/ui/card';
-import { Slider } from '@/components/ui/slider';
 
 interface PageHeaderProps {
   isEditing: boolean;
@@ -40,52 +39,35 @@ const PageHeader = ({
           <div className="flex items-center gap-2">
             {onToggleStatus && (
               <div className="flex items-center gap-3 mr-2">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-gray-600">Draft</span>
-                  <div className="w-16">
-                    <Slider
-                      defaultValue={[isPublished ? 100 : 0]}
-                      max={100}
-                      step={100}
-                      disabled={isTogglingStatus}
-                      onValueChange={(value) => {
-                        const newValue = value[0] > 50;
-                        if (newValue !== isPublished) {
-                          onToggleStatus();
-                        }
-                      }}
-                      className={isPublished ? "bg-gray-200" : ""}
-                    />
-                  </div>
-                  <span className={`text-xs ${isPublished ? "text-green-600 font-medium" : "text-gray-600"}`}>
-                    Published
+                <div className="text-sm font-medium">
+                  Status: 
+                  <span className={`ml-2 px-2 py-1 rounded ${isPublished 
+                    ? "bg-green-100 text-green-700" 
+                    : "bg-gray-100 text-gray-700"}`}>
+                    {isPublished ? 'Published' : 'Draft'}
                   </span>
                 </div>
-                {isTogglingStatus && (
-                  <RefreshCw className="h-4 w-4 animate-spin text-gray-500" />
-                )}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={onToggleStatus}
+                  disabled={isTogglingStatus}
+                  className={`gap-1 ${isPublished 
+                    ? "border-gray-300" 
+                    : "border-green-300"}`}
+                >
+                  {isTogglingStatus ? (
+                    <>
+                      <RefreshCw className="h-4 w-4 animate-spin" />
+                      Updating...
+                    </>
+                  ) : (
+                    <>
+                      <span>{isPublished ? 'Set as Draft' : 'Publish'}</span>
+                    </>
+                  )}
+                </Button>
               </div>
-            )}
-            {!isPublished && onPublish && (
-              <Button 
-                variant="default" 
-                size="sm"
-                onClick={onPublish}
-                disabled={isPublishing}
-                className="gap-1 bg-green-600 hover:bg-green-700"
-              >
-                {isPublishing ? (
-                  <>
-                    <RefreshCw className="h-4 w-4 animate-spin" />
-                    Publishing...
-                  </>
-                ) : (
-                  <>
-                    <CheckCircle className="h-4 w-4" />
-                    Publish
-                  </>
-                )}
-              </Button>
             )}
             <Button 
               variant="outline" 
