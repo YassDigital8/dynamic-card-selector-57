@@ -4,7 +4,14 @@ import { FileInfo, Gallery } from '@/models/FileModel';
 import { useGlobalDragState } from '@/hooks/gallery/useDragAndDrop';
 import { GalleryDropTargets } from './GalleryDropTargets';
 import { ShareDialog } from './ShareDialog';
-import { SortControls, FilePreviewDialog, FileGrid, useSortedFiles } from './file-list';
+import { 
+  SortControls, 
+  FilePreviewDialog, 
+  FileGrid, 
+  useSortedFiles,
+  FilterControls,
+  FileTypeFilter
+} from './file-list';
 
 interface FileListProps {
   files: FileInfo[];
@@ -28,10 +35,27 @@ export const FileList: React.FC<FileListProps> = ({
   const [previewFile, setPreviewFile] = useState<FileInfo | null>(null);
   const [shareFile, setShareFile] = useState<FileInfo | null>(null);
   const { isDragging, draggedItem } = useGlobalDragState();
-  const [sortConfig, setSortConfig] = useState({ field: 'uploadedOn' as const, direction: 'desc' as const });
+  const [sortConfig, setSortConfig] = useState<{ field: 'name' | 'size' | 'type' | 'uploadedOn', direction: 'asc' | 'desc' }>({ 
+    field: 'uploadedOn', 
+    direction: 'desc' 
+  });
+  const [fileTypeFilter, setFileTypeFilter] = useState('all');
+  
+  // Define file type filters
+  const fileTypeFilters: FileTypeFilter[] = [
+    { type: 'image/', label: 'Images' },
+    { type: 'application/pdf', label: 'PDF Documents' },
+    { type: 'video/', label: 'Videos' },
+    { type: 'audio/', label: 'Audio' },
+  ];
+  
+  // Filter files based on type
+  const filteredFiles = files.filter(file => {
+    return fileTypeFilter === 'all' || file.type.startsWith(fileTypeFilter);
+  });
   
   // Sort files based on current sort configuration
-  const sortedFiles = useSortedFiles(files, sortConfig);
+  const sortedFiles = useSortedFiles(filteredFiles, sortConfig);
   
   // Change sort field and direction
   const handleSort = (field: 'name' | 'size' | 'type' | 'uploadedOn') => {
@@ -39,6 +63,11 @@ export const FileList: React.FC<FileListProps> = ({
       field,
       direction: current.field === field && current.direction === 'desc' ? 'asc' : 'desc'
     }));
+  };
+
+  // Clear all filters
+  const handleClearFilters = () => {
+    setFileTypeFilter('all');
   };
   
   // Ensure drag state is properly reflected with proper dependencies
@@ -79,7 +108,14 @@ export const FileList: React.FC<FileListProps> = ({
 
   return (
     <>
-      <div className="mb-4 flex justify-end">
+      <div className="mb-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <FilterControls
+          selectedType={fileTypeFilter}
+          onTypeChange={setFileTypeFilter}
+          onClearFilters={handleClearFilters}
+          fileTypes={fileTypeFilters}
+          hasActiveFilters={fileTypeFilter !== 'all'}
+        />
         <SortControls sortConfig={sortConfig} onSortChange={handleSort} />
       </div>
 

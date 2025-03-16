@@ -11,13 +11,13 @@ import { FileType, Filter } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 
-interface FileTypeFilter {
+export interface FileTypeFilter {
   type: string;
   label: string;
   icon?: React.ReactNode;
 }
 
-interface FilterComponentProps {
+export interface FilterControlsProps {
   selectedType: string;
   onTypeChange: (type: string) => void;
   onClearFilters: () => void;
@@ -25,7 +25,7 @@ interface FilterComponentProps {
   hasActiveFilters: boolean;
 }
 
-export const FilterComponent: React.FC<FilterComponentProps> = ({
+export const FilterControls: React.FC<FilterControlsProps> = ({
   selectedType,
   onTypeChange,
   onClearFilters,
@@ -33,10 +33,10 @@ export const FilterComponent: React.FC<FilterComponentProps> = ({
   hasActiveFilters
 }) => {
   return (
-    <div className="flex items-center space-x-2">
-      <span className="text-sm text-muted-foreground">Filter:</span>
+    <div className="flex items-center gap-2">
+      <span className="text-sm text-muted-foreground hidden md:inline">Filter:</span>
       <Select value={selectedType} onValueChange={onTypeChange}>
-        <SelectTrigger className="w-[180px]">
+        <SelectTrigger className="w-full md:w-[180px]">
           <SelectValue placeholder="All file types" />
         </SelectTrigger>
         <SelectContent>

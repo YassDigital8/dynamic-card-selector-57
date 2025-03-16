@@ -7,8 +7,8 @@ import { Edit, ArrowLeft, Share2, Plus, Image, FileText, File } from 'lucide-rea
 import { FileList } from '../FileList';
 import { EditGalleryDialog } from '../EditGalleryDialog';
 import { ShareDialog } from '../ShareDialog';
-import { FilterComponent } from '../FilterComponent';
 import { Input } from '@/components/ui/input';
+import { FileTypeFilter } from '../file-list';
 
 interface GalleryBrowseViewProps {
   selectedGallery: Gallery;
@@ -37,25 +37,23 @@ export const GalleryBrowseView: React.FC<GalleryBrowseViewProps> = ({
 }) => {
   const [isEditGalleryOpen, setIsEditGalleryOpen] = useState(false);
   const [isShareGalleryOpen, setIsShareGalleryOpen] = useState(false);
-  const [fileTypeFilter, setFileTypeFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   
   // Get all files in this gallery
   const galleryFiles = files.filter(file => file.galleryId === selectedGallery.id);
   
-  // Filter files based on type and search query
+  // Filter files based on search query
   const filteredFiles = galleryFiles.filter(file => {
-    const matchesType = fileTypeFilter === 'all' || file.type.startsWith(fileTypeFilter);
     const matchesSearch = !searchQuery || 
       file.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       file.metadata?.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       file.metadata?.description?.toLowerCase().includes(searchQuery.toLowerCase());
     
-    return matchesType && matchesSearch;
+    return matchesSearch;
   });
 
-  // Define file type filters
-  const fileTypeFilters = [
+  // Define file type filters with icons
+  const fileTypeFilters: FileTypeFilter[] = [
     { type: 'image/', label: 'Images', icon: <Image className="h-4 w-4 mr-2" /> },
     { type: 'application/pdf', label: 'PDF Documents', icon: <FileText className="h-4 w-4 mr-2" /> },
     { type: 'video/', label: 'Videos', icon: <File className="h-4 w-4 mr-2" /> },
@@ -111,24 +109,12 @@ export const GalleryBrowseView: React.FC<GalleryBrowseViewProps> = ({
       )}
       
       {galleryFiles.length > 0 && (
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-4 gap-4">
-          <div className="w-full md:w-auto">
-            <Input
-              placeholder="Search files..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full md:w-[300px]"
-            />
-          </div>
-          <FilterComponent
-            selectedType={fileTypeFilter}
-            onTypeChange={setFileTypeFilter}
-            onClearFilters={() => {
-              setFileTypeFilter('all');
-              setSearchQuery('');
-            }}
-            fileTypes={fileTypeFilters}
-            hasActiveFilters={fileTypeFilter !== 'all' || searchQuery !== ''}
+        <div className="flex items-center mb-4 gap-4">
+          <Input
+            placeholder="Search files..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full md:w-[300px] h-8"
           />
         </div>
       )}

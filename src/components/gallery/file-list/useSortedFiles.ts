@@ -1,11 +1,16 @@
 
-import { useMemo } from 'react';
+import React from 'react';
 import { FileInfo } from '@/models/FileModel';
-import { SortConfig, SortField } from './SortControls';
+
+export interface SortConfig {
+  field: 'name' | 'size' | 'type' | 'uploadedOn';
+  direction: 'asc' | 'desc';
+}
 
 export const useSortedFiles = (files: FileInfo[], sortConfig: SortConfig) => {
-  const sortedFiles = useMemo(() => {
-    return [...files].sort((a, b) => {
+  // Sort files based on current sort configuration
+  return React.useMemo(() => {
+    const sortedFiles = [...files].sort((a, b) => {
       const direction = sortConfig.direction === 'asc' ? 1 : -1;
       
       switch (sortConfig.field) {
@@ -21,24 +26,7 @@ export const useSortedFiles = (files: FileInfo[], sortConfig: SortConfig) => {
           return 0;
       }
     });
-  }, [files, sortConfig.field, sortConfig.direction]);
-
-  return sortedFiles;
-};
-
-export const useSort = (initialField: SortField = 'uploadedOn', initialDirection: 'asc' | 'desc' = 'desc') => {
-  const [sortConfig, setSortConfig] = React.useState<SortConfig>({ 
-    field: initialField, 
-    direction: initialDirection 
-  });
-  
-  // Change sort field and direction
-  const handleSort = (field: SortField) => {
-    setSortConfig(current => ({
-      field,
-      direction: current.field === field && current.direction === 'desc' ? 'asc' : 'desc'
-    }));
-  };
-
-  return { sortConfig, handleSort };
+    
+    return sortedFiles;
+  }, [files, sortConfig]);
 };
