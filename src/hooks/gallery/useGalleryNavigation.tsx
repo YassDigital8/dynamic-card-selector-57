@@ -23,10 +23,17 @@ export const useGalleryNavigation = (): UseGalleryNavigationReturn => {
   
   // When selectedGallery becomes null, switch back to galleries tab
   useEffect(() => {
-    if (!selectedGallery && activeTab === "browse") {
+    if (!selectedGallery && (activeTab === "browse")) {
       setActiveTab("galleries");
     }
   }, [selectedGallery, activeTab]);
+
+  // When switching to galleries tab, clear the selected gallery
+  useEffect(() => {
+    if (activeTab === "galleries") {
+      setSelectedGallery(null);
+    }
+  }, [activeTab]);
 
   const handleSelectGallery = (gallery: Gallery) => {
     setSelectedGallery(gallery);
