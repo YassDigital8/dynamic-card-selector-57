@@ -1,15 +1,12 @@
 
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Route, HelpCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Link, LucideGitFork } from 'lucide-react';
 import { SelectionStep } from '@/models/PageModel';
-import DynamicUrlDisplay from './pathSelector/DynamicUrlDisplay';
 import PathConfigOption from './pathSelector/PathConfigOption';
+import DynamicUrlDisplay from './pathSelector/DynamicUrlDisplay';
 import AddPageOption from './pathSelector/AddPageOption';
-import { fadeInVariants } from './pathSelector/animations';
-import { useIsMobile } from '@/hooks/use-mobile';
+import { Button } from '@/components/ui/button';
 
 interface PathSelectorsProps {
   availableSlugs: string[];
@@ -21,8 +18,10 @@ interface PathSelectorsProps {
   loading: boolean;
   selectedPOS: string;
   selectedLanguage: string;
-  onAddPageClick?: () => void;
+  onAddPageClick: () => void;
   currentStep: SelectionStep;
+  apiReachable?: boolean;
+  onRetryConnection?: () => void;
 }
 
 const PathSelectors = ({
@@ -36,68 +35,65 @@ const PathSelectors = ({
   selectedPOS,
   selectedLanguage,
   onAddPageClick,
-  currentStep
+  currentStep,
+  apiReachable = true,
+  onRetryConnection
 }: PathSelectorsProps) => {
-  const isMobile = useIsMobile();
-  
-  // Only show this component in the options step
-  if (currentStep !== 'options') return null;
+  const hasSubSlugs = selectedSlug && subSlugs.length > 0;
   
   return (
-    <AnimatePresence mode="wait">
-      <motion.div
-        key="path-selectors"
-        initial="hidden"
-        animate="visible"
-        exit="exit"
-        variants={fadeInVariants}
-      >
-        <Card className="shadow-md bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
-          <CardHeader className="bg-blue-50 dark:bg-blue-900/30 border-b border-gray-200 dark:border-gray-700 p-1 md:p-4">
-            <CardTitle className="text-blue-800 dark:text-blue-300 flex items-center gap-1 md:gap-2 text-[10px] md:text-lg">
-              <Route className="h-3 w-3 md:h-5 md:w-5" />
-              {isMobile ? "Actions" : "Choose Your Action"}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-2 md:p-5 space-y-2 md:space-y-6">
-            {!isMobile && (
-              <Alert className="bg-blue-50 dark:bg-blue-900/20 border-blue-100 dark:border-blue-800/30 text-blue-800 dark:text-blue-300 p-1 md:p-4">
-                <HelpCircle className="h-2.5 w-2.5 md:h-4 md:w-4" />
-                <AlertDescription className="text-xs md:text-sm">
-                  Choose how you want to proceed - configure a path or add a new page directly
-                </AlertDescription>
-              </Alert>
-            )}
-
-            {/* Dynamic URL Display */}
-            {(selectedPOS && selectedLanguage) && (
-              <DynamicUrlDisplay
-                selectedPOS={selectedPOS}
-                selectedLanguage={selectedLanguage}
-                selectedSlug={selectedSlug}
-                selectedSubSlug={selectedSubSlug}
-              />
-            )}
-
-            {/* Action Options Cards */}
-            <div className="grid grid-cols-1 gap-2 md:gap-4 mt-1 md:mt-4">
-              {/* Option 1: Configure Path */}
-              <PathConfigOption
-                availableSlugs={availableSlugs}
-                selectedSlug={selectedSlug}
-                setSelectedSlug={setSelectedSlug}
-                subSlugs={subSlugs}
-                selectedSubSlug={selectedSubSlug}
-                setSelectedSubSlug={setSelectedSubSlug}
-              />
-
-              {/* Option 2: Add New Page Directly */}
-              <AddPageOption onAddPageClick={onAddPageClick} />
-            </div>
-          </CardContent>
-        </Card>
-      </motion.div>
-    </AnimatePresence>
+    <Card className="shadow-md bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
+      <CardHeader className="bg-green-50 dark:bg-green-900/30 border-b border-gray-200 dark:border-gray-700 p-2 sm:p-3 md:p-4">
+        <CardTitle className="text-green-800 dark:text-green-300 flex items-center gap-1.5 md:gap-2 text-sm sm:text-base md:text-lg">
+          <Link className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5" />
+          Path Selection
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="p-2 sm:p-3 md:p-5 space-y-3 sm:space-y-4 md:space-y-6">
+        {/* URL Preview Display */}
+        <DynamicUrlDisplay
+          selectedPOS={selectedPOS}
+          selectedLanguage={selectedLanguage}
+          selectedSlug={selectedSlug}
+          selectedSubSlug={selectedSubSlug}
+        />
+        
+        {/* Parent Path Selection */}
+        <div className="space-y-3">
+          <PathConfigOption
+            title="Parent Path"
+            description="Select the parent path for your page"
+            options={availableSlugs}
+            value={selectedSlug}
+            onChange={setSelectedSlug}
+            loading={loading}
+            apiReachable={apiReachable}
+            onRetryConnection={onRetryConnection}
+          />
+          
+          {/* Subpath Selection - Only shown when a parent path is selected */}
+          {selectedSlug && (
+            <PathConfigOption
+              title="Subpath (Optional)"
+              description="Select a subpath if needed"
+              options={subSlugs}
+              value={selectedSubSlug}
+              onChange={setSelectedSubSlug}
+              loading={loading}
+              apiReachable={apiReachable}
+            />
+          )}
+        </div>
+        
+        {/* Add Page Option */}
+        <AddPageOption 
+          onAddPageClick={onAddPageClick}
+          selectedSlug={selectedSlug}
+          hasSubSlugs={hasSubSlugs}
+          selectedSubSlug={selectedSubSlug}
+        />
+      </CardContent>
+    </Card>
   );
 };
 

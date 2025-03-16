@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { FileText, Settings, PlusCircle } from 'lucide-react';
@@ -91,6 +92,7 @@ const Index = () => {
                     setSelectedLanguage={pageNavigation.setSelectedLanguage}
                     loading={pageNavigation.loading}
                     currentStep={pageNavigation.currentStep}
+                    error={pageNavigation.error}
                   />
                 </div>
                 
@@ -108,6 +110,8 @@ const Index = () => {
                       selectedLanguage={pageNavigation.selectedLanguage}
                       onAddPageClick={() => pageAddition.setAddPageDialogOpen(true)}
                       currentStep={pageNavigation.currentStep}
+                      apiReachable={pageNavigation.apiReachable}
+                      onRetryConnection={pageNavigation.retryApiConnection}
                     />
                   </div>
                 )}
