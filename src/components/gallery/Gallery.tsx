@@ -4,9 +4,18 @@ import { FileInfo } from '@/models/FileModel';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Eye, Download, Trash2, Search } from 'lucide-react';
+import { Eye, Download, Trash2, Search, ArrowDownAZ, ArrowDownUp, CalendarDays, ArrowUpDown } from 'lucide-react';
 import { FilePreview } from './FilePreview';
 import { FileDetails } from './FileDetails';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+
+type SortField = 'name' | 'size' | 'type' | 'uploadedOn';
+type SortDirection = 'asc' | 'desc';
+
+interface SortConfig {
+  field: SortField;
+  direction: SortDirection;
+}
 
 interface GalleryProps {
   files: FileInfo[];
@@ -15,16 +24,43 @@ interface GalleryProps {
 export const Gallery: React.FC<GalleryProps> = ({ files }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedFile, setSelectedFile] = useState<FileInfo | null>(null);
+  const [sortConfig, setSortConfig] = useState<SortConfig>({ field: 'uploadedOn', direction: 'desc' });
   
+  const handleSort = (field: SortField) => {
+    setSortConfig(current => ({
+      field,
+      direction: current.field === field && current.direction === 'desc' ? 'asc' : 'desc'
+    }));
+  };
+  
+  // Filter files based on search query
   const filteredFiles = files.filter(file => 
     file.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     file.metadata?.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     file.metadata?.description?.toLowerCase().includes(searchQuery.toLowerCase())
   );
+  
+  // Sort filtered files
+  const sortedFiles = [...filteredFiles].sort((a, b) => {
+    const direction = sortConfig.direction === 'asc' ? 1 : -1;
+    
+    switch (sortConfig.field) {
+      case 'name':
+        return (a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1) * direction;
+      case 'size':
+        return (a.size - b.size) * direction;
+      case 'type':
+        return (a.type.toLowerCase() > b.type.toLowerCase() ? 1 : -1) * direction;
+      case 'uploadedOn':
+        return (new Date(a.uploadedOn).getTime() - new Date(b.uploadedOn).getTime()) * direction;
+      default:
+        return 0;
+    }
+  });
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-3">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500 pointer-events-none" />
           <Input
@@ -34,6 +70,35 @@ export const Gallery: React.FC<GalleryProps> = ({ files }) => {
             className="pl-10 py-2 border-gray-300 focus:border-primary focus:ring-1 focus:ring-primary"
           />
         </div>
+        
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="sm" className="h-8">
+              {sortConfig.field === 'name' && <ArrowDownAZ className="h-4 w-4 mr-2" />}
+              {sortConfig.field === 'size' && <ArrowDownUp className="h-4 w-4 mr-2" />}
+              {sortConfig.field === 'uploadedOn' && <CalendarDays className="h-4 w-4 mr-2" />}
+              Sort by: {sortConfig.field.charAt(0).toUpperCase() + sortConfig.field.slice(1)}
+              <ArrowUpDown className={`h-4 w-4 ml-2 ${sortConfig.direction === 'asc' ? 'rotate-180' : ''}`} />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={() => handleSort('name')}>
+              <ArrowDownAZ className="h-4 w-4 mr-2" />
+              Name
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleSort('size')}>
+              <ArrowDownUp className="h-4 w-4 mr-2" />
+              Size
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleSort('type')}>
+              File Type
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleSort('uploadedOn')}>
+              <CalendarDays className="h-4 w-4 mr-2" />
+              Upload Date
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       {selectedFile ? (
@@ -49,8 +114,8 @@ export const Gallery: React.FC<GalleryProps> = ({ files }) => {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {filteredFiles.length > 0 ? (
-            filteredFiles.map((file) => (
+          {sortedFiles.length > 0 ? (
+            sortedFiles.map((file) => (
               <FileCard
                 key={file.id}
                 file={file}

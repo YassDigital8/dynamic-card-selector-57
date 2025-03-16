@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { FileInfo, Gallery } from '@/models/FileModel';
 import { Card, CardContent } from '@/components/ui/card';
-import { FileText, Image, File, Eye, Trash2, Share2 } from 'lucide-react';
+import { FileText, Image, File, Eye, Trash2, Share2, ArrowUpDown, ArrowDownAZ, ArrowDownUp, CalendarDays } from 'lucide-react';
 import { formatDate } from '@/lib/date-utils';
 import { Button } from '@/components/ui/button';
 import { FileDetails } from './FileDetails';
@@ -12,6 +12,15 @@ import { ShareDialog } from './ShareDialog';
 import { DraggableFileCard } from './DraggableFileCard';
 import { GalleryDropTargets } from './GalleryDropTargets';
 import { useGlobalDragState } from '@/hooks/gallery/useDragAndDrop';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+
+type SortField = 'name' | 'size' | 'type' | 'uploadedOn';
+type SortDirection = 'asc' | 'desc';
+
+interface SortConfig {
+  field: SortField;
+  direction: SortDirection;
+}
 
 interface FileListProps {
   files: FileInfo[];
@@ -35,6 +44,33 @@ export const FileList: React.FC<FileListProps> = ({
   const [previewFile, setPreviewFile] = useState<FileInfo | null>(null);
   const [shareFile, setShareFile] = useState<FileInfo | null>(null);
   const { isDragging, draggedItem } = useGlobalDragState();
+  const [sortConfig, setSortConfig] = useState<SortConfig>({ field: 'uploadedOn', direction: 'desc' });
+  
+  // Sort files based on current sort configuration
+  const sortedFiles = [...files].sort((a, b) => {
+    const direction = sortConfig.direction === 'asc' ? 1 : -1;
+    
+    switch (sortConfig.field) {
+      case 'name':
+        return (a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1) * direction;
+      case 'size':
+        return (a.size - b.size) * direction;
+      case 'type':
+        return (a.type.toLowerCase() > b.type.toLowerCase() ? 1 : -1) * direction;
+      case 'uploadedOn':
+        return (new Date(a.uploadedOn).getTime() - new Date(b.uploadedOn).getTime()) * direction;
+      default:
+        return 0;
+    }
+  });
+  
+  // Change sort field and direction
+  const handleSort = (field: SortField) => {
+    setSortConfig(current => ({
+      field,
+      direction: current.field === field && current.direction === 'desc' ? 'asc' : 'desc'
+    }));
+  };
   
   // Ensure drag state is properly reflected with proper dependencies
   const showDropTargets = isDragging && draggedItem && galleries.length > 1;
@@ -92,8 +128,56 @@ export const FileList: React.FC<FileListProps> = ({
 
   return (
     <>
+      <div className="mb-4 flex justify-end">
+        <div className="flex items-center space-x-2">
+          <span className="text-sm text-muted-foreground mr-2">Sort by:</span>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" className="h-8">
+                {sortConfig.field === 'name' && <ArrowDownAZ className="h-4 w-4 mr-2" />}
+                {sortConfig.field === 'size' && <ArrowDownUp className="h-4 w-4 mr-2" />}
+                {sortConfig.field === 'type' && <File className="h-4 w-4 mr-2" />}
+                {sortConfig.field === 'uploadedOn' && <CalendarDays className="h-4 w-4 mr-2" />}
+                {sortConfig.field.charAt(0).toUpperCase() + sortConfig.field.slice(1)}
+                <ArrowUpDown className={`h-4 w-4 ml-2 ${sortConfig.direction === 'asc' ? 'rotate-180' : ''}`} />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => handleSort('name')}>
+                <ArrowDownAZ className="h-4 w-4 mr-2" />
+                Name
+                {sortConfig.field === 'name' && (
+                  <ArrowUpDown className={`h-4 w-4 ml-2 ${sortConfig.direction === 'asc' ? 'rotate-180' : ''}`} />
+                )}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleSort('size')}>
+                <ArrowDownUp className="h-4 w-4 mr-2" />
+                Size
+                {sortConfig.field === 'size' && (
+                  <ArrowUpDown className={`h-4 w-4 ml-2 ${sortConfig.direction === 'asc' ? 'rotate-180' : ''}`} />
+                )}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleSort('type')}>
+                <File className="h-4 w-4 mr-2" />
+                Type
+                {sortConfig.field === 'type' && (
+                  <ArrowUpDown className={`h-4 w-4 ml-2 ${sortConfig.direction === 'asc' ? 'rotate-180' : ''}`} />
+                )}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleSort('uploadedOn')}>
+                <CalendarDays className="h-4 w-4 mr-2" />
+                Upload Date
+                {sortConfig.field === 'uploadedOn' && (
+                  <ArrowUpDown className={`h-4 w-4 ml-2 ${sortConfig.direction === 'asc' ? 'rotate-180' : ''}`} />
+                )}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {files.map((file) => (
+        {sortedFiles.map((file) => (
           <DraggableFileCard
             key={file.id}
             file={file}
