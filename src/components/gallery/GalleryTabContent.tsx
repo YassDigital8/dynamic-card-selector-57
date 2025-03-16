@@ -24,6 +24,7 @@ interface GalleryTabContentProps {
   onViewFile: (file: FileInfo) => void;
   onUpdateGallery: (gallery: Gallery) => void;
   onDeleteFile?: (file: FileInfo) => void;
+  onMoveFile?: (file: FileInfo, toGalleryId: string) => void;
 }
 
 export const GalleryTabContent: React.FC<GalleryTabContentProps> = ({
@@ -38,7 +39,8 @@ export const GalleryTabContent: React.FC<GalleryTabContentProps> = ({
   onFileUploaded,
   onViewFile,
   onUpdateGallery,
-  onDeleteFile
+  onDeleteFile,
+  onMoveFile
 }) => {
   const [isEditGalleryOpen, setIsEditGalleryOpen] = useState(false);
   const [isShareGalleryOpen, setIsShareGalleryOpen] = useState(false);
@@ -93,6 +95,7 @@ export const GalleryTabContent: React.FC<GalleryTabContentProps> = ({
           galleries={galleries}
           onSelectGallery={onSelectGallery}
           fileTypes={galleryFileTypes}
+          onMoveFile={onMoveFile}
         />
       )}
       
@@ -161,6 +164,7 @@ export const GalleryTabContent: React.FC<GalleryTabContentProps> = ({
               files={filteredFiles}
               onViewFile={onViewFile}
               onDeleteFile={handleDeleteFile}
+              onMoveFile={onMoveFile}
             />
           ) : (
             <div className="flex flex-col items-center justify-center p-12 border rounded-md">

@@ -26,7 +26,8 @@ const GalleryPage: React.FC = () => {
     handleViewFile,
     handleSelectGallery,
     handleUpdateGallery,
-    handleDeleteFile
+    handleDeleteFile,
+    handleMoveFile
   } = useGalleryViewModel();
 
   return (
@@ -57,6 +58,7 @@ const GalleryPage: React.FC = () => {
           onViewFile={handleViewFile}
           onUpdateGallery={handleUpdateGallery}
           onDeleteFile={handleDeleteFile}
+          onMoveFile={handleMoveFile}
         />
       </GalleryTabs>
       

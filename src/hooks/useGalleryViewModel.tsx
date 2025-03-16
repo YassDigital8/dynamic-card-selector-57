@@ -1,12 +1,14 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import { FileInfo, Gallery } from '@/models/FileModel';
+import { useToast } from './use-toast';
 
 export const useGalleryViewModel = () => {
   const [activeTab, setActiveTab] = useState("galleries");
   const [isCreateGalleryOpen, setIsCreateGalleryOpen] = useState(false);
   const [selectedGallery, setSelectedGallery] = useState<Gallery | null>(null);
   const [selectedFile, setSelectedFile] = useState<FileInfo | null>(null);
+  const { toast } = useToast();
   
   // When selectedGallery becomes null, switch back to galleries tab
   useEffect(() => {
@@ -147,6 +149,40 @@ export const useGalleryViewModel = () => {
     }
   };
 
+  const handleMoveFile = (fileToMove: FileInfo, toGalleryId: string) => {
+    // Make sure we're not moving to the same gallery
+    if (fileToMove.galleryId === toGalleryId) return;
+    
+    // Update the file with the new gallery ID
+    const updatedFile = { ...fileToMove, galleryId: toGalleryId };
+    
+    // Update the files array
+    setFiles(prevFiles => 
+      prevFiles.map(file => 
+        file.id === fileToMove.id ? updatedFile : file
+      )
+    );
+    
+    // Update file counts in both galleries
+    setGalleries(prevGalleries => 
+      prevGalleries.map(gallery => {
+        if (gallery.id === fileToMove.galleryId) {
+          // Decrement count in source gallery
+          return { ...gallery, fileCount: Math.max(0, gallery.fileCount - 1) };
+        } else if (gallery.id === toGalleryId) {
+          // Increment count in destination gallery
+          return { ...gallery, fileCount: gallery.fileCount + 1 };
+        }
+        return gallery;
+      })
+    );
+    
+    // Show toast notification
+    toast({
+      description: "File moved successfully",
+    });
+  };
+
   return {
     activeTab,
     setActiveTab,
@@ -163,6 +199,7 @@ export const useGalleryViewModel = () => {
     handleViewFile,
     handleSelectGallery,
     handleUpdateGallery,
-    handleDeleteFile
+    handleDeleteFile,
+    handleMoveFile
   };
 };
