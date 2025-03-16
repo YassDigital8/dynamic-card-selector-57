@@ -33,8 +33,8 @@ export const FilterComponent: React.FC<FilterComponentProps> = ({
   hasActiveFilters
 }) => {
   return (
-    <div className="flex items-center space-x-2">
-      <span className="text-sm text-muted-foreground">Filter:</span>
+    <div className="flex items-center gap-2">
+      <span className="text-sm text-muted-foreground whitespace-nowrap">Filter:</span>
       <Select value={selectedType} onValueChange={onTypeChange}>
         <SelectTrigger className="w-[180px]">
           <SelectValue placeholder="All file types" />

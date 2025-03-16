@@ -8,7 +8,6 @@ import { FileList } from '../FileList';
 import { EditGalleryDialog } from '../EditGalleryDialog';
 import { ShareDialog } from '../ShareDialog';
 import { FilterComponent } from '../FilterComponent';
-import { Input } from '@/components/ui/input';
 
 interface GalleryBrowseViewProps {
   selectedGallery: Gallery;
@@ -111,15 +110,7 @@ export const GalleryBrowseView: React.FC<GalleryBrowseViewProps> = ({
       )}
       
       {galleryFiles.length > 0 && (
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-4 gap-4">
-          <div className="w-full md:w-auto">
-            <Input
-              placeholder="Search files..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full md:w-[300px]"
-            />
-          </div>
+        <div className="mb-4">
           <FilterComponent
             selectedType={fileTypeFilter}
             onTypeChange={setFileTypeFilter}
@@ -142,6 +133,8 @@ export const GalleryBrowseView: React.FC<GalleryBrowseViewProps> = ({
           onViewFile={onViewFile}
           onDeleteFile={onDeleteFile}
           onMoveFile={onMoveFile}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
         />
       ) : (
         <div className="flex flex-col items-center justify-center p-12 border rounded-md">

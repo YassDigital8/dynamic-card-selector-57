@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { FileInfo, Gallery } from '@/models/FileModel';
 import { Card, CardContent } from '@/components/ui/card';
-import { FileText, Image, File, Eye, Trash2, Share2, ArrowUpDown, ArrowDownAZ, ArrowDownUp, CalendarDays } from 'lucide-react';
+import { FileText, Image, File, Eye, Trash2, Share2, ArrowUpDown, ArrowDownAZ, ArrowDownUp, CalendarDays, Search } from 'lucide-react';
 import { formatDate } from '@/lib/date-utils';
 import { Button } from '@/components/ui/button';
 import { FileDetails } from './FileDetails';
@@ -13,6 +13,7 @@ import { DraggableFileCard } from './DraggableFileCard';
 import { GalleryDropTargets } from './GalleryDropTargets';
 import { useGlobalDragState } from '@/hooks/gallery/useDragAndDrop';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
 
 type SortField = 'name' | 'size' | 'type' | 'uploadedOn';
 type SortDirection = 'asc' | 'desc';
@@ -30,6 +31,8 @@ interface FileListProps {
   onViewFile?: (file: FileInfo) => void;
   onDeleteFile?: (file: FileInfo) => void;
   onMoveFile?: (file: FileInfo, newGalleryId: string) => void;
+  searchQuery?: string;
+  onSearchChange?: (query: string) => void;
 }
 
 export const FileList: React.FC<FileListProps> = ({ 
@@ -39,12 +42,29 @@ export const FileList: React.FC<FileListProps> = ({
   currentGalleryId = '',
   onViewFile, 
   onDeleteFile,
-  onMoveFile 
+  onMoveFile,
+  searchQuery = '',
+  onSearchChange
 }) => {
   const [previewFile, setPreviewFile] = useState<FileInfo | null>(null);
   const [shareFile, setShareFile] = useState<FileInfo | null>(null);
   const { isDragging, draggedItem } = useGlobalDragState();
   const [sortConfig, setSortConfig] = useState<SortConfig>({ field: 'uploadedOn', direction: 'desc' });
+  const [localSearchQuery, setLocalSearchQuery] = useState(searchQuery);
+  
+  // Update local search when prop changes
+  useEffect(() => {
+    setLocalSearchQuery(searchQuery);
+  }, [searchQuery]);
+  
+  // Handle search input changes
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setLocalSearchQuery(value);
+    if (onSearchChange) {
+      onSearchChange(value);
+    }
+  };
   
   // Sort files based on current sort configuration
   const sortedFiles = [...files].sort((a, b) => {
@@ -128,12 +148,22 @@ export const FileList: React.FC<FileListProps> = ({
 
   return (
     <>
-      <div className="mb-4 flex justify-end">
+      <div className="mb-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-4 justify-between">
+        <div className="relative w-full sm:max-w-md">
+          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search files..."
+            value={localSearchQuery}
+            onChange={handleSearchChange}
+            className="pl-9 pr-4 h-10"
+          />
+        </div>
+        
         <div className="flex items-center space-x-2">
-          <span className="text-sm text-muted-foreground mr-2">Sort by:</span>
+          <span className="text-sm text-muted-foreground whitespace-nowrap">Sort by:</span>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="h-8">
+              <Button variant="outline" size="sm" className="h-10">
                 {sortConfig.field === 'name' && <ArrowDownAZ className="h-4 w-4 mr-2" />}
                 {sortConfig.field === 'size' && <ArrowDownUp className="h-4 w-4 mr-2" />}
                 {sortConfig.field === 'type' && <File className="h-4 w-4 mr-2" />}
