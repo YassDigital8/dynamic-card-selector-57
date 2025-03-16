@@ -21,6 +21,7 @@ const Login = () => {
 
   // If authenticated, redirect to the homepage
   if (authToken && !authLoading) {
+    console.log("Authenticated, redirecting to home page");
     return <Navigate to="/" replace />;
   }
 

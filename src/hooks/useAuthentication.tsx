@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -131,6 +132,7 @@ export const useAuthentication = () => {
           description: `Welcome back, ${authData.firstName || authData.email}`,
         });
         
+        console.log("Authentication successful, token set");
         return authData;
       } catch (fetchError) {
         // Convert the fetch error to a more specific error
@@ -172,9 +174,6 @@ export const useAuthentication = () => {
       title: "Logged out",
       description: "You have been successfully logged out",
     });
-    
-    // Redirect to login page
-    window.location.href = '/login';
   };
 
   return { 

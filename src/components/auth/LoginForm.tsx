@@ -49,6 +49,8 @@ const LoginForm = () => {
         password: data.password
       });
       
+      console.log('Login successful, should redirect soon');
+      
     } catch (error) {
       console.error('Login error:', error);
       let errorMessage = '';
