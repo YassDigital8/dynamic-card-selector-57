@@ -83,16 +83,24 @@ export const useAuthentication = () => {
     setAuthError(null);
     
     try {
-      // Updated URL to the new staging endpoint
-      const response = await fetch('https://staging.sa3d.online:7182/api/Authentication/login', {
+      console.log('Attempting to authenticate with:', credentials.email);
+      
+      // First try the staging URL
+      const authEndpoint = 'https://staging.sa3d.online:7182/api/Authentication/login';
+      console.log('Using authentication endpoint:', authEndpoint);
+      
+      const response = await fetch(authEndpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
         },
         body: JSON.stringify({
           email: credentials.email,
           password: credentials.password
         }),
+        mode: 'cors', // Explicitly set CORS mode
+        credentials: 'include' // Include credentials like cookies
       });
       
       if (!response.ok) {
@@ -132,7 +140,7 @@ export const useAuthentication = () => {
       let errorMessage = '';
       if (error instanceof Error) {
         if (error.message.includes('Failed to fetch')) {
-          errorMessage = 'Network error: Unable to connect to authentication server. Please check your connection or try again later.';
+          errorMessage = 'Network error or CORS issue: Unable to connect to authentication server. Please ensure the server allows cross-origin requests or contact your administrator.';
         } else {
           errorMessage = error.message;
         }

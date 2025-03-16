@@ -3,14 +3,13 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Loader2 } from 'lucide-react';
+import { Loader2, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import useAuthentication from '@/hooks/useAuthentication';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { AlertCircle } from 'lucide-react';
 
 // Define the schema for the login form
 const loginSchema = z.object({
@@ -58,9 +57,15 @@ const LoginForm = () => {
       let errorMessage = '';
       
       if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
-        errorMessage = 'Network error: Unable to connect to authentication server. Please check your connection or try again later.';
+        errorMessage = 'Network error or CORS issue: The authentication server is not accessible. Please ensure the server allows cross-origin requests or contact your administrator.';
+      } else if (error instanceof DOMException && error.name === 'AbortError') {
+        errorMessage = 'Request was aborted. This may be due to network issues or CORS restrictions.';
       } else {
         errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      }
+      
+      if (errorMessage.toLowerCase().includes('cors')) {
+        errorMessage += ' (This is likely a server configuration issue and not a problem with your credentials)';
       }
       
       setLoginError(errorMessage);
@@ -78,7 +83,7 @@ const LoginForm = () => {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       {loginError && (
-        <Alert variant="error" className="mb-4">
+        <Alert variant="destructive" className="mb-4">
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>Login failed</AlertTitle>
           <AlertDescription>{loginError}</AlertDescription>
@@ -121,6 +126,13 @@ const LoginForm = () => {
           'Log in'
         )}
       </Button>
+      
+      {loginError && loginError.includes('CORS') && (
+        <div className="mt-4 text-sm text-amber-600 dark:text-amber-400">
+          <p className="font-medium">CORS Error Detected</p>
+          <p>This is a server configuration issue. The authentication server needs to allow requests from this domain. Please contact your administrator.</p>
+        </div>
+      )}
     </form>
   );
 };
