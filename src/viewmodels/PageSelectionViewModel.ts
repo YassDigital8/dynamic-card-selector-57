@@ -34,46 +34,54 @@ export function usePageSelectionViewModel() {
   const languageOptions = ['English', 'Arabic'];
 
   // Fetch POS options from API
-  useEffect(() => {
-    const fetchPOSOptions = async () => {
-      setLoading(true);
-      setError(null);
-      
-      try {
-        // Use the correct API endpoint and include auth token
-        const response = await fetch('https://staging.sa3d.online:7036/POS', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${authToken}`
-          }
-        });
-        
-        if (!response.ok) {
-          throw new Error(`Error fetching POS options: ${response.status}`);
-        }
-        
-        const data: POSOption[] = await response.json();
-        setPosOptions(data);
-      } catch (err) {
-        console.error('Failed to fetch POS options:', err);
-        setError(err instanceof Error ? err.message : 'Unknown error occurred');
-        // Fallback to default values in case of API failure
-        setPosOptions([
-          { id: 1, key: 'SY', englishName: 'Syria', arabicName: 'سوريا', createdDate: '', createdBy: '', modifiedDate: null, modifiedBy: null },
-          { id: 2, key: 'UAE', englishName: 'UAE', arabicName: 'الإمارات', createdDate: '', createdBy: '', modifiedDate: null, modifiedBy: null },
-          { id: 3, key: 'KWI', englishName: 'Kuwait', arabicName: 'الكويت', createdDate: '', createdBy: '', modifiedDate: null, modifiedBy: null }
-        ]);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchPOSOptions = useCallback(async () => {
+    setLoading(true);
+    setError(null);
     
-    // Only fetch when we have an auth token
+    try {
+      // API call with timeout to prevent long waits
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000);
+      
+      const response = await fetch('https://staging.sa3d.online:7036/POS', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`
+        },
+        signal: controller.signal
+      });
+      
+      clearTimeout(timeoutId);
+      
+      if (!response.ok) {
+        throw new Error(`Error fetching POS options: ${response.status}`);
+      }
+      
+      const data: POSOption[] = await response.json();
+      
+      if (data.length === 0) {
+        throw new Error('API returned empty POS options');
+      }
+      
+      setPosOptions(data);
+    } catch (err) {
+      console.error('Failed to fetch POS options:', err);
+      setPosOptions([]);
+      setError(err instanceof Error 
+        ? `API Connection Error: ${err.message}` 
+        : 'API Connection Error: Unable to fetch POS options');
+    } finally {
+      setLoading(false);
+    }
+  }, [authToken]);
+  
+  // Only fetch when we have an auth token
+  useEffect(() => {
     if (authToken) {
       fetchPOSOptions();
     }
-  }, [authToken]); // Add authToken as a dependency
+  }, [authToken, fetchPOSOptions]);
 
   // Flow control methods
   const handlePOSSelection = useCallback((pos: string) => {
@@ -111,6 +119,9 @@ export function usePageSelectionViewModel() {
     setSelectedLanguage: handleLanguageSelection,
     setCurrentStep,
     setShowingOptions,
+    
+    // API actions
+    refreshPOSOptions: fetchPOSOptions,
     
     // Flow control
     resetSelections

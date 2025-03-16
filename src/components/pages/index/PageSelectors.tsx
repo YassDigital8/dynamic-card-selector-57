@@ -5,7 +5,7 @@ import { Languages } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { SelectionStep } from '@/models/PageModel';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { POSSelection, LanguageSelection, OptionsDisplay } from './pageSelector';
+import { POSSelection, LanguageSelection, OptionsDisplay, SlugPath } from './pageSelector';
 
 interface POSOption {
   id: number;
@@ -28,6 +28,7 @@ interface PageSelectorsProps {
   loading: boolean;
   currentStep: SelectionStep;
   error?: string | null;
+  onRetry?: () => void;
 }
 
 const PageSelectors = ({
@@ -39,7 +40,8 @@ const PageSelectors = ({
   setSelectedLanguage,
   loading,
   currentStep,
-  error
+  error,
+  onRetry
 }: PageSelectorsProps) => {
   const isMobile = useIsMobile();
   const selectedPOSName = posOptions.find(pos => pos.key === selectedPOS)?.englishName || selectedPOS;
@@ -62,6 +64,7 @@ const PageSelectors = ({
               setSelectedPOS={setSelectedPOS}
               loading={loading}
               error={error}
+              onRetry={onRetry}
             />
           )}
 

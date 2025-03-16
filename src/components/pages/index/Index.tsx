@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { FileText, Settings, PlusCircle } from 'lucide-react';
@@ -29,7 +30,7 @@ const Index = () => {
   
   const pageNavigation = usePageNavigation();
   const pageAddition = usePageAddition({
-    onSuccess: pageNavigation.fetchSlugs
+    onSuccess: pageNavigation.refreshSlugs
   });
   
   useEffect(() => {
@@ -91,6 +92,8 @@ const Index = () => {
                     setSelectedLanguage={pageNavigation.setSelectedLanguage}
                     loading={pageNavigation.loading}
                     currentStep={pageNavigation.currentStep}
+                    error={pageNavigation.error}
+                    onRetry={pageNavigation.refreshPOSOptions}
                   />
                 </div>
                 
@@ -120,7 +123,7 @@ const Index = () => {
               <div ref={pageDataRef} className="h-full pl-4 overflow-auto">
                 <PageData 
                   pageData={pageNavigation.pageData} 
-                  onRefresh={pageNavigation.refreshPageData}
+                  onRefresh={pageNavigation.fetchPageData}
                   onDelete={pageNavigation.deletePage}
                   selectedPOS={pageNavigation.selectedPOS}
                   selectedLanguage={pageNavigation.selectedLanguage}
