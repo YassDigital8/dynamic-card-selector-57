@@ -3,8 +3,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Edit2, Save, X, RefreshCw, CheckCircle } from 'lucide-react';
 import { CardHeader, CardTitle } from '@/components/ui/card';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Label } from '@/components/ui/label';
+import { Slider } from '@/components/ui/slider';
 
 interface PageHeaderProps {
   isEditing: boolean;
@@ -41,38 +40,27 @@ const PageHeader = ({
           <div className="flex items-center gap-2">
             {onToggleStatus && (
               <div className="flex items-center gap-3 mr-2">
-                <RadioGroup 
-                  value={isPublished ? "published" : "draft"}
-                  onValueChange={(value) => {
-                    if (value !== (isPublished ? "published" : "draft")) {
-                      onToggleStatus();
-                    }
-                  }}
-                  className="flex items-center gap-3"
-                  disabled={isTogglingStatus}
-                >
-                  <div className="flex items-center space-x-1">
-                    <RadioGroupItem 
-                      value="draft" 
-                      id="draft-status" 
-                      disabled={isTogglingStatus} 
-                    />
-                    <Label htmlFor="draft-status" className="text-xs cursor-pointer text-gray-600">
-                      Draft
-                    </Label>
-                  </div>
-                  <div className="flex items-center space-x-1">
-                    <RadioGroupItem 
-                      value="published" 
-                      id="published-status" 
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-gray-600">Draft</span>
+                  <div className="w-16">
+                    <Slider
+                      defaultValue={[isPublished ? 100 : 0]}
+                      max={100}
+                      step={100}
                       disabled={isTogglingStatus}
-                      className="text-green-500 border-green-500 data-[state=checked]:bg-green-500 data-[state=checked]:text-white"
+                      onValueChange={(value) => {
+                        const newValue = value[0] > 50;
+                        if (newValue !== isPublished) {
+                          onToggleStatus();
+                        }
+                      }}
+                      className={isPublished ? "bg-gray-200" : ""}
                     />
-                    <Label htmlFor="published-status" className="text-xs cursor-pointer text-gray-600">
-                      Published
-                    </Label>
                   </div>
-                </RadioGroup>
+                  <span className={`text-xs ${isPublished ? "text-green-600 font-medium" : "text-gray-600"}`}>
+                    Published
+                  </span>
+                </div>
                 {isTogglingStatus && (
                   <RefreshCw className="h-4 w-4 animate-spin text-gray-500" />
                 )}
