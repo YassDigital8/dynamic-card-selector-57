@@ -6,7 +6,6 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { motion } from 'framer-motion';
 import { fadeInVariants } from '../pathSelector/animations';
 import { useIsMobile } from '@/hooks/use-mobile';
-import ApiErrorAlert from './ApiErrorAlert';
 
 interface POSOption {
   id: number;
@@ -25,7 +24,6 @@ interface POSSelectionProps {
   setSelectedPOS: (value: string) => void;
   loading: boolean;
   error?: string | null;
-  onRetry?: () => void;
 }
 
 const POSSelection = ({
@@ -33,8 +31,7 @@ const POSSelection = ({
   selectedPOS,
   setSelectedPOS,
   loading,
-  error,
-  onRetry
+  error
 }: POSSelectionProps) => {
   const isMobile = useIsMobile();
   
@@ -54,11 +51,11 @@ const POSSelection = ({
       </Alert>
       
       {error && (
-        <ApiErrorAlert 
-          error={error} 
-          onRetry={onRetry}
-          className="mb-2"
-        />
+        <Alert className="bg-red-50 dark:bg-red-900/20 border-red-100 dark:border-red-800/30 text-red-800 dark:text-red-300 p-1.5 sm:p-2 md:p-4">
+          <AlertDescription className="text-[10px] sm:text-xs md:text-sm">
+            {error}
+          </AlertDescription>
+        </Alert>
       )}
       
       <div className="space-y-1 md:space-y-2">
@@ -72,36 +69,18 @@ const POSSelection = ({
           disabled={loading || posOptions.length === 0}
         >
           <SelectTrigger className="w-full bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-green-400 transition-colors text-[10px] sm:text-xs md:text-sm h-8 md:h-10">
-            <SelectValue placeholder={loading ? "Loading..." : error ? "API Error" : "Select POS"} />
+            <SelectValue placeholder={loading ? "Loading..." : "Select POS"} />
           </SelectTrigger>
           <SelectContent className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 max-h-[40vh]">
-            {posOptions.length > 0 ? (
-              posOptions.map((pos) => (
-                <SelectItem 
-                  key={pos.id} 
-                  value={pos.key} 
-                  className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 text-[10px] sm:text-xs md:text-sm"
-                >
-                  {pos.englishName}
-                </SelectItem>
-              ))
-            ) : error ? (
+            {posOptions.map((pos) => (
               <SelectItem 
-                value="error" 
-                disabled 
-                className="text-red-500 dark:text-red-400 text-[10px] sm:text-xs md:text-sm"
+                key={pos.id} 
+                value={pos.key} 
+                className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 text-[10px] sm:text-xs md:text-sm"
               >
-                API connection error
+                {pos.englishName}
               </SelectItem>
-            ) : (
-              <SelectItem 
-                value="loading" 
-                disabled 
-                className="text-gray-500 dark:text-gray-400 text-[10px] sm:text-xs md:text-sm"
-              >
-                Loading options...
-              </SelectItem>
-            )}
+            ))}
           </SelectContent>
         </Select>
       </div>
