@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { FileInfo } from '@/models/FileModel';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -20,11 +20,11 @@ export const DraggableFileCard: React.FC<DraggableFileCardProps> = ({
   onShare,
   onDelete 
 }) => {
-  const { isDragging, resetDragState } = useGlobalDragState();
+  const { isDragging: globalIsDragging, resetDragState } = useGlobalDragState();
   const { dragRef, isDragging: isThisCardDragging } = useDrag<FileInfo>(file);
 
   // Clean up drag state if component unmounts while dragging
-  React.useEffect(() => {
+  useEffect(() => {
     return () => {
       if (isThisCardDragging) {
         resetDragState();

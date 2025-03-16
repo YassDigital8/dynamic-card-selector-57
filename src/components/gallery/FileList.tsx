@@ -14,9 +14,18 @@ import type { FileInfo } from '@/models/FileModel';
 interface FileListProps {
   files: FileInfo[];
   isLoading?: boolean;
+  onViewFile?: (file: FileInfo) => void;
+  onShareFile?: (file: FileInfo, e: React.MouseEvent) => void;
+  onDeleteFile?: (file: FileInfo, e: React.MouseEvent) => void;
 }
 
-const FileList = ({ files, isLoading = false }: FileListProps) => {
+const FileList = ({ 
+  files, 
+  isLoading = false, 
+  onViewFile,
+  onShareFile,
+  onDeleteFile
+}: FileListProps) => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedType, setSelectedType] = useState<string>('all');
   const [selectedFile, setSelectedFile] = useState<FileInfo | null>(null);
@@ -38,20 +47,30 @@ const FileList = ({ files, isLoading = false }: FileListProps) => {
   }, [searchParams]);
 
   const handleFileClick = (file: FileInfo) => {
-    setSelectedFile(file);
-    setPreviewDialogOpen(true);
+    if (onViewFile) {
+      onViewFile(file);
+    } else {
+      setSelectedFile(file);
+      setPreviewDialogOpen(true);
+    }
   };
 
   const handleShareFile = (file: FileInfo, e: React.MouseEvent) => {
     e.stopPropagation();
-    // Handle share logic
-    console.log('Share file:', file.name);
+    if (onShareFile) {
+      onShareFile(file, e);
+    } else {
+      console.log('Share file:', file.name);
+    }
   };
 
   const handleDeleteFile = (file: FileInfo, e: React.MouseEvent) => {
     e.stopPropagation();
-    // Handle delete logic
-    console.log('Delete file:', file.name);
+    if (onDeleteFile) {
+      onDeleteFile(file, e);
+    } else {
+      console.log('Delete file:', file.name);
+    }
   };
 
   const filteredFiles = sortedFiles.filter((file) => {
@@ -84,11 +103,13 @@ const FileList = ({ files, isLoading = false }: FileListProps) => {
         onDeleteFile={handleDeleteFile}
       />
 
-      <FilePreviewDialog
-        file={selectedFile}
-        open={previewDialogOpen}
-        onOpenChange={setPreviewDialogOpen}
-      />
+      {!onViewFile && (
+        <FilePreviewDialog
+          file={selectedFile}
+          open={previewDialogOpen}
+          onOpenChange={setPreviewDialogOpen}
+        />
+      )}
     </div>
   );
 };

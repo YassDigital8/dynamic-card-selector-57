@@ -1,8 +1,12 @@
 
-export { SortControls } from './SortControls';
-export { FilePreviewDialog } from './FilePreviewDialog';
+// Export components
 export { FileGrid } from './FileGrid';
-export { useSortedFiles } from './useSortedFiles';
+export { FilePreviewDialog } from './FilePreviewDialog';
+export { SortControls } from './SortControls';
 export { FilterControls } from './FilterControls';
-export type { SortConfig, SortControlsProps } from './useSortedFiles';
-export type { FileTypeFilter } from './FilterControls';
+
+// Export hooks
+export { useSortedFiles } from './useSortedFiles';
+
+// Export types
+export type { SortConfig } from './useSortedFiles';

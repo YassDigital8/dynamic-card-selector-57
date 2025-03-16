@@ -20,7 +20,10 @@ export const GalleryDropTargets: React.FC<GalleryDropTargetsProps> = ({
   fileTypes
 }) => {
   const { toast } = useToast();
-  const { resetDragState } = useGlobalDragState();
+  const { isDragging, draggedItem, resetDragState } = useGlobalDragState();
+
+  // If not dragging, don't render the component
+  if (!isDragging) return null;
 
   const renderGalleryIcon = (gallery: Gallery) => {
     if (gallery.coverImageUrl) {

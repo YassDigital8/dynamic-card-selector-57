@@ -7,10 +7,13 @@ const globalDragState = {
   isDragging: false,
   draggedItem: null as any,
   subscribers: new Set<(isDragging: boolean, item: any) => void>(),
+  setDragState: (isDragging: boolean, item: any) => {
+    globalDragState.isDragging = isDragging;
+    globalDragState.draggedItem = item;
+    globalDragState.subscribers.forEach(fn => fn(isDragging, item));
+  },
   resetDragState: () => {
-    globalDragState.isDragging = false;
-    globalDragState.draggedItem = null;
-    globalDragState.subscribers.forEach(fn => fn(false, null));
+    globalDragState.setDragState(false, null);
   }
 };
 
@@ -26,6 +29,10 @@ export function useGlobalDragState() {
     };
 
     globalDragState.subscribers.add(handleChange);
+    
+    // Set initial state
+    handleChange(globalDragState.isDragging, globalDragState.draggedItem);
+    
     return () => {
       globalDragState.subscribers.delete(handleChange);
     };
@@ -50,13 +57,24 @@ export function useDrag<T>(item: T) {
       setIsDragging(true);
       
       // Update global drag state
-      globalDragState.isDragging = true;
-      globalDragState.draggedItem = item;
-      globalDragState.subscribers.forEach(fn => fn(true, item));
+      globalDragState.setDragState(true, item);
       
       if (e.dataTransfer) {
         e.dataTransfer.setData('application/json', JSON.stringify(item));
         e.dataTransfer.effectAllowed = 'move';
+        
+        // Create a ghost drag image
+        const dragImage = document.createElement('div');
+        dragImage.textContent = 'Moving...';
+        dragImage.style.position = 'absolute';
+        dragImage.style.top = '-1000px';
+        document.body.appendChild(dragImage);
+        e.dataTransfer.setDragImage(dragImage, 0, 0);
+        
+        // Clean up the ghost element after a short delay
+        setTimeout(() => {
+          document.body.removeChild(dragImage);
+        }, 100);
       }
     };
 
@@ -96,7 +114,9 @@ export function useDrop<T>(onDrop: (item: T) => void) {
       setIsOver(true);
     };
 
-    const handleDragLeave = () => {
+    const handleDragLeave = (e: DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
       setIsOver(false);
     };
 

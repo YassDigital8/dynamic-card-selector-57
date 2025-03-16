@@ -6,6 +6,8 @@ import { Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import EmptyGalleryState from '../EmptyGalleryState';
 import { FileInfo, Gallery } from '@/models/FileModel';
+import { GalleryDropTargets } from '../GalleryDropTargets';
+import { useGlobalDragState } from '@/hooks/gallery/useDragAndDrop';
 
 interface GalleryBrowseViewProps {
   onOpenUploadDialog: () => void;
@@ -27,17 +29,37 @@ const GalleryBrowseView: React.FC<GalleryBrowseViewProps> = ({
   selectedGallery,
   onBackToGalleries,
   onAddFiles,
-  galleries,
-  galleryFileTypes,
+  galleries = [],
+  galleryFileTypes = {},
   onViewFile,
   onDeleteFile,
   onMoveFile,
   onUpdateGallery
 }) => {
   const navigate = useNavigate();
+  const { isDragging } = useGlobalDragState();
 
   const handleCreateFolderClick = () => {
     navigate('/new-folder');
+  };
+
+  const handleViewFile = (file: FileInfo) => {
+    if (onViewFile) {
+      onViewFile(file);
+    }
+  };
+
+  const handleDeleteFile = (file: FileInfo, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onDeleteFile) {
+      onDeleteFile(file);
+    }
+  };
+
+  const handleShareFile = (file: FileInfo, e: React.MouseEvent) => {
+    e.stopPropagation();
+    // Handle share functionality
+    console.log('Share file:', file.name);
   };
 
   return (
@@ -57,7 +79,22 @@ const GalleryBrowseView: React.FC<GalleryBrowseViewProps> = ({
       {files.length === 0 ? (
         <EmptyGalleryState onOpenUploadDialog={onOpenUploadDialog} />
       ) : (
-        <FileList files={files} />
+        <FileList 
+          files={files} 
+          onViewFile={handleViewFile}
+          onShareFile={handleShareFile}
+          onDeleteFile={handleDeleteFile}
+        />
+      )}
+
+      {/* Show gallery drop targets when dragging */}
+      {isDragging && selectedGallery && (
+        <GalleryDropTargets
+          galleries={galleries}
+          currentGalleryId={selectedGallery.id}
+          onMoveFile={onMoveFile || (() => {})}
+          fileTypes={galleryFileTypes}
+        />
       )}
     </div>
   );
