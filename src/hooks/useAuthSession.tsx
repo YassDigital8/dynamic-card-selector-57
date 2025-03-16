@@ -73,6 +73,19 @@ export const useAuthSession = ({ authToken, logout }: UseAuthSessionProps) => {
     };
   }, [authToken, resetSessionTimer]);
 
+  // Initialize the timer on first load
+  useEffect(() => {
+    if (authToken) {
+      const storedExpiryTime = localStorage.getItem('sessionExpiresAt');
+      if (storedExpiryTime) {
+        const expiryTime = parseInt(storedExpiryTime, 10);
+        setSessionExpiresAt(expiryTime);
+      } else {
+        startSessionTimer();
+      }
+    }
+  }, [authToken, startSessionTimer]);
+
   return {
     sessionExpiresAt,
     remainingTime,
