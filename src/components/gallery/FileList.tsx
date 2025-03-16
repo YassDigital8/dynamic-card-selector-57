@@ -67,7 +67,10 @@ const FileList = ({ files, isLoading = false }: FileListProps) => {
           selectedType={selectedType}
           setSelectedType={setSelectedType}
         />
-        <SortControls sortConfig={sortConfig} setSortConfig={setSortConfig} />
+        <SortControls 
+          sortConfig={sortConfig} 
+          onSortChange={setSortConfig} 
+        />
       </div>
 
       <FileGrid 
@@ -79,7 +82,8 @@ const FileList = ({ files, isLoading = false }: FileListProps) => {
 
       <FilePreviewDialog
         file={selectedFile}
-        onClose={() => setPreviewDialogOpen(false)}
+        open={previewDialogOpen}
+        onOpenChange={setPreviewDialogOpen}
       />
     </div>
   );

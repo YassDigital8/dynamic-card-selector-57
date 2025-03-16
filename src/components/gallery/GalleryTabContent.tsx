@@ -2,7 +2,7 @@ import React from 'react';
 import { Gallery, FileInfo } from '@/models/FileModel';
 import { GalleriesView } from './tabs/GalleriesView';
 import { UploadView } from './tabs/UploadView';
-import { GalleryBrowseView } from './tabs/GalleryBrowseView';
+import GalleryBrowseView from './tabs/GalleryBrowseView';
 import { useGalleryNotifications } from './tabs/GalleryNotifications';
 
 interface GalleryTabContentProps {
@@ -107,6 +107,7 @@ export const GalleryTabContent: React.FC<GalleryTabContentProps> = ({
           onDeleteFile={handleDeleteFile}
           onMoveFile={onMoveFile}
           onUpdateGallery={onUpdateGallery}
+          onOpenUploadDialog={handleAddFiles}
         />
       )}
     </div>

@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Search, FileType, Filter } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { LucideIcon } from 'lucide-react';
 
 export interface FileTypeFilter {
   type: string;
@@ -40,7 +41,7 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
     setSelectedType('');
   };
 
-  const defaultFileTypes = [
+  const defaultFileTypes: FileTypeFilter[] = [
     { type: 'image/jpeg', label: 'JPEG Images' },
     { type: 'image/png', label: 'PNG Images' },
     { type: 'application/pdf', label: 'PDF Documents' },

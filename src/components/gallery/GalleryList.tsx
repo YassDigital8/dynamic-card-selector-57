@@ -4,7 +4,7 @@ import { Gallery, FileInfo } from '@/models/FileModel';
 import { ShareDialog } from './ShareDialog';
 import { useToast } from '@/hooks/use-toast';
 import { GalleryCard } from './GalleryCard';
-import { EmptyGalleryState } from './EmptyGalleryState';
+import EmptyGalleryState from './EmptyGalleryState';
 
 interface GalleryListProps {
   galleries: Gallery[];
