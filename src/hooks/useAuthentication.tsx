@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
 interface AuthResponse {
@@ -22,12 +22,77 @@ interface LoginCredentials {
   password: string;
 }
 
+// Session duration in milliseconds (1 hour)
+const SESSION_DURATION = 60 * 60 * 1000;
+
 export const useAuthentication = () => {
   const [authToken, setAuthToken] = useState<string>('');
   const [authLoading, setAuthLoading] = useState<boolean>(true);
   const [authError, setAuthError] = useState<string | null>(null);
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+  const [sessionExpiresAt, setSessionExpiresAt] = useState<number | null>(null);
+  const [remainingTime, setRemainingTime] = useState<number | null>(null);
   const { toast } = useToast();
+  
+  // Start session timer
+  const startSessionTimer = useCallback(() => {
+    const expiryTime = Date.now() + SESSION_DURATION;
+    setSessionExpiresAt(expiryTime);
+    
+    // Store session expiry in localStorage
+    localStorage.setItem('sessionExpiresAt', expiryTime.toString());
+    
+    console.log(`Session started, will expire at ${new Date(expiryTime).toLocaleTimeString()}`);
+  }, []);
+  
+  // Reset session timer (e.g., on user activity)
+  const resetSessionTimer = useCallback(() => {
+    if (authToken) {
+      startSessionTimer();
+      console.log('Session timer reset due to user activity');
+    }
+  }, [authToken, startSessionTimer]);
+  
+  // Handle checking session expiration
+  useEffect(() => {
+    if (!authToken || !sessionExpiresAt) return;
+    
+    const interval = setInterval(() => {
+      const now = Date.now();
+      const timeLeft = sessionExpiresAt - now;
+      
+      if (timeLeft <= 0) {
+        clearInterval(interval);
+        logout();
+        toast({
+          title: "Session Expired",
+          description: "Your session has expired. Please log in again.",
+        });
+      } else {
+        setRemainingTime(timeLeft);
+      }
+    }, 1000);
+    
+    return () => clearInterval(interval);
+  }, [authToken, sessionExpiresAt, toast]);
+  
+  // User activity listener
+  useEffect(() => {
+    if (!authToken) return;
+    
+    const activityEvents = ['mousedown', 'keypress', 'scroll', 'touchstart'];
+    const handleUserActivity = () => resetSessionTimer();
+    
+    activityEvents.forEach(event => {
+      window.addEventListener(event, handleUserActivity);
+    });
+    
+    return () => {
+      activityEvents.forEach(event => {
+        window.removeEventListener(event, handleUserActivity);
+      });
+    };
+  }, [authToken, resetSessionTimer]);
   
   useEffect(() => {
     const checkAuthentication = async () => {
@@ -52,6 +117,24 @@ export const useAuthentication = () => {
           setUserInfo(JSON.parse(storedUserInfo));
         }
         
+        // Check for existing session timer
+        const storedExpiryTime = localStorage.getItem('sessionExpiresAt');
+        if (storedExpiryTime) {
+          const expiryTime = parseInt(storedExpiryTime, 10);
+          const now = Date.now();
+          
+          if (now > expiryTime) {
+            // Session expired
+            throw new Error('Session expired');
+          } else {
+            // Valid session, continue with remaining time
+            setSessionExpiresAt(expiryTime);
+          }
+        } else {
+          // No session timer found, start a new one
+          startSessionTimer();
+        }
+        
         setAuthToken(storedToken);
         console.log("Authentication successful with stored token");
         
@@ -61,6 +144,7 @@ export const useAuthentication = () => {
         // Clear invalid token and user info
         localStorage.removeItem('authToken');
         localStorage.removeItem('userInfo');
+        localStorage.removeItem('sessionExpiresAt');
         
         let errorMessage = '';
         if (error instanceof Error) {
@@ -76,7 +160,7 @@ export const useAuthentication = () => {
     };
 
     checkAuthentication();
-  }, []);
+  }, [startSessionTimer]);
 
   const login = async (credentials: LoginCredentials) => {
     setAuthLoading(true);
@@ -123,6 +207,9 @@ export const useAuthentication = () => {
         
         localStorage.setItem('userInfo', JSON.stringify(userInfoToStore));
         
+        // Start session timer
+        startSessionTimer();
+        
         // Update state
         setAuthToken(authData.token);
         setUserInfo(userInfoToStore);
@@ -168,8 +255,11 @@ export const useAuthentication = () => {
   const logout = () => {
     localStorage.removeItem('authToken');
     localStorage.removeItem('userInfo');
+    localStorage.removeItem('sessionExpiresAt');
     setAuthToken('');
     setUserInfo(null);
+    setSessionExpiresAt(null);
+    setRemainingTime(null);
     
     toast({
       title: "Logged out",
@@ -183,6 +273,8 @@ export const useAuthentication = () => {
     authError, 
     userInfo,
     isAuthenticated: !!authToken,
+    remainingTime,
+    resetSessionTimer,
     login,
     logout 
   };

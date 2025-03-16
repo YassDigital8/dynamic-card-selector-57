@@ -27,6 +27,7 @@ import {
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { Logo } from '@/components/ui/logo';
 import { useIsMobile } from '@/hooks/use-mobile';
+import SessionTimer from '@/components/auth/SessionTimer';
 
 interface PageContainerProps {
   children: React.ReactNode;
@@ -159,6 +160,7 @@ const PageContainer: React.FC<PageContainerProps> = ({ children }) => {
                   <p className="text-xs md:text-sm text-muted-foreground mt-1">Manage pages across different POS and languages</p>
                 </div>
                 <div className="flex items-center gap-2 self-start">
+                  <SessionTimer />
                   <Logo showText={false} className="mr-1 md:mr-2" />
                   <span className="text-xs md:text-sm text-primary bg-secondary px-2 py-1 rounded-full">
                     Demo Mode
