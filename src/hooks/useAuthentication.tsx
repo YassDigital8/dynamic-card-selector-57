@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -89,60 +88,68 @@ export const useAuthentication = () => {
       const authEndpoint = 'https://staging.sa3d.online:7182/api/Authentication/login';
       console.log('Using authentication endpoint:', authEndpoint);
       
-      const response = await fetch(authEndpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        body: JSON.stringify({
-          email: credentials.email,
-          password: credentials.password
-        }),
-        mode: 'cors', // Explicitly set CORS mode
-        credentials: 'include' // Include credentials like cookies
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || `Authentication failed: ${response.status}`);
+      try {
+        const response = await fetch(authEndpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+          body: JSON.stringify({
+            email: credentials.email,
+            password: credentials.password
+          }),
+        });
+        
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.message || `Authentication failed: ${response.status}`);
+        }
+        
+        const authData: AuthResponse = await response.json();
+        
+        if (!authData.token) {
+          throw new Error('Invalid authentication response: no token received');
+        }
+        
+        // Store the token and user info
+        localStorage.setItem('authToken', authData.token);
+        
+        const userInfoToStore = {
+          firstName: authData.firstName,
+          email: authData.email
+        };
+        
+        localStorage.setItem('userInfo', JSON.stringify(userInfoToStore));
+        
+        // Update state
+        setAuthToken(authData.token);
+        setUserInfo(userInfoToStore);
+        
+        toast({
+          title: "Login successful",
+          description: `Welcome back, ${authData.firstName || authData.email}`,
+        });
+        
+        return authData;
+      } catch (fetchError) {
+        // Convert the fetch error to a more specific error
+        if (fetchError instanceof TypeError && fetchError.message.includes('Failed to fetch')) {
+          // This is likely a CORS or certificate issue
+          throw new Error('SSL Certificate Error: The server uses an invalid SSL certificate. If you trust this server, please add an exception in your browser or contact your administrator.');
+        }
+        throw fetchError;
       }
-      
-      const authData: AuthResponse = await response.json();
-      
-      if (!authData.token) {
-        throw new Error('Invalid authentication response: no token received');
-      }
-      
-      // Store the token and user info
-      localStorage.setItem('authToken', authData.token);
-      
-      const userInfoToStore = {
-        firstName: authData.firstName,
-        email: authData.email
-      };
-      
-      localStorage.setItem('userInfo', JSON.stringify(userInfoToStore));
-      
-      // Update state
-      setAuthToken(authData.token);
-      setUserInfo(userInfoToStore);
-      
-      toast({
-        title: "Login successful",
-        description: `Welcome back, ${authData.firstName || authData.email}`,
-      });
-      
-      return authData;
     } catch (error) {
       console.error('Login error:', error);
       
       let errorMessage = '';
       if (error instanceof Error) {
-        if (error.message.includes('Failed to fetch')) {
-          errorMessage = 'Network error or CORS issue: Unable to connect to authentication server. Please ensure the server allows cross-origin requests or contact your administrator.';
-        } else {
-          errorMessage = error.message;
+        errorMessage = error.message;
+        
+        // Add more specific guidance for SSL certificate errors
+        if (errorMessage.includes('SSL Certificate Error')) {
+          errorMessage += '\n\nThis is typically caused by a self-signed or invalid SSL certificate on the server.';
         }
       } else {
         errorMessage = 'Unknown error occurred during authentication';
