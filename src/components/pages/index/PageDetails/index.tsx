@@ -46,6 +46,7 @@ const PageDetails = ({
   const [editedTitle, setEditedTitle] = useState('');
   const [editedContent, setEditedContent] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  const [isPublishing, setIsPublishing] = useState(false);
   const { toast } = useToast();
 
   // Start editing with current values
@@ -135,6 +136,86 @@ const PageDetails = ({
     }
   };
 
+  // Change page status from draft to published
+  const handlePublish = async () => {
+    if (!pageData?.id) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Cannot publish page: Missing page ID",
+      });
+      return;
+    }
+    
+    if (pageData.status === 'published') {
+      toast({
+        title: "Info",
+        description: "This page is already published",
+      });
+      return;
+    }
+    
+    setIsPublishing(true);
+    
+    try {
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        throw new Error('Authentication token not found');
+      }
+      
+      // Prepare the request body based on the existing page data
+      const updateData = {
+        id: pageData.id,
+        pageUrlName: pageData.pageUrlName || `${selectedPOS}/${selectedLanguage}/${selectedSlug}${selectedSubSlug ? '/' + selectedSubSlug : ''}`,
+        language: selectedLanguage,
+        pos: selectedPOS,
+        title: pageData.title,
+        status: 'published',
+        description: pageData.content,
+        segments: pageData.segments || []
+      };
+      
+      console.log('Publishing page with data:', updateData);
+      
+      const response = await fetch('https://staging.sa3d.online:7036/Page', {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updateData)
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to publish page: ${response.status} ${response.statusText}`);
+      }
+
+      toast({
+        title: "Success",
+        description: "Page published successfully",
+      });
+      
+      // Update the local pageData
+      if (pageData) {
+        pageData.status = 'published';
+      }
+      
+      // Refresh the page data to get the latest from the server
+      if (onRefresh) {
+        onRefresh();
+      }
+    } catch (error) {
+      console.error('Error publishing page:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to publish page",
+      });
+    } finally {
+      setIsPublishing(false);
+    }
+  };
+
   if (!pageData) {
     return (
       <Card className="bg-white shadow-md">
@@ -166,6 +247,9 @@ const PageDetails = ({
           onEdit={handleEdit}
           onCancel={handleCancel}
           onSave={handleSave}
+          onPublish={handlePublish}
+          isPublishing={isPublishing}
+          pageStatus={pageData.status}
         />
         <CardContent className="p-6">
           <PageDetailsView 

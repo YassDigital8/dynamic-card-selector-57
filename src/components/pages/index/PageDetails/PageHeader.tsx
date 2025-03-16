@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Edit2, Save, X, RefreshCw } from 'lucide-react';
+import { Edit2, Save, X, RefreshCw, CheckCircle } from 'lucide-react';
 import { CardHeader, CardTitle } from '@/components/ui/card';
 
 interface PageHeaderProps {
@@ -10,23 +10,58 @@ interface PageHeaderProps {
   onEdit: () => void;
   onCancel: () => void;
   onSave: () => void;
+  onPublish?: () => void;
+  isPublishing?: boolean;
+  pageStatus?: string;
 }
 
-const PageHeader = ({ isEditing, isSaving, onEdit, onCancel, onSave }: PageHeaderProps) => {
+const PageHeader = ({ 
+  isEditing, 
+  isSaving, 
+  onEdit, 
+  onCancel, 
+  onSave,
+  onPublish,
+  isPublishing,
+  pageStatus
+}: PageHeaderProps) => {
   return (
     <CardHeader className="bg-gray-50 border-b">
       <CardTitle className="flex items-center justify-between">
         <span>Page Details</span>
         {!isEditing ? (
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={onEdit}
-            className="gap-1"
-          >
-            <Edit2 className="h-4 w-4" />
-            Edit
-          </Button>
+          <div className="flex items-center gap-2">
+            {pageStatus !== 'published' && onPublish && (
+              <Button 
+                variant="default" 
+                size="sm"
+                onClick={onPublish}
+                disabled={isPublishing}
+                className="gap-1 bg-green-600 hover:bg-green-700"
+              >
+                {isPublishing ? (
+                  <>
+                    <RefreshCw className="h-4 w-4 animate-spin" />
+                    Publishing...
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle className="h-4 w-4" />
+                    Publish
+                  </>
+                )}
+              </Button>
+            )}
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={onEdit}
+              className="gap-1"
+            >
+              <Edit2 className="h-4 w-4" />
+              Edit
+            </Button>
+          </div>
         ) : (
           <div className="flex items-center gap-2">
             <Button 
