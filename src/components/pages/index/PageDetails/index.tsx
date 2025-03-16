@@ -1,9 +1,9 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
-import { useToast } from '@/hooks/use-toast';
 import { PageData } from '@/models/PageModel';
+import { usePageEdit } from '@/hooks/usePageEdit';
 
 // Components
 import PageHeader from './PageHeader';
@@ -42,179 +42,26 @@ const PageDetails = ({
   selectedPathId,
   selectedSubPathId
 }: PageDetailsProps) => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [editedTitle, setEditedTitle] = useState('');
-  const [editedContent, setEditedContent] = useState('');
-  const [isSaving, setIsSaving] = useState(false);
-  const [isPublishing, setIsPublishing] = useState(false);
-  const { toast } = useToast();
-
-  // Start editing with current values
-  const handleEdit = () => {
-    setEditedTitle(pageData?.title || '');
-    setEditedContent(pageData?.content || '');
-    setIsEditing(true);
-  };
-
-  // Cancel editing
-  const handleCancel = () => {
-    setIsEditing(false);
-  };
-
-  // Save changes using the API
-  const handleSave = async () => {
-    if (!pageData?.id) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Cannot update page: Missing page ID",
-      });
-      return;
-    }
-    
-    setIsSaving(true);
-    
-    try {
-      const token = localStorage.getItem('authToken');
-      if (!token) {
-        throw new Error('Authentication token not found');
-      }
-      
-      // Prepare the request body based on the existing page data
-      const updateData = {
-        id: pageData.id,
-        pageUrlName: pageData.pageUrlName || `${selectedPOS}/${selectedLanguage}/${selectedSlug}${selectedSubSlug ? '/' + selectedSubSlug : ''}`,
-        language: selectedLanguage,
-        pos: selectedPOS,
-        title: editedTitle,
-        status: pageData.status || 'draft',
-        description: editedContent,
-        segments: pageData.segments || []
-      };
-      
-      console.log('Sending update with data:', updateData);
-      
-      const response = await fetch('https://staging.sa3d.online:7036/Page', {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updateData)
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to update page data: ${response.status} ${response.statusText}`);
-      }
-
-      toast({
-        title: "Success",
-        description: "Page data updated successfully",
-      });
-      
-      // Update the local pageData
-      if (pageData) {
-        pageData.title = editedTitle;
-        pageData.content = editedContent;
-      }
-      
-      // Refresh the page data to get the latest from the server
-      if (onRefresh) {
-        onRefresh();
-      }
-      
-      setIsEditing(false);
-    } catch (error) {
-      console.error('Error updating page data:', error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to update page data",
-      });
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  // Change page status from draft to published
-  const handlePublish = async () => {
-    if (!pageData?.id) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Cannot publish page: Missing page ID",
-      });
-      return;
-    }
-    
-    if (pageData.status === 'published') {
-      toast({
-        title: "Info",
-        description: "This page is already published",
-      });
-      return;
-    }
-    
-    setIsPublishing(true);
-    
-    try {
-      const token = localStorage.getItem('authToken');
-      if (!token) {
-        throw new Error('Authentication token not found');
-      }
-      
-      // Prepare the request body based on the existing page data
-      const updateData = {
-        id: pageData.id,
-        pageUrlName: pageData.pageUrlName || `${selectedPOS}/${selectedLanguage}/${selectedSlug}${selectedSubSlug ? '/' + selectedSubSlug : ''}`,
-        language: selectedLanguage,
-        pos: selectedPOS,
-        title: pageData.title,
-        status: 'published',
-        description: pageData.content,
-        segments: pageData.segments || []
-      };
-      
-      console.log('Publishing page with data:', updateData);
-      
-      const response = await fetch('https://staging.sa3d.online:7036/Page', {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updateData)
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to publish page: ${response.status} ${response.statusText}`);
-      }
-
-      toast({
-        title: "Success",
-        description: "Page published successfully",
-      });
-      
-      // Update the local pageData
-      if (pageData) {
-        pageData.status = 'published';
-      }
-      
-      // Refresh the page data to get the latest from the server
-      if (onRefresh) {
-        onRefresh();
-      }
-    } catch (error) {
-      console.error('Error publishing page:', error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to publish page",
-      });
-    } finally {
-      setIsPublishing(false);
-    }
-  };
+  const {
+    isEditing,
+    editedTitle,
+    editedContent,
+    isSaving,
+    isPublishing,
+    setEditedTitle,
+    setEditedContent,
+    handleEdit,
+    handleCancel,
+    handleSave,
+    handlePublish
+  } = usePageEdit({
+    pageData,
+    onRefresh,
+    selectedPOS,
+    selectedLanguage,
+    selectedSlug,
+    selectedSubSlug
+  });
 
   if (!pageData) {
     return (
@@ -232,7 +79,6 @@ const PageDetails = ({
   
   // Determine if we can show the delete button - only for specific pages, not landing pages
   const canDelete = Boolean(selectedSlug);
-  console.log('canDelete value:', canDelete, 'selectedSlug:', selectedSlug);
   
   return (
     <motion.div
