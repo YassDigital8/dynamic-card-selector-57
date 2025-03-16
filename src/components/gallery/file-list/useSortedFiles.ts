@@ -1,5 +1,5 @@
 
-import React from 'react';
+import { useMemo, useState } from 'react';
 import { FileInfo } from '@/models/FileModel';
 
 export interface SortConfig {
@@ -7,10 +7,14 @@ export interface SortConfig {
   direction: 'asc' | 'desc';
 }
 
-export const useSortedFiles = (files: FileInfo[], sortConfig: SortConfig) => {
+export const useSortedFiles = (files: FileInfo[], initialSortConfig?: SortConfig) => {
+  const [sortConfig, setSortConfig] = useState<SortConfig>(
+    initialSortConfig || { field: 'uploadedOn', direction: 'desc' }
+  );
+
   // Sort files based on current sort configuration
-  return React.useMemo(() => {
-    const sortedFiles = [...files].sort((a, b) => {
+  const sortedFiles = useMemo(() => {
+    return [...files].sort((a, b) => {
       const direction = sortConfig.direction === 'asc' ? 1 : -1;
       
       switch (sortConfig.field) {
@@ -26,7 +30,7 @@ export const useSortedFiles = (files: FileInfo[], sortConfig: SortConfig) => {
           return 0;
       }
     });
-    
-    return sortedFiles;
   }, [files, sortConfig]);
+  
+  return { sortedFiles, sortConfig, setSortConfig };
 };

@@ -5,3 +5,4 @@ export { FileGrid } from './FileGrid';
 export { useSortedFiles } from './useSortedFiles';
 export { FilterControls } from './FilterControls';
 export type { SortConfig } from './useSortedFiles';
+export type { FileTypeFilter } from './FilterControls';

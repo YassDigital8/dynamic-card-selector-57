@@ -1,7 +1,8 @@
+
 import React, { useState, useEffect } from 'react';
 import FileList from '../FileList';
-import useGalleryViewModel from '@/hooks/useGalleryViewModel';
-import { FileModel } from '@/models/FileModel';
+import { useGalleryViewModel } from '@/hooks/useGalleryViewModel';
+import { FileInfo } from '@/models/FileModel';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
