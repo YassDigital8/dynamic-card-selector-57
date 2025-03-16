@@ -1,91 +1,92 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { fadeInVariants } from './animations';
-import { AlertTriangle, RefreshCw } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { FolderTree, FolderDown, GitBranch } from 'lucide-react';
+import { buttonVariants } from './animations';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface PathConfigOptionProps {
-  title: string;
-  description: string;
-  options: string[];
-  value: string;
-  onChange: (value: string) => void;
-  loading: boolean;
-  apiReachable?: boolean;
-  onRetryConnection?: () => void;
+  availableSlugs: string[];
+  selectedSlug: string;
+  setSelectedSlug: (value: string) => void;
+  subSlugs: string[];
+  selectedSubSlug: string;
+  setSelectedSubSlug: (value: string) => void;
 }
 
 const PathConfigOption = ({
-  title,
-  description,
-  options,
-  value,
-  onChange,
-  loading,
-  apiReachable = true,
-  onRetryConnection
+  availableSlugs,
+  selectedSlug,
+  setSelectedSlug,
+  subSlugs,
+  selectedSubSlug,
+  setSelectedSubSlug
 }: PathConfigOptionProps) => {
+  const isMobile = useIsMobile();
+
   return (
     <motion.div
-      initial="hidden"
-      animate="visible"
-      exit="exit"
-      variants={fadeInVariants}
+      variants={buttonVariants}
+      whileHover="hover"
+      whileTap="tap"
+      className="border border-blue-200 rounded-lg p-2 md:p-4 bg-blue-50 hover:bg-blue-100 transition-colors cursor-pointer"
     >
-      <Card className="border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow">
-        <CardContent className="pt-4 pb-3 px-4">
-          <div className="space-y-2 md:space-y-3">
-            <div>
-              <h3 className="text-xs md:text-sm font-medium text-gray-800 dark:text-gray-200">{title}</h3>
-              <p className="text-[10px] md:text-xs text-gray-500 dark:text-gray-400">{description}</p>
+      <div className="flex flex-col items-center text-center gap-2 md:gap-3">
+        <GitBranch className={`${isMobile ? 'h-6 w-6' : 'h-8 w-8'} text-blue-600`} />
+        <h3 className="font-medium text-blue-800 text-xs md:text-base">Configure Path</h3>
+        {!isMobile && (
+          <p className="text-xs text-gray-600">
+            Select a parent path and optionally a sub-path
+          </p>
+        )}
+        
+        {availableSlugs.length > 0 && (
+          <div className="w-full mt-1 md:mt-3 space-y-2 md:space-y-3">
+            <div className="space-y-1 md:space-y-2">
+              <label className="flex items-center gap-1 md:gap-2 text-[10px] md:text-sm font-medium text-gray-700 dark:text-gray-300">
+                <FolderTree className={`${isMobile ? 'h-3 w-3' : 'h-4 w-4'} text-purple-500`} />
+                {isMobile ? "Parent Path" : "Select Parent Path"}
+              </label>
+              <Select
+                value={selectedSlug}
+                onValueChange={setSelectedSlug}
+              >
+                <SelectTrigger className={`w-full bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-purple-400 transition-colors ${isMobile ? 'text-[10px] h-6 py-0 px-2' : ''}`}>
+                  <SelectValue placeholder={isMobile ? "-- Select --" : "-- Select Parent --"} />
+                </SelectTrigger>
+                <SelectContent className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
+                  {availableSlugs.map((slug) => (
+                    <SelectItem key={slug} value={slug} className={`text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 ${isMobile ? 'text-[10px]' : ''}`}>{slug}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
-            
-            {!apiReachable && onRetryConnection && (
-              <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-800/30 p-2 rounded-md flex items-start gap-2">
-                <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0" />
-                <div className="space-y-1 flex-1 text-[10px] md:text-xs">
-                  <p className="text-amber-800 dark:text-amber-300">
-                    Unable to connect to API. Showing mock data.
-                  </p>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="h-7 px-2 border-amber-200 dark:border-amber-700 text-amber-700 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-800/30"
-                    onClick={onRetryConnection}
-                  >
-                    <RefreshCw className="h-3 w-3 mr-1" />
-                    Retry Connection
-                  </Button>
-                </div>
+
+            {subSlugs.length > 0 && selectedSlug && (
+              <div className="space-y-1 md:space-y-2">
+                <label className="flex items-center gap-1 md:gap-2 text-[10px] md:text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <FolderDown className={`${isMobile ? 'h-3 w-3' : 'h-4 w-4'} text-amber-500`} />
+                  {isMobile ? "Sub Path" : "Select Sub Path"}
+                </label>
+                <Select
+                  value={selectedSubSlug}
+                  onValueChange={setSelectedSubSlug}
+                >
+                  <SelectTrigger className={`w-full bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-amber-400 transition-colors ${isMobile ? 'text-[10px] h-6 py-0 px-2' : ''}`}>
+                    <SelectValue placeholder={isMobile ? "-- Select --" : "-- Select Sub Path --"} />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
+                    {subSlugs.map((slug) => (
+                      <SelectItem key={slug} value={slug} className={`text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 ${isMobile ? 'text-[10px]' : ''}`}>{slug}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             )}
-            
-            <Select
-              value={value}
-              onValueChange={onChange}
-              disabled={loading || options.length === 0}
-            >
-              <SelectTrigger className="w-full bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 h-8 md:h-10 text-[10px] md:text-xs">
-                <SelectValue placeholder={loading ? "Loading..." : "Select an option..."} />
-              </SelectTrigger>
-              <SelectContent className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 max-h-[40vh]">
-                {options.map((option) => (
-                  <SelectItem
-                    key={option}
-                    value={option}
-                    className="text-[10px] md:text-xs hover:bg-gray-100 dark:hover:bg-gray-700"
-                  >
-                    {option}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
           </div>
-        </CardContent>
-      </Card>
+        )}
+      </div>
     </motion.div>
   );
 };

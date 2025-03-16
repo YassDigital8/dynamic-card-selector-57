@@ -13,7 +13,6 @@ export function usePageSlugsViewModel({ selectedPOS, selectedLanguage }: PageSlu
   const [selectedSlug, setSelectedSlug] = useState('');
   const [subSlugs, setSubSlugs] = useState<string[]>([]);
   const [selectedSubSlug, setSelectedSubSlug] = useState('');
-  const [apiReachable, setApiReachable] = useState(true);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -46,18 +45,13 @@ export function usePageSlugsViewModel({ selectedPOS, selectedLanguage }: PageSlu
       
       console.log(`Fetching parent paths from: ${apiUrl}`);
       
-      // Use a timeout to prevent long waiting times if the API is down
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 5000);
-      
       const response = await fetch(apiUrl, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
-        },
-        signal: controller.signal
-      }).finally(() => clearTimeout(timeoutId));
+        }
+      });
 
       if (!response.ok) {
         throw new Error(`Failed to fetch parent paths: ${response.status} ${response.statusText}`);
@@ -80,31 +74,17 @@ export function usePageSlugsViewModel({ selectedPOS, selectedLanguage }: PageSlu
       }
       
       setAvailableSlugs(paths);
-      setApiReachable(true);
     } catch (error) {
       console.error('Error fetching parent paths:', error);
       
-      // Set API reachable state to false
-      setApiReachable(false);
-      
       // Fallback to mock data in case of API failure
-      console.log('Using mock data for parent paths due to API failure');
       const mockSlugs = ['aboutus', 'contact', 'services', 'products', 'blog', 'parent1'];
       setAvailableSlugs(mockSlugs);
       
-      let errorMessage = "Failed to fetch parent paths";
-      if (error instanceof Error) {
-        if (error.name === 'AbortError') {
-          errorMessage = "API request timed out. Using mock data instead.";
-        } else {
-          errorMessage = error.message;
-        }
-      }
-      
       toast({
         variant: "destructive",
-        title: "API Connection Error",
-        description: errorMessage,
+        title: "API Error",
+        description: error instanceof Error ? error.message : "Failed to fetch parent paths",
       });
     } finally {
       setLoading(false);
@@ -116,11 +96,6 @@ export function usePageSlugsViewModel({ selectedPOS, selectedLanguage }: PageSlu
     
     setLoading(true);
     try {
-      // If API was unreachable in parent slug fetch, don't try again
-      if (!apiReachable) {
-        throw new Error('API is currently unreachable');
-      }
-      
       const token = localStorage.getItem('authToken');
       if (!token) {
         throw new Error('Authentication token not found');
@@ -130,18 +105,13 @@ export function usePageSlugsViewModel({ selectedPOS, selectedLanguage }: PageSlu
       
       console.log(`Fetching sub-paths from: ${apiUrl}`);
       
-      // Use a timeout to prevent long waiting times if the API is down
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 5000);
-      
       const response = await fetch(apiUrl, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
-        },
-        signal: controller.signal
-      }).finally(() => clearTimeout(timeoutId));
+        }
+      });
 
       if (!response.ok) {
         throw new Error(`Failed to fetch sub-paths: ${response.status} ${response.statusText}`);
@@ -165,34 +135,18 @@ export function usePageSlugsViewModel({ selectedPOS, selectedLanguage }: PageSlu
       console.error('Error fetching sub-paths:', error);
       
       // Fallback to mock data in case of API failure
-      console.log('Using mock data for sub-paths due to API failure');
       const mockSubSlugs = ['subpage1', 'subpage2', 'subpage3', 'subparen1'];
       setSubSlugs(mockSubSlugs);
       
-      let errorMessage = "Failed to fetch sub-paths";
-      if (error instanceof Error) {
-        if (error.name === 'AbortError') {
-          errorMessage = "API request timed out. Using mock data instead.";
-        } else {
-          errorMessage = error.message;
-        }
-      }
-      
       toast({
         variant: "destructive",
-        title: "API Connection Error",
-        description: errorMessage,
+        title: "API Error",
+        description: error instanceof Error ? error.message : "Failed to fetch sub-paths",
       });
     } finally {
       setLoading(false);
     }
-  }, [selectedPOS, selectedLanguage, selectedSlug, apiReachable, toast]);
-
-  // Method to retry API connection
-  const retryApiConnection = useCallback(() => {
-    setApiReachable(true);
-    fetchSlugs();
-  }, [fetchSlugs]);
+  }, [selectedPOS, selectedLanguage, selectedSlug, toast]);
 
   return {
     loading,
@@ -203,8 +157,6 @@ export function usePageSlugsViewModel({ selectedPOS, selectedLanguage }: PageSlu
     subSlugs,
     selectedSubSlug,
     setSelectedSubSlug,
-    fetchSlugs,
-    apiReachable,
-    retryApiConnection
+    fetchSlugs
   };
 }
