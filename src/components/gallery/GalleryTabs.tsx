@@ -10,7 +10,7 @@ interface GalleryTabsProps {
   setActiveTab: (value: string) => void;
   onCreateGallery: () => void;
   children: React.ReactNode;
-  selectedGallery: Gallery | null; // Add this new prop
+  selectedGallery: Gallery | null; 
 }
 
 export const GalleryTabs: React.FC<GalleryTabsProps> = ({
