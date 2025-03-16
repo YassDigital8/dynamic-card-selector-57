@@ -1,151 +1,74 @@
-
 import React, { useState, useEffect } from 'react';
-import { FileInfo, Gallery } from '@/models/FileModel';
-import { useGlobalDragState } from '@/hooks/gallery/useDragAndDrop';
-import { GalleryDropTargets } from './GalleryDropTargets';
-import { ShareDialog } from './ShareDialog';
+import { useSearchParams } from 'react-router-dom';
 import { 
   SortControls, 
   FilePreviewDialog, 
-  FileGrid, 
+  FileGrid,
   useSortedFiles,
-  FilterControls,
-  FileTypeFilter
+  FilterControls
 } from './file-list';
+import type { SortConfig } from './file-list';
+import type { FileModel } from '@/models/FileModel';
 
 interface FileListProps {
-  files: FileInfo[];
-  galleries?: Gallery[];
-  galleryFileTypes?: Record<string, string[]>;
-  currentGalleryId?: string;
-  onViewFile?: (file: FileInfo) => void;
-  onDeleteFile?: (file: FileInfo) => void;
-  onMoveFile?: (file: FileInfo, newGalleryId: string) => void;
+  files: FileModel[];
+  isLoading?: boolean;
 }
 
-export const FileList: React.FC<FileListProps> = ({ 
-  files, 
-  galleries = [],
-  galleryFileTypes = {},
-  currentGalleryId = '',
-  onViewFile, 
-  onDeleteFile,
-  onMoveFile 
-}) => {
-  const [previewFile, setPreviewFile] = useState<FileInfo | null>(null);
-  const [shareFile, setShareFile] = useState<FileInfo | null>(null);
-  const { isDragging, draggedItem } = useGlobalDragState();
-  const [sortConfig, setSortConfig] = useState<{ field: 'name' | 'size' | 'type' | 'uploadedOn', direction: 'asc' | 'desc' }>({ 
-    field: 'uploadedOn', 
-    direction: 'desc' 
-  });
-  const [fileTypeFilter, setFileTypeFilter] = useState('all');
-  
-  // Define file type filters
-  const fileTypeFilters: FileTypeFilter[] = [
-    { type: 'image/', label: 'Images' },
-    { type: 'application/pdf', label: 'PDF Documents' },
-    { type: 'video/', label: 'Videos' },
-    { type: 'audio/', label: 'Audio' },
-  ];
-  
-  // Filter files based on type
-  const filteredFiles = files.filter(file => {
-    return fileTypeFilter === 'all' || file.type.startsWith(fileTypeFilter);
-  });
-  
-  // Sort files based on current sort configuration
-  const sortedFiles = useSortedFiles(filteredFiles, sortConfig);
-  
-  // Change sort field and direction
-  const handleSort = (field: 'name' | 'size' | 'type' | 'uploadedOn') => {
-    setSortConfig(current => ({
-      field,
-      direction: current.field === field && current.direction === 'desc' ? 'asc' : 'desc'
-    }));
-  };
+const FileList = ({ files, isLoading = false }: FileListProps) => {
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [selectedType, setSelectedType] = useState<string>('');
+  const [selectedFile, setSelectedFile] = useState<FileModel | null>(null);
+  const [previewDialogOpen, setPreviewDialogOpen] = useState<boolean>(false);
+  const [searchParams] = useSearchParams();
 
-  // Clear all filters
-  const handleClearFilters = () => {
-    setFileTypeFilter('all');
-  };
-  
-  // Ensure drag state is properly reflected with proper dependencies
-  const showDropTargets = isDragging && draggedItem && galleries.length > 1;
-  
-  // Force component to re-render when drag state changes
+  // Use the custom hook for sorting
+  const { sortedFiles, sortConfig, setSortConfig } = useSortedFiles(files);
+
   useEffect(() => {
-    // This effect runs whenever isDragging or draggedItem changes
-    // It ensures the component re-renders when the drag state changes
-  }, [isDragging, draggedItem]);
+    const initialSearchQuery = searchParams.get('search') || '';
+    const initialType = searchParams.get('type') || '';
+    setSearchQuery(initialSearchQuery);
+    setSelectedType(initialType);
+  }, [searchParams]);
 
-  const handleViewFile = (file: FileInfo) => {
-    setPreviewFile(file);
-    if (onViewFile) onViewFile(file);
+  const handleFileClick = (file: FileModel) => {
+    setSelectedFile(file);
+    setPreviewDialogOpen(true);
   };
 
-  const closePreview = () => {
-    setPreviewFile(null);
-  };
-
-  const handleShareFile = (file: FileInfo, e: React.MouseEvent) => {
-    e.stopPropagation();
-    setShareFile(file);
-  };
-
-  const handleDeleteFile = (file: FileInfo, e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (onDeleteFile) onDeleteFile(file);
-  };
-
-  if (files.length === 0) {
-    return (
-      <div className="text-center p-8">
-        <p className="text-muted-foreground">No files to display</p>
-      </div>
-    );
-  }
+  const filteredFiles = sortedFiles.filter((file) => {
+    const searchRegex = new RegExp(searchQuery, 'i');
+    const nameMatch = searchRegex.test(file.name);
+    const typeMatch = selectedType ? file.type === selectedType : true;
+    return nameMatch && typeMatch;
+  });
 
   return (
-    <>
-      <div className="mb-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <FilterControls
-          selectedType={fileTypeFilter}
-          onTypeChange={setFileTypeFilter}
-          onClearFilters={handleClearFilters}
-          fileTypes={fileTypeFilters}
-          hasActiveFilters={fileTypeFilter !== 'all'}
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <FilterControls 
+          searchQuery={searchQuery} 
+          setSearchQuery={setSearchQuery} 
+          selectedType={selectedType}
+          setSelectedType={setSelectedType}
         />
-        <SortControls sortConfig={sortConfig} onSortChange={handleSort} />
+        <SortControls sortConfig={sortConfig} setSortConfig={setSortConfig} />
       </div>
 
       <FileGrid 
-        files={sortedFiles}
-        onViewFile={handleViewFile}
-        onShareFile={handleShareFile}
-        onDeleteFile={handleDeleteFile}
+        files={filteredFiles} 
+        isLoading={isLoading} 
+        onFileClick={handleFileClick} 
       />
 
-      {/* Gallery Drop Targets - Shows when dragging */}
-      {showDropTargets && onMoveFile && (
-        <GalleryDropTargets
-          galleries={galleries}
-          currentGalleryId={currentGalleryId}
-          onMoveFile={onMoveFile}
-          fileTypes={galleryFileTypes}
-        />
-      )}
-
-      {/* File Preview Dialog */}
-      <FilePreviewDialog file={previewFile} onClose={closePreview} />
-
-      {/* Share Dialog */}
-      <ShareDialog
-        open={shareFile !== null}
-        onOpenChange={(open) => !open && setShareFile(null)}
-        item={shareFile}
-        itemType="file"
+      <FilePreviewDialog
+        isOpen={previewDialogOpen}
+        onClose={() => setPreviewDialogOpen(false)}
+        file={selectedFile}
       />
-    </>
+    </div>
   );
 };
+
+export default FileList;

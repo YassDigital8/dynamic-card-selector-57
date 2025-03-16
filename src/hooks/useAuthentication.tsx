@@ -83,7 +83,8 @@ export const useAuthentication = () => {
     setAuthError(null);
     
     try {
-      const response = await fetch('https://92.112.184.210:7182/api/Authentication/login', {
+      // Modified to use http instead of https to avoid SSL issues with self-signed certificates
+      const response = await fetch('http://92.112.184.210:7182/api/Authentication/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

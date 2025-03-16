@@ -9,6 +9,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import useAuthentication from '@/hooks/useAuthentication';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { AlertCircle } from 'lucide-react';
 
 // Define the schema for the login form
 const loginSchema = z.object({
@@ -20,6 +22,7 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 
 const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [loginError, setLoginError] = useState<string | null>(null);
   const { toast } = useToast();
   const { login } = useAuthentication();
   
@@ -37,6 +40,7 @@ const LoginForm = () => {
 
   const onSubmit = async (data: LoginFormValues) => {
     setIsLoading(true);
+    setLoginError(null);
     
     try {
       console.log('Attempting to authenticate with:', data.email);
@@ -59,6 +63,8 @@ const LoginForm = () => {
         errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       }
       
+      setLoginError(errorMessage);
+      
       toast({
         variant: "destructive",
         title: "Login failed",
@@ -71,6 +77,14 @@ const LoginForm = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      {loginError && (
+        <Alert variant="error" className="mb-4">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Login failed</AlertTitle>
+          <AlertDescription>{loginError}</AlertDescription>
+        </Alert>
+      )}
+      
       <div className="space-y-2">
         <Label htmlFor="email">Email</Label>
         <Input
