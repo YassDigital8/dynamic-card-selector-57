@@ -26,7 +26,7 @@ export const DraggableFileCard: React.FC<DraggableFileCardProps> = ({
     <Card 
       ref={dragRef}
       className={`overflow-hidden h-full flex flex-col transition-all ${
-        isDragging ? 'opacity-50 shadow-lg' : ''
+        isDragging ? 'opacity-50 shadow-lg scale-95' : ''
       }`}
       data-file-id={file.id}
       draggable="true"
@@ -36,6 +36,9 @@ export const DraggableFileCard: React.FC<DraggableFileCardProps> = ({
         {isDragging && (
           <div className="absolute inset-0 bg-primary/10 flex items-center justify-center">
             <Move className="h-12 w-12 text-primary/80" />
+            <div className="absolute bottom-2 left-0 right-0 text-center text-xs font-medium text-primary">
+              Drop onto a gallery
+            </div>
           </div>
         )}
       </div>

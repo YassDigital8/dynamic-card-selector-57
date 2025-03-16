@@ -162,6 +162,9 @@ export const GalleryTabContent: React.FC<GalleryTabContentProps> = ({
           {filteredFiles.length > 0 ? (
             <FileList 
               files={filteredFiles}
+              galleries={galleries}
+              galleryFileTypes={galleryFileTypes}
+              currentGalleryId={selectedGallery.id}
               onViewFile={onViewFile}
               onDeleteFile={handleDeleteFile}
               onMoveFile={onMoveFile}

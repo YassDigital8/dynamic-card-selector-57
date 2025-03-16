@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { FileInfo } from '@/models/FileModel';
+import { FileInfo, Gallery } from '@/models/FileModel';
 import { Card, CardContent } from '@/components/ui/card';
 import { FileText, Image, File, Eye, Trash2, Share2 } from 'lucide-react';
 import { formatDate } from '@/lib/date-utils';
@@ -10,9 +10,14 @@ import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { FilePreview } from './FilePreview';
 import { ShareDialog } from './ShareDialog';
 import { DraggableFileCard } from './DraggableFileCard';
+import { GalleryDropTargets } from './GalleryDropTargets';
+import { useGlobalDragState } from '@/hooks/gallery/useDragAndDrop';
 
 interface FileListProps {
   files: FileInfo[];
+  galleries?: Gallery[];
+  galleryFileTypes?: Record<string, string[]>;
+  currentGalleryId?: string;
   onViewFile?: (file: FileInfo) => void;
   onDeleteFile?: (file: FileInfo) => void;
   onMoveFile?: (file: FileInfo, newGalleryId: string) => void;
@@ -20,12 +25,18 @@ interface FileListProps {
 
 export const FileList: React.FC<FileListProps> = ({ 
   files, 
+  galleries = [],
+  galleryFileTypes = {},
+  currentGalleryId = '',
   onViewFile, 
   onDeleteFile,
   onMoveFile 
 }) => {
   const [previewFile, setPreviewFile] = useState<FileInfo | null>(null);
   const [shareFile, setShareFile] = useState<FileInfo | null>(null);
+  const { isDragging, draggedItem } = useGlobalDragState();
+  
+  const showDropTargets = isDragging && draggedItem && galleries.length > 1;
   
   const getFileIcon = (fileType: string) => {
     if (fileType.startsWith('image/')) {
@@ -85,6 +96,16 @@ export const FileList: React.FC<FileListProps> = ({
           />
         ))}
       </div>
+
+      {/* Gallery Drop Targets - Shows when dragging */}
+      {showDropTargets && onMoveFile && (
+        <GalleryDropTargets
+          galleries={galleries}
+          currentGalleryId={currentGalleryId}
+          onMoveFile={onMoveFile}
+          fileTypes={galleryFileTypes}
+        />
+      )}
 
       {/* File Preview Dialog */}
       <Dialog open={previewFile !== null} onOpenChange={(open) => !open && closePreview()}>
