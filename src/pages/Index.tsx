@@ -109,6 +109,10 @@ const Index = () => {
                       subSlugs={pageNavigation.subSlugs}
                       selectedSubSlug={pageNavigation.selectedSubSlug}
                       setSelectedSubSlug={pageNavigation.setSelectedSubSlug}
+                      selectedPathId={pageNavigation.selectedPathId}
+                      selectedSubPathId={pageNavigation.selectedSubPathId}
+                      slugsWithIds={pageNavigation.slugsWithIds}
+                      subSlugsWithIds={pageNavigation.subSlugsWithIds}
                       loading={pageNavigation.loading}
                       selectedPOS={pageNavigation.selectedPOS}
                       selectedLanguage={pageNavigation.selectedLanguage}
@@ -132,6 +136,8 @@ const Index = () => {
                   selectedLanguage={pageNavigation.selectedLanguage}
                   selectedSlug={pageNavigation.selectedSlug}
                   selectedSubSlug={pageNavigation.selectedSubSlug}
+                  selectedPathId={pageNavigation.selectedPathId}
+                  selectedSubPathId={pageNavigation.selectedSubPathId}
                 />
               </div>
             </ResizablePanel>
