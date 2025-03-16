@@ -1,102 +1,63 @@
 
 import React from 'react';
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from '@/components/ui/select';
-import { Input } from "@/components/ui/input";
-import { Search, FileType, Filter } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { LucideIcon } from 'lucide-react';
+import { Search } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-export interface FileTypeFilter {
-  type: string;
-  label: string;
-  icon?: React.ReactNode;
-}
-
-export interface FilterControlsProps {
-  selectedType: string;
-  setSelectedType: React.Dispatch<React.SetStateAction<string>>;
+interface FilterControlsProps {
   searchQuery: string;
-  setSearchQuery: React.Dispatch<React.SetStateAction<string>>;
-  fileTypes?: FileTypeFilter[];
+  setSearchQuery: (query: string) => void;
+  selectedType: string;
+  setSelectedType: (type: string) => void;
+  fileTypes?: string[];
 }
 
 export const FilterControls: React.FC<FilterControlsProps> = ({
-  selectedType,
-  setSelectedType,
   searchQuery,
   setSearchQuery,
+  selectedType,
+  setSelectedType,
   fileTypes = []
 }) => {
-  const hasActiveFilters = !!searchQuery || !!selectedType;
+  // Group and format file types for display
+  const uniqueFileTypes = Array.from(new Set(fileTypes)).sort();
   
-  const handleClearFilters = () => {
-    setSearchQuery('');
-    setSelectedType('');
+  const getTypeLabel = (type: string): string => {
+    if (type.startsWith('image/')) return `Image (${type.split('/')[1]})`;
+    if (type.startsWith('video/')) return `Video (${type.split('/')[1]})`;
+    if (type.startsWith('audio/')) return `Audio (${type.split('/')[1]})`;
+    if (type === 'application/pdf') return 'PDF Document';
+    return type.split('/').pop() || type;
   };
 
-  const defaultFileTypes: FileTypeFilter[] = [
-    { type: 'image/jpeg', label: 'JPEG Images' },
-    { type: 'image/png', label: 'PNG Images' },
-    { type: 'application/pdf', label: 'PDF Documents' },
-  ];
-
-  const allFileTypes = fileTypes.length > 0 ? fileTypes : defaultFileTypes;
-  
   return (
-    <div className="flex flex-wrap items-center gap-3">
-      <div className="relative flex-1 min-w-[200px]">
-        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+    <div className="flex flex-col sm:flex-row gap-4 w-full">
+      <div className="relative flex-1">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
-          type="search"
           placeholder="Search files..."
-          className="pl-8"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
+          className="pl-9"
         />
       </div>
       
-      <Select value={selectedType} onValueChange={setSelectedType}>
-        <SelectTrigger className="w-[180px]">
+      <Select
+        value={selectedType}
+        onValueChange={setSelectedType}
+      >
+        <SelectTrigger className="w-full sm:w-[180px]">
           <SelectValue placeholder="All file types" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="">
-            <div className="flex items-center">
-              <FileType className="h-4 w-4 mr-2" />
-              All file types
-            </div>
-          </SelectItem>
-          {allFileTypes.map((type) => (
-            <SelectItem key={type.type} value={type.type}>
-              <div className="flex items-center">
-                {type.icon || <FileType className="h-4 w-4 mr-2" />}
-                {type.label}
-              </div>
+          <SelectItem value="all">All file types</SelectItem>
+          {uniqueFileTypes.map((type) => (
+            <SelectItem key={type} value={type}>
+              {getTypeLabel(type)}
             </SelectItem>
           ))}
         </SelectContent>
       </Select>
-      
-      {hasActiveFilters && (
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          onClick={handleClearFilters} 
-          className="h-8 px-2"
-        >
-          <Badge variant="outline" className="gap-1 px-2 py-0">
-            <Filter className="h-3 w-3" />
-            Clear
-          </Badge>
-        </Button>
-      )}
     </div>
   );
 };

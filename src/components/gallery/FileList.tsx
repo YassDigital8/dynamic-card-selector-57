@@ -18,10 +18,13 @@ interface FileListProps {
 
 const FileList = ({ files, isLoading = false }: FileListProps) => {
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [selectedType, setSelectedType] = useState<string>('');
+  const [selectedType, setSelectedType] = useState<string>('all');
   const [selectedFile, setSelectedFile] = useState<FileInfo | null>(null);
   const [previewDialogOpen, setPreviewDialogOpen] = useState<boolean>(false);
   const [searchParams] = useSearchParams();
+
+  // Extract unique file types for the filter dropdown
+  const fileTypes = Array.from(new Set(files.map(file => file.type)));
 
   // Initialize sort config
   const initialSortConfig: SortConfig = { field: 'uploadedOn', direction: 'desc' };
@@ -29,7 +32,7 @@ const FileList = ({ files, isLoading = false }: FileListProps) => {
 
   useEffect(() => {
     const initialSearchQuery = searchParams.get('search') || '';
-    const initialType = searchParams.get('type') || '';
+    const initialType = searchParams.get('type') || 'all';
     setSearchQuery(initialSearchQuery);
     setSelectedType(initialType);
   }, [searchParams]);
@@ -54,7 +57,7 @@ const FileList = ({ files, isLoading = false }: FileListProps) => {
   const filteredFiles = sortedFiles.filter((file) => {
     const searchRegex = new RegExp(searchQuery, 'i');
     const nameMatch = searchRegex.test(file.name);
-    const typeMatch = selectedType ? file.type === selectedType : true;
+    const typeMatch = selectedType === 'all' ? true : file.type === selectedType;
     return nameMatch && typeMatch;
   });
 
@@ -66,6 +69,7 @@ const FileList = ({ files, isLoading = false }: FileListProps) => {
           setSearchQuery={setSearchQuery} 
           selectedType={selectedType}
           setSelectedType={setSelectedType}
+          fileTypes={fileTypes}
         />
         <SortControls 
           sortConfig={sortConfig} 
