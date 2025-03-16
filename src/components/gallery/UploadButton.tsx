@@ -18,7 +18,6 @@ export const UploadButton: React.FC<UploadButtonProps> = ({
       <Button 
         onClick={onUpload} 
         disabled={isUploading || disabled}
-        className="bg-blue-600 hover:bg-blue-700"
       >
         {isUploading ? 'Uploading...' : 'Upload File'}
       </Button>

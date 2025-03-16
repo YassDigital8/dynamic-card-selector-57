@@ -1,15 +1,9 @@
-
-import React, { useState } from 'react';
+import React from 'react';
 import { Gallery, FileInfo } from '@/models/FileModel';
-import { GalleryList } from './GalleryList';
-import { UploadComponent } from './UploadComponent';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
-import { Plus, Edit, ArrowLeft, Trash2, Share2 } from 'lucide-react';
-import { EditGalleryDialog } from './EditGalleryDialog';
-import { FileList } from './FileList';
-import { ShareDialog } from './ShareDialog';
-import { useToast } from '@/hooks/use-toast';
+import { GalleriesView } from './tabs/GalleriesView';
+import { UploadView } from './tabs/UploadView';
+import { GalleryBrowseView } from './tabs/GalleryBrowseView';
+import { useGalleryNotifications } from './tabs/GalleryNotifications';
 
 interface GalleryTabContentProps {
   activeTab: string;
@@ -42,14 +36,8 @@ export const GalleryTabContent: React.FC<GalleryTabContentProps> = ({
   onDeleteFile,
   onMoveFile
 }) => {
-  const [isEditGalleryOpen, setIsEditGalleryOpen] = useState(false);
-  const [isShareGalleryOpen, setIsShareGalleryOpen] = useState(false);
-  const { toast } = useToast();
+  const { showDeleteNotification } = useGalleryNotifications();
   
-  const filteredFiles = selectedGallery
-    ? files.filter(file => file.galleryId === selectedGallery.id)
-    : [];
-
   // Handler for the "Add Files" button
   const handleAddFiles = () => {
     // Switch to upload tab while keeping the selected gallery
@@ -71,36 +59,35 @@ export const GalleryTabContent: React.FC<GalleryTabContentProps> = ({
     setActiveTab('browse');
   };
 
+  // Handler for back to galleries button
+  const handleBackToGalleries = () => {
+    setSelectedGallery(null);
+    setActiveTab('galleries');
+  };
+
   // Handler for deleting a file
   const handleDeleteFile = (file: FileInfo) => {
     if (onDeleteFile) {
       onDeleteFile(file);
       
       // Show a toast notification for successful deletion
-      toast({
-        description: (
-          <div className="flex items-center gap-2">
-            <Trash2 className="h-4 w-4 text-destructive" />
-            <span>File deleted successfully</span>
-          </div>
-        ),
-      });
+      showDeleteNotification();
     }
   };
 
   return (
     <div className="space-y-4">
       {activeTab === 'galleries' && (
-        <GalleryList 
+        <GalleriesView 
           galleries={galleries}
           onSelectGallery={onSelectGallery}
-          fileTypes={galleryFileTypes}
+          galleryFileTypes={galleryFileTypes}
           onMoveFile={onMoveFile}
         />
       )}
       
       {activeTab === 'upload' && (
-        <UploadComponent 
+        <UploadView 
           onFileUploaded={onFileUploaded}
           galleries={galleries}
           selectedGalleryId={selectedGallery?.id}
@@ -109,93 +96,18 @@ export const GalleryTabContent: React.FC<GalleryTabContentProps> = ({
       )}
       
       {activeTab === 'browse' && selectedGallery && (
-        <>
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={() => {
-                  setSelectedGallery(null);
-                  setActiveTab('galleries');
-                }}
-              >
-                <ArrowLeft className="h-4 w-4 mr-1" />
-                Back
-              </Button>
-              <h2 className="text-xl font-semibold">{selectedGallery.name}</h2>
-            </div>
-            <div className="flex items-center gap-2">
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => setIsShareGalleryOpen(true)}
-              >
-                <Share2 className="h-4 w-4 mr-1" />
-                Share
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => setIsEditGalleryOpen(true)}
-              >
-                <Edit className="h-4 w-4 mr-1" />
-                Edit Gallery
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={handleAddFiles}
-              >
-                <Plus className="h-4 w-4 mr-1" />
-                Add Files
-              </Button>
-            </div>
-          </div>
-          
-          {selectedGallery.description && (
-            <Alert className="mb-4">
-              <AlertDescription>{selectedGallery.description}</AlertDescription>
-            </Alert>
-          )}
-          
-          {filteredFiles.length > 0 ? (
-            <FileList 
-              files={filteredFiles}
-              galleries={galleries}
-              galleryFileTypes={galleryFileTypes}
-              currentGalleryId={selectedGallery.id}
-              onViewFile={onViewFile}
-              onDeleteFile={handleDeleteFile}
-              onMoveFile={onMoveFile}
-            />
-          ) : (
-            <div className="flex flex-col items-center justify-center p-12 border rounded-md">
-              <p className="text-muted-foreground mb-4">No files in this gallery</p>
-              <Button
-                onClick={handleAddFiles}
-              >
-                <Plus className="h-4 w-4 mr-1" />
-                Add Files
-              </Button>
-            </div>
-          )}
-          
-          <EditGalleryDialog
-            open={isEditGalleryOpen}
-            onOpenChange={setIsEditGalleryOpen}
-            gallery={selectedGallery}
-            onUpdateGallery={onUpdateGallery}
-            files={files}
-          />
-          
-          <ShareDialog
-            open={isShareGalleryOpen}
-            onOpenChange={setIsShareGalleryOpen}
-            item={selectedGallery}
-            itemType="gallery"
-          />
-        </>
+        <GalleryBrowseView
+          selectedGallery={selectedGallery}
+          onBackToGalleries={handleBackToGalleries}
+          onAddFiles={handleAddFiles}
+          files={files}
+          galleries={galleries}
+          galleryFileTypes={galleryFileTypes}
+          onViewFile={onViewFile}
+          onDeleteFile={handleDeleteFile}
+          onMoveFile={onMoveFile}
+          onUpdateGallery={onUpdateGallery}
+        />
       )}
     </div>
   );
