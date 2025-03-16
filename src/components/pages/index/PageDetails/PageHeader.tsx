@@ -1,10 +1,10 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Edit2, Save, X, RefreshCw, CheckCircle, FileText } from 'lucide-react';
+import { Edit2, Save, X, RefreshCw, CheckCircle } from 'lucide-react';
 import { CardHeader, CardTitle } from '@/components/ui/card';
-import { Switch } from '@/components/ui/switch';
-import { Badge } from '@/components/ui/badge';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
 
 interface PageHeaderProps {
   isEditing: boolean;
@@ -40,16 +40,39 @@ const PageHeader = ({
         {!isEditing ? (
           <div className="flex items-center gap-2">
             {onToggleStatus && (
-              <div className="flex items-center gap-2 mr-2">
-                <span className="text-xs text-gray-500">
-                  {isPublished ? 'Published' : 'Draft'}
-                </span>
-                <Switch
-                  checked={isPublished}
-                  onCheckedChange={onToggleStatus}
+              <div className="flex items-center gap-3 mr-2">
+                <RadioGroup 
+                  value={isPublished ? "published" : "draft"}
+                  onValueChange={(value) => {
+                    if (value !== (isPublished ? "published" : "draft")) {
+                      onToggleStatus();
+                    }
+                  }}
+                  className="flex items-center gap-3"
                   disabled={isTogglingStatus}
-                  className={isPublished ? "bg-green-600" : "bg-gray-400"}
-                />
+                >
+                  <div className="flex items-center space-x-1">
+                    <RadioGroupItem 
+                      value="draft" 
+                      id="draft-status" 
+                      disabled={isTogglingStatus} 
+                    />
+                    <Label htmlFor="draft-status" className="text-xs cursor-pointer text-gray-600">
+                      Draft
+                    </Label>
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    <RadioGroupItem 
+                      value="published" 
+                      id="published-status" 
+                      disabled={isTogglingStatus}
+                      className="text-green-500 border-green-500 data-[state=checked]:bg-green-500 data-[state=checked]:text-white"
+                    />
+                    <Label htmlFor="published-status" className="text-xs cursor-pointer text-gray-600">
+                      Published
+                    </Label>
+                  </div>
+                </RadioGroup>
                 {isTogglingStatus && (
                   <RefreshCw className="h-4 w-4 animate-spin text-gray-500" />
                 )}
