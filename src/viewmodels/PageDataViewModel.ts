@@ -114,10 +114,12 @@ https://{{URL}}:7036/${selectedLanguage}/${selectedPOS}`,
       // Transform API response to PageData format
       const transformedData: PageData = {
         id: data.id,
+        pageUrlName: data.pageUrlName,
         title: data.title || `Untitled Page (ID: ${pageId})`,
         content: data.description || 'No description available',
         status: data.status || 'unknown',
-        lastUpdated: new Date().toISOString()
+        lastUpdated: new Date().toISOString(),
+        segments: data.segments || []
       };
       
       setPageData(transformedData);

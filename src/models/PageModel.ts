@@ -8,6 +8,8 @@ export interface PageData {
   lastUpdated: string;
   status: string;
   description?: string;
+  pageUrlName?: string;
+  segments?: any[];
 }
 
 export interface PageSelectionModel {
