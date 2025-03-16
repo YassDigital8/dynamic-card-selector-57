@@ -6,7 +6,12 @@ import { FileInfo } from '@/models/FileModel';
 const globalDragState = {
   isDragging: false,
   draggedItem: null as any,
-  subscribers: new Set<(isDragging: boolean, item: any) => void>()
+  subscribers: new Set<(isDragging: boolean, item: any) => void>(),
+  resetDragState: () => {
+    globalDragState.isDragging = false;
+    globalDragState.draggedItem = null;
+    globalDragState.subscribers.forEach(fn => fn(false, null));
+  }
 };
 
 // Subscribe to global drag state changes
@@ -26,7 +31,11 @@ export function useGlobalDragState() {
     };
   }, []);
 
-  return { isDragging, draggedItem };
+  return { 
+    isDragging, 
+    draggedItem,
+    resetDragState: globalDragState.resetDragState 
+  };
 }
 
 export function useDrag<T>(item: T) {
@@ -55,9 +64,7 @@ export function useDrag<T>(item: T) {
       setIsDragging(false);
       
       // Update global drag state
-      globalDragState.isDragging = false;
-      globalDragState.draggedItem = null;
-      globalDragState.subscribers.forEach(fn => fn(false, null));
+      globalDragState.resetDragState();
     };
 
     element.addEventListener('dragstart', handleDragStart);
@@ -103,6 +110,9 @@ export function useDrop<T>(onDrop: (item: T) => void) {
           const data = e.dataTransfer.getData('application/json');
           const item = JSON.parse(data) as T;
           onDrop(item);
+          
+          // Reset global drag state after a successful drop
+          globalDragState.resetDragState();
         } catch (err) {
           console.error('Error parsing dropped data:', err);
         }

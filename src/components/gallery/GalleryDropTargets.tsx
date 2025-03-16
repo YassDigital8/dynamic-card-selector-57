@@ -3,7 +3,7 @@ import React from 'react';
 import { Gallery, FileInfo } from '@/models/FileModel';
 import { Card } from '@/components/ui/card';
 import { FolderOpen, Image, FileText, Images } from 'lucide-react';
-import { useDrop } from '@/hooks/gallery/useDragAndDrop';
+import { useDrop, useGlobalDragState } from '@/hooks/gallery/useDragAndDrop';
 import { useToast } from '@/hooks/use-toast';
 
 interface GalleryDropTargetsProps {
@@ -20,6 +20,7 @@ export const GalleryDropTargets: React.FC<GalleryDropTargetsProps> = ({
   fileTypes
 }) => {
   const { toast } = useToast();
+  const { resetDragState } = useGlobalDragState();
 
   const renderGalleryIcon = (gallery: Gallery) => {
     if (gallery.coverImageUrl) {
@@ -74,6 +75,9 @@ export const GalleryDropTargets: React.FC<GalleryDropTargetsProps> = ({
                 toast({
                   description: `File moved to "${gallery.name}" gallery`,
                 });
+                
+                // Explicitly reset the drag state after successful move
+                resetDragState();
               };
             };
 

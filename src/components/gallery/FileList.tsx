@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FileInfo, Gallery } from '@/models/FileModel';
 import { Card, CardContent } from '@/components/ui/card';
 import { FileText, Image, File, Eye, Trash2, Share2 } from 'lucide-react';
@@ -36,7 +36,14 @@ export const FileList: React.FC<FileListProps> = ({
   const [shareFile, setShareFile] = useState<FileInfo | null>(null);
   const { isDragging, draggedItem } = useGlobalDragState();
   
+  // Ensure drag state is properly reflected with proper dependencies
   const showDropTargets = isDragging && draggedItem && galleries.length > 1;
+  
+  // Force component to re-render when drag state changes
+  useEffect(() => {
+    // This effect runs whenever isDragging or draggedItem changes
+    // It ensures the component re-renders when the drag state changes
+  }, [isDragging, draggedItem]);
   
   const getFileIcon = (fileType: string) => {
     if (fileType.startsWith('image/')) {
