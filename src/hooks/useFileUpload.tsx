@@ -1,3 +1,5 @@
+
+import { useState } from 'react';
 import { FileInfo, Gallery } from '@/models/FileModel';
 import { useAuthentication } from '@/hooks/useAuthentication';
 import { useFileSelection } from './upload/useFileSelection';
@@ -13,6 +15,7 @@ interface UseFileUploadProps {
 
 export const useFileUpload = ({ onFileUploaded, selectedGalleryId = '', galleries }: UseFileUploadProps) => {
   const { userInfo } = useAuthentication();
+  const [uploadProgress, setUploadProgress] = useState(0);
   
   const {
     selectedFile,
@@ -55,6 +58,26 @@ export const useFileUpload = ({ onFileUploaded, selectedGalleryId = '', gallerie
     }
   };
 
+  const simulateProgress = () => {
+    // Reset progress
+    setUploadProgress(0);
+    
+    // Simulate upload progress with intervals
+    const interval = setInterval(() => {
+      setUploadProgress(prev => {
+        // Gradually increment progress, but stop at 90% (the final 10% comes when upload completes)
+        const newProgress = prev + Math.random() * 10;
+        if (newProgress >= 90) {
+          clearInterval(interval);
+          return 90;
+        }
+        return newProgress;
+      });
+    }, 300);
+    
+    return interval;
+  };
+
   const handleUpload = async () => {
     if (!selectedFile || !targetGalleryId) {
       showUploadErrorNotification();
@@ -68,7 +91,15 @@ export const useFileUpload = ({ onFileUploaded, selectedGalleryId = '', gallerie
     setIsUploading(true);
     
     try {
+      // Start progress simulation
+      const progressInterval = simulateProgress();
+      
+      // Simulate upload with delay
       await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Clear progress interval and set to 100%
+      clearInterval(progressInterval);
+      setUploadProgress(100);
       
       const selectedGallery = galleries.find(g => g.id === targetGalleryId);
       const galleryName = selectedGallery ? selectedGallery.name : 'Unknown Gallery';
@@ -96,8 +127,14 @@ export const useFileUpload = ({ onFileUploaded, selectedGalleryId = '', gallerie
       
       showUploadSuccessNotification(fileInfo, selectedFile.name);
       
+      // Reset progress after a brief delay to ensure the 100% state is visible
+      setTimeout(() => {
+        setUploadProgress(0);
+      }, 500);
+      
     } catch (error) {
       showUploadErrorNotification();
+      setUploadProgress(0);
     } finally {
       setIsUploading(false);
     }
@@ -111,6 +148,7 @@ export const useFileUpload = ({ onFileUploaded, selectedGalleryId = '', gallerie
     targetGalleryId,
     metadata,
     uploadedFile,
+    uploadProgress,
     handleFile,
     handleMetadataChange,
     handleUpload,

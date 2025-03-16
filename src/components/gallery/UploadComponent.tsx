@@ -29,6 +29,7 @@ export const UploadComponent: React.FC<UploadComponentProps> = ({
     targetGalleryId,
     metadata,
     uploadedFile,
+    uploadProgress,
     handleFile,
     handleMetadataChange,
     handleUpload,
@@ -98,6 +99,7 @@ export const UploadComponent: React.FC<UploadComponentProps> = ({
           onUpload={handleUpload}
           isUploading={isUploading}
           disabled={!targetGalleryId}
+          progress={uploadProgress}
         />
       )}
     </div>
