@@ -32,6 +32,24 @@ export const DraggableFileCard: React.FC<DraggableFileCardProps> = ({
     };
   }, [isThisCardDragging, resetDragState]);
 
+  const handleView = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onView();
+  };
+
+  const handleShare = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onShare(e);
+  };
+
+  const handleDelete = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onDelete(e);
+  };
+
   return (
     <Card 
       ref={dragRef}
@@ -54,13 +72,13 @@ export const DraggableFileCard: React.FC<DraggableFileCardProps> = ({
         <div className="flex items-center justify-between mt-2 pt-2 border-t border-gray-100">
           <span className="text-xs text-gray-500">{file.size} KB</span>
           <div className="flex gap-1">
-            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onView}>
+            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleView}>
               <Eye className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onShare}>
+            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleShare}>
               <Share2 className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8 text-red-500 hover:text-red-600" onClick={onDelete}>
+            <Button variant="ghost" size="icon" className="h-8 w-8 text-red-500 hover:text-red-600" onClick={handleDelete}>
               <Trash2 className="h-4 w-4" />
             </Button>
           </div>

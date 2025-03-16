@@ -10,6 +10,7 @@ import {
 } from './file-list';
 import type { SortConfig } from './file-list';
 import type { FileInfo } from '@/models/FileModel';
+import { ShareDialog } from './ShareDialog';
 
 interface FileListProps {
   files: FileInfo[];
@@ -30,6 +31,8 @@ const FileList = ({
   const [selectedType, setSelectedType] = useState<string>('all');
   const [selectedFile, setSelectedFile] = useState<FileInfo | null>(null);
   const [previewDialogOpen, setPreviewDialogOpen] = useState<boolean>(false);
+  const [shareDialogOpen, setShareDialogOpen] = useState<boolean>(false);
+  const [fileToShare, setFileToShare] = useState<FileInfo | null>(null);
   const [searchParams] = useSearchParams();
 
   // Extract unique file types for the filter dropdown
@@ -57,15 +60,18 @@ const FileList = ({
 
   const handleShareFile = (file: FileInfo, e: React.MouseEvent) => {
     e.stopPropagation();
+    
     if (onShareFile) {
       onShareFile(file, e);
     } else {
-      console.log('Share file:', file.name);
+      setFileToShare(file);
+      setShareDialogOpen(true);
     }
   };
 
   const handleDeleteFile = (file: FileInfo, e: React.MouseEvent) => {
     e.stopPropagation();
+    
     if (onDeleteFile) {
       onDeleteFile(file, e);
     } else {
@@ -103,13 +109,20 @@ const FileList = ({
         onDeleteFile={handleDeleteFile}
       />
 
-      {!onViewFile && (
-        <FilePreviewDialog
-          file={selectedFile}
-          open={previewDialogOpen}
-          onOpenChange={setPreviewDialogOpen}
-        />
-      )}
+      {/* File Preview Dialog */}
+      <FilePreviewDialog
+        file={selectedFile}
+        open={previewDialogOpen}
+        onOpenChange={setPreviewDialogOpen}
+      />
+
+      {/* Share Dialog */}
+      <ShareDialog
+        open={shareDialogOpen}
+        onOpenChange={setShareDialogOpen}
+        item={fileToShare}
+        itemType="file"
+      />
     </div>
   );
 };

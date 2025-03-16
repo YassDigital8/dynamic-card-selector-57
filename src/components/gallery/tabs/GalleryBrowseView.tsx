@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import FileList from '../FileList';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
@@ -8,6 +8,8 @@ import EmptyGalleryState from '../EmptyGalleryState';
 import { FileInfo, Gallery } from '@/models/FileModel';
 import { GalleryDropTargets } from '../GalleryDropTargets';
 import { useGlobalDragState } from '@/hooks/gallery/useDragAndDrop';
+import { ShareDialog } from '../ShareDialog';
+import { FilePreviewDialog } from '../file-list/FilePreviewDialog';
 
 interface GalleryBrowseViewProps {
   onOpenUploadDialog: () => void;
@@ -38,6 +40,10 @@ const GalleryBrowseView: React.FC<GalleryBrowseViewProps> = ({
 }) => {
   const navigate = useNavigate();
   const { isDragging } = useGlobalDragState();
+  const [fileToShare, setFileToShare] = useState<FileInfo | null>(null);
+  const [shareDialogOpen, setShareDialogOpen] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<FileInfo | null>(null);
+  const [previewDialogOpen, setPreviewDialogOpen] = useState(false);
 
   const handleCreateFolderClick = () => {
     navigate('/new-folder');
@@ -46,6 +52,9 @@ const GalleryBrowseView: React.FC<GalleryBrowseViewProps> = ({
   const handleViewFile = (file: FileInfo) => {
     if (onViewFile) {
       onViewFile(file);
+    } else {
+      setSelectedFile(file);
+      setPreviewDialogOpen(true);
     }
   };
 
@@ -58,8 +67,8 @@ const GalleryBrowseView: React.FC<GalleryBrowseViewProps> = ({
 
   const handleShareFile = (file: FileInfo, e: React.MouseEvent) => {
     e.stopPropagation();
-    // Handle share functionality
-    console.log('Share file:', file.name);
+    setFileToShare(file);
+    setShareDialogOpen(true);
   };
 
   return (
@@ -96,6 +105,21 @@ const GalleryBrowseView: React.FC<GalleryBrowseViewProps> = ({
           fileTypes={galleryFileTypes}
         />
       )}
+      
+      {/* File Preview Dialog */}
+      <FilePreviewDialog
+        file={selectedFile}
+        open={previewDialogOpen}
+        onOpenChange={setPreviewDialogOpen}
+      />
+      
+      {/* Share Dialog */}
+      <ShareDialog
+        open={shareDialogOpen}
+        onOpenChange={setShareDialogOpen}
+        item={fileToShare}
+        itemType="file"
+      />
     </div>
   );
 };
