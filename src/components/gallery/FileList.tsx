@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { FileInfo, Gallery } from '@/models/FileModel';
 import { Card, CardContent } from '@/components/ui/card';
-import { FileText, Image, File, Eye, Trash2, Share2, ArrowUpDown, ArrowDownAZ, ArrowDownUp, CalendarDays, Search } from 'lucide-react';
+import { FileText, Image, File, Eye, Trash2, Share2, ArrowUpDown, ArrowDownAZ, ArrowDownUp, CalendarDays } from 'lucide-react';
 import { formatDate } from '@/lib/date-utils';
 import { Button } from '@/components/ui/button';
 import { FileDetails } from './FileDetails';
@@ -148,61 +148,64 @@ export const FileList: React.FC<FileListProps> = ({
 
   return (
     <>
-      <div className="mb-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-4 justify-between">
-        <div className="relative w-full sm:max-w-md">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search files..."
-            value={localSearchQuery}
-            onChange={handleSearchChange}
-            className="pl-9 pr-4 h-10"
-          />
-        </div>
-        
-        <div className="flex items-center space-x-2">
-          <span className="text-sm text-muted-foreground whitespace-nowrap">Sort by:</span>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="h-10">
-                {sortConfig.field === 'name' && <ArrowDownAZ className="h-4 w-4 mr-2" />}
-                {sortConfig.field === 'size' && <ArrowDownUp className="h-4 w-4 mr-2" />}
-                {sortConfig.field === 'type' && <File className="h-4 w-4 mr-2" />}
-                {sortConfig.field === 'uploadedOn' && <CalendarDays className="h-4 w-4 mr-2" />}
-                {sortConfig.field.charAt(0).toUpperCase() + sortConfig.field.slice(1)}
-                <ArrowUpDown className={`h-4 w-4 ml-2 ${sortConfig.direction === 'asc' ? 'rotate-180' : ''}`} />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => handleSort('name')}>
-                <ArrowDownAZ className="h-4 w-4 mr-2" />
-                Name
-                {sortConfig.field === 'name' && (
-                  <ArrowUpDown className={`h-4 w-4 ml-2 ${sortConfig.direction === 'asc' ? 'rotate-180' : ''}`} />
-                )}
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleSort('size')}>
-                <ArrowDownUp className="h-4 w-4 mr-2" />
-                Size
-                {sortConfig.field === 'size' && (
-                  <ArrowUpDown className={`h-4 w-4 ml-2 ${sortConfig.direction === 'asc' ? 'rotate-180' : ''}`} />
-                )}
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleSort('type')}>
-                <File className="h-4 w-4 mr-2" />
-                Type
-                {sortConfig.field === 'type' && (
-                  <ArrowUpDown className={`h-4 w-4 ml-2 ${sortConfig.direction === 'asc' ? 'rotate-180' : ''}`} />
-                )}
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleSort('uploadedOn')}>
-                <CalendarDays className="h-4 w-4 mr-2" />
-                Upload Date
-                {sortConfig.field === 'uploadedOn' && (
-                  <ArrowUpDown className={`h-4 w-4 ml-2 ${sortConfig.direction === 'asc' ? 'rotate-180' : ''}`} />
-                )}
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+      <div className="mb-4">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 justify-between">
+          <div className="w-full sm:max-w-sm">
+            <Input
+              placeholder="Search files..."
+              value={localSearchQuery}
+              onChange={handleSearchChange}
+              className="px-4 h-10"
+            />
+          </div>
+          
+          <div className="flex-grow flex items-center justify-end space-x-4">
+            <div className="flex items-center">
+              <span className="text-sm text-muted-foreground whitespace-nowrap mr-2">Sort by:</span>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="h-10">
+                    {sortConfig.field === 'name' && <ArrowDownAZ className="h-4 w-4 mr-2" />}
+                    {sortConfig.field === 'size' && <ArrowDownUp className="h-4 w-4 mr-2" />}
+                    {sortConfig.field === 'type' && <File className="h-4 w-4 mr-2" />}
+                    {sortConfig.field === 'uploadedOn' && <CalendarDays className="h-4 w-4 mr-2" />}
+                    {sortConfig.field.charAt(0).toUpperCase() + sortConfig.field.slice(1)}
+                    <ArrowUpDown className={`h-4 w-4 ml-2 ${sortConfig.direction === 'asc' ? 'rotate-180' : ''}`} />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => handleSort('name')}>
+                    <ArrowDownAZ className="h-4 w-4 mr-2" />
+                    Name
+                    {sortConfig.field === 'name' && (
+                      <ArrowUpDown className={`h-4 w-4 ml-2 ${sortConfig.direction === 'asc' ? 'rotate-180' : ''}`} />
+                    )}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleSort('size')}>
+                    <ArrowDownUp className="h-4 w-4 mr-2" />
+                    Size
+                    {sortConfig.field === 'size' && (
+                      <ArrowUpDown className={`h-4 w-4 ml-2 ${sortConfig.direction === 'asc' ? 'rotate-180' : ''}`} />
+                    )}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleSort('type')}>
+                    <File className="h-4 w-4 mr-2" />
+                    Type
+                    {sortConfig.field === 'type' && (
+                      <ArrowUpDown className={`h-4 w-4 ml-2 ${sortConfig.direction === 'asc' ? 'rotate-180' : ''}`} />
+                    )}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleSort('uploadedOn')}>
+                    <CalendarDays className="h-4 w-4 mr-2" />
+                    Upload Date
+                    {sortConfig.field === 'uploadedOn' && (
+                      <ArrowUpDown className={`h-4 w-4 ml-2 ${sortConfig.direction === 'asc' ? 'rotate-180' : ''}`} />
+                    )}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </div>
         </div>
       </div>
 
