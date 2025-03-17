@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -12,10 +12,23 @@ import HotelEmptyState from './HotelEmptyState';
 import HotelAddForm from './HotelAddForm';
 import HotelEditForm from './HotelEditForm';
 import HotelDetailsWrapper from './HotelDetailsWrapper';
+import { FilterOptions } from './HotelFilters';
 
 const HotelPage: React.FC = () => {
   const { posOptions } = usePageSelectionViewModel();
   const [selectedPOS, setSelectedPOS] = useState<string>('');
+  
+  // Setup filter state
+  const [filters, setFilters] = useState<FilterOptions>({
+    amenities: {
+      wifi: false,
+      restaurant: false,
+      gym: false,
+      swimmingPool: false
+    },
+    showOnlyNewest: false,
+    countryFilter: null
+  });
   
   const {
     hotels,
@@ -30,6 +43,36 @@ const HotelPage: React.FC = () => {
   } = useHotelNetwork(selectedPOS);
 
   const [showAddForm, setShowAddForm] = useState(false);
+  const [filteredHotels, setFilteredHotels] = useState<Hotel[]>(hotels);
+
+  // Apply filters to hotels
+  useEffect(() => {
+    let result = [...hotels];
+    
+    // Apply amenities filters
+    if (Object.values(filters.amenities).some(Boolean)) {
+      result = result.filter(hotel => {
+        return (
+          (!filters.amenities.wifi || hotel.amenities.wifi) &&
+          (!filters.amenities.restaurant || hotel.amenities.restaurant) &&
+          (!filters.amenities.gym || hotel.amenities.gym) &&
+          (!filters.amenities.swimmingPool || hotel.amenities.swimmingPool)
+        );
+      });
+    }
+    
+    // Apply newest filter
+    if (filters.showOnlyNewest) {
+      result = result.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    }
+    
+    // Apply country filter
+    if (filters.countryFilter) {
+      result = result.filter(hotel => hotel.country === filters.countryFilter);
+    }
+    
+    setFilteredHotels(result);
+  }, [hotels, filters]);
 
   const handleSelectHotel = (hotel: Hotel) => {
     setSelectedHotel(hotel);
@@ -77,6 +120,8 @@ const HotelPage: React.FC = () => {
         selectedPOS={selectedPOS}
         onSelectPOS={setSelectedPOS}
         onAddHotel={handleAddHotel}
+        filters={filters}
+        onFilterChange={setFilters}
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -84,7 +129,7 @@ const HotelPage: React.FC = () => {
           <Card className="p-4 overflow-hidden border-indigo-100 dark:border-indigo-900 shadow-sm">
             <ScrollArea className="h-[calc(100vh-320px)]">
               <HotelList
-                hotels={hotels}
+                hotels={filteredHotels}
                 selectedHotel={selectedHotel}
                 onSelectHotel={handleSelectHotel}
                 onEditHotel={handleEditHotel}

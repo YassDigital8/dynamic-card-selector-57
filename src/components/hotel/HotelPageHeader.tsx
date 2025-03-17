@@ -4,19 +4,31 @@ import { Flag, Hotel as HotelIcon, PlusCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { usePageSelectionViewModel } from '@/viewmodels/PageSelectionViewModel';
+import HotelFilters, { FilterOptions } from './HotelFilters';
 
 interface HotelPageHeaderProps {
   selectedPOS: string;
   onSelectPOS: (pos: string) => void;
   onAddHotel: () => void;
+  filters: FilterOptions;
+  onFilterChange: (filters: FilterOptions) => void;
 }
 
 const HotelPageHeader: React.FC<HotelPageHeaderProps> = ({
   selectedPOS,
   onSelectPOS,
-  onAddHotel
+  onAddHotel,
+  filters,
+  onFilterChange
 }) => {
   const { posOptions } = usePageSelectionViewModel();
+
+  // Calculate the number of active filters
+  const activeFilterCount = [
+    ...Object.values(filters.amenities).filter(Boolean),
+    filters.showOnlyNewest,
+    filters.countryFilter !== null
+  ].filter(Boolean).length;
 
   return (
     <div className="bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-indigo-950 dark:to-blue-950 p-6 rounded-xl shadow-md border border-indigo-100 dark:border-indigo-900 mb-8">
@@ -49,6 +61,13 @@ const HotelPageHeader: React.FC<HotelPageHeaderProps> = ({
               </SelectContent>
             </Select>
           </div>
+          
+          <HotelFilters 
+            filters={filters} 
+            onFilterChange={onFilterChange}
+            activeFilterCount={activeFilterCount}
+          />
+          
           <Button onClick={onAddHotel} className="gap-2 w-full sm:w-auto bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 shadow-sm">
             <PlusCircle className="h-4 w-4" />
             Add Hotel
