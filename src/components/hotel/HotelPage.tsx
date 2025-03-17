@@ -4,7 +4,7 @@ import { AnimatePresence } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import HotelList from './HotelList';
-import useHotelNetwork from '@/hooks/useHotelNetwork';
+import useHotelNetwork from '@/hooks/hotel/useHotelNetwork';
 import { Hotel, HotelFormData } from '@/models/HotelModel';
 import { usePageSelectionViewModel } from '@/viewmodels/PageSelectionViewModel';
 import HotelPageHeader from './HotelPageHeader';
