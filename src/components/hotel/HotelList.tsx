@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { 
   AirVent, 
@@ -16,7 +15,7 @@ import {
   Hotel as HotelIcon,
   Bath,
   BedDouble,
-  Swimming
+  Waves
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Hotel, HotelAmenities } from '@/models/HotelModel';
@@ -66,7 +65,7 @@ const AmenityIcon = ({
     restaurant: <Utensils className="h-4 w-4" />,
     breakfast: <Coffee className="h-4 w-4" />,
     wifi: <Wifi className="h-4 w-4" />,
-    swimmingPool: <Swimming className="h-4 w-4" />,
+    swimmingPool: <Waves className="h-4 w-4" />,
     petsAllowed: <PawPrint className="h-4 w-4" />,
     extraBed: <BedDouble className="h-4 w-4" />
   };
@@ -79,7 +78,6 @@ const AmenityIcon = ({
 };
 
 const formatAmenityName = (amenity: keyof HotelAmenities): string => {
-  // Convert camelCase to Title Case with spaces
   return amenity
     .replace(/([A-Z])/g, ' $1')
     .replace(/^./, str => str.toUpperCase());
@@ -187,7 +185,6 @@ const HotelList: React.FC<HotelListProps> = ({
         </div>
       )}
 
-      {/* Confirmation Dialog for Delete */}
       <Dialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>
         <DialogContent>
           <DialogHeader>

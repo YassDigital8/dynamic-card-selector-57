@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { 
   AirVent, 
@@ -17,7 +16,7 @@ import {
   Hotel as HotelIcon,
   Bath,
   BedDouble,
-  Swimming
+  Waves
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { Hotel, HotelAmenities } from '@/models/HotelModel';
@@ -50,7 +49,7 @@ const AmenityDisplay = ({
     { key: 'restaurant', label: 'Restaurant', icon: Utensils },
     { key: 'breakfast', label: 'Breakfast', icon: Coffee },
     { key: 'wifi', label: 'WiFi', icon: Wifi },
-    { key: 'swimmingPool', label: 'Swimming Pool', icon: Swimming },
+    { key: 'swimmingPool', label: 'Swimming Pool', icon: Waves },
     { key: 'petsAllowed', label: 'Pets Allowed', icon: PawPrint },
     { key: 'extraBed', label: 'Extra Bed', icon: BedDouble }
   ];

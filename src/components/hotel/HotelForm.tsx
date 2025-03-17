@@ -16,7 +16,7 @@ import {
   Hotel as HotelIcon,
   Bath,
   BedDouble,
-  Swimming
+  Waves
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -33,7 +33,6 @@ import {
 import { Input } from '@/components/ui/input';
 import { HotelFormData, Hotel } from '@/models/HotelModel';
 
-// Define validation schema
 const formSchema = z.object({
   name: z.string().min(2, { message: "Hotel name must be at least 2 characters." }),
   country: z.string().min(2, { message: "Country must be at least 2 characters." }),
@@ -71,7 +70,6 @@ interface HotelFormProps {
 }
 
 export function HotelForm({ initialData, onSubmit, isLoading }: HotelFormProps) {
-  // Default values for new hotel
   const defaultValues: HotelFormData = {
     name: '',
     country: '',
@@ -91,6 +89,7 @@ export function HotelForm({ initialData, onSubmit, isLoading }: HotelFormProps) 
       extraBed: false,
     },
     roomTypes: [{
+      id: Date.now().toString(),
       name: '',
       maxAdults: 1,
       maxChildren: 0,
@@ -110,7 +109,6 @@ export function HotelForm({ initialData, onSubmit, isLoading }: HotelFormProps) 
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Basic Information */}
           <div className="space-y-6 col-span-2">
             <h3 className="text-lg font-medium text-foreground">Basic Information</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -181,7 +179,6 @@ export function HotelForm({ initialData, onSubmit, isLoading }: HotelFormProps) 
             </div>
           </div>
 
-          {/* Amenities */}
           <div className="space-y-6 col-span-2">
             <h3 className="text-lg font-medium text-foreground">Amenities</h3>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -349,7 +346,7 @@ export function HotelForm({ initialData, onSubmit, isLoading }: HotelFormProps) 
                       />
                     </FormControl>
                     <div className="flex items-center space-x-2">
-                      <Swimming className="h-4 w-4 text-muted-foreground" />
+                      <Waves className="h-4 w-4 text-muted-foreground" />
                       <FormLabel className="m-0">Swimming Pool</FormLabel>
                     </div>
                   </FormItem>
@@ -396,7 +393,6 @@ export function HotelForm({ initialData, onSubmit, isLoading }: HotelFormProps) 
             </div>
           </div>
 
-          {/* Room Types */}
           <div className="space-y-6 col-span-2">
             <h3 className="text-lg font-medium text-foreground">Room Types</h3>
             {form.watch('roomTypes').map((_, index) => (
