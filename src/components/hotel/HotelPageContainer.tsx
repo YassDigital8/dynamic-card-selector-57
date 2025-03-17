@@ -53,6 +53,14 @@ const HotelPageContainer: React.FC = () => {
 
   const handleBackToList = () => {
     setIsExpanded(false);
+    // Adding a small delay before clearing selection to allow animation to complete
+    setTimeout(() => {
+      if (!isExpanded) {
+        setSelectedHotel(null);
+        setShowAddForm(false);
+        setIsEditing(false);
+      }
+    }, 300);
   };
 
   const handleSubmitAdd = (data: HotelFormData) => {

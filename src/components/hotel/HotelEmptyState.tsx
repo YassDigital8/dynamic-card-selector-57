@@ -74,14 +74,16 @@ const HotelEmptyState: React.FC<HotelEmptyStateProps> = ({
       animate="visible"
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.3 }}
+      className="w-full h-full"
     >
       <motion.div
         variants={cardVariants}
         initial="hidden"
         animate="visible"
         whileHover="hover"
+        className="w-full h-full"
       >
-        <Card className="p-6 flex flex-col items-center justify-center text-center h-[calc(100vh-320px)] bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-950 dark:to-slate-900 border-indigo-100 dark:border-indigo-900 shadow-sm">
+        <Card className="p-6 flex flex-col items-center justify-center text-center h-[calc(100vh-200px)] bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-950 dark:to-slate-900 border-indigo-100 dark:border-indigo-900 shadow-sm">
           <motion.div 
             className="p-5 bg-white dark:bg-indigo-900 rounded-full mb-6 shadow-md"
             variants={iconVariants}
@@ -95,8 +97,8 @@ const HotelEmptyState: React.FC<HotelEmptyStateProps> = ({
           <p className="text-muted-foreground mb-8 max-w-md">
             {selectedPOS ? 
               hasHotels 
-                ? `Select a hotel from the ${posName} region to view details.` 
-                : `No hotels found for ${posName}. Add your first hotel.`
+                ? `Select a hotel from the ${posName || 'selected'} region to view details.` 
+                : `No hotels found for ${posName || 'selected region'}. Add your first hotel.`
               : 'Select a region to view hotels, or add a new hotel to your network.'}
           </p>
           <motion.div

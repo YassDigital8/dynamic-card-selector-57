@@ -23,6 +23,7 @@ const HotelDetailsWrapper: React.FC<HotelDetailsWrapperProps> = ({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.3 }}
+      className="w-full h-full"
     >
       <Card className="p-6 border-indigo-100 dark:border-indigo-900 shadow-md overflow-hidden bg-white dark:bg-slate-900">
         <HotelDetails hotel={hotel} onEdit={onEdit} onBack={onBack} />

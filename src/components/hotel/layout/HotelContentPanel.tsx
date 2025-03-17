@@ -77,6 +77,12 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
     }
   };
 
+  // Determine if we should show content (either a selected hotel, add form, or edit form)
+  const showContent = selectedHotel || showAddForm || isEditing;
+
+  // This will handle the render conditions for the empty state
+  const shouldShowEmptyState = !showContent;
+
   return (
     <motion.div 
       className="lg:col-span-8"
@@ -134,7 +140,7 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
           />
         )}
 
-        {!showAddForm && !isEditing && !selectedHotel && (
+        {shouldShowEmptyState && (
           <HotelEmptyState
             key="empty-state"
             selectedPOS={selectedPOS}
