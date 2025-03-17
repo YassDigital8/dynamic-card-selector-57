@@ -41,7 +41,7 @@ const HotelListPanel: React.FC<HotelListPanelProps> = ({
             onSelectHotel={onSelectHotel}
             onEditHotel={onEditHotel}
             onDeleteHotel={onDeleteHotel}
-            useGridView={true}
+            useGridView={!isExpanded}
           />
         </ScrollArea>
       </Card>

@@ -37,6 +37,13 @@ const HotelPageContainer: React.FC = () => {
     }
   }, [selectedHotel, showAddForm, isEditing]);
 
+  // Effect to automatically set isExpanded to true when a hotel is selected
+  useEffect(() => {
+    if (selectedHotel || showAddForm || isEditing) {
+      setIsExpanded(true);
+    }
+  }, [selectedHotel, showAddForm, isEditing]);
+
   const handleSelectHotel = (hotel: Hotel) => {
     setSelectedHotel(hotel);
     setIsEditing(false);

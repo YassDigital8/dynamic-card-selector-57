@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Hotel } from '@/models/HotelModel';
 import { Badge } from "@/components/ui/badge";
+import { LayoutGrid, LayoutList } from 'lucide-react';
 import DeleteHotelDialog from './DeleteHotelDialog';
 import HotelCard from './HotelCard';
 import HotelListEmptyState from './HotelListEmptyState';
@@ -60,15 +61,21 @@ const HotelList: React.FC<HotelListProps> = ({
     }
   };
 
+  // Display the current view mode
+  const ViewModeIcon = useGridView ? LayoutGrid : LayoutList;
+
   return (
     <div className="space-y-6 w-full">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-blue-600 dark:from-indigo-400 dark:to-blue-400">
           Hotels ({filteredHotels.length})
         </h2>
-        <Badge variant="outline" className="text-xs border-indigo-200 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-400">
-          {hotels.length} total
-        </Badge>
+        <div className="flex items-center gap-2">
+          <ViewModeIcon size={16} className="text-indigo-500" />
+          <Badge variant="outline" className="text-xs border-indigo-200 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-400">
+            {useGridView ? 'Grid View' : 'List View'}
+          </Badge>
+        </div>
       </div>
       
       {hotels.length > 0 && (
