@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Hotel, HotelFormData, RoomType } from '@/models/HotelModel';
 import { useToast } from '@/hooks/use-toast';
@@ -139,7 +140,7 @@ export const useHotelNetwork = (selectedPOS: string = '') => {
 
   // Filter hotels by POS
   useEffect(() => {
-    if (selectedPOS) {
+    if (selectedPOS && selectedPOS !== 'all') {
       const filtered = hotels.filter(hotel => 
         hotel.posKey.toLowerCase() === selectedPOS.toLowerCase()
       );

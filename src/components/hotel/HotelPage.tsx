@@ -81,7 +81,8 @@ const HotelPage: React.FC = () => {
                 <SelectValue placeholder="Select POS" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Regions</SelectItem>
+                {/* Fixed the empty value issue by using a non-empty string */}
+                <SelectItem value="all">All Regions</SelectItem> 
                 {posOptions.map(pos => (
                   <SelectItem key={pos.id} value={pos.key.toLowerCase()}>
                     {pos.englishName}
