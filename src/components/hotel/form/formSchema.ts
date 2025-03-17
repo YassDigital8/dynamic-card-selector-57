@@ -1,0 +1,35 @@
+
+import * as z from 'zod';
+
+export const formSchema = z.object({
+  name: z.string().min(2, { message: "Hotel name must be at least 2 characters." }),
+  country: z.string().min(2, { message: "Country must be at least 2 characters." }),
+  governorate: z.string().min(2, { message: "Governorate must be at least 2 characters." }),
+  streetAddress: z.string().min(5, { message: "Street address must be at least 5 characters." }),
+  posKey: z.string().default(''),
+  amenities: z.object({
+    airConditioning: z.boolean().default(false),
+    bar: z.boolean().default(false),
+    gym: z.boolean().default(false),
+    parking: z.boolean().default(false),
+    spa: z.boolean().default(false),
+    restaurant: z.boolean().default(false),
+    breakfast: z.boolean().default(false),
+    wifi: z.boolean().default(false),
+    swimmingPool: z.boolean().default(false),
+    petsAllowed: z.boolean().default(false),
+    extraBed: z.boolean().default(false),
+  }),
+  roomTypes: z.array(
+    z.object({
+      id: z.string().optional(),
+      name: z.string().min(2, { message: "Room type name must be at least 2 characters." }),
+      maxAdults: z.number().min(1, { message: "At least 1 adult required." }),
+      maxChildren: z.number().min(0),
+      description: z.string().optional(),
+      price: z.number().optional(),
+    })
+  ).default([]),
+});
+
+export type FormValues = z.infer<typeof formSchema>;
