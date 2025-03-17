@@ -31,9 +31,14 @@ const HotelListPanel: React.FC<HotelListPanelProps> = ({
         width: "100%",
         gridColumn: isExpanded ? "span 3 / span 3" : "span 12 / span 12"
       }}
-      transition={{ duration: 0.3, ease: "easeInOut" }}
+      transition={{ 
+        duration: 0.4, 
+        ease: [0.4, 0.0, 0.2, 1],
+        layoutX: { duration: 0.3 }  
+      }}
+      layout
     >
-      <Card className="p-4 overflow-hidden border-indigo-100 dark:border-indigo-900 shadow-sm h-[calc(100vh-200px)]">
+      <Card className="p-4 overflow-hidden border-indigo-100 dark:border-indigo-900 shadow-md h-[calc(100vh-200px)] backdrop-blur-sm bg-white/90 dark:bg-slate-900/90 rounded-xl">
         <ScrollArea className="h-[calc(100vh-230px)]">
           <HotelList
             hotels={filteredHotels}

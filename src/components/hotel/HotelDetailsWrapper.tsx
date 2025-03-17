@@ -22,11 +22,17 @@ const HotelDetailsWrapper: React.FC<HotelDetailsWrapperProps> = ({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      transition={{ duration: 0.3 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
       className="w-full h-full"
     >
-      <Card className="p-6 border-indigo-100 dark:border-indigo-900 shadow-md overflow-hidden bg-white dark:bg-slate-900">
-        <HotelDetails hotel={hotel} onEdit={onEdit} onBack={onBack} />
+      <Card className="p-6 border-indigo-100 dark:border-indigo-900 shadow-lg rounded-xl overflow-hidden bg-white dark:bg-slate-900 backdrop-blur-sm">
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2, duration: 0.3 }}
+        >
+          <HotelDetails hotel={hotel} onEdit={onEdit} onBack={onBack} />
+        </motion.div>
       </Card>
     </motion.div>
   );
