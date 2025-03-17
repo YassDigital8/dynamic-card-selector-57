@@ -7,7 +7,7 @@ import {
   Home, 
   Coffee, 
   Dumbbell, 
-  Pool,
+  Waves,
   Clock,
   MapPin,
   Building
@@ -146,7 +146,7 @@ const HotelFilters: React.FC<HotelFiltersProps> = ({
           
           <DropdownMenuItem className="flex items-center justify-between" onSelect={(e) => e.preventDefault()}>
             <div className="flex items-center gap-2">
-              <Pool className="h-4 w-4 text-indigo-500" />
+              <Waves className="h-4 w-4 text-indigo-500" />
               <span>Swimming Pool</span>
             </div>
             <Checkbox 
