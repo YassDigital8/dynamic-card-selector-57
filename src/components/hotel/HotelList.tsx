@@ -2,21 +2,21 @@
 import React from 'react';
 import { 
   AirVent, 
-  Bar, 
-  Dumbbell, 
-  Parking, 
-  Spa, 
   Utensils, 
   Coffee, 
   Wifi, 
-  SwimmingPool, 
   PawPrint, 
-  BedPlus,
   Pencil,
   Trash2,
   MapPin,
   Flag,
-  Users
+  Users,
+  Dumbbell,
+  GlassWater,
+  Hotel as HotelIcon,
+  Bath,
+  BedDouble,
+  Swimming
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Hotel, HotelAmenities } from '@/models/HotelModel';
@@ -59,16 +59,16 @@ const AmenityIcon = ({
   
   const iconMap = {
     airConditioning: <AirVent className="h-4 w-4" />,
-    bar: <Bar className="h-4 w-4" />,
+    bar: <GlassWater className="h-4 w-4" />,
     gym: <Dumbbell className="h-4 w-4" />,
-    parking: <Parking className="h-4 w-4" />,
-    spa: <Spa className="h-4 w-4" />,
+    parking: <HotelIcon className="h-4 w-4" />,
+    spa: <Bath className="h-4 w-4" />,
     restaurant: <Utensils className="h-4 w-4" />,
     breakfast: <Coffee className="h-4 w-4" />,
     wifi: <Wifi className="h-4 w-4" />,
-    swimmingPool: <SwimmingPool className="h-4 w-4" />,
+    swimmingPool: <Swimming className="h-4 w-4" />,
     petsAllowed: <PawPrint className="h-4 w-4" />,
-    extraBed: <BedPlus className="h-4 w-4" />
+    extraBed: <BedDouble className="h-4 w-4" />
   };
 
   return (

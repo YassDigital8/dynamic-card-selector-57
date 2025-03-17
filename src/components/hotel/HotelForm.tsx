@@ -1,23 +1,22 @@
-
 import React from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { 
   AirVent, 
-  Bar, 
-  Dumbbell, 
-  Parking, 
-  Spa, 
   Utensils, 
   Coffee, 
   Wifi, 
-  SwimmingPool, 
   PawPrint, 
-  BedPlus, 
   MapPin,
   Flag,
-  Building
+  Building,
+  Dumbbell,
+  GlassWater,
+  Hotel as HotelIcon,
+  Bath,
+  BedDouble,
+  Swimming
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -217,7 +216,7 @@ export function HotelForm({ initialData, onSubmit, isLoading }: HotelFormProps) 
                       />
                     </FormControl>
                     <div className="flex items-center space-x-2">
-                      <Bar className="h-4 w-4 text-muted-foreground" />
+                      <GlassWater className="h-4 w-4 text-muted-foreground" />
                       <FormLabel className="m-0">Bar</FormLabel>
                     </div>
                   </FormItem>
@@ -255,7 +254,7 @@ export function HotelForm({ initialData, onSubmit, isLoading }: HotelFormProps) 
                       />
                     </FormControl>
                     <div className="flex items-center space-x-2">
-                      <Parking className="h-4 w-4 text-muted-foreground" />
+                      <HotelIcon className="h-4 w-4 text-muted-foreground" />
                       <FormLabel className="m-0">Parking</FormLabel>
                     </div>
                   </FormItem>
@@ -274,7 +273,7 @@ export function HotelForm({ initialData, onSubmit, isLoading }: HotelFormProps) 
                       />
                     </FormControl>
                     <div className="flex items-center space-x-2">
-                      <Spa className="h-4 w-4 text-muted-foreground" />
+                      <Bath className="h-4 w-4 text-muted-foreground" />
                       <FormLabel className="m-0">Spa</FormLabel>
                     </div>
                   </FormItem>
@@ -350,7 +349,7 @@ export function HotelForm({ initialData, onSubmit, isLoading }: HotelFormProps) 
                       />
                     </FormControl>
                     <div className="flex items-center space-x-2">
-                      <SwimmingPool className="h-4 w-4 text-muted-foreground" />
+                      <Swimming className="h-4 w-4 text-muted-foreground" />
                       <FormLabel className="m-0">Swimming Pool</FormLabel>
                     </div>
                   </FormItem>
@@ -388,7 +387,7 @@ export function HotelForm({ initialData, onSubmit, isLoading }: HotelFormProps) 
                       />
                     </FormControl>
                     <div className="flex items-center space-x-2">
-                      <BedPlus className="h-4 w-4 text-muted-foreground" />
+                      <BedDouble className="h-4 w-4 text-muted-foreground" />
                       <FormLabel className="m-0">Extra Bed</FormLabel>
                     </div>
                   </FormItem>

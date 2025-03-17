@@ -2,22 +2,22 @@
 import React from 'react';
 import { 
   AirVent, 
-  Bar, 
-  Dumbbell, 
-  Parking, 
-  Spa, 
   Utensils, 
   Coffee, 
   Wifi, 
-  SwimmingPool, 
   PawPrint, 
-  BedPlus,
   Bed,
   Users,
   Heart,
   MapPin,
   Flag,
-  Building
+  Building,
+  Dumbbell,
+  GlassWater,
+  Hotel as HotelIcon,
+  Bath,
+  BedDouble,
+  Swimming
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { Hotel, HotelAmenities } from '@/models/HotelModel';
@@ -43,16 +43,16 @@ const AmenityDisplay = ({
 }) => {
   const amenityItems = [
     { key: 'airConditioning', label: 'Air Conditioning', icon: AirVent },
-    { key: 'bar', label: 'Bar', icon: Bar },
+    { key: 'bar', label: 'Bar', icon: GlassWater },
     { key: 'gym', label: 'Gym', icon: Dumbbell },
-    { key: 'parking', label: 'Parking', icon: Parking },
-    { key: 'spa', label: 'Spa', icon: Spa },
+    { key: 'parking', label: 'Parking', icon: HotelIcon },
+    { key: 'spa', label: 'Spa', icon: Bath },
     { key: 'restaurant', label: 'Restaurant', icon: Utensils },
     { key: 'breakfast', label: 'Breakfast', icon: Coffee },
     { key: 'wifi', label: 'WiFi', icon: Wifi },
-    { key: 'swimmingPool', label: 'Swimming Pool', icon: SwimmingPool },
+    { key: 'swimmingPool', label: 'Swimming Pool', icon: Swimming },
     { key: 'petsAllowed', label: 'Pets Allowed', icon: PawPrint },
-    { key: 'extraBed', label: 'Extra Bed', icon: BedPlus }
+    { key: 'extraBed', label: 'Extra Bed', icon: BedDouble }
   ];
 
   return (
