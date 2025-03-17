@@ -1,11 +1,12 @@
 
 import React from 'react';
-import { Pencil, Trash2, MapPin, Flag, Users } from 'lucide-react';
+import { Pencil, Trash2, MapPin, Flag, Users, Hotel as HotelIcon } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Hotel, HotelAmenities } from '@/models/HotelModel';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import AmenityIcon from './AmenityIcon';
 
 interface HotelCardProps {
@@ -15,6 +16,23 @@ interface HotelCardProps {
   onEdit: () => void;
   onDelete: () => void;
 }
+
+// Function to get a consistent avatar image based on hotel name
+const getHotelAvatar = (hotelName: string): string => {
+  // Use a modulo operation to cycle through 5 placeholder images
+  const nameHash = hotelName.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  const imageIndex = nameHash % 5 + 1;
+  
+  const placeholderImages = [
+    'photo-1460925895917-afdab827c52f',
+    'photo-1487958449943-2429e8be8625',
+    'photo-1449157291145-7efd050a4d0e',
+    'photo-1459767129954-1b1c1f9b9ace',
+    'photo-1496307653780-42ee777d4833'
+  ];
+  
+  return `https://images.unsplash.com/${placeholderImages[imageIndex - 1]}?auto=format&fit=crop&w=100&h=100&q=80`;
+};
 
 const HotelCard: React.FC<HotelCardProps> = ({
   hotel,
@@ -40,13 +58,21 @@ const HotelCard: React.FC<HotelCardProps> = ({
         }`}
       >
         <CardHeader className="pb-2">
-          <div className="flex justify-between items-start">
-            <CardTitle className="text-lg text-indigo-700 dark:text-indigo-300">
-              {hotel.name}
-            </CardTitle>
-            <Badge variant="outline" className="uppercase text-xs bg-indigo-50 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-400 font-medium">
-              {hotel.posKey}
-            </Badge>
+          <div className="flex items-center space-x-3">
+            <Avatar className="h-12 w-12 border-2 border-white shadow-sm">
+              <AvatarImage src={getHotelAvatar(hotel.name)} alt={hotel.name} />
+              <AvatarFallback className="bg-indigo-100 text-indigo-700">
+                <HotelIcon className="h-6 w-6" />
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex-1">
+              <CardTitle className="text-lg text-indigo-700 dark:text-indigo-300">
+                {hotel.name}
+              </CardTitle>
+              <Badge variant="outline" className="uppercase text-xs bg-indigo-50 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-400 font-medium mt-1">
+                {hotel.posKey}
+              </Badge>
+            </div>
           </div>
         </CardHeader>
         <CardContent className="space-y-3">

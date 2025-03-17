@@ -25,11 +25,11 @@ const HotelListPanel: React.FC<HotelListPanelProps> = ({
 }) => {
   return (
     <motion.div 
-      className="lg:col-span-5 space-y-6"
+      className="lg:col-span-12"
       initial={{ width: "100%" }}
       animate={{ 
         width: "100%",
-        gridColumn: isExpanded ? "span 4 / span 4" : "span 5 / span 5"
+        gridColumn: isExpanded ? "span 3 / span 3" : "span 12 / span 12"
       }}
       transition={{ duration: 0.3, ease: "easeInOut" }}
     >

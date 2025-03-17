@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Hotel, HotelFormData } from '@/models/HotelModel';
 import HotelPageHeader from './HotelPageHeader';
 import HotelListPanel from './layout/HotelListPanel';
@@ -29,6 +29,13 @@ const HotelPageContainer: React.FC = () => {
   
   const [showAddForm, setShowAddForm] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
+
+  // Effect to ensure expanded view is reset when no hotel is selected
+  useEffect(() => {
+    if (!selectedHotel && !showAddForm && !isEditing) {
+      setIsExpanded(false);
+    }
+  }, [selectedHotel, showAddForm, isEditing]);
 
   const handleSelectHotel = (hotel: Hotel) => {
     setSelectedHotel(hotel);
@@ -107,21 +114,23 @@ const HotelPageContainer: React.FC = () => {
           onDeleteHotel={deleteHotel}
         />
 
-        <HotelContentPanel 
-          selectedHotel={selectedHotel}
-          isLoading={isLoading}
-          isEditing={isEditing}
-          showAddForm={showAddForm}
-          isExpanded={isExpanded}
-          selectedPOS={selectedPOS}
-          posName={getSelectedPOSName()}
-          hasHotels={hotels.length > 0}
-          onAddHotel={handleAddHotel}
-          onBackToList={handleBackToList}
-          onSubmitAdd={handleSubmitAdd}
-          onSubmitEdit={handleSubmitEdit}
-          onCancelEdit={handleCancelEdit}
-        />
+        {(isExpanded || selectedHotel || showAddForm || isEditing) && (
+          <HotelContentPanel 
+            selectedHotel={selectedHotel}
+            isLoading={isLoading}
+            isEditing={isEditing}
+            showAddForm={showAddForm}
+            isExpanded={isExpanded}
+            selectedPOS={selectedPOS}
+            posName={getSelectedPOSName()}
+            hasHotels={hotels.length > 0}
+            onAddHotel={handleAddHotel}
+            onBackToList={handleBackToList}
+            onSubmitAdd={handleSubmitAdd}
+            onSubmitEdit={handleSubmitEdit}
+            onCancelEdit={handleCancelEdit}
+          />
+        )}
       </div>
     </div>
   );

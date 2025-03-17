@@ -43,13 +43,17 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
   // Panel animation variants
   const panelVariants = {
     collapsed: { 
-      opacity: 0.9,
+      opacity: 0,
       x: 20,
+      width: 0,
+      display: "none",
       transition: { duration: 0.3, ease: "easeInOut" }
     },
     expanded: { 
       opacity: 1, 
       x: 0,
+      width: "100%",
+      display: "block",
       transition: { 
         duration: 0.4, 
         ease: "easeOut",
@@ -83,13 +87,18 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
   // This will handle the render conditions for the empty state
   const shouldShowEmptyState = !showContent;
 
+  // If no content to show and not expanded, don't render anything
+  if (!showContent && !isExpanded) {
+    return null;
+  }
+
   return (
     <motion.div 
-      className="lg:col-span-8"
+      className="lg:col-span-9"
       initial="collapsed"
       animate={isExpanded ? "expanded" : "collapsed"}
       variants={panelVariants}
-      style={{ gridColumn: isExpanded ? "span 8 / span 8" : "span 7 / span 7" }}
+      style={{ gridColumn: isExpanded ? "span 9 / span 9" : "span 0 / span 0" }}
     >
       {isExpanded && (
         <motion.div 
@@ -140,7 +149,7 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
           />
         )}
 
-        {shouldShowEmptyState && (
+        {shouldShowEmptyState && isExpanded && (
           <HotelEmptyState
             key="empty-state"
             selectedPOS={selectedPOS}
