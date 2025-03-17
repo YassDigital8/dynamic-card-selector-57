@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Hotel } from '@/models/HotelModel';
 import { useHotelCrud } from './useHotelCrud';
 import { useRoomTypes } from './useRoomTypes';
@@ -30,7 +30,7 @@ export const useHotelNetwork = (selectedPOS: string = '') => {
   }, [selectedPOS, hotels, selectedHotel]);
 
   // Handle hotel operations with updates to selected hotel
-  const handleAddHotel = (hotelData: any) => {
+  const handleAddHotel = useCallback((hotelData: any) => {
     const result = addHotel(hotelData);
     
     if (result.success && result.hotel) {
@@ -39,9 +39,9 @@ export const useHotelNetwork = (selectedPOS: string = '') => {
     }
     
     return result.success;
-  };
+  }, [addHotel]);
 
-  const handleUpdateHotel = (id: string, hotelData: any) => {
+  const handleUpdateHotel = useCallback((id: string, hotelData: any) => {
     const result = updateHotel(id, hotelData);
     
     if (result.success && result.hotel) {
@@ -53,9 +53,9 @@ export const useHotelNetwork = (selectedPOS: string = '') => {
     
     setIsEditing(false);
     return result.success;
-  };
+  }, [updateHotel, selectedHotel]);
 
-  const handleDeleteHotel = (id: string) => {
+  const handleDeleteHotel = useCallback((id: string) => {
     const result = deleteHotel(id);
     
     // If we're deleting the currently selected hotel, clear the selection
@@ -64,32 +64,32 @@ export const useHotelNetwork = (selectedPOS: string = '') => {
     }
     
     return result.success;
-  };
+  }, [deleteHotel, selectedHotel]);
 
   // Room type operations with the current hotel's room types
-  const handleAddRoomType = (hotelId: string, roomTypeData: any) => {
+  const handleAddRoomType = useCallback((hotelId: string, roomTypeData: any) => {
     const hotel = hotels.find(h => h.id === hotelId);
     if (!hotel) return false;
     
     const result = addRoomType(hotelId, roomTypeData, hotel.roomTypes);
     return result.success;
-  };
+  }, [hotels, addRoomType]);
 
-  const handleUpdateRoomType = (hotelId: string, roomTypeId: string, roomTypeData: any) => {
+  const handleUpdateRoomType = useCallback((hotelId: string, roomTypeId: string, roomTypeData: any) => {
     const hotel = hotels.find(h => h.id === hotelId);
     if (!hotel) return false;
     
     const result = updateRoomType(hotelId, roomTypeId, roomTypeData, hotel.roomTypes);
     return result.success;
-  };
+  }, [hotels, updateRoomType]);
 
-  const handleDeleteRoomType = (hotelId: string, roomTypeId: string) => {
+  const handleDeleteRoomType = useCallback((hotelId: string, roomTypeId: string) => {
     const hotel = hotels.find(h => h.id === hotelId);
     if (!hotel) return false;
     
     const result = deleteRoomType(hotelId, roomTypeId, hotel.roomTypes);
     return result.success;
-  };
+  }, [hotels, deleteRoomType]);
 
   return {
     hotels: filteredHotels,

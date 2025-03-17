@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { memo } from 'react';
 import { Hotel } from '@/models/HotelModel';
 import { HotelHeader, LocationCard, AmenitiesCard, RoomTypesCard } from './details';
 
@@ -9,7 +9,7 @@ interface HotelDetailsProps {
   onBack?: () => void;
 }
 
-const HotelDetails: React.FC<HotelDetailsProps> = ({ hotel, onEdit, onBack }) => {
+const HotelDetails: React.FC<HotelDetailsProps> = memo(({ hotel, onEdit, onBack }) => {
   return (
     <div className="space-y-6">
       <HotelHeader 
@@ -33,6 +33,8 @@ const HotelDetails: React.FC<HotelDetailsProps> = ({ hotel, onEdit, onBack }) =>
       <RoomTypesCard roomTypes={hotel.roomTypes} updatedAt={hotel.updatedAt} />
     </div>
   );
-};
+});
+
+HotelDetails.displayName = 'HotelDetails';
 
 export default HotelDetails;

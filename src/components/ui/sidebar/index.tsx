@@ -45,7 +45,7 @@ export {
 export { useSidebar }
 
 // Create a wrapped SidebarProvider with TooltipProvider
-export const SidebarProvider: typeof SidebarContextProvider = (props) => {
+export const SidebarProvider = ({...props}: React.ComponentPropsWithoutRef<typeof SidebarContextProvider>) => {
   return (
     <SidebarContextProvider
       {...props}

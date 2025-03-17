@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Hotel, HotelFormData } from '@/models/HotelModel';
 import { useToast } from '@/hooks/use-toast';
 import { defaultHotels } from './hotelMockData';
@@ -10,7 +10,7 @@ export const useHotelCrud = () => {
   const { toast } = useToast();
 
   // Function to add a new hotel
-  const addHotel = (hotelData: HotelFormData) => {
+  const addHotel = useCallback((hotelData: HotelFormData) => {
     setIsLoading(true);
     try {
       const newHotel: Hotel = {
@@ -19,7 +19,7 @@ export const useHotelCrud = () => {
         createdAt: new Date(),
         updatedAt: new Date()
       };
-      setHotels([...hotels, newHotel]);
+      setHotels(prevHotels => [...prevHotels, newHotel]);
       
       toast({
         title: "Success",
@@ -40,27 +40,28 @@ export const useHotelCrud = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [toast]);
 
   // Function to update an existing hotel
-  const updateHotel = (id: string, hotelData: Partial<HotelFormData>) => {
+  const updateHotel = useCallback((id: string, hotelData: Partial<HotelFormData>) => {
     setIsLoading(true);
     try {
       let updatedHotel: Hotel | undefined;
       
-      const updatedHotels = hotels.map(hotel => {
-        if (hotel.id === id) {
-          updatedHotel = {
-            ...hotel,
-            ...hotelData,
-            updatedAt: new Date()
-          };
-          return updatedHotel;
-        }
-        return hotel;
+      setHotels(prevHotels => {
+        const updated = prevHotels.map(hotel => {
+          if (hotel.id === id) {
+            updatedHotel = {
+              ...hotel,
+              ...hotelData,
+              updatedAt: new Date()
+            };
+            return updatedHotel;
+          }
+          return hotel;
+        });
+        return updated;
       });
-      
-      setHotels(updatedHotels);
       
       toast({
         title: "Success",
@@ -81,10 +82,10 @@ export const useHotelCrud = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [toast]);
 
   // Function to delete a hotel
-  const deleteHotel = (id: string) => {
+  const deleteHotel = useCallback((id: string) => {
     setIsLoading(true);
     try {
       const hotelToDelete = hotels.find(hotel => hotel.id === id);
@@ -93,8 +94,7 @@ export const useHotelCrud = () => {
         throw new Error('Hotel not found');
       }
       
-      const filteredHotels = hotels.filter(hotel => hotel.id !== id);
-      setHotels(filteredHotels);
+      setHotels(prevHotels => prevHotels.filter(hotel => hotel.id !== id));
       
       toast({
         title: "Success",
@@ -115,7 +115,7 @@ export const useHotelCrud = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [hotels, toast]);
 
   return {
     hotels,

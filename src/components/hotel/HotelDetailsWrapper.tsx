@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { memo } from 'react';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import HotelDetails from './HotelDetails';
@@ -11,7 +11,7 @@ interface HotelDetailsWrapperProps {
   onBack?: () => void;
 }
 
-const HotelDetailsWrapper: React.FC<HotelDetailsWrapperProps> = ({
+const HotelDetailsWrapper: React.FC<HotelDetailsWrapperProps> = memo(({
   hotel,
   onEdit,
   onBack
@@ -36,6 +36,8 @@ const HotelDetailsWrapper: React.FC<HotelDetailsWrapperProps> = ({
       </Card>
     </motion.div>
   );
-};
+});
+
+HotelDetailsWrapper.displayName = 'HotelDetailsWrapper';
 
 export default HotelDetailsWrapper;

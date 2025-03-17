@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo, useCallback } from 'react';
 import { Gallery, FileInfo } from '@/models/FileModel';
 import { GalleriesView } from './tabs/GalleriesView';
 import { UploadView } from './tabs/UploadView';
@@ -21,7 +21,7 @@ interface GalleryTabContentProps {
   onMoveFile?: (file: FileInfo, toGalleryId: string) => void;
 }
 
-export const GalleryTabContent: React.FC<GalleryTabContentProps> = ({
+export const GalleryTabContent: React.FC<GalleryTabContentProps> = memo(({
   activeTab,
   setActiveTab,
   galleries,
@@ -39,13 +39,13 @@ export const GalleryTabContent: React.FC<GalleryTabContentProps> = ({
   const { showDeleteNotification } = useGalleryNotifications();
   
   // Handler for the "Add Files" button
-  const handleAddFiles = () => {
+  const handleAddFiles = useCallback(() => {
     // Switch to upload tab while keeping the selected gallery
     setActiveTab('upload');
-  };
+  }, [setActiveTab]);
 
   // Handler for viewing a file after upload
-  const handleViewFile = (file: FileInfo) => {
+  const handleViewFile = useCallback((file: FileInfo) => {
     // Set the selected gallery to the gallery the file belongs to
     const fileGallery = galleries.find(g => g.id === file.galleryId);
     if (fileGallery) {
@@ -57,23 +57,23 @@ export const GalleryTabContent: React.FC<GalleryTabContentProps> = ({
     
     // Switch to browse tab
     setActiveTab('browse');
-  };
+  }, [galleries, onViewFile, setActiveTab, setSelectedGallery]);
 
   // Handler for back to galleries button
-  const handleBackToGalleries = () => {
+  const handleBackToGalleries = useCallback(() => {
     setSelectedGallery(null);
     setActiveTab('galleries');
-  };
+  }, [setActiveTab, setSelectedGallery]);
 
   // Handler for deleting a file
-  const handleDeleteFile = (file: FileInfo) => {
+  const handleDeleteFile = useCallback((file: FileInfo) => {
     if (onDeleteFile) {
       onDeleteFile(file);
       
       // Show a toast notification for successful deletion
       showDeleteNotification();
     }
-  };
+  }, [onDeleteFile, showDeleteNotification]);
 
   return (
     <div className="space-y-4">
@@ -112,4 +112,8 @@ export const GalleryTabContent: React.FC<GalleryTabContentProps> = ({
       )}
     </div>
   );
-};
+});
+
+GalleryTabContent.displayName = 'GalleryTabContent';
+
+export default GalleryTabContent;

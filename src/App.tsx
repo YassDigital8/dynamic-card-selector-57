@@ -1,10 +1,10 @@
 
+import React, { useEffect, memo, useMemo } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { useEffect } from "react";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
@@ -39,17 +39,19 @@ const initializeTheme = () => {
   document.title = "Cham Wings Admin Portal";
 };
 
+// Create QueryClient outside of component to prevent recreation on renders
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
       retry: 1,
+      staleTime: 5 * 60 * 1000, // 5 minutes
     },
   },
 });
 
 // Protected route component
-const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+const ProtectedRoute = memo(({ children }: { children: React.ReactNode }) => {
   const { authToken, authLoading } = useAuthentication();
   
   if (authLoading) {
@@ -63,12 +65,61 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   }
   
   return <>{children}</>;
-};
+});
+
+ProtectedRoute.displayName = 'ProtectedRoute';
 
 const App = () => {
   useEffect(() => {
     initializeTheme();
   }, []);
+
+  // Use memoized routes to prevent unnecessary re-renders
+  const routes = useMemo(() => (
+    <Routes>
+      {/* Public routes */}
+      <Route path="/login" element={<Login />} />
+      
+      {/* Protected routes */}
+      <Route path="/" element={
+        <ProtectedRoute>
+          <Index />
+        </ProtectedRoute>
+      } />
+      <Route path="/pages" element={
+        <ProtectedRoute>
+          <Index />
+        </ProtectedRoute>
+      } />
+      <Route path="/users" element={
+        <ProtectedRoute>
+          <Index />
+        </ProtectedRoute>
+      } />
+      <Route path="/settings" element={
+        <ProtectedRoute>
+          <Index />
+        </ProtectedRoute>
+      } />
+      <Route path="/gallery" element={
+        <ProtectedRoute>
+          <Gallery />
+        </ProtectedRoute>
+      } />
+      <Route path="/hotel" element={
+        <ProtectedRoute>
+          <Hotel />
+        </ProtectedRoute>
+      } />
+      
+      {/* Catch-all route - also protected */}
+      <Route path="*" element={
+        <ProtectedRoute>
+          <NotFound />
+        </ProtectedRoute>
+      } />
+    </Routes>
+  ), []);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -76,49 +127,7 @@ const App = () => {
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <Routes>
-            {/* Public routes */}
-            <Route path="/login" element={<Login />} />
-            
-            {/* Protected routes */}
-            <Route path="/" element={
-              <ProtectedRoute>
-                <Index />
-              </ProtectedRoute>
-            } />
-            <Route path="/pages" element={
-              <ProtectedRoute>
-                <Index />
-              </ProtectedRoute>
-            } />
-            <Route path="/users" element={
-              <ProtectedRoute>
-                <Index />
-              </ProtectedRoute>
-            } />
-            <Route path="/settings" element={
-              <ProtectedRoute>
-                <Index />
-              </ProtectedRoute>
-            } />
-            <Route path="/gallery" element={
-              <ProtectedRoute>
-                <Gallery />
-              </ProtectedRoute>
-            } />
-            <Route path="/hotel" element={
-              <ProtectedRoute>
-                <Hotel />
-              </ProtectedRoute>
-            } />
-            
-            {/* Catch-all route - also protected */}
-            <Route path="*" element={
-              <ProtectedRoute>
-                <NotFound />
-              </ProtectedRoute>
-            } />
-          </Routes>
+          {routes}
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>

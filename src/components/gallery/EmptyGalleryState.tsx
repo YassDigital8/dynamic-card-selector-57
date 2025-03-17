@@ -1,12 +1,12 @@
 
-import React from 'react';
+import React, { memo } from 'react';
 import { FolderOpen } from 'lucide-react';
 
 interface EmptyGalleryStateProps {
   onOpenUploadDialog?: () => void;
 }
 
-const EmptyGalleryState: React.FC<EmptyGalleryStateProps> = ({ onOpenUploadDialog }) => {
+const EmptyGalleryState: React.FC<EmptyGalleryStateProps> = memo(({ onOpenUploadDialog }) => {
   return (
     <div className="flex flex-col items-center justify-center p-12 text-center">
       <FolderOpen className="w-16 h-16 text-muted-foreground mb-4" />
@@ -14,6 +14,8 @@ const EmptyGalleryState: React.FC<EmptyGalleryStateProps> = ({ onOpenUploadDialo
       <p className="text-muted-foreground">Upload files to get started</p>
     </div>
   );
-};
+});
+
+EmptyGalleryState.displayName = 'EmptyGalleryState';
 
 export default EmptyGalleryState;

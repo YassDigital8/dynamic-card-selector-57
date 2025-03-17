@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, memo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { 
   SortControls, 
@@ -20,7 +20,7 @@ interface FileListProps {
   onDeleteFile?: (file: FileInfo, e: React.MouseEvent) => void;
 }
 
-const FileList = ({ 
+const FileList = memo(({ 
   files, 
   isLoading = false, 
   onViewFile,
@@ -49,16 +49,16 @@ const FileList = ({
     setSelectedType(initialType);
   }, [searchParams]);
 
-  const handleFileClick = (file: FileInfo) => {
+  const handleFileClick = useCallback((file: FileInfo) => {
     if (onViewFile) {
       onViewFile(file);
     } else {
       setSelectedFile(file);
       setPreviewDialogOpen(true);
     }
-  };
+  }, [onViewFile]);
 
-  const handleShareFile = (file: FileInfo, e: React.MouseEvent) => {
+  const handleShareFile = useCallback((file: FileInfo, e: React.MouseEvent) => {
     e.stopPropagation();
     
     if (onShareFile) {
@@ -67,9 +67,9 @@ const FileList = ({
       setFileToShare(file);
       setShareDialogOpen(true);
     }
-  };
+  }, [onShareFile]);
 
-  const handleDeleteFile = (file: FileInfo, e: React.MouseEvent) => {
+  const handleDeleteFile = useCallback((file: FileInfo, e: React.MouseEvent) => {
     e.stopPropagation();
     
     if (onDeleteFile) {
@@ -77,14 +77,17 @@ const FileList = ({
     } else {
       console.log('Delete file:', file.name);
     }
-  };
+  }, [onDeleteFile]);
 
-  const filteredFiles = sortedFiles.filter((file) => {
-    const searchRegex = new RegExp(searchQuery, 'i');
-    const nameMatch = searchRegex.test(file.name);
-    const typeMatch = selectedType === 'all' ? true : file.type === selectedType;
-    return nameMatch && typeMatch;
-  });
+  // Memoize filtered files to prevent unnecessary re-renders
+  const filteredFiles = React.useMemo(() => {
+    return sortedFiles.filter((file) => {
+      const searchRegex = new RegExp(searchQuery, 'i');
+      const nameMatch = searchRegex.test(file.name);
+      const typeMatch = selectedType === 'all' ? true : file.type === selectedType;
+      return nameMatch && typeMatch;
+    });
+  }, [sortedFiles, searchQuery, selectedType]);
 
   return (
     <div className="space-y-4">
@@ -125,6 +128,8 @@ const FileList = ({
       />
     </div>
   );
-};
+});
+
+FileList.displayName = 'FileList';
 
 export default FileList;

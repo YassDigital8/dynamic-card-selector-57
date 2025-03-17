@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useCallback, memo } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
@@ -21,15 +21,15 @@ interface HotelFormProps {
   isLoading: boolean;
 }
 
-export function HotelForm({ initialData, onSubmit, isLoading }: HotelFormProps) {
+const HotelForm = memo(({ initialData, onSubmit, isLoading }: HotelFormProps) => {
   const form = useForm<typeof formSchema._type>({
     resolver: zodResolver(formSchema),
     defaultValues: initialData || defaultValues,
   });
 
-  const handleSubmit = (values: typeof formSchema._type) => {
+  const handleSubmit = useCallback((values: typeof formSchema._type) => {
     onSubmit(values as HotelFormData);
-  };
+  }, [onSubmit]);
 
   return (
     <Form {...form}>
@@ -46,6 +46,8 @@ export function HotelForm({ initialData, onSubmit, isLoading }: HotelFormProps) 
       </form>
     </Form>
   );
-}
+});
+
+HotelForm.displayName = 'HotelForm';
 
 export default HotelForm;
