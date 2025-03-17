@@ -22,7 +22,8 @@ import {
   Settings, 
   Users, 
   HelpCircle,
-  Image
+  Image,
+  Hotel
 } from 'lucide-react';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { Logo } from '@/components/ui/logo';
@@ -107,6 +108,19 @@ const PageContainer: React.FC<PageContainerProps> = ({ children }) => {
                       >
                         <Image className="h-3.5 w-3.5 md:h-4 md:w-4" />
                         <span className="text-xs md:text-sm">Gallery</span>
+                      </SidebarMenuButton>
+                    </Link>
+                  </SidebarMenuItem>
+                  
+                  <SidebarMenuItem>
+                    <Link to="/hotel" className="w-full">
+                      <SidebarMenuButton 
+                        tooltip="Hotel Network" 
+                        isActive={window.location.pathname === '/hotel'}
+                        size={isMobile ? "sm" : "default"}
+                      >
+                        <Hotel className="h-3.5 w-3.5 md:h-4 md:w-4" />
+                        <span className="text-xs md:text-sm">Hotel Network</span>
                       </SidebarMenuButton>
                     </Link>
                   </SidebarMenuItem>
