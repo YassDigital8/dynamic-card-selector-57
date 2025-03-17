@@ -28,7 +28,7 @@ export interface Hotel {
   country: string;
   governorate: string;
   streetAddress: string;
-  posKey: string; // Added POS key
+  posKey: string; // POS key
   amenities: HotelAmenities;
   roomTypes: RoomType[];
   createdAt: Date;
@@ -36,4 +36,3 @@ export interface Hotel {
 }
 
 export type HotelFormData = Omit<Hotel, 'id' | 'createdAt' | 'updatedAt'>;
-

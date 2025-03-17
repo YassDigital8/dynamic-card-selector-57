@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -38,6 +39,7 @@ const formSchema = z.object({
   country: z.string().min(2, { message: "Country must be at least 2 characters." }),
   governorate: z.string().min(2, { message: "Governorate must be at least 2 characters." }),
   streetAddress: z.string().min(5, { message: "Street address must be at least 5 characters." }),
+  posKey: z.string().default(''), // Added posKey to the form schema
   amenities: z.object({
     airConditioning: z.boolean().default(false),
     bar: z.boolean().default(false),
@@ -75,6 +77,7 @@ export function HotelForm({ initialData, onSubmit, isLoading }: HotelFormProps) 
     country: '',
     governorate: '',
     streetAddress: '',
+    posKey: '', // Added posKey with default empty string
     amenities: {
       airConditioning: false,
       bar: false,
