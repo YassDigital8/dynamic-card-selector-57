@@ -56,7 +56,9 @@ const HotelList: React.FC<HotelListProps> = ({
     show: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.05 // Reduced from 0.1 to 0.05 seconds
+        staggerChildren: 0.03,
+        delayChildren: 0.01,
+        ease: [0.4, 0.0, 0.2, 1]
       }
     }
   };
@@ -99,6 +101,7 @@ const HotelList: React.FC<HotelListProps> = ({
           variants={container}
           initial="hidden"
           animate="show"
+          layout
         >
           {filteredHotels.map((hotel) => (
             <HotelCard

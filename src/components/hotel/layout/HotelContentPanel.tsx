@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -43,10 +44,13 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
   const panelVariants = {
     collapsed: { 
       opacity: 0,
-      x: 20,
+      x: 10,
       width: 0,
       display: "none",
-      transition: { duration: 0.2, ease: "easeInOut" }
+      transition: { 
+        duration: 0.15, 
+        ease: [0.4, 0.0, 0.2, 1] 
+      }
     },
     expanded: { 
       opacity: 1, 
@@ -55,27 +59,27 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
       display: "block",
       transition: { 
         duration: 0.2, 
-        ease: "easeOut",
-        type: "spring",
-        stiffness: 120
+        ease: [0.4, 0.0, 0.2, 1],
+        stiffness: 100,
+        damping: 15
       }
     }
   };
 
   // Button animation variants
   const buttonVariants = {
-    initial: { opacity: 0, y: -10 },
+    initial: { opacity: 0, y: -5 },
     animate: { 
       opacity: 1, 
       y: 0,
       transition: { 
-        duration: 0.2,
-        delay: 0.1
+        duration: 0.15,
+        ease: "easeOut"
       }
     },
     exit: {
       opacity: 0,
-      y: -20,
+      y: -10,
       transition: { duration: 0.1 }
     }
   };
