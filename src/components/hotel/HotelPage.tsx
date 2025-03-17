@@ -13,6 +13,8 @@ import HotelAddForm from './HotelAddForm';
 import HotelEditForm from './HotelEditForm';
 import HotelDetailsWrapper from './HotelDetailsWrapper';
 import { FilterOptions } from './HotelFilters';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft } from 'lucide-react';
 
 const HotelPage: React.FC = () => {
   const { posOptions } = usePageSelectionViewModel();
@@ -96,6 +98,10 @@ const HotelPage: React.FC = () => {
     setIsExpanded(true);
   };
 
+  const handleBackToList = () => {
+    setIsExpanded(false);
+  };
+
   const handleSubmitAdd = (data: HotelFormData) => {
     // Include the selected POS in the new hotel data
     const hotelWithPOS = {
@@ -161,6 +167,24 @@ const HotelPage: React.FC = () => {
           }}
           transition={{ duration: 0.3, ease: "easeInOut" }}
         >
+          {isExpanded && (
+            <motion.div 
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.2 }}
+              className="mb-4"
+            >
+              <Button 
+                variant="outline" 
+                onClick={handleBackToList}
+                className="group mb-4 border-indigo-200 dark:border-indigo-800 hover:bg-indigo-50 dark:hover:bg-indigo-900/30"
+              >
+                <ArrowLeft className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" />
+                Back to hotels
+              </Button>
+            </motion.div>
+          )}
+          
           <AnimatePresence mode="wait">
             {showAddForm && (
               <HotelAddForm
@@ -184,6 +208,7 @@ const HotelPage: React.FC = () => {
               <HotelDetailsWrapper 
                 hotel={selectedHotel} 
                 onEdit={() => setIsEditing(true)} 
+                onBack={handleBackToList}
               />
             )}
 

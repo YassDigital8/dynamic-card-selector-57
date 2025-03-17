@@ -8,11 +8,13 @@ import { Hotel } from '@/models/HotelModel';
 interface HotelDetailsWrapperProps {
   hotel: Hotel;
   onEdit: () => void;
+  onBack?: () => void;
 }
 
 const HotelDetailsWrapper: React.FC<HotelDetailsWrapperProps> = ({
   hotel,
-  onEdit
+  onEdit,
+  onBack
 }) => {
   return (
     <motion.div
@@ -23,7 +25,7 @@ const HotelDetailsWrapper: React.FC<HotelDetailsWrapperProps> = ({
       transition={{ duration: 0.3 }}
     >
       <Card className="p-6 border-indigo-100 dark:border-indigo-900 shadow-md overflow-hidden bg-white dark:bg-slate-900">
-        <HotelDetails hotel={hotel} onEdit={onEdit} />
+        <HotelDetails hotel={hotel} onEdit={onEdit} onBack={onBack} />
       </Card>
     </motion.div>
   );
