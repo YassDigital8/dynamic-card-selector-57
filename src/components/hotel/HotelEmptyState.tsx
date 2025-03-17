@@ -46,7 +46,11 @@ const HotelEmptyState: React.FC<HotelEmptyStateProps> = ({
     },
     hover: {
       y: [0, -5, 0],
-      transition: { repeat: Infinity, repeatType: "reverse", duration: 1.5 }
+      transition: { 
+        repeat: Infinity, 
+        repeatType: "reverse" as const, // Fix: Use "reverse" as a const type
+        duration: 1.5 
+      }
     }
   };
 
