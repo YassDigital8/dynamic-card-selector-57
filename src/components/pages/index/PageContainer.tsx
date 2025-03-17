@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -59,11 +58,11 @@ const PageContainer: React.FC<PageContainerProps> = ({ children }) => {
           <SidebarHeader className="border-b border-sidebar-border py-2 px-2 md:py-4 md:px-3">
             <div className="flex items-center justify-between">
               <Link to="/">
-                <Logo showText={!isMobile} />
+                <Logo showText={true} />
               </Link>
               <div className="flex items-center gap-1 md:gap-2">
                 <ThemeToggle />
-                {!isMobile && <SidebarTrigger />}
+                <SidebarTrigger />
               </div>
             </div>
           </SidebarHeader>
@@ -178,7 +177,6 @@ const PageContainer: React.FC<PageContainerProps> = ({ children }) => {
                 </div>
                 <div className="flex items-center gap-2 self-start">
                   <SessionTimer />
-                  <Logo showText={false} className="mr-1 md:mr-2" />
                   <ApiStatusIndicator isLive={isApiLive} />
                 </div>
               </div>

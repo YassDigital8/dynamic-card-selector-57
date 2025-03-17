@@ -21,10 +21,6 @@ export function Logo({ showText = true, className }: LogoProps) {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 h-8 md:h-10 w-10 md:w-12 rounded-md flex items-center justify-center shadow-md overflow-hidden border border-blue-400 dark:border-blue-700">
-        <span className="text-white font-bold text-sm md:text-base">CW</span>
-      </div>
-      
       {showText && (
         <motion.div 
           className="text-sm md:text-lg lg:text-xl font-bold tracking-wide logo-text whitespace-nowrap"
