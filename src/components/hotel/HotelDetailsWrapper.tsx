@@ -19,12 +19,14 @@ const HotelDetailsWrapper: React.FC<HotelDetailsWrapperProps> = memo(({
   return (
     <motion.div
       key="details"
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -10 }}
+      initial={{ opacity: 0, scale: 0.98 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.98 }}
       transition={{ 
-        duration: 0.15, 
-        ease: [0.4, 0.0, 0.2, 1] 
+        type: "spring",
+        stiffness: 400,
+        damping: 30,
+        mass: 0.8
       }}
       className="w-full h-full"
     >
@@ -33,8 +35,8 @@ const HotelDetailsWrapper: React.FC<HotelDetailsWrapperProps> = memo(({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ 
-            duration: 0.15, 
-            ease: [0.4, 0.0, 0.2, 1] 
+            duration: 0.12, 
+            ease: "easeOut" 
           }}
         >
           <HotelDetails hotel={hotel} onEdit={onEdit} onBack={onBack} />

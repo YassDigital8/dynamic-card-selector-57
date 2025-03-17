@@ -46,11 +46,23 @@ const HotelCard: React.FC<HotelCardProps> = ({
   return (
     <motion.div 
       variants={{
-        hidden: { opacity: 0, y: 20 },
-        show: { opacity: 1, y: 0, transition: { duration: 0.2 } } // Reduced from default duration
+        hidden: { opacity: 0, y: 15, scale: 0.98 },
+        show: { 
+          opacity: 1, 
+          y: 0, 
+          scale: 1,
+          transition: { 
+            type: "spring",
+            stiffness: 500,
+            damping: 30,
+            mass: 0.8
+          }
+        }
       }}
       className="cursor-pointer"
       onClick={onSelect}
+      layout
+      layoutId={hotel.id}
     >
       <Card 
         className={`h-full transition-all duration-150 hover:shadow-md ${

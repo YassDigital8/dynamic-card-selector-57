@@ -56,9 +56,11 @@ const HotelList: React.FC<HotelListProps> = ({
     show: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.03,
+        staggerChildren: 0.02,
         delayChildren: 0.01,
-        ease: [0.4, 0.0, 0.2, 1]
+        type: "spring",
+        stiffness: 300,
+        damping: 30
       }
     }
   };
@@ -102,6 +104,7 @@ const HotelList: React.FC<HotelListProps> = ({
           initial="hidden"
           animate="show"
           layout
+          layoutRoot
         >
           {filteredHotels.map((hotel) => (
             <HotelCard

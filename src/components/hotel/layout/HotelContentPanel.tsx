@@ -44,12 +44,14 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
   const panelVariants = {
     collapsed: { 
       opacity: 0,
-      x: 10,
+      x: 5,
       width: 0,
       display: "none",
       transition: { 
-        duration: 0.15, 
-        ease: [0.4, 0.0, 0.2, 1] 
+        type: "spring",
+        stiffness: 400,
+        damping: 40,
+        mass: 0.8
       }
     },
     expanded: { 
@@ -58,29 +60,29 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
       width: "100%",
       display: "block",
       transition: { 
-        duration: 0.2, 
-        ease: [0.4, 0.0, 0.2, 1],
-        stiffness: 100,
-        damping: 15
+        type: "spring",
+        stiffness: 400,
+        damping: 35,
+        mass: 0.8
       }
     }
   };
 
   // Button animation variants
   const buttonVariants = {
-    initial: { opacity: 0, y: -5 },
+    initial: { opacity: 0, y: -3 },
     animate: { 
       opacity: 1, 
       y: 0,
       transition: { 
-        duration: 0.15,
+        duration: 0.12,
         ease: "easeOut"
       }
     },
     exit: {
       opacity: 0,
-      y: -10,
-      transition: { duration: 0.1 }
+      y: -5,
+      transition: { duration: 0.08 }
     }
   };
 
@@ -122,7 +124,7 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
         </motion.div>
       )}
       
-      <AnimatePresence mode="wait">
+      <AnimatePresence mode="sync">
         {showAddForm && (
           <HotelAddForm
             key="add-form"

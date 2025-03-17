@@ -32,9 +32,15 @@ const HotelListPanel: React.FC<HotelListPanelProps> = ({
         gridColumn: isExpanded ? "span 3 / span 3" : "span 12 / span 12"
       }}
       transition={{ 
-        duration: 0.2,
-        ease: [0.4, 0.0, 0.2, 1],
-        layout: { duration: 0.2, ease: [0.4, 0.0, 0.2, 1] }
+        type: "spring",
+        stiffness: 400,
+        damping: 35,
+        mass: 1,
+        layout: { 
+          type: "spring",
+          stiffness: 300,
+          damping: 35
+        }
       }}
       layout
     >
