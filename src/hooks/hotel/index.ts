@@ -4,4 +4,5 @@ export * from './useHotelCrud';
 export * from './useRoomTypes';
 export { defaultHotels } from './hotelMockData';
 
-export default useHotelNetwork;
+// Export the default from useHotelNetwork correctly
+export { default } from './useHotelNetwork';
