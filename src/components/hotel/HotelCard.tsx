@@ -47,13 +47,13 @@ const HotelCard: React.FC<HotelCardProps> = ({
     <motion.div 
       variants={{
         hidden: { opacity: 0, y: 20 },
-        show: { opacity: 1, y: 0 }
+        show: { opacity: 1, y: 0, transition: { duration: 0.2 } } // Reduced from default duration
       }}
       className="cursor-pointer"
       onClick={onSelect}
     >
       <Card 
-        className={`h-full transition-all duration-200 hover:shadow-md ${
+        className={`h-full transition-all duration-150 hover:shadow-md ${
           isSelected 
           ? 'border-indigo-400 dark:border-indigo-500 shadow-md bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-900/40 dark:to-indigo-800/40' 
           : 'hover:border-indigo-200 dark:hover:border-indigo-800'

@@ -56,7 +56,7 @@ const HotelList: React.FC<HotelListProps> = ({
     show: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1
+        staggerChildren: 0.05 // Reduced from 0.1 to 0.05 seconds
       }
     }
   };

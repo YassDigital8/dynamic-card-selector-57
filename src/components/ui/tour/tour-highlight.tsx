@@ -48,7 +48,7 @@ export const TourHighlight: React.FC<TourHighlightProps> = ({
           boxShadow: ["0 0 0 4px rgba(59, 130, 246, 0.4)", "0 0 0 4px rgba(59, 130, 246, 0.8)"],
           transition: {
             boxShadow: {
-              duration: 1.5,
+              duration: 1,  // Reduced from 1.5 to 1 second
               repeat: Infinity,
               repeatType: "reverse"
             }
@@ -69,7 +69,7 @@ export const TourHighlight: React.FC<TourHighlightProps> = ({
           opacity: 1,
           x: 0,
           y: 0,
-          transition: { duration: 0.8, repeat: Infinity, repeatType: "reverse" }
+          transition: { duration: 0.5, repeat: Infinity, repeatType: "reverse" } // Reduced from 0.8 to 0.5 seconds
         }}
       >
         <MousePointerClick className="h-8 w-8 text-white drop-shadow-lg" />

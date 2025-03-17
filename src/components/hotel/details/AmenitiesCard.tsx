@@ -22,8 +22,8 @@ const AmenitiesCard: React.FC<AmenitiesCardProps> = ({ amenities }) => {
           opacity: 1,
           y: 0,
           transition: {
-            delay: i * 0.1,
-            duration: 0.3,
+            delay: i * 0.05, // Reduced from 0.1 to 0.05 seconds
+            duration: 0.2, // Reduced from 0.3 to 0.2 seconds
             ease: "easeOut"
           }
         })
