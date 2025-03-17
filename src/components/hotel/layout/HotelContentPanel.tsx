@@ -40,14 +40,20 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
   onSubmitEdit,
   onCancelEdit
 }) => {
-  // Panel animation variants
+  // Enhanced panel animation variants
   const panelVariants = {
     collapsed: { 
       opacity: 0,
-      x: 20,
+      x: 40,
       width: 0,
       display: "none",
-      transition: { duration: 0.3, ease: "easeInOut" }
+      transition: { 
+        duration: 0.4, 
+        ease: "easeInOut",
+        type: "spring",
+        stiffness: 400,
+        damping: 40
+      }
     },
     expanded: { 
       opacity: 1, 
@@ -55,28 +61,40 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
       width: "100%",
       display: "block",
       transition: { 
-        duration: 0.4, 
+        duration: 0.5, 
         ease: "easeOut",
         type: "spring",
-        stiffness: 100
+        stiffness: 300,
+        damping: 30,
+        when: "beforeChildren",
+        staggerChildren: 0.1
       }
     }
   };
 
-  // Button animation variants
+  // Button animation variants with enhanced transitions
   const buttonVariants = {
-    initial: { opacity: 0, y: -10 },
+    initial: { opacity: 0, y: -20, scale: 0.95 },
     animate: { 
       opacity: 1, 
       y: 0,
+      scale: 1,
       transition: { 
-        duration: 0.3,
-        delay: 0.2
+        duration: 0.4,
+        delay: 0.2,
+        type: "spring",
+        stiffness: 500
       }
     },
     exit: {
       opacity: 0,
-      y: -20,
+      y: -30,
+      scale: 0.9,
+      transition: { duration: 0.3 }
+    },
+    hover: {
+      scale: 1.05,
+      boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
       transition: { duration: 0.2 }
     }
   };
@@ -99,6 +117,7 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
       animate={isExpanded ? "expanded" : "collapsed"}
       variants={panelVariants}
       style={{ gridColumn: isExpanded ? "span 9 / span 9" : "span 0 / span 0" }}
+      layout
     >
       {isExpanded && (
         <motion.div 
@@ -106,6 +125,7 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
           initial="initial"
           animate="animate"
           exit="exit"
+          whileHover="hover"
           className="mb-4"
         >
           <Button 
@@ -113,8 +133,14 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
             onClick={onBackToList}
             className="group mb-4 border-indigo-200 dark:border-indigo-800 hover:bg-indigo-50 dark:hover:bg-indigo-900/30"
           >
-            <ArrowLeft className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" />
-            Back to hotels
+            <motion.span 
+              className="flex items-center"
+              whileHover={{ x: -3 }}
+              transition={{ type: "spring", stiffness: 700, damping: 30 }}
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to hotels
+            </motion.span>
           </Button>
         </motion.div>
       )}
