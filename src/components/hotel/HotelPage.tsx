@@ -4,7 +4,7 @@ import { AnimatePresence } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import HotelList from './HotelList';
-import useHotelNetwork from '@/hooks/hotel/useHotelNetwork';
+import useHotelNetwork from '@/hooks/hotel';
 import { Hotel, HotelFormData } from '@/models/HotelModel';
 import { usePageSelectionViewModel } from '@/viewmodels/PageSelectionViewModel';
 import HotelPageHeader from './HotelPageHeader';
@@ -81,7 +81,7 @@ const HotelPage: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         <div className="lg:col-span-4 space-y-6">
-          <Card className="p-4 overflow-hidden border-blue-100 dark:border-blue-900">
+          <Card className="p-4 overflow-hidden border-indigo-100 dark:border-indigo-900 shadow-sm">
             <ScrollArea className="h-[calc(100vh-320px)]">
               <HotelList
                 hotels={hotels}

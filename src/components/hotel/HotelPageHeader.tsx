@@ -19,13 +19,13 @@ const HotelPageHeader: React.FC<HotelPageHeaderProps> = ({
   const { posOptions } = usePageSelectionViewModel();
 
   return (
-    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-900 p-6 rounded-xl shadow-sm mb-8">
+    <div className="bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-indigo-950 dark:to-blue-950 p-6 rounded-xl shadow-md border border-indigo-100 dark:border-indigo-900 mb-8">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg">
-            <HotelIcon className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+          <div className="p-3 bg-white dark:bg-indigo-900 rounded-full shadow-sm">
+            <HotelIcon className="h-7 w-7 text-indigo-600 dark:text-indigo-300" />
           </div>
-          <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">
+          <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-blue-600 dark:from-indigo-300 dark:to-blue-300">
             Hotel Network
           </h1>
         </div>
@@ -35,8 +35,8 @@ const HotelPageHeader: React.FC<HotelPageHeaderProps> = ({
               value={selectedPOS}
               onValueChange={onSelectPOS}
             >
-              <SelectTrigger className="w-[200px] gap-2 border-blue-200 dark:border-blue-800 bg-white dark:bg-slate-800">
-                <Flag className="h-4 w-4 text-blue-500" />
+              <SelectTrigger className="w-[200px] gap-2 border-indigo-200 dark:border-indigo-800 bg-white dark:bg-slate-800 shadow-sm">
+                <Flag className="h-4 w-4 text-indigo-500" />
                 <SelectValue placeholder="Select Region" />
               </SelectTrigger>
               <SelectContent>
@@ -49,7 +49,7 @@ const HotelPageHeader: React.FC<HotelPageHeaderProps> = ({
               </SelectContent>
             </Select>
           </div>
-          <Button onClick={onAddHotel} className="gap-2 w-full sm:w-auto bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700">
+          <Button onClick={onAddHotel} className="gap-2 w-full sm:w-auto bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 shadow-sm">
             <PlusCircle className="h-4 w-4" />
             Add Hotel
           </Button>

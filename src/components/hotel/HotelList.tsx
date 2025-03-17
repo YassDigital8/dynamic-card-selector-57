@@ -61,26 +61,32 @@ const HotelList: React.FC<HotelListProps> = ({
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">
+        <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-blue-600 dark:from-indigo-400 dark:to-blue-400">
           Hotels ({filteredHotels.length})
         </h2>
-        <Badge variant="outline" className="text-xs">
+        <Badge variant="outline" className="text-xs border-indigo-200 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-400">
           {hotels.length} total
         </Badge>
       </div>
       
       {hotels.length > 0 && (
-        <HotelSearch 
-          searchTerm={searchTerm} 
-          onSearchChange={setSearchTerm} 
-        />
+        <div className="rounded-lg overflow-hidden border border-indigo-100 dark:border-indigo-900">
+          <HotelSearch 
+            searchTerm={searchTerm} 
+            onSearchChange={setSearchTerm} 
+          />
+        </div>
       )}
       
       {hotels.length === 0 ? (
         <HotelListEmptyState />
+      ) : filteredHotels.length === 0 ? (
+        <div className="p-8 text-center border border-dashed border-indigo-200 dark:border-indigo-800 rounded-lg bg-indigo-50/50 dark:bg-indigo-900/20">
+          <p className="text-muted-foreground">No hotels match your search criteria</p>
+        </div>
       ) : (
         <motion.div 
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-4"
+          className="grid grid-cols-1 gap-4"
           variants={container}
           initial="hidden"
           animate="show"

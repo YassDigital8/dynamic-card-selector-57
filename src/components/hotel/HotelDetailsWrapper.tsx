@@ -22,7 +22,7 @@ const HotelDetailsWrapper: React.FC<HotelDetailsWrapperProps> = ({
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.3 }}
     >
-      <Card className="p-6 border-blue-100 dark:border-blue-900 shadow-lg">
+      <Card className="p-6 border-indigo-100 dark:border-indigo-900 shadow-md overflow-hidden bg-white dark:bg-slate-900">
         <HotelDetails hotel={hotel} onEdit={onEdit} />
       </Card>
     </motion.div>
