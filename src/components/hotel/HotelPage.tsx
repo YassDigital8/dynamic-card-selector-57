@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import HotelList from './HotelList';
@@ -44,6 +44,7 @@ const HotelPage: React.FC = () => {
 
   const [showAddForm, setShowAddForm] = useState(false);
   const [filteredHotels, setFilteredHotels] = useState<Hotel[]>(hotels);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   // Apply filters to hotels
   useEffect(() => {
@@ -78,18 +79,21 @@ const HotelPage: React.FC = () => {
     setSelectedHotel(hotel);
     setIsEditing(false);
     setShowAddForm(false);
+    setIsExpanded(true);
   };
 
   const handleEditHotel = (hotel: Hotel) => {
     setSelectedHotel(hotel);
     setIsEditing(true);
     setShowAddForm(false);
+    setIsExpanded(true);
   };
 
   const handleAddHotel = () => {
     setSelectedHotel(null);
     setIsEditing(false);
     setShowAddForm(true);
+    setIsExpanded(true);
   };
 
   const handleSubmitAdd = (data: HotelFormData) => {
@@ -125,9 +129,17 @@ const HotelPage: React.FC = () => {
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        <div className="lg:col-span-4 space-y-6">
-          <Card className="p-4 overflow-hidden border-indigo-100 dark:border-indigo-900 shadow-sm">
-            <ScrollArea className="h-[calc(100vh-320px)]">
+        <motion.div 
+          className="lg:col-span-5 space-y-6"
+          initial={{ width: "100%" }}
+          animate={{ 
+            width: "100%",
+            gridColumn: isExpanded ? "span 4 / span 4" : "span 5 / span 5"
+          }}
+          transition={{ duration: 0.3, ease: "easeInOut" }}
+        >
+          <Card className="p-4 overflow-hidden border-indigo-100 dark:border-indigo-900 shadow-sm h-[calc(100vh-200px)]">
+            <ScrollArea className="h-[calc(100vh-230px)]">
               <HotelList
                 hotels={filteredHotels}
                 selectedHotel={selectedHotel}
@@ -137,9 +149,18 @@ const HotelPage: React.FC = () => {
               />
             </ScrollArea>
           </Card>
-        </div>
+        </motion.div>
 
-        <div className="lg:col-span-8">
+        <motion.div 
+          className="lg:col-span-8"
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ 
+            opacity: 1, 
+            x: 0,
+            gridColumn: isExpanded ? "span 8 / span 8" : "span 7 / span 7"
+          }}
+          transition={{ duration: 0.3, ease: "easeInOut" }}
+        >
           <AnimatePresence mode="wait">
             {showAddForm && (
               <HotelAddForm
@@ -175,7 +196,7 @@ const HotelPage: React.FC = () => {
               />
             )}
           </AnimatePresence>
-        </div>
+        </motion.div>
       </div>
     </div>
   );
