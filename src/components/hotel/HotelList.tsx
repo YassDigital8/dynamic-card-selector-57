@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { 
   AirVent, 
@@ -38,6 +39,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
 
 interface HotelListProps {
   hotels: Hotel[];
@@ -111,9 +113,9 @@ const HotelList: React.FC<HotelListProps> = ({
       <h2 className="text-2xl font-bold">Hotel Network</h2>
       {hotels.length === 0 ? (
         <div className="flex flex-col items-center justify-center p-8 text-center bg-muted/50 rounded-lg border border-dashed">
-          <h3 className="text-lg font-medium mb-2">No Hotels Yet</h3>
+          <h3 className="text-lg font-medium mb-2">No Hotels Found</h3>
           <p className="text-sm text-muted-foreground mb-4">
-            Your hotel network is empty. Add your first hotel to get started.
+            No hotels in this region. Add your first hotel to get started.
           </p>
         </div>
       ) : (
@@ -132,7 +134,12 @@ const HotelList: React.FC<HotelListProps> = ({
                 className={`h-full ${selectedHotel?.id === hotel.id ? 'border-primary ring-1 ring-primary' : ''}`}
               >
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-lg">{hotel.name}</CardTitle>
+                  <div className="flex justify-between items-start">
+                    <CardTitle className="text-lg">{hotel.name}</CardTitle>
+                    <Badge variant="outline" className="uppercase text-xs">
+                      {hotel.posKey}
+                    </Badge>
+                  </div>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="flex items-center text-sm text-muted-foreground">

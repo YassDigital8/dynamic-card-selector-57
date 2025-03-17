@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { 
   AirVent, 
@@ -16,13 +17,15 @@ import {
   Hotel as HotelIcon,
   Bath,
   BedDouble,
-  Waves
+  Waves,
+  Globe
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { Hotel, HotelAmenities } from '@/models/HotelModel';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
 import {
   Tooltip,
   TooltipContent,
@@ -83,7 +86,12 @@ const HotelDetails: React.FC<HotelDetailsProps> = ({ hotel, onEdit }) => {
     <div className="space-y-6">
       <div className="flex justify-between items-start">
         <div>
-          <h2 className="text-2xl font-bold">{hotel.name}</h2>
+          <div className="flex items-center gap-2">
+            <h2 className="text-2xl font-bold">{hotel.name}</h2>
+            <Badge variant="outline" className="uppercase text-xs">
+              {hotel.posKey}
+            </Badge>
+          </div>
           <div className="flex items-center text-sm text-muted-foreground mt-1">
             <Flag className="mr-1 h-3.5 w-3.5" />
             <span>{hotel.country}</span>
@@ -102,7 +110,7 @@ const HotelDetails: React.FC<HotelDetailsProps> = ({ hotel, onEdit }) => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
             <div>
               <p className="font-medium">Country</p>
               <p className="text-muted-foreground">{hotel.country}</p>
@@ -114,6 +122,13 @@ const HotelDetails: React.FC<HotelDetailsProps> = ({ hotel, onEdit }) => {
             <div>
               <p className="font-medium">Street Address</p>
               <p className="text-muted-foreground">{hotel.streetAddress}</p>
+            </div>
+            <div>
+              <p className="font-medium">POS Region</p>
+              <p className="text-muted-foreground flex items-center gap-1">
+                <Globe className="h-3.5 w-3.5" />
+                <span className="uppercase">{hotel.posKey}</span>
+              </p>
             </div>
           </div>
         </CardContent>

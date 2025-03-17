@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Hotel, HotelFormData, RoomType } from '@/models/HotelModel';
 import { useToast } from '@/hooks/use-toast';
@@ -11,6 +10,7 @@ const defaultHotels: Hotel[] = [
     country: 'United Arab Emirates',
     governorate: 'Dubai',
     streetAddress: '123 Sheikh Zayed Road',
+    posKey: 'UAE',
     amenities: {
       airConditioning: true,
       bar: true,
@@ -51,6 +51,7 @@ const defaultHotels: Hotel[] = [
     country: 'Syria',
     governorate: 'Damascus',
     streetAddress: '45 Al-Mutanabbi Street',
+    posKey: 'sy',
     amenities: {
       airConditioning: true,
       bar: false,
@@ -84,15 +85,74 @@ const defaultHotels: Hotel[] = [
     ],
     createdAt: new Date('2023-02-10'),
     updatedAt: new Date('2023-05-22')
+  },
+  {
+    id: '3',
+    name: 'Britannia Hotel',
+    country: 'United Kingdom',
+    governorate: 'London',
+    streetAddress: '78 Baker Street',
+    posKey: 'uk',
+    amenities: {
+      airConditioning: true,
+      bar: true,
+      gym: true,
+      parking: true,
+      spa: true,
+      restaurant: true,
+      breakfast: true,
+      wifi: true,
+      swimmingPool: false,
+      petsAllowed: true,
+      extraBed: true
+    },
+    roomTypes: [
+      {
+        id: '1',
+        name: 'Classic Room',
+        maxAdults: 2,
+        maxChildren: 1,
+        description: 'Traditional British décor',
+        price: 180
+      },
+      {
+        id: '2',
+        name: 'Royal Suite',
+        maxAdults: 2,
+        maxChildren: 2,
+        description: 'Luxurious suite with city views',
+        price: 350
+      }
+    ],
+    createdAt: new Date('2023-03-20'),
+    updatedAt: new Date('2023-06-15')
   }
 ];
 
-export const useHotelNetwork = () => {
+export const useHotelNetwork = (selectedPOS: string = '') => {
   const [hotels, setHotels] = useState<Hotel[]>(defaultHotels);
+  const [filteredHotels, setFilteredHotels] = useState<Hotel[]>([]);
   const [selectedHotel, setSelectedHotel] = useState<Hotel | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const { toast } = useToast();
+
+  // Filter hotels by POS
+  useEffect(() => {
+    if (selectedPOS) {
+      const filtered = hotels.filter(hotel => 
+        hotel.posKey.toLowerCase() === selectedPOS.toLowerCase()
+      );
+      setFilteredHotels(filtered);
+      
+      // Clear selected hotel if it's not in the filtered list
+      if (selectedHotel && !filtered.some(h => h.id === selectedHotel.id)) {
+        setSelectedHotel(null);
+      }
+    } else {
+      setFilteredHotels(hotels);
+    }
+  }, [selectedPOS, hotels, selectedHotel]);
 
   // Function to add a new hotel
   const addHotel = (hotelData: HotelFormData) => {
@@ -252,7 +312,8 @@ export const useHotelNetwork = () => {
   };
 
   return {
-    hotels,
+    hotels: filteredHotels,
+    allHotels: hotels,
     selectedHotel,
     isLoading,
     isEditing,
