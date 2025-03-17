@@ -25,7 +25,7 @@ const HotelListPanel: React.FC<HotelListPanelProps> = ({
 }) => {
   return (
     <motion.div 
-      className="lg:col-span-12"
+      className={`lg:col-span-${isExpanded ? '3' : '12'}`}
       initial={{ width: "100%" }}
       animate={{ 
         width: "100%",
@@ -41,6 +41,7 @@ const HotelListPanel: React.FC<HotelListPanelProps> = ({
             onSelectHotel={onSelectHotel}
             onEditHotel={onEditHotel}
             onDeleteHotel={onDeleteHotel}
+            useGridView={true}
           />
         </ScrollArea>
       </Card>

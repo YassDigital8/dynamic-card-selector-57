@@ -14,6 +14,7 @@ interface HotelListProps {
   onSelectHotel: (hotel: Hotel) => void;
   onEditHotel: (hotel: Hotel) => void;
   onDeleteHotel: (id: string) => void;
+  useGridView?: boolean;
 }
 
 const HotelList: React.FC<HotelListProps> = ({
@@ -21,7 +22,8 @@ const HotelList: React.FC<HotelListProps> = ({
   selectedHotel,
   onSelectHotel,
   onEditHotel,
-  onDeleteHotel
+  onDeleteHotel,
+  useGridView = false
 }) => {
   const [hotelToDelete, setHotelToDelete] = useState<Hotel | null>(null);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
@@ -86,7 +88,7 @@ const HotelList: React.FC<HotelListProps> = ({
         </div>
       ) : (
         <motion.div 
-          className="grid grid-cols-1 gap-4"
+          className={`grid ${useGridView ? 'grid-cols-2 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3' : 'grid-cols-1'} gap-4`}
           variants={container}
           initial="hidden"
           animate="show"
@@ -99,6 +101,7 @@ const HotelList: React.FC<HotelListProps> = ({
               onSelect={() => onSelectHotel(hotel)}
               onEdit={() => onEditHotel(hotel)}
               onDelete={() => handleDeleteClick(hotel)}
+              useGridView={useGridView}
             />
           ))}
         </motion.div>

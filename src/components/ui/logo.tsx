@@ -21,9 +21,13 @@ export function Logo({ showText = false, className }: LogoProps) {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
+      <div className="bg-gradient-to-r from-indigo-500 to-blue-500 h-8 md:h-10 w-24 md:w-36 rounded-md flex items-center justify-center">
+        <span className="text-white font-bold text-xs md:text-sm">ADMIN</span>
+      </div>
+      
       {showText && (
         <div className="text-[10px] md:text-sm lg:text-xl font-bold transition-colors duration-300 logo-text whitespace-nowrap">
-          {isMobile ? "ADMIN" : "ADMIN DASHBOARD"}
+          {isMobile ? "ADMIN" : "DASHBOARD"}
         </div>
       )}
     </motion.div>

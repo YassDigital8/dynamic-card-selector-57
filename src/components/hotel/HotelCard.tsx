@@ -15,6 +15,7 @@ interface HotelCardProps {
   onSelect: () => void;
   onEdit: () => void;
   onDelete: () => void;
+  useGridView?: boolean;
 }
 
 // Function to get a consistent avatar image based on hotel name
@@ -31,7 +32,7 @@ const getHotelAvatar = (hotelName: string): string => {
     'photo-1496307653780-42ee777d4833'
   ];
   
-  return `https://images.unsplash.com/${placeholderImages[imageIndex - 1]}?auto=format&fit=crop&w=100&h=100&q=80`;
+  return `https://images.unsplash.com/${placeholderImages[imageIndex - 1]}?auto=format&fit=crop&w=300&h=150&q=80`;
 };
 
 const HotelCard: React.FC<HotelCardProps> = ({
@@ -39,7 +40,8 @@ const HotelCard: React.FC<HotelCardProps> = ({
   isSelected,
   onSelect,
   onEdit,
-  onDelete
+  onDelete,
+  useGridView = false
 }) => {
   return (
     <motion.div 
@@ -57,16 +59,29 @@ const HotelCard: React.FC<HotelCardProps> = ({
           : 'hover:border-indigo-200 dark:hover:border-indigo-800'
         }`}
       >
-        <CardHeader className="pb-2">
-          <div className="flex items-center space-x-3">
-            <Avatar className="h-12 w-12 border-2 border-white shadow-sm">
-              <AvatarImage src={getHotelAvatar(hotel.name)} alt={hotel.name} />
-              <AvatarFallback className="bg-indigo-100 text-indigo-700">
-                <HotelIcon className="h-6 w-6" />
-              </AvatarFallback>
-            </Avatar>
+        <CardHeader className={`pb-2 ${useGridView ? 'p-3' : ''}`}>
+          <div className={`${useGridView ? 'flex flex-col' : 'flex items-center space-x-3'}`}>
+            <div className={`${useGridView ? 'w-full h-32 mb-3 overflow-hidden rounded-lg' : 'h-12 w-12'}`}>
+              {useGridView ? (
+                <img 
+                  src={getHotelAvatar(hotel.name)} 
+                  alt={hotel.name} 
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.src = 'https://placehold.co/300x150/indigo/white?text=Hotel';
+                  }}
+                />
+              ) : (
+                <Avatar className="h-12 w-12 border-2 border-white shadow-sm">
+                  <AvatarImage src={getHotelAvatar(hotel.name)} alt={hotel.name} />
+                  <AvatarFallback className="bg-indigo-100 text-indigo-700">
+                    <HotelIcon className="h-6 w-6" />
+                  </AvatarFallback>
+                </Avatar>
+              )}
+            </div>
             <div className="flex-1">
-              <CardTitle className="text-lg text-indigo-700 dark:text-indigo-300">
+              <CardTitle className={`${useGridView ? 'text-base' : 'text-lg'} text-indigo-700 dark:text-indigo-300`}>
                 {hotel.name}
               </CardTitle>
               <Badge variant="outline" className="uppercase text-xs bg-indigo-50 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-400 font-medium mt-1">
@@ -75,7 +90,7 @@ const HotelCard: React.FC<HotelCardProps> = ({
             </div>
           </div>
         </CardHeader>
-        <CardContent className="space-y-3">
+        <CardContent className={`space-y-3 ${useGridView ? 'p-3 pt-0' : ''}`}>
           <div className="flex items-center text-sm text-muted-foreground">
             <Flag className="mr-1 h-3.5 w-3.5 text-indigo-500" />
             <span>{hotel.country}</span>
@@ -86,21 +101,25 @@ const HotelCard: React.FC<HotelCardProps> = ({
             <MapPin className="mr-1 h-3.5 w-3.5 text-pink-500" />
             <span className="truncate">{hotel.streetAddress}</span>
           </div>
-          <div className="flex flex-wrap gap-1.5 bg-white/70 dark:bg-slate-800/50 p-2 rounded-md border border-indigo-50 dark:border-indigo-900/50">
-            {(Object.keys(hotel.amenities) as Array<keyof HotelAmenities>)
-              .filter(amenity => hotel.amenities[amenity])
-              .slice(0, 6) // Show only top 6 amenities to keep card clean
-              .map(amenity => (
-                <AmenityIcon key={amenity} amenity={amenity} value={hotel.amenities[amenity]} />
-              ))}
-            {(Object.keys(hotel.amenities) as Array<keyof HotelAmenities>)
-              .filter(amenity => hotel.amenities[amenity]).length > 6 && (
-              <Badge variant="outline" className="bg-indigo-50 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-400 font-medium text-xs">
-                +{(Object.keys(hotel.amenities) as Array<keyof HotelAmenities>)
-                  .filter(amenity => hotel.amenities[amenity]).length - 6} more
-              </Badge>
-            )}
-          </div>
+          
+          {!useGridView && (
+            <div className="flex flex-wrap gap-1.5 bg-white/70 dark:bg-slate-800/50 p-2 rounded-md border border-indigo-50 dark:border-indigo-900/50">
+              {(Object.keys(hotel.amenities) as Array<keyof HotelAmenities>)
+                .filter(amenity => hotel.amenities[amenity])
+                .slice(0, 6) // Show only top 6 amenities to keep card clean
+                .map(amenity => (
+                  <AmenityIcon key={amenity} amenity={amenity} value={hotel.amenities[amenity]} />
+                ))}
+              {(Object.keys(hotel.amenities) as Array<keyof HotelAmenities>)
+                .filter(amenity => hotel.amenities[amenity]).length > 6 && (
+                <Badge variant="outline" className="bg-indigo-50 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-400 font-medium text-xs">
+                  +{(Object.keys(hotel.amenities) as Array<keyof HotelAmenities>)
+                    .filter(amenity => hotel.amenities[amenity]).length - 6} more
+                </Badge>
+              )}
+            </div>
+          )}
+          
           <div className="pt-2 flex justify-between items-center border-t border-indigo-100 dark:border-indigo-900/30">
             <div className="flex items-center text-sm">
               <Users className="mr-1 h-3.5 w-3.5 text-indigo-500" />
