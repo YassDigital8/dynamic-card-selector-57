@@ -40,22 +40,57 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
   onSubmitEdit,
   onCancelEdit
 }) => {
+  // Panel animation variants
+  const panelVariants = {
+    collapsed: { 
+      opacity: 0.9,
+      x: 20,
+      transition: { duration: 0.3, ease: "easeInOut" }
+    },
+    expanded: { 
+      opacity: 1, 
+      x: 0,
+      transition: { 
+        duration: 0.4, 
+        ease: "easeOut",
+        type: "spring",
+        stiffness: 100
+      }
+    }
+  };
+
+  // Button animation variants
+  const buttonVariants = {
+    initial: { opacity: 0, y: -10 },
+    animate: { 
+      opacity: 1, 
+      y: 0,
+      transition: { 
+        duration: 0.3,
+        delay: 0.2
+      }
+    },
+    exit: {
+      opacity: 0,
+      y: -20,
+      transition: { duration: 0.2 }
+    }
+  };
+
   return (
     <motion.div 
       className="lg:col-span-8"
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ 
-        opacity: 1, 
-        x: 0,
-        gridColumn: isExpanded ? "span 8 / span 8" : "span 7 / span 7"
-      }}
-      transition={{ duration: 0.3, ease: "easeInOut" }}
+      initial="collapsed"
+      animate={isExpanded ? "expanded" : "collapsed"}
+      variants={panelVariants}
+      style={{ gridColumn: isExpanded ? "span 8 / span 8" : "span 7 / span 7" }}
     >
       {isExpanded && (
         <motion.div 
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.2 }}
+          variants={buttonVariants}
+          initial="initial"
+          animate="animate"
+          exit="exit"
           className="mb-4"
         >
           <Button 
@@ -72,6 +107,7 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
       <AnimatePresence mode="wait">
         {showAddForm && (
           <HotelAddForm
+            key="add-form"
             isLoading={isLoading}
             onSubmit={onSubmitAdd}
             selectedPOS={selectedPOS}
@@ -81,6 +117,7 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
 
         {isEditing && selectedHotel && (
           <HotelEditForm
+            key="edit-form"
             selectedHotel={selectedHotel}
             isLoading={isLoading}
             onSubmit={onSubmitEdit}
@@ -90,6 +127,7 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
 
         {!showAddForm && !isEditing && selectedHotel && (
           <HotelDetailsWrapper 
+            key="details"
             hotel={selectedHotel} 
             onEdit={onCancelEdit} 
             onBack={onBackToList}
@@ -98,6 +136,7 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
 
         {!showAddForm && !isEditing && !selectedHotel && (
           <HotelEmptyState
+            key="empty-state"
             selectedPOS={selectedPOS}
             posName={posName}
             hasHotels={hasHotels}
