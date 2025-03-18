@@ -29,14 +29,14 @@ const HotelCardHeader: React.FC<HotelCardHeaderProps> = ({ hotel, useGridView })
   };
   
   return (
-    <CardHeader className={`pb-1 ${useGridView ? 'p-1 sm:p-2' : `${isMobile ? 'p-1' : 'p-2 sm:p-3'}`}`}>
-      <div className={`${useGridView ? 'flex flex-col' : `flex ${isMobile ? 'flex-row gap-1' : 'flex-row'} items-center space-x-1 sm:space-x-2`}`}>
+    <CardHeader className={`pb-2 ${useGridView ? 'p-2 sm:p-3' : `${isMobile ? 'p-2' : 'p-3 sm:p-4'}`}`}>
+      <div className={`${useGridView ? 'flex flex-col' : `flex ${isMobile ? 'flex-row gap-2' : 'flex-row'} items-center space-x-2 sm:space-x-3`}`}>
         <motion.div 
           layoutId={`hotel-image-${hotel.id}`}
           className={`${
             useGridView 
-              ? 'w-full h-16 sm:h-24 mb-1 sm:mb-2 overflow-hidden rounded-lg' 
-              : `${isMobile ? 'h-8 w-8' : 'h-10 w-10 sm:h-12 sm:w-12'} overflow-hidden rounded-lg flex-shrink-0`
+              ? 'w-full h-24 sm:h-32 mb-2 sm:mb-3 overflow-hidden rounded-lg' 
+              : `${isMobile ? 'h-12 w-12' : 'h-14 w-14 sm:h-16 sm:w-16'} overflow-hidden rounded-lg flex-shrink-0`
           }`}
           variants={imageVariants}
           initial="rest"
@@ -56,16 +56,16 @@ const HotelCardHeader: React.FC<HotelCardHeaderProps> = ({ hotel, useGridView })
         </motion.div>
         <div className="flex-1">
           <motion.div layoutId={`hotel-title-${hotel.id}`}>
-            <CardTitle className={`${useGridView ? 'text-xs sm:text-sm' : `${isMobile ? 'text-xs' : 'text-sm'}`} text-indigo-700 dark:text-indigo-300 line-clamp-1`}>
+            <CardTitle className={`${useGridView ? 'text-sm sm:text-base' : `${isMobile ? 'text-xs sm:text-sm' : 'text-base sm:text-lg'}`} text-indigo-700 dark:text-indigo-300 line-clamp-2`}>
               {hotel.name}
             </CardTitle>
           </motion.div>
-          <motion.div className="flex items-center mt-0.5 gap-1 flex-wrap" layoutId={`hotel-badges-${hotel.id}`}>
-            <Badge variant="outline" className={`uppercase ${isMobile ? 'text-[8px] px-1 py-0' : 'text-[9px]'} bg-indigo-50 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-400 font-medium`}>
+          <motion.div className="flex items-center mt-1 gap-1 sm:gap-2 flex-wrap" layoutId={`hotel-badges-${hotel.id}`}>
+            <Badge variant="outline" className={`uppercase ${isMobile ? 'text-[9px] px-1 py-0' : 'text-[10px] sm:text-xs'} bg-indigo-50 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-400 font-medium`}>
               {hotel.posKey}
             </Badge>
             {hotel.country && (
-              <Badge variant="outline" className={`${isMobile ? 'text-[8px] px-1 py-0' : 'text-[9px]'} bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-medium`}>
+              <Badge variant="outline" className={`${isMobile ? 'text-[9px] px-1 py-0' : 'text-[10px] sm:text-xs'} bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-medium`}>
                 {hotel.country}
               </Badge>
             )}
