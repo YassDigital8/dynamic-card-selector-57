@@ -29,6 +29,43 @@ const HotelCard: React.FC<HotelCardProps> = ({
 }) => {
   const isMobile = useIsMobile();
 
+  // Enhanced card animation variants
+  const cardAnimation = {
+    rest: { 
+      scale: 1,
+      boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+      y: 0
+    },
+    hover: { 
+      scale: 1.02,
+      boxShadow: "0 10px 15px -3px rgba(79, 70, 229, 0.15), 0 4px 6px -2px rgba(79, 70, 229, 0.1)",
+      y: -4,
+      transition: {
+        type: "spring",
+        stiffness: 400,
+        damping: 20
+      }
+    },
+    tap: { 
+      scale: 0.98, 
+      boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+      transition: {
+        type: "spring",
+        stiffness: 400,
+        damping: 25
+      }
+    },
+    selected: {
+      scale: 1.01,
+      boxShadow: "0 10px 15px -3px rgba(79, 70, 229, 0.2), 0 4px 6px -2px rgba(79, 70, 229, 0.15)",
+      transition: {
+        type: "spring",
+        stiffness: 400,
+        damping: 25
+      }
+    }
+  };
+
   return (
     <motion.div 
       layoutId={`hotel-card-container-${hotel.id}`}
@@ -36,7 +73,11 @@ const HotelCard: React.FC<HotelCardProps> = ({
         !useGridView ? 'w-full' : ''
       }`}
       onClick={onSelect}
-      {...containerAnimation}
+      initial="rest"
+      whileHover="hover"
+      whileTap="tap"
+      animate={isSelected ? "selected" : "rest"}
+      variants={cardAnimation}
     >
       <Card 
         className={`h-full transition-all will-change-transform ${

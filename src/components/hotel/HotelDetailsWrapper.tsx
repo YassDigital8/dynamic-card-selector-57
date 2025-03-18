@@ -23,22 +23,61 @@ const HotelDetailsWrapper: React.FC<HotelDetailsWrapperProps> = memo(({
   onEdit,
   onBack
 }) => {
-  // Spring animation configurations for natural movement
+  // Enhanced spring animation configurations
   const springConfig = {
     type: "spring",
-    stiffness: 300,
+    stiffness: 350,
     damping: 30,
     mass: 1
+  };
+
+  // Staggered content animation
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.05
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: springConfig
+    }
+  };
+
+  // Card animation
+  const cardVariants = {
+    hidden: { 
+      opacity: 0, 
+      scale: 0.95,
+      y: 10
+    },
+    visible: { 
+      opacity: 1, 
+      scale: 1,
+      y: 0,
+      transition: {
+        ...springConfig,
+        delay: 0.05
+      }
+    }
   };
 
   return (
     <motion.div
       key="details"
       layoutId={`hotel-card-container-${hotel.id}`}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0, y: 10 }}
-      transition={springConfig}
+      initial="hidden"
+      animate="visible"
+      exit={{ opacity: 0, y: 10, transition: springConfig }}
+      variants={cardVariants}
       className="w-full h-full"
     >
       <Card className="p-6 border-indigo-100 dark:border-indigo-900 shadow-lg rounded-xl overflow-hidden bg-white dark:bg-slate-900 backdrop-blur-sm">
@@ -46,12 +85,9 @@ const HotelDetailsWrapper: React.FC<HotelDetailsWrapperProps> = memo(({
           <CarouselContent>
             <CarouselItem>
               <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ 
-                  delay: 0.1,
-                  ...springConfig
-                }}
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
               >
                 <HotelDetails hotel={hotel} onEdit={onEdit} onBack={onBack} />
               </motion.div>
@@ -59,36 +95,42 @@ const HotelDetailsWrapper: React.FC<HotelDetailsWrapperProps> = memo(({
             <CarouselItem>
               <div className="h-full flex items-center justify-center p-6">
                 <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2, ...springConfig }}
+                  variants={itemVariants}
                   className="space-y-4 text-center"
                 >
                   <h3 className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">Room Availability</h3>
-                  <div className="bg-indigo-50 dark:bg-indigo-900/30 p-8 rounded-xl">
+                  <motion.div 
+                    className="bg-indigo-50 dark:bg-indigo-900/30 p-8 rounded-xl"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3, ...springConfig }}
+                  >
                     <p className="text-muted-foreground">Room availability information will be displayed here in future updates.</p>
-                  </div>
+                  </motion.div>
                 </motion.div>
               </div>
             </CarouselItem>
             <CarouselItem>
               <div className="h-full flex items-center justify-center p-6">
                 <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2, ...springConfig }}
+                  variants={itemVariants}
                   className="space-y-4 text-center"
                 >
                   <h3 className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">Hotel Gallery</h3>
-                  <div className="bg-indigo-50 dark:bg-indigo-900/30 p-8 rounded-xl">
+                  <motion.div 
+                    className="bg-indigo-50 dark:bg-indigo-900/30 p-8 rounded-xl"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3, ...springConfig }}
+                  >
                     <p className="text-muted-foreground">Photo gallery will be displayed here in future updates.</p>
-                  </div>
+                  </motion.div>
                 </motion.div>
               </div>
             </CarouselItem>
           </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
+          <CarouselPrevious className="transition-all hover:bg-indigo-100 dark:hover:bg-indigo-900/50" />
+          <CarouselNext className="transition-all hover:bg-indigo-100 dark:hover:bg-indigo-900/50" />
         </Carousel>
       </Card>
     </motion.div>

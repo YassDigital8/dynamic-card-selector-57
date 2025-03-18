@@ -15,6 +15,19 @@ interface HotelCardHeaderProps {
 const HotelCardHeader: React.FC<HotelCardHeaderProps> = ({ hotel, useGridView }) => {
   const isMobile = useIsMobile();
   
+  // Image animation variants
+  const imageVariants = {
+    rest: { scale: 1 },
+    hover: { 
+      scale: 1.05,
+      transition: { 
+        type: "spring", 
+        stiffness: 300, 
+        damping: 20
+      }
+    }
+  };
+  
   return (
     <CardHeader className={`pb-2 ${useGridView ? 'p-3' : `${isMobile ? 'p-2' : 'p-4'}`}`}>
       <div className={`${useGridView ? 'flex flex-col' : `flex ${isMobile ? 'flex-row' : 'flex-row md:flex-col'} items-center md:items-start space-x-3 md:space-x-0`}`}>
@@ -25,11 +38,17 @@ const HotelCardHeader: React.FC<HotelCardHeaderProps> = ({ hotel, useGridView })
               ? 'w-full h-32 mb-3 overflow-hidden rounded-lg' 
               : `${isMobile ? 'h-12 w-12' : 'h-16 w-16 md:w-full md:h-32 md:mb-3'} overflow-hidden rounded-lg`
           }`}
+          variants={imageVariants}
+          initial="rest"
+          whileHover="hover"
         >
-          <img 
+          <motion.img 
             src={getHotelAvatar(hotel.name)} 
             alt={hotel.name} 
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover transition-transform duration-700 ease-in-out"
+            initial={{ scale: 1.2 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 0.7 }}
             onError={(e) => {
               e.currentTarget.src = 'https://placehold.co/300x150/indigo/white?text=Hotel';
             }}
