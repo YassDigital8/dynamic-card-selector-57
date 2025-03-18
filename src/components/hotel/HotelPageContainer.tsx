@@ -68,11 +68,11 @@ const HotelPageContainer: React.FC = () => {
       setIsSelectingNewHotel(true);
       setSelectedHotel(null);
       
-      // Then set the new hotel after a small delay (just enough for animation)
+      // Shorter delay for a less jarring transition
       setTimeout(() => {
         setSelectedHotel(hotel);
         setIsSelectingNewHotel(false);
-      }, 50);
+      }, 20); // Reduced from 50ms to 20ms for smoother transition
     } else {
       // If no hotel was selected before or it's the same hotel, just set it directly
       setSelectedHotel(hotel);
@@ -131,7 +131,7 @@ const HotelPageContainer: React.FC = () => {
       className="container mx-auto py-3 sm:py-4 md:py-6 space-y-4 sm:space-y-6 md:space-y-8 px-2 sm:px-4"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
+      transition={{ duration: 0.3 }}
     >
       <HotelPageHeader 
         selectedPOS={selectedPOS}
@@ -154,7 +154,7 @@ const HotelPageContainer: React.FC = () => {
         <ResizablePanel 
           defaultSize={panelSize}
           minSize={35}
-          maxSize={65} // Increased max size to allow wider panel when needed
+          maxSize={65}
           className="transition-all duration-300"
         >
           <HotelListPanel 
@@ -172,7 +172,7 @@ const HotelPageContainer: React.FC = () => {
         
         <ResizablePanel 
           defaultSize={100 - panelSize}
-          minSize={35} // Decreased min size to allow left panel to be wider
+          minSize={35}
           maxSize={65}
           className="transition-all duration-300"
         >

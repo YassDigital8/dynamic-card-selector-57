@@ -46,15 +46,15 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
   const showContent = selectedHotel || showAddForm || isEditing;
   const isMobile = useIsMobile();
 
-  // Animation variants for content transitions
+  // Refined animation variants for smoother content transitions
   const contentVariants = {
     hidden: { 
       opacity: 0, 
-      x: 20,
+      x: 10,
       transition: {
         type: "spring",
-        stiffness: 300,
-        damping: 30
+        stiffness: 250,
+        damping: 25
       }
     },
     visible: { 
@@ -62,8 +62,8 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
       x: 0,
       transition: {
         type: "spring",
-        stiffness: 300,
-        damping: 30
+        stiffness: 250,
+        damping: 25
       }
     }
   };
@@ -84,7 +84,7 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
           className="mb-2 sm:mb-4"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.3 }}
+          transition={{ duration: 0.2 }}
         >
           <Button 
             variant="outline" 
@@ -98,7 +98,7 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
         </motion.div>
       )}
       
-      <AnimatePresence mode="wait">
+      <AnimatePresence mode="sync">
         {showAddForm && (
           <HotelAddForm
             key="add-form"
