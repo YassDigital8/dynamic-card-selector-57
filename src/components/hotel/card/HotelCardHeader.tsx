@@ -30,13 +30,13 @@ const HotelCardHeader: React.FC<HotelCardHeaderProps> = ({ hotel, useGridView })
   
   return (
     <CardHeader className={`pb-2 ${useGridView ? 'p-3' : `${isMobile ? 'p-2' : 'p-4'}`}`}>
-      <div className={`${useGridView ? 'flex flex-col' : `flex ${isMobile ? 'flex-row' : 'flex-row md:flex-col'} items-center md:items-start space-x-3 md:space-x-0`}`}>
+      <div className={`${useGridView ? 'flex flex-col' : `flex ${isMobile ? 'flex-row' : 'flex-row'} items-center space-x-3`}`}>
         <motion.div 
           layoutId={`hotel-image-${hotel.id}`}
           className={`${
             useGridView 
               ? 'w-full h-32 mb-3 overflow-hidden rounded-lg' 
-              : `${isMobile ? 'h-12 w-12' : 'h-16 w-16 md:w-full md:h-32 md:mb-3'} overflow-hidden rounded-lg`
+              : `${isMobile ? 'h-14 w-14' : 'h-16 w-16'} overflow-hidden rounded-lg flex-shrink-0`
           }`}
           variants={imageVariants}
           initial="rest"
@@ -54,7 +54,7 @@ const HotelCardHeader: React.FC<HotelCardHeaderProps> = ({ hotel, useGridView })
             }}
           />
         </motion.div>
-        <div className={`flex-1 ${isMobile ? 'ml-2' : 'md:mt-2'}`}>
+        <div className="flex-1">
           <motion.div layoutId={`hotel-title-${hotel.id}`}>
             <CardTitle className={`${useGridView ? 'text-base' : `${isMobile ? 'text-sm' : 'text-lg'}`} text-indigo-700 dark:text-indigo-300`}>
               {hotel.name}

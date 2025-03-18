@@ -9,6 +9,7 @@ import useHotelNetwork from '@/hooks/hotel';
 import useHotelFilters from '@/hooks/hotel/useHotelFilters';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { motion } from 'framer-motion';
 
 const HotelPageContainer: React.FC = () => {
   const { posOptions } = usePageSelectionViewModel();
@@ -31,24 +32,28 @@ const HotelPageContainer: React.FC = () => {
   const { filters, setFilters, filteredHotels } = useHotelFilters(hotels);
   
   const [showAddForm, setShowAddForm] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [panelSize, setPanelSize] = useState(100);
+  const [isExpanded, setIsExpanded] = useState(true);
+  
+  // Set initial panel size based on device, showing both panels by default
+  const initialPanelSize = isMobile ? 60 : 55;
+  const [panelSize, setPanelSize] = useState(initialPanelSize);
 
-  // Effect to ensure expanded view is reset when no hotel is selected
   useEffect(() => {
-    if (!selectedHotel && !showAddForm && !isEditing) {
-      setIsExpanded(false);
-      setPanelSize(100);
-    }
-  }, [selectedHotel, showAddForm, isEditing]);
+    // Adjust panel size when device type changes
+    setPanelSize(isMobile ? 60 : 55);
+  }, [isMobile]);
 
-  // Effect to automatically set isExpanded to true when a hotel is selected
+  // Effect to update panel size when selection changes
   useEffect(() => {
     if (selectedHotel || showAddForm || isEditing) {
-      setIsExpanded(true);
-      // Automatically adjust the panel size based on device
-      const newPanelSize = isMobile ? 70 : 40;
+      // Show more details when an item is selected
+      const newPanelSize = isMobile ? 50 : 40;
       setPanelSize(newPanelSize);
+      setIsExpanded(true);
+    } else {
+      // Default layout showing both panels
+      const defaultSize = isMobile ? 60 : 55;
+      setPanelSize(defaultSize);
     }
   }, [selectedHotel, showAddForm, isEditing, isMobile]);
 
@@ -58,9 +63,8 @@ const HotelPageContainer: React.FC = () => {
     setShowAddForm(false);
     setIsExpanded(true);
     
-    // Automatically adjust panel size when a hotel is selected
-    // More space for detail view on non-mobile devices
-    const newPanelSize = isMobile ? 70 : 40;
+    // Adjust panel size when selecting a hotel
+    const newPanelSize = isMobile ? 50 : 40;
     setPanelSize(newPanelSize);
   };
 
@@ -71,7 +75,7 @@ const HotelPageContainer: React.FC = () => {
     setIsExpanded(true);
     
     // Similar panel adjustment for edit mode
-    const newPanelSize = isMobile ? 70 : 40;
+    const newPanelSize = isMobile ? 50 : 40;
     setPanelSize(newPanelSize);
   };
 
@@ -82,18 +86,16 @@ const HotelPageContainer: React.FC = () => {
     setIsExpanded(true);
     
     // Similar panel adjustment for add mode
-    const newPanelSize = isMobile ? 70 : 40;
+    const newPanelSize = isMobile ? 50 : 40;
     setPanelSize(newPanelSize);
   };
 
   const handleBackToList = () => {
-    // First change the expanded state
-    setIsExpanded(false);
+    // Restore default panel size
+    const defaultSize = isMobile ? 60 : 55;
+    setPanelSize(defaultSize);
     
-    // Collapse the detail panel
-    setPanelSize(100);
-    
-    // Clear selection states immediately rather than in a timeout
+    // Clear selection states
     setSelectedHotel(null);
     setShowAddForm(false);
     setIsEditing(false);
@@ -131,7 +133,12 @@ const HotelPageContainer: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto py-6 space-y-8">
+    <motion.div 
+      className="container mx-auto py-6 space-y-8"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
       <HotelPageHeader 
         selectedPOS={selectedPOS}
         onSelectPOS={setSelectedPOS}
@@ -142,10 +149,14 @@ const HotelPageContainer: React.FC = () => {
 
       <ResizablePanelGroup
         direction="horizontal"
-        className="min-h-[calc(100vh-200px)] rounded-lg border border-indigo-100 dark:border-indigo-900 bg-white/90 dark:bg-slate-900/90"
+        className="min-h-[calc(100vh-200px)] rounded-lg border border-indigo-100 dark:border-indigo-900 bg-white/90 dark:bg-slate-900/90 shadow-lg"
         onLayout={handlePanelResize}
       >
-        <ResizablePanel defaultSize={panelSize} minSize={isMobile ? 70 : 40} maxSize={100}>
+        <ResizablePanel 
+          defaultSize={initialPanelSize} 
+          minSize={isMobile ? 40 : 30} 
+          maxSize={isMobile ? 100 : 70}
+        >
           <HotelListPanel 
             filteredHotels={filteredHotels}
             selectedHotel={selectedHotel}
@@ -157,9 +168,13 @@ const HotelPageContainer: React.FC = () => {
           />
         </ResizablePanel>
         
-        <ResizableHandle withHandle />
+        <ResizableHandle withHandle className="transition-colors hover:bg-indigo-100 dark:hover:bg-indigo-800" />
         
-        <ResizablePanel defaultSize={100 - panelSize} minSize={0} maxSize={isMobile ? 30 : 60}>
+        <ResizablePanel 
+          defaultSize={100 - initialPanelSize} 
+          minSize={isMobile ? 0 : 30} 
+          maxSize={isMobile ? 60 : 70}
+        >
           <HotelContentPanel 
             selectedHotel={selectedHotel}
             isLoading={isLoading}
@@ -177,7 +192,7 @@ const HotelPageContainer: React.FC = () => {
           />
         </ResizablePanel>
       </ResizablePanelGroup>
-    </div>
+    </motion.div>
   );
 };
 

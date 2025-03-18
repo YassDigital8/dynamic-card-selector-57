@@ -30,8 +30,7 @@ const HotelListPanel: React.FC<HotelListPanelProps> = ({
 
   // Determine if we should show grid or list view based on panel size
   // Show list view when panel size is smaller (details panel is visible)
-  // The threshold is different for mobile devices
-  const useGridView = isMobile ? panelSize > 90 : panelSize > 70;
+  const useGridView = isMobile ? panelSize > 80 : panelSize > 60;
 
   // Animation variants for panel
   const panelVariants = {

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import HotelAddForm from '../HotelAddForm';
@@ -46,10 +46,42 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
   // This will handle the render conditions for the empty state
   const shouldShowEmptyState = !showContent;
 
+  // Animation variants for content transitions
+  const contentVariants = {
+    hidden: { 
+      opacity: 0, 
+      x: 20,
+      transition: {
+        type: "spring",
+        stiffness: 300,
+        damping: 30
+      }
+    },
+    visible: { 
+      opacity: 1, 
+      x: 0,
+      transition: {
+        type: "spring",
+        stiffness: 300,
+        damping: 30
+      }
+    }
+  };
+
   return (
-    <div className="h-full w-full p-4 overflow-auto">
-      {isExpanded && (
-        <div className="mb-4">
+    <motion.div 
+      className="h-full w-full p-4 overflow-auto"
+      initial="hidden"
+      animate="visible"
+      variants={contentVariants}
+    >
+      {isExpanded && showContent && (
+        <motion.div 
+          className="mb-4"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.3 }}
+        >
           <Button 
             variant="outline" 
             onClick={onBackToList}
@@ -58,7 +90,7 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
             <ArrowLeft className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" />
             Back to hotels
           </Button>
-        </div>
+        </motion.div>
       )}
       
       <AnimatePresence mode="sync">
@@ -101,7 +133,7 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
           />
         )}
       </AnimatePresence>
-    </div>
+    </motion.div>
   );
 };
 
