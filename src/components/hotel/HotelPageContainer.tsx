@@ -43,13 +43,6 @@ const HotelPageContainer: React.FC = () => {
 
   const [panelSize, setPanelSize] = useState(getInitialLeftPanelSize());
 
-  // Always have a hotel selected if available (for the initial view)
-  useEffect(() => {
-    if (hotels.length > 0 && !selectedHotel && !showAddForm && !isEditing) {
-      setSelectedHotel(hotels[0]);
-    }
-  }, [hotels, selectedHotel, showAddForm, isEditing, setSelectedHotel]);
-
   // Effect to handle panel size based on device type
   useEffect(() => {
     setPanelSize(getInitialLeftPanelSize());
@@ -77,18 +70,12 @@ const HotelPageContainer: React.FC = () => {
   };
 
   const handleBackToList = () => {
-    if (hotels.length > 0) {
-      // Keep the first hotel selected for the side-by-side view
-      setSelectedHotel(hotels[0]);
-    } else {
-      setSelectedHotel(null);
-    }
+    setSelectedHotel(null);
     setShowAddForm(false);
     setIsEditing(false);
   };
 
   const handleSubmitAdd = (data: HotelFormData) => {
-    // Include the selected POS in the new hotel data
     const hotelWithPOS = {
       ...data,
       posKey: selectedPOS === 'all' ? '' : selectedPOS
@@ -130,7 +117,6 @@ const HotelPageContainer: React.FC = () => {
         direction="horizontal"
         className="min-h-[calc(100vh-180px)] sm:min-h-[calc(100vh-200px)] rounded-lg border border-indigo-100 dark:border-indigo-900 bg-white dark:bg-slate-900 shadow-lg"
         onLayout={(sizes) => {
-          // Keep panel sizes fixed based on screen size
           setPanelSize(getInitialLeftPanelSize());
         }}
       >

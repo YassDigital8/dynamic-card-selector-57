@@ -7,6 +7,7 @@ import HotelAddForm from '../HotelAddForm';
 import HotelEditForm from '../HotelEditForm';
 import HotelDetailsWrapper from '../HotelDetailsWrapper';
 import HotelEmptyState from '../HotelEmptyState';
+import NoHotelSelected from '../NoHotelSelected';
 import { Hotel, HotelFormData } from '@/models/HotelModel';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -44,9 +45,6 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
   // Determine if we should show content (either a selected hotel, add form, or edit form)
   const showContent = selectedHotel || showAddForm || isEditing;
   const isMobile = useIsMobile();
-
-  // This will handle the render conditions for the empty state
-  const shouldShowEmptyState = !showContent;
 
   // Animation variants for content transitions
   const contentVariants = {
@@ -126,7 +124,15 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
           />
         )}
 
-        {shouldShowEmptyState && isExpanded && (
+        {!showContent && isExpanded && hasHotels && (
+          <NoHotelSelected
+            key="no-hotel-selected"
+            hasHotels={hasHotels}
+            onAddHotel={onAddHotel}
+          />
+        )}
+
+        {!showContent && isExpanded && !hasHotels && (
           <HotelEmptyState
             key="empty-state"
             selectedPOS={selectedPOS}
