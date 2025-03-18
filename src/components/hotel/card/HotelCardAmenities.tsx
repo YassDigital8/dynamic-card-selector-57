@@ -1,0 +1,62 @@
+
+import React from 'react';
+import { motion } from 'framer-motion';
+import { Badge } from "@/components/ui/badge";
+import { HotelAmenities } from '@/models/HotelModel';
+import AmenityIcon from '../AmenityIcon';
+
+interface HotelCardAmenitiesProps {
+  amenities: HotelAmenities;
+}
+
+const HotelCardAmenities: React.FC<HotelCardAmenitiesProps> = ({ amenities }) => {
+  const amenityKeys = (Object.keys(amenities) as Array<keyof HotelAmenities>)
+    .filter(amenity => amenities[amenity]);
+  
+  const displayedAmenities = amenityKeys.slice(0, 6);
+  const hasMoreAmenities = amenityKeys.length > 6;
+  
+  return (
+    <motion.div 
+      initial={{ opacity: 0, y: 5 }}
+      animate={{ 
+        opacity: 1, 
+        y: 0,
+        transition: { 
+          delay: 0.1, 
+          type: "spring", 
+          stiffness: 250, 
+          damping: 20 
+        } 
+      }}
+      className="flex flex-wrap gap-1.5 bg-white/70 dark:bg-slate-800/50 p-2 rounded-md border border-indigo-50 dark:border-indigo-900/50"
+    >
+      {displayedAmenities.map((amenity, index) => (
+        <motion.div
+          key={amenity}
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ 
+            opacity: 1, 
+            scale: 1,
+            transition: { 
+              delay: 0.05 * index, 
+              type: "spring", 
+              stiffness: 250, 
+              damping: 20 
+            } 
+          }}
+        >
+          <AmenityIcon key={amenity} amenity={amenity} value={amenities[amenity]} />
+        </motion.div>
+      ))}
+      
+      {hasMoreAmenities && (
+        <Badge variant="outline" className="bg-indigo-50 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-400 font-medium text-xs">
+          +{amenityKeys.length - 6} more
+        </Badge>
+      )}
+    </motion.div>
+  );
+};
+
+export default React.memo(HotelCardAmenities);
