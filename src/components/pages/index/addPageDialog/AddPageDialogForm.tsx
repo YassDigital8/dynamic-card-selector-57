@@ -8,7 +8,6 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
@@ -18,6 +17,7 @@ import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AddPageFormValues } from '@/viewmodels/PageAdditionViewModel';
+import { Label } from '@/components/ui/label';
 
 interface AddPageDialogFormProps {
   pos: string;
@@ -79,9 +79,10 @@ const AddPageDialogForm = ({
           name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel required>Title</FormLabel>
+              <Label htmlFor="title" required>Title</Label>
               <FormControl>
                 <Input 
+                  id="title"
                   placeholder="Page Title" 
                   {...field} 
                   error={!!form.formState.errors.title}
@@ -97,9 +98,10 @@ const AddPageDialogForm = ({
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel required>Description</FormLabel>
+              <Label htmlFor="description" required>Description</Label>
               <FormControl>
                 <Textarea 
+                  id="description"
                   placeholder="Page Description" 
                   {...field} 
                   className="min-h-[120px]"
@@ -150,7 +152,7 @@ interface UrlPathDisplayProps {
 const UrlPathDisplay = ({ pos, language, generatedUrlPath }: UrlPathDisplayProps) => {
   return (
     <div className="mb-4">
-      <FormLabel>Page URL Path</FormLabel>
+      <Label>Page URL Path</Label>
       <div className="p-3 bg-gray-50 border rounded-md text-gray-700">
         {pos && language ? `${pos.toLowerCase()}/${language.toLowerCase()}/${generatedUrlPath || ""}` : "Please select POS and language"}
       </div>

@@ -4,7 +4,6 @@ import { UseFormReturn } from 'react-hook-form';
 import { 
   FormField,
   FormItem,
-  FormLabel,
   FormControl,
   FormMessage,
 } from '@/components/ui/form';
@@ -12,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Flag, Building, MapPin } from 'lucide-react';
 import { FormValues } from './formSchema';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { Label } from '@/components/ui/label';
 
 interface BasicInformationProps {
   form: UseFormReturn<FormValues>;
@@ -29,9 +29,10 @@ const BasicInformation: React.FC<BasicInformationProps> = ({ form }) => {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel required>Hotel Name</FormLabel>
+              <Label htmlFor="name" required>Hotel Name</Label>
               <FormControl>
                 <Input 
+                  id="name"
                   placeholder="Enter hotel name" 
                   {...field} 
                   error={!!form.formState.errors.name}
@@ -47,11 +48,12 @@ const BasicInformation: React.FC<BasicInformationProps> = ({ form }) => {
           name="country"
           render={({ field }) => (
             <FormItem>
-              <FormLabel required>Country</FormLabel>
+              <Label htmlFor="country" required>Country</Label>
               <FormControl>
                 <div className="relative">
                   <Flag className={`absolute left-2 top-${isMobile ? '1.5' : '2'} h-4 w-4 text-muted-foreground`} />
                   <Input 
+                    id="country"
                     className="pl-8" 
                     placeholder="Enter country" 
                     {...field} 
@@ -69,11 +71,12 @@ const BasicInformation: React.FC<BasicInformationProps> = ({ form }) => {
           name="governorate"
           render={({ field }) => (
             <FormItem>
-              <FormLabel required>Governorate/State</FormLabel>
+              <Label htmlFor="governorate" required>Governorate/State</Label>
               <FormControl>
                 <div className="relative">
                   <Building className={`absolute left-2 top-${isMobile ? '1.5' : '2'} h-4 w-4 text-muted-foreground`} />
                   <Input 
+                    id="governorate"
                     className="pl-8" 
                     placeholder="Enter governorate or state" 
                     {...field} 
@@ -91,11 +94,12 @@ const BasicInformation: React.FC<BasicInformationProps> = ({ form }) => {
           name="streetAddress"
           render={({ field }) => (
             <FormItem>
-              <FormLabel required>Street Address</FormLabel>
+              <Label htmlFor="streetAddress" required>Street Address</Label>
               <FormControl>
                 <div className="relative">
                   <MapPin className={`absolute left-2 top-${isMobile ? '1.5' : '2'} h-4 w-4 text-muted-foreground`} />
                   <Input 
+                    id="streetAddress"
                     className="pl-8" 
                     placeholder="Enter street address" 
                     {...field} 
