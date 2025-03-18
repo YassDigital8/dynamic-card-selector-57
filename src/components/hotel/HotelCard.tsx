@@ -50,7 +50,8 @@ const HotelCard: React.FC<HotelCardProps> = ({
           <CardContent className={`space-y-3 ${useGridView ? 'p-3 pt-0' : 'md:w-3/4 p-3 md:p-4'}`}>
             <HotelLocationInfo hotel={hotel} />
             
-            {(!useGridView || !isExpanded) && <HotelCardAmenities amenities={hotel.amenities} />}
+            {/* Show amenities always in grid view, or in list view */}
+            <HotelCardAmenities amenities={hotel.amenities} />
             
             <HotelCardFooter 
               hotel={hotel} 
