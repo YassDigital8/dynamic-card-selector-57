@@ -17,7 +17,7 @@ const NoHotelSelected: React.FC<NoHotelSelectedProps> = ({ hasHotels, onAddHotel
       transition={{ type: "spring", stiffness: 350, damping: 30 }}
       className="h-full flex flex-col items-center justify-center p-4 sm:p-8"
     >
-      <div className="flex flex-col items-center text-center max-w-md space-y-6 bg-background/90 backdrop-blur-sm p-6 rounded-xl shadow-sm">
+      <div className="flex flex-col items-center text-center max-w-md space-y-6 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm p-6 rounded-xl shadow-md border border-gray-100 dark:border-gray-700">
         <div className="p-6 rounded-full bg-indigo-100 dark:bg-indigo-900/30">
           {hasHotels ? (
             <PointerIcon size={48} className="text-indigo-500 dark:text-indigo-400" />
