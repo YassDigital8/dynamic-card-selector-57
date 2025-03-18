@@ -22,8 +22,9 @@ export const useHotelCrud = () => {
       setHotels(prevHotels => [...prevHotels, newHotel]);
       
       toast({
-        title: "Success",
+        title: "Hotel Added Successfully",
         description: `${newHotel.name} has been added to your hotel network`,
+        variant: "success",
       });
       
       return { success: true, hotel: newHotel };
@@ -31,8 +32,8 @@ export const useHotelCrud = () => {
       console.error('Error adding hotel:', error);
       
       toast({
-        title: "Error",
-        description: "Failed to add hotel. Please try again.",
+        title: "Failed to Add Hotel",
+        description: "There was an error adding your hotel. Please try again.",
         variant: "destructive"
       });
       
@@ -64,8 +65,9 @@ export const useHotelCrud = () => {
       });
       
       toast({
-        title: "Success",
-        description: "Hotel information updated successfully",
+        title: "Hotel Updated Successfully",
+        description: `${updatedHotel?.name || 'Hotel'} information has been updated`,
+        variant: "success",
       });
       
       return { success: true, hotel: updatedHotel };
@@ -73,8 +75,8 @@ export const useHotelCrud = () => {
       console.error('Error updating hotel:', error);
       
       toast({
-        title: "Error",
-        description: "Failed to update hotel. Please try again.",
+        title: "Failed to Update Hotel",
+        description: "There was an error updating your hotel. Please try again.",
         variant: "destructive"
       });
       
@@ -97,8 +99,9 @@ export const useHotelCrud = () => {
       setHotels(prevHotels => prevHotels.filter(hotel => hotel.id !== id));
       
       toast({
-        title: "Success",
+        title: "Hotel Deleted Successfully",
         description: `${hotelToDelete.name} has been removed from your hotel network`,
+        variant: "success",
       });
       
       return { success: true, hotelName: hotelToDelete.name };
@@ -106,8 +109,8 @@ export const useHotelCrud = () => {
       console.error('Error deleting hotel:', error);
       
       toast({
-        title: "Error",
-        description: "Failed to delete hotel. Please try again.",
+        title: "Failed to Delete Hotel",
+        description: "There was an error deleting the hotel. Please try again.",
         variant: "destructive"
       });
       

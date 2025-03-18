@@ -8,7 +8,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, error, ...props }, ref) => {
+  ({ className, type, error, "aria-describedby": ariaDescribedBy, ...props }, ref) => {
     const isMobile = useIsMobile()
     
     return (
@@ -20,6 +20,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           error ? "border-destructive" : "border-input",
           className
         )}
+        aria-invalid={error ? "true" : "false"}
+        aria-describedby={ariaDescribedBy}
         ref={ref}
         {...props}
       />
