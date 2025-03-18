@@ -10,7 +10,7 @@ interface HotelLocationInfoProps {
 
 const HotelLocationInfo: React.FC<HotelLocationInfoProps> = ({ hotel }) => {
   return (
-    <div className="space-y-1.5">
+    <div className="mt-2">
       <motion.div 
         className="flex items-center text-sm sm:text-base text-muted-foreground"
         layout

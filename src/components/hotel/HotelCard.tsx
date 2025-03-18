@@ -66,10 +66,6 @@ const HotelCard: React.FC<HotelCardProps> = ({
     }
   };
 
-  // Consistent card styles
-  const cardStyles = `flex ${isMobile ? 'flex-col' : 'flex-row'} min-h-[160px]`;
-  const contentStyles = `flex-1 space-y-2.5 py-3 px-4`;
-
   return (
     <motion.div 
       layoutId={`hotel-card-${hotel.id}`}
@@ -88,7 +84,7 @@ const HotelCard: React.FC<HotelCardProps> = ({
       }}
     >
       <Card 
-        className={`transition-all will-change-transform ${cardStyles} ${
+        className={`transition-all will-change-transform flex flex-col min-h-[160px] ${
           isSelected 
           ? 'border-indigo-400 dark:border-indigo-500 shadow-md bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-900/40 dark:to-indigo-800/40' 
           : 'hover:border-indigo-200 dark:hover:border-indigo-800'
@@ -96,7 +92,7 @@ const HotelCard: React.FC<HotelCardProps> = ({
       >
         <HotelCardHeader hotel={hotel} useGridView={false} />
         
-        <CardContent className={contentStyles}>
+        <CardContent className="flex-1 space-y-3 py-2 px-3">
           <HotelLocationInfo hotel={hotel} />
           <HotelCardAmenities amenities={hotel.amenities} />
           <HotelCardFooter 
