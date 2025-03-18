@@ -6,4 +6,5 @@ export {
   CarouselItem,
   CarouselPrevious,
   CarouselNext,
+  CarouselIndicators,
 } from "./carousel/index"
