@@ -27,12 +27,12 @@ const HotelDetailsWrapper: React.FC<HotelDetailsWrapperProps> = memo(({
   const isMobile = useIsMobile();
   const { width } = useScreenSize();
   
-  // Enhanced spring animation configurations
+  // Enhanced spring animation configurations - gentler for smoother transitions
   const springConfig = {
     type: "spring",
-    stiffness: 350,
+    stiffness: 300, // Reduced stiffness
     damping: 30,
-    mass: 1
+    mass: 0.8 // Increased mass for smoother motion
   };
 
   // Staggered content animation
@@ -56,12 +56,12 @@ const HotelDetailsWrapper: React.FC<HotelDetailsWrapperProps> = memo(({
     }
   };
 
-  // Card animation - softer for transitions between hotels
+  // Card animation - ultra-soft for seamless transitions between hotels
   const cardVariants = {
     hidden: { 
-      opacity: 0, 
-      scale: 0.98,
-      y: 5
+      opacity: 0.9, // Start with higher opacity to reduce flicker
+      scale: 0.99, // Very subtle scale change
+      y: 2 // Minimal vertical movement
     },
     visible: { 
       opacity: 1, 
@@ -69,14 +69,7 @@ const HotelDetailsWrapper: React.FC<HotelDetailsWrapperProps> = memo(({
       y: 0,
       transition: {
         ...springConfig,
-        delay: 0.02
-      }
-    },
-    exit: {
-      opacity: 0,
-      scale: 0.98,
-      transition: {
-        duration: 0.15
+        duration: 0.2 // Shorter, more direct transition
       }
     }
   };
@@ -86,9 +79,11 @@ const HotelDetailsWrapper: React.FC<HotelDetailsWrapperProps> = memo(({
       key={`hotel-card-container-${hotel.id}`}
       initial="hidden"
       animate="visible"
-      exit="exit"
       variants={cardVariants}
       className="w-full h-full"
+      // Explicitly prevent exit animations to avoid any removal effect
+      exit={{ opacity: 1, scale: 1, y: 0 }}
+      transition={{ duration: 0 }}
     >
       <Card className="p-4 sm:p-6 border-indigo-100 dark:border-indigo-900 shadow-lg rounded-xl overflow-hidden bg-white dark:bg-slate-900">
         <Carousel className="w-full relative">

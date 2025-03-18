@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Hotel, HotelFormData } from '@/models/HotelModel';
 
@@ -13,22 +12,14 @@ export const useHotelSelection = (
   const [isSelectingNewHotel, setIsSelectingNewHotel] = useState(false);
 
   const handleSelectHotel = (hotel: Hotel) => {
-    // Skip the clearing animation when selecting a different hotel
-    // This makes transitions between hotels more seamless
+    setSelectedHotel(hotel);
+    
     if (selectedHotel && selectedHotel.id !== hotel.id) {
-      // Just set a flag that we're selecting a new hotel without clearing the current one
       setIsSelectingNewHotel(true);
       
-      // Directly update to the new hotel without the temporary clearing
-      setSelectedHotel(hotel);
-      
-      // Reset the flag after a very short delay
       setTimeout(() => {
         setIsSelectingNewHotel(false);
       }, 10);
-    } else {
-      // If no hotel was selected before, just set it directly
-      setSelectedHotel(hotel);
     }
     
     setIsEditing(false);
