@@ -7,13 +7,14 @@ import { usePageSelectionViewModel } from '@/viewmodels/PageSelectionViewModel';
 import useHotelNetwork from '@/hooks/hotel';
 import useHotelFilters from '@/hooks/hotel/useHotelFilters';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable';
-import { useIsMobile } from '@/hooks/use-mobile';
+import { useIsMobile, useScreenSize } from '@/hooks/use-mobile';
 import { motion } from 'framer-motion';
 
 const HotelPageContainer: React.FC = () => {
   const { posOptions } = usePageSelectionViewModel();
   const [selectedPOS, setSelectedPOS] = useState<string>('');
   const isMobile = useIsMobile();
+  const screenSize = useScreenSize();
   
   const {
     hotels,
@@ -33,9 +34,14 @@ const HotelPageContainer: React.FC = () => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [isExpanded, setIsExpanded] = useState(true);
   
-  // Set fixed panel sizes for consistency 
-  const initialLeftPanelSize = isMobile ? 50 : 40; // Smaller on desktop to show more details
-  const [panelSize, setPanelSize] = useState(initialLeftPanelSize);
+  // Set fixed panel sizes based on screen size
+  const getInitialLeftPanelSize = () => {
+    if (screenSize.width < 640) return 50; // Mobile
+    if (screenSize.width < 1024) return 45; // Tablet
+    return 40; // Desktop
+  };
+
+  const [panelSize, setPanelSize] = useState(getInitialLeftPanelSize());
 
   // Always have a hotel selected if available (for the initial view)
   useEffect(() => {
@@ -46,8 +52,8 @@ const HotelPageContainer: React.FC = () => {
 
   // Effect to handle panel size based on device type
   useEffect(() => {
-    setPanelSize(isMobile ? 50 : 40);
-  }, [isMobile]);
+    setPanelSize(getInitialLeftPanelSize());
+  }, [screenSize.width]);
 
   const handleSelectHotel = (hotel: Hotel) => {
     setSelectedHotel(hotel);
@@ -105,16 +111,9 @@ const HotelPageContainer: React.FC = () => {
     return posOptions.find(p => p.key.toLowerCase() === selectedPOS.toLowerCase())?.englishName;
   };
 
-  // We'll disable the panel resize to maintain the fixed position
-  const handlePanelResize = (sizes: number[]) => {
-    // Keep the size fixed to our desired values
-    setPanelSize(initialLeftPanelSize);
-    setIsExpanded(true);
-  };
-
   return (
     <motion.div 
-      className="container mx-auto py-6 space-y-8"
+      className="container mx-auto py-3 sm:py-4 md:py-6 space-y-4 sm:space-y-6 md:space-y-8 px-2 sm:px-4"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
@@ -129,14 +128,16 @@ const HotelPageContainer: React.FC = () => {
 
       <ResizablePanelGroup
         direction="horizontal"
-        className="min-h-[calc(100vh-200px)] rounded-lg border border-indigo-100 dark:border-indigo-900 bg-white dark:bg-slate-900 shadow-lg"
-        onLayout={handlePanelResize}
+        className="min-h-[calc(100vh-180px)] sm:min-h-[calc(100vh-200px)] rounded-lg border border-indigo-100 dark:border-indigo-900 bg-white dark:bg-slate-900 shadow-lg"
+        onLayout={(sizes) => {
+          // Keep panel sizes fixed based on screen size
+          setPanelSize(getInitialLeftPanelSize());
+        }}
       >
         <ResizablePanel 
-          defaultSize={initialLeftPanelSize} 
-          minSize={isMobile ? 40 : 30}
-          maxSize={isMobile ? 60 : 50}
-          // Lock the size to prevent resizing
+          defaultSize={panelSize}
+          minSize={35}
+          maxSize={50}
           className="transition-all duration-300"
         >
           <HotelListPanel 
@@ -153,9 +154,9 @@ const HotelPageContainer: React.FC = () => {
         <ResizableHandle withHandle className="transition-colors bg-indigo-100 dark:bg-indigo-900 hover:bg-indigo-200 dark:hover:bg-indigo-800" />
         
         <ResizablePanel 
-          defaultSize={100 - initialLeftPanelSize}
-          minSize={isMobile ? 40 : 50}
-          maxSize={isMobile ? 60 : 70}
+          defaultSize={100 - panelSize}
+          minSize={50}
+          maxSize={65}
           className="transition-all duration-300"
         >
           <HotelContentPanel 

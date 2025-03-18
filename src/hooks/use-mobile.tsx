@@ -38,10 +38,31 @@ export function useIsMobile() {
     }
   }, [])
 
-  // Add a console log to help with debugging
-  React.useEffect(() => {
-    console.log(`Current device mode: ${isMobile ? 'Mobile' : 'Desktop'}`);
-  }, [isMobile]);
-
   return isMobile
+}
+
+export function useScreenSize() {
+  const [screenSize, setScreenSize] = React.useState({
+    width: typeof window !== 'undefined' ? window.innerWidth : 1920,
+    height: typeof window !== 'undefined' ? window.innerHeight : 1080,
+  })
+
+  React.useEffect(() => {
+    const handleResize = () => {
+      setScreenSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      })
+    }
+
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  return {
+    ...screenSize,
+    isMobile: screenSize.width < MOBILE_BREAKPOINT,
+    isTablet: screenSize.width >= MOBILE_BREAKPOINT && screenSize.width < 1024,
+    isDesktop: screenSize.width >= 1024,
+  }
 }

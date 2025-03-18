@@ -32,39 +32,10 @@ const HotelListPanel: React.FC<HotelListPanelProps> = ({
   // Show list view when panel size is smaller (details panel is visible)
   const useGridView = isMobile ? panelSize > 80 : panelSize > 60;
 
-  // Animation variants for panel
-  const panelVariants = {
-    expanded: { 
-      opacity: 1,
-      scale: 1,
-      transition: { 
-        type: "spring", 
-        stiffness: 400, 
-        damping: 30,
-        mass: 1
-      }
-    },
-    contracted: { 
-      opacity: 0.95,
-      scale: 0.98,
-      transition: { 
-        type: "spring", 
-        stiffness: 400, 
-        damping: 30,
-        mass: 1
-      }
-    }
-  };
-
   return (
-    <motion.div 
-      className="h-full w-full p-4"
-      initial="expanded"
-      animate={isExpanded ? "expanded" : "contracted"}
-      variants={panelVariants}
-    >
+    <div className="h-full w-full p-2 sm:p-4">
       <Card className="h-full overflow-hidden border-indigo-100 dark:border-indigo-900 shadow-md bg-white dark:bg-slate-900 rounded-xl transition-all duration-300 ease-in-out">
-        <ScrollArea className="h-[calc(100vh-230px)] overflow-y-auto">
+        <ScrollArea className="h-[calc(100vh-230px)] sm:h-[calc(100vh-200px)] overflow-y-auto">
           <HotelList
             hotels={filteredHotels}
             selectedHotel={selectedHotel}
@@ -75,7 +46,7 @@ const HotelListPanel: React.FC<HotelListPanelProps> = ({
           />
         </ScrollArea>
       </Card>
-    </motion.div>
+    </div>
   );
 };
 

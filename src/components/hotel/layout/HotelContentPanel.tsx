@@ -8,6 +8,7 @@ import HotelEditForm from '../HotelEditForm';
 import HotelDetailsWrapper from '../HotelDetailsWrapper';
 import HotelEmptyState from '../HotelEmptyState';
 import { Hotel, HotelFormData } from '@/models/HotelModel';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface HotelContentPanelProps {
   selectedHotel: Hotel | null;
@@ -42,6 +43,7 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
 }) => {
   // Determine if we should show content (either a selected hotel, add form, or edit form)
   const showContent = selectedHotel || showAddForm || isEditing;
+  const isMobile = useIsMobile();
 
   // This will handle the render conditions for the empty state
   const shouldShowEmptyState = !showContent;
@@ -70,14 +72,14 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
 
   return (
     <motion.div 
-      className="h-full w-full p-4 overflow-auto"
+      className="h-full w-full p-2 sm:p-4 overflow-auto"
       initial="hidden"
       animate="visible"
       variants={contentVariants}
     >
       {isExpanded && showContent && (
         <motion.div 
-          className="mb-4"
+          className="mb-2 sm:mb-4"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.3 }}
@@ -85,10 +87,11 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
           <Button 
             variant="outline" 
             onClick={onBackToList}
-            className="group mb-4 border-indigo-200 dark:border-indigo-800 hover:bg-indigo-50 dark:hover:bg-indigo-900/30"
+            size={isMobile ? "sm" : "default"}
+            className="group mb-2 sm:mb-4 border-indigo-200 dark:border-indigo-800 hover:bg-indigo-50 dark:hover:bg-indigo-900/30"
           >
-            <ArrowLeft className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" />
-            Back to hotels
+            <ArrowLeft className={`mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4 transition-transform group-hover:-translate-x-1`} />
+            <span className="text-xs sm:text-sm">Back to hotels</span>
           </Button>
         </motion.div>
       )}
