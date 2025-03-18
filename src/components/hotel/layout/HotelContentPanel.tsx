@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -69,14 +70,14 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
 
   return (
     <motion.div 
-      className="h-full w-full p-2 sm:p-4 relative flex flex-col"
+      className="h-full w-full p-2 sm:p-4 overflow-auto"
       initial="hidden"
       animate="visible"
       variants={contentVariants}
     >
       {isExpanded && showContent && (
         <motion.div 
-          className="mb-2 sm:mb-4 sticky top-0 z-20 bg-background pt-2 pb-1"
+          className="mb-2 sm:mb-4"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.2 }}
@@ -93,61 +94,52 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
         </motion.div>
       )}
       
+      {/* Direct component rendering without any exit animations or waiting */}
       {showAddForm && (
-        <div className="flex-1 overflow-auto">
-          <HotelAddForm
-            key="add-form"
-            isLoading={isLoading}
-            onSubmit={onSubmitAdd}
-            selectedPOS={selectedPOS}
-            posName={posName}
-          />
-        </div>
+        <HotelAddForm
+          key="add-form"
+          isLoading={isLoading}
+          onSubmit={onSubmitAdd}
+          selectedPOS={selectedPOS}
+          posName={posName}
+        />
       )}
 
       {isEditing && selectedHotel && (
-        <div className="flex-1 overflow-auto">
-          <HotelEditForm
-            key="edit-form"
-            selectedHotel={selectedHotel}
-            isLoading={isLoading}
-            onSubmit={onSubmitEdit}
-            onCancel={onCancelEdit}
-          />
-        </div>
+        <HotelEditForm
+          key="edit-form"
+          selectedHotel={selectedHotel}
+          isLoading={isLoading}
+          onSubmit={onSubmitEdit}
+          onCancel={onCancelEdit}
+        />
       )}
 
       {!showAddForm && !isEditing && selectedHotel && (
-        <div className="flex-1 overflow-auto">
-          <HotelDetailsWrapper 
-            key={`hotel-details-${selectedHotel.id}`}
-            hotel={selectedHotel} 
-            onEdit={onCancelEdit} 
-            onBack={onBackToList}
-          />
-        </div>
+        <HotelDetailsWrapper 
+          key={`hotel-details-${selectedHotel.id}`}
+          hotel={selectedHotel} 
+          onEdit={onCancelEdit} 
+          onBack={onBackToList}
+        />
       )}
 
       {!showContent && isExpanded && hasHotels && (
-        <div className="flex-1 relative h-full w-full overflow-hidden">
-          <NoHotelSelected
-            key="no-hotel-selected"
-            hasHotels={hasHotels}
-            onAddHotel={onAddHotel}
-          />
-        </div>
+        <NoHotelSelected
+          key="no-hotel-selected"
+          hasHotels={hasHotels}
+          onAddHotel={onAddHotel}
+        />
       )}
 
       {!showContent && isExpanded && !hasHotels && (
-        <div className="flex-1 relative h-full">
-          <HotelEmptyState
-            key="empty-state"
-            selectedPOS={selectedPOS}
-            posName={posName}
-            hasHotels={hasHotels}
-            onAddHotel={onAddHotel}
-          />
-        </div>
+        <HotelEmptyState
+          key="empty-state"
+          selectedPOS={selectedPOS}
+          posName={posName}
+          hasHotels={hasHotels}
+          onAddHotel={onAddHotel}
+        />
       )}
     </motion.div>
   );
