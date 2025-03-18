@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Hotel } from '@/models/HotelModel';
@@ -8,7 +7,8 @@ import {
   HotelLocationInfo, 
   HotelCardAmenities, 
   HotelCardFooter,
-  getHotelAvatar
+  getHotelAvatar,
+  getHotelImages
 } from './card';
 import { useIsMobile } from '@/hooks/use-mobile';
 import {
@@ -37,7 +37,6 @@ const HotelCard: React.FC<HotelCardProps> = ({
 }) => {
   const isMobile = useIsMobile();
 
-  // Animation variants - optimized to prevent disappearing during selection
   const cardAnimation = {
     rest: { 
       scale: 1,
@@ -74,13 +73,7 @@ const HotelCard: React.FC<HotelCardProps> = ({
     }
   };
 
-  // Demo images for the carousel
-  const hotelImages = [
-    getHotelAvatar(hotel.name),
-    `https://images.unsplash.com/photo-1496307653780-42ee777d4833?auto=format&fit=crop&w=300&h=150&q=80`,
-    `https://images.unsplash.com/photo-1459767129954-1b1c1f9b9ace?auto=format&fit=crop&w=300&h=150&q=80`,
-    `https://images.unsplash.com/photo-1487958449943-2429e8be8625?auto=format&fit=crop&w=300&h=150&q=80`,
-  ];
+  const hotelImages = getHotelImages(hotel.name, hotel.id);
 
   return (
     <motion.div 
