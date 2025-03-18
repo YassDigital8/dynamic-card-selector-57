@@ -67,8 +67,8 @@ const HotelCard: React.FC<HotelCardProps> = ({
   };
 
   // List view styles - more compact
-  const cardStyles = `flex ${isMobile ? 'flex-col' : 'flex-row'} min-h-[80px]`;
-  const contentStyles = `flex-1 space-y-1 ${isMobile ? 'p-2' : 'p-3'}`;
+  const cardStyles = `flex ${isMobile ? 'flex-col' : 'flex-row'} min-h-[70px]`;
+  const contentStyles = `flex-1 space-y-1 ${isMobile ? 'p-1' : 'p-2'}`;
 
   return (
     <motion.div 

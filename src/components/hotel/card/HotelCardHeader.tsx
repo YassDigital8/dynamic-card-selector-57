@@ -29,11 +29,11 @@ const HotelCardHeader: React.FC<HotelCardHeaderProps> = ({ hotel, useGridView })
   };
   
   return (
-    <CardHeader className="p-2 pb-1 flex-shrink-0">
+    <CardHeader className="p-1 pb-0 flex-shrink-0">
       <div className="flex flex-row items-center space-x-2">
         <motion.div 
           layoutId={`hotel-image-${hotel.id}`}
-          className="h-10 w-10 overflow-hidden rounded-lg flex-shrink-0"
+          className="h-8 w-8 overflow-hidden rounded-lg flex-shrink-0"
           variants={imageVariants}
           initial="rest"
           whileHover="hover"
@@ -52,16 +52,16 @@ const HotelCardHeader: React.FC<HotelCardHeaderProps> = ({ hotel, useGridView })
         </motion.div>
         <div className="flex-1 min-w-0">
           <motion.div layoutId={`hotel-title-${hotel.id}`}>
-            <CardTitle className="text-xs sm:text-sm text-indigo-700 dark:text-indigo-300 truncate">
+            <CardTitle className="text-xs text-indigo-700 dark:text-indigo-300 truncate">
               {hotel.name}
             </CardTitle>
           </motion.div>
-          <motion.div className="flex items-center mt-1 gap-1 flex-wrap" layoutId={`hotel-badges-${hotel.id}`}>
-            <Badge variant="outline" className="uppercase text-[9px] px-1 py-0 bg-indigo-50 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-400 font-medium">
+          <motion.div className="flex items-center mt-0.5 gap-1 flex-wrap" layoutId={`hotel-badges-${hotel.id}`}>
+            <Badge variant="outline" className="uppercase text-[8px] px-1 py-0 bg-indigo-50 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-400 font-medium">
               {hotel.posKey}
             </Badge>
             {hotel.country && (
-              <Badge variant="outline" className="text-[9px] px-1 py-0 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-medium">
+              <Badge variant="outline" className="text-[8px] px-1 py-0 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-medium">
                 {hotel.country}
               </Badge>
             )}
