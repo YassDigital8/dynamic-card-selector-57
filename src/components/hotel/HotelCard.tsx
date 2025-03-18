@@ -86,8 +86,9 @@ const HotelCard: React.FC<HotelCardProps> = ({
       whileHover="hover"
       whileTap="tap"
       variants={cardVariants}
-      initial="initial"
-      animate="animate"
+      // Removing the duplicate attributes - there were two instances of 'initial' and 'animate'
+      initial="hidden"
+      animate="show"
     >
       <Card 
         className={`h-full transition-all will-change-transform ${
