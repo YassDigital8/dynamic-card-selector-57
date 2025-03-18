@@ -4,6 +4,7 @@ import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import HotelList from '../HotelList';
 import { Hotel } from '@/models/HotelModel';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface HotelListPanelProps {
   filteredHotels: Hotel[];
@@ -24,9 +25,12 @@ const HotelListPanel: React.FC<HotelListPanelProps> = ({
   onDeleteHotel,
   panelSize = 100
 }) => {
+  const isMobile = useIsMobile();
+
   // Determine if we should show grid or list view based on panel size
-  // If panel is larger than 70%, show grid view, otherwise show list
-  const useGridView = panelSize > 70;
+  // Show list view when panel size is smaller (details panel is visible)
+  // The threshold is different for mobile devices
+  const useGridView = isMobile ? panelSize > 90 : panelSize > 70;
 
   return (
     <div className="h-full w-full p-4">

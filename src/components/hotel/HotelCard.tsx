@@ -8,6 +8,7 @@ import HotelLocationInfo from './card/HotelLocationInfo';
 import HotelCardAmenities from './card/HotelCardAmenities';
 import HotelCardFooter from './card/HotelCardFooter';
 import { containerAnimation } from './animations/cardAnimations';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface HotelCardProps {
   hotel: Hotel;
@@ -26,6 +27,8 @@ const HotelCard: React.FC<HotelCardProps> = ({
   onDelete,
   useGridView = false
 }) => {
+  const isMobile = useIsMobile();
+
   return (
     <motion.div 
       layoutId={`hotel-card-container-${hotel.id}`}
@@ -42,12 +45,16 @@ const HotelCard: React.FC<HotelCardProps> = ({
           : 'hover:border-indigo-200 dark:hover:border-indigo-800'
         }`}
       >
-        <div className={!useGridView ? 'flex flex-col md:flex-row md:items-start' : ''}>
-          <div className={!useGridView ? 'w-full md:w-1/4' : 'w-full'}>
+        <div className={!useGridView ? `flex ${isMobile ? 'flex-col' : 'flex-row'} items-start` : ''}>
+          <div className={!useGridView ? `${isMobile ? 'w-full' : 'w-1/4'}` : 'w-full'}>
             <HotelCardHeader hotel={hotel} useGridView={useGridView} />
           </div>
           
-          <CardContent className={`space-y-3 ${useGridView ? 'p-3 pt-0' : 'w-full md:w-3/4 p-3 md:p-6'}`}>
+          <CardContent className={`space-y-3 ${
+            useGridView 
+              ? 'p-3 pt-0' 
+              : `w-full ${isMobile ? 'p-2' : 'md:w-3/4 p-3 md:p-6'}`
+          }`}>
             <HotelLocationInfo hotel={hotel} />
             <HotelCardAmenities amenities={hotel.amenities} />
             <HotelCardFooter 
