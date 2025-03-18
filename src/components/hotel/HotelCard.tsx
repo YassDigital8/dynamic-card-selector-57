@@ -7,9 +7,17 @@ import {
   HotelCardHeader, 
   HotelLocationInfo, 
   HotelCardAmenities, 
-  HotelCardFooter 
+  HotelCardFooter,
+  getHotelAvatar
 } from './card';
 import { useIsMobile } from '@/hooks/use-mobile';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselPrevious,
+  CarouselNext,
+} from '@/components/ui/carousel';
 
 interface HotelCardProps {
   hotel: Hotel;
@@ -66,6 +74,14 @@ const HotelCard: React.FC<HotelCardProps> = ({
     }
   };
 
+  // Demo images for the carousel
+  const hotelImages = [
+    getHotelAvatar(hotel.name),
+    `https://images.unsplash.com/photo-1496307653780-42ee777d4833?auto=format&fit=crop&w=300&h=150&q=80`,
+    `https://images.unsplash.com/photo-1459767129954-1b1c1f9b9ace?auto=format&fit=crop&w=300&h=150&q=80`,
+    `https://images.unsplash.com/photo-1487958449943-2429e8be8625?auto=format&fit=crop&w=300&h=150&q=80`,
+  ];
+
   return (
     <motion.div 
       layoutId={`hotel-card-${hotel.id}`}
@@ -93,8 +109,36 @@ const HotelCard: React.FC<HotelCardProps> = ({
         <HotelCardHeader hotel={hotel} useGridView={false} />
         
         <CardContent className="flex-1 space-y-3 py-2 px-3">
-          <HotelLocationInfo hotel={hotel} />
-          <HotelCardAmenities amenities={hotel.amenities} />
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-3">
+              <HotelLocationInfo hotel={hotel} />
+              <HotelCardAmenities amenities={hotel.amenities} />
+            </div>
+            
+            <div className="h-[120px] rounded-lg overflow-hidden">
+              <Carousel className="w-full h-full">
+                <CarouselContent className="h-full">
+                  {hotelImages.map((image, index) => (
+                    <CarouselItem key={index} className="h-full">
+                      <div className="h-full w-full p-0">
+                        <img 
+                          src={image} 
+                          alt={`${hotel.name} image ${index + 1}`}
+                          className="w-full h-full object-cover rounded-md"
+                          onError={(e) => {
+                            e.currentTarget.src = 'https://placehold.co/300x150/indigo/white?text=Hotel';
+                          }}
+                        />
+                      </div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious className="h-7 w-7 left-1" />
+                <CarouselNext className="h-7 w-7 right-1" />
+              </Carousel>
+            </div>
+          </div>
+          
           <HotelCardFooter 
             hotel={hotel} 
             onEdit={onEdit} 
