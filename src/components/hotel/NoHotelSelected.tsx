@@ -15,7 +15,7 @@ const NoHotelSelected: React.FC<NoHotelSelectedProps> = ({ hasHotels, onAddHotel
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ type: "spring", stiffness: 350, damping: 30 }}
-      className="h-full flex flex-col items-center justify-center p-4 sm:p-8 sticky top-1/2 transform -translate-y-1/2"
+      className="absolute inset-0 flex items-center justify-center p-4 sm:p-8"
     >
       <div className="flex flex-col items-center text-center max-w-md space-y-6 bg-background/90 backdrop-blur-sm p-6 rounded-xl shadow-sm border border-indigo-100 dark:border-indigo-900">
         <div className="p-6 rounded-full bg-indigo-100 dark:bg-indigo-900/30">

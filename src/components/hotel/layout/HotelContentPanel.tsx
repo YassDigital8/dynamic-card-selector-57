@@ -70,7 +70,7 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
 
   return (
     <motion.div 
-      className="h-full w-full p-2 sm:p-4 overflow-hidden relative flex flex-col"
+      className="h-full w-full p-2 sm:p-4 relative flex flex-col"
       initial="hidden"
       animate="visible"
       variants={contentVariants}
@@ -96,32 +96,38 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
       
       {/* Direct component rendering without any exit animations or waiting */}
       {showAddForm && (
-        <HotelAddForm
-          key="add-form"
-          isLoading={isLoading}
-          onSubmit={onSubmitAdd}
-          selectedPOS={selectedPOS}
-          posName={posName}
-        />
+        <div className="flex-1 overflow-auto">
+          <HotelAddForm
+            key="add-form"
+            isLoading={isLoading}
+            onSubmit={onSubmitAdd}
+            selectedPOS={selectedPOS}
+            posName={posName}
+          />
+        </div>
       )}
 
       {isEditing && selectedHotel && (
-        <HotelEditForm
-          key="edit-form"
-          selectedHotel={selectedHotel}
-          isLoading={isLoading}
-          onSubmit={onSubmitEdit}
-          onCancel={onCancelEdit}
-        />
+        <div className="flex-1 overflow-auto">
+          <HotelEditForm
+            key="edit-form"
+            selectedHotel={selectedHotel}
+            isLoading={isLoading}
+            onSubmit={onSubmitEdit}
+            onCancel={onCancelEdit}
+          />
+        </div>
       )}
 
       {!showAddForm && !isEditing && selectedHotel && (
-        <HotelDetailsWrapper 
-          key={`hotel-details-${selectedHotel.id}`}
-          hotel={selectedHotel} 
-          onEdit={onCancelEdit} 
-          onBack={onBackToList}
-        />
+        <div className="flex-1 overflow-auto">
+          <HotelDetailsWrapper 
+            key={`hotel-details-${selectedHotel.id}`}
+            hotel={selectedHotel} 
+            onEdit={onCancelEdit} 
+            onBack={onBackToList}
+          />
+        </div>
       )}
 
       {!showContent && isExpanded && hasHotels && (
