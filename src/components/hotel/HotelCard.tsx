@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Hotel } from '@/models/HotelModel';
@@ -7,17 +8,9 @@ import {
   HotelLocationInfo, 
   HotelCardAmenities, 
   HotelCardFooter,
-  getHotelAvatar,
-  getHotelImages
+  getHotelAvatar
 } from './card';
 import { useIsMobile } from '@/hooks/use-mobile';
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselPrevious,
-  CarouselNext,
-} from '@/components/ui/carousel';
 
 interface HotelCardProps {
   hotel: Hotel;
@@ -73,8 +66,6 @@ const HotelCard: React.FC<HotelCardProps> = ({
     }
   };
 
-  const hotelImages = getHotelImages(hotel.name, hotel.id);
-
   return (
     <motion.div 
       layoutId={`hotel-card-${hotel.id}`}
@@ -102,34 +93,9 @@ const HotelCard: React.FC<HotelCardProps> = ({
         <HotelCardHeader hotel={hotel} useGridView={false} />
         
         <CardContent className="flex-1 space-y-3 py-2 px-3">
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-3">
-              <HotelLocationInfo hotel={hotel} />
-              <HotelCardAmenities amenities={hotel.amenities} />
-            </div>
-            
-            <div className="h-[120px] rounded-lg overflow-hidden">
-              <Carousel className="w-full h-full">
-                <CarouselContent className="h-full">
-                  {hotelImages.map((image, index) => (
-                    <CarouselItem key={index} className="h-full">
-                      <div className="h-full w-full p-0">
-                        <img 
-                          src={image} 
-                          alt={`${hotel.name} image ${index + 1}`}
-                          className="w-full h-full object-cover rounded-md"
-                          onError={(e) => {
-                            e.currentTarget.src = 'https://placehold.co/300x150/indigo/white?text=Hotel';
-                          }}
-                        />
-                      </div>
-                    </CarouselItem>
-                  ))}
-                </CarouselContent>
-                <CarouselPrevious className="h-7 w-7 left-1" />
-                <CarouselNext className="h-7 w-7 right-1" />
-              </Carousel>
-            </div>
+          <div className="space-y-3">
+            <HotelLocationInfo hotel={hotel} />
+            <HotelCardAmenities amenities={hotel.amenities} />
           </div>
           
           <HotelCardFooter 
