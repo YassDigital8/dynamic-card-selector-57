@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Pencil, ArrowLeft, Hotel as HotelIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { BreadcrumbNav } from '@/components/ui/breadcrumb-nav';
 
 interface HotelHeaderProps {
   name: string;
@@ -24,31 +25,17 @@ const HotelHeader: React.FC<HotelHeaderProps> = ({
 }) => {
   return (
     <div className="flex flex-col space-y-4">
+      <BreadcrumbNav 
+        items={[
+          { label: 'Dashboard', href: '/' },
+          { label: 'Hotel Network', href: '/hotel' },
+          { label: posKey.toUpperCase(), href: `/hotel?pos=${posKey.toLowerCase()}` },
+          { label: name }
+        ]}
+      />
+      
       <div className="flex items-start justify-between">
-        <div className="flex flex-col space-y-1">
-          {onBack && (
-            <motion.div
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{
-                type: "spring",
-                stiffness: 300,
-                damping: 30
-              }}
-              className="mb-2"
-            >
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={onBack}
-                className="group p-0 h-8 hover:bg-transparent"
-              >
-                <ArrowLeft className="mr-1 h-4 w-4 text-indigo-500 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-transform group-hover:-translate-x-1" />
-                <span className="text-indigo-500 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">Back</span>
-              </Button>
-            </motion.div>
-          )}
-          
+        <div className="flex flex-col space-y-1">          
           <motion.div 
             layoutId={`hotel-title-${posKey}`}
             className="flex items-center gap-2"
