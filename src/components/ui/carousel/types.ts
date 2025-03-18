@@ -1,17 +1,19 @@
 
-import { EmblaOptionsType, EmblaPluginType } from "embla-carousel"
-import { UseEmblaCarouselType } from "embla-carousel-react"
+import type { UseEmblaCarouselType } from "embla-carousel-react"
+import type { EmblaOptionsType, EmblaPluginType } from "embla-carousel"
+
+export type CarouselApi = UseEmblaCarouselType[1]
 
 export interface CarouselProps {
   opts?: EmblaOptionsType
   plugins?: EmblaPluginType[]
   orientation?: "horizontal" | "vertical"
-  setApi?: (api: UseEmblaCarouselType[1]) => void
+  setApi?: (api: CarouselApi) => void
 }
 
 export interface CarouselContextProps {
-  carouselRef: React.RefObject<HTMLDivElement> | null
-  api: UseEmblaCarouselType[1] | undefined
+  carouselRef: React.RefObject<HTMLDivElement>
+  api: CarouselApi
   opts?: EmblaOptionsType
   orientation: "horizontal" | "vertical"
   scrollPrev: () => void
@@ -21,6 +23,3 @@ export interface CarouselContextProps {
   activeIndex: number
   slideCount: number
 }
-
-// Export type for use in other components
-export type CarouselApi = UseEmblaCarouselType[1]
