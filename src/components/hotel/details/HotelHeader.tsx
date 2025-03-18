@@ -1,11 +1,10 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Pencil, ArrowLeft, Hotel as HotelIcon } from 'lucide-react';
+import { Pencil, ArrowLeft, MapPin, Flag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { BreadcrumbNav } from '@/components/ui/breadcrumb-nav';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { BreadcrumbNav } from '@/components/ui/breadcrumb-nav';
 
 interface HotelHeaderProps {
   name: string;
@@ -43,33 +42,22 @@ const HotelHeader: React.FC<HotelHeaderProps> = ({
             layoutId={`hotel-title-${posKey}`}
             className="flex items-center gap-2"
           >
-            <HotelIcon className={`${isMobile ? 'h-6 w-6' : 'h-7 w-7'} text-indigo-600 dark:text-indigo-400`} />
             <h1 className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold text-indigo-700 dark:text-indigo-300`}>{name}</h1>
           </motion.div>
           
           <motion.div 
-            className="text-base text-gray-600 dark:text-gray-400 ml-9"
+            className="text-base text-gray-600 dark:text-gray-400"
             layoutId={`hotel-country-${posKey}`}
           >
             {country}
           </motion.div>
           
-          <div className="flex flex-wrap items-center gap-2 mt-2">
-            <motion.div layoutId={`hotel-badge-${posKey}`} className="ml-1">
-              <Badge variant="outline" className="bg-indigo-50 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-400 border-indigo-200 dark:border-indigo-800 uppercase">
-                {posKey}
-              </Badge>
-            </motion.div>
-            
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.15 }}
-            >
-              <Badge variant="secondary" className="bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800">
-                {governorate}
-              </Badge>
-            </motion.div>
+          <div className="flex items-center mt-2 text-sm">
+            <Flag className="mr-1.5 h-4 w-4 text-indigo-500" />
+            <span className="text-indigo-600 dark:text-indigo-400">{posKey}</span>
+            <span className="mx-2 text-gray-400">•</span>
+            <MapPin className="mr-1.5 h-4 w-4 text-pink-500" />
+            <span className="text-gray-600 dark:text-gray-400">{governorate}</span>
           </div>
         </div>
         

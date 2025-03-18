@@ -27,7 +27,7 @@ const HotelCardFooter: React.FC<HotelCardFooterProps> = ({ hotel, onEdit, onDele
             e.stopPropagation();
             onEdit();
           }}
-          className="text-indigo-600 hover:text-indigo-800 hover:bg-indigo-100 dark:text-indigo-400 dark:hover:text-indigo-300 dark:hover:bg-indigo-900 transition-colors duration-200"
+          className="h-8 w-8 text-indigo-600 hover:text-indigo-800 hover:bg-indigo-100 dark:text-indigo-400 dark:hover:text-indigo-300 dark:hover:bg-indigo-900 transition-colors duration-200"
         >
           <Pencil className="h-4 w-4" />
         </Button>
@@ -38,7 +38,7 @@ const HotelCardFooter: React.FC<HotelCardFooterProps> = ({ hotel, onEdit, onDele
             e.stopPropagation();
             onDelete();
           }}
-          className="text-destructive hover:bg-destructive/10 transition-colors duration-200"
+          className="h-8 w-8 text-destructive hover:bg-destructive/10 transition-colors duration-200"
         >
           <Trash2 className="h-4 w-4" />
         </Button>

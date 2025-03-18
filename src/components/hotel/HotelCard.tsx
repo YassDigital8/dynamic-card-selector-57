@@ -66,9 +66,9 @@ const HotelCard: React.FC<HotelCardProps> = ({
     }
   };
 
-  // List view styles - with consistent padding
-  const cardStyles = `flex ${isMobile ? 'flex-col' : 'flex-row'} min-h-[80px]`;
-  const contentStyles = `flex-1 space-y-2 py-3 px-4`;
+  // Consistent card styles
+  const cardStyles = `flex ${isMobile ? 'flex-col' : 'flex-row'} min-h-[160px]`;
+  const contentStyles = `flex-1 space-y-2.5 py-3 px-4`;
 
   return (
     <motion.div 
@@ -84,7 +84,7 @@ const HotelCard: React.FC<HotelCardProps> = ({
         type: "spring",
         stiffness: 300,
         damping: 25,
-        layout: { duration: 0.2 } // Smoother layout transitions
+        layout: { duration: 0.2 }
       }}
     >
       <Card 
