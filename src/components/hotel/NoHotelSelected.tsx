@@ -1,15 +1,14 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { MapPin, Hotel, PointerIcon, Plus } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { MapPin, Hotel, PointerIcon } from 'lucide-react';
 
 interface NoHotelSelectedProps {
   hasHotels: boolean;
   onAddHotel: () => void;
 }
 
-const NoHotelSelected: React.FC<NoHotelSelectedProps> = ({ hasHotels, onAddHotel }) => {
+const NoHotelSelected: React.FC<NoHotelSelectedProps> = ({ hasHotels }) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -33,23 +32,9 @@ const NoHotelSelected: React.FC<NoHotelSelectedProps> = ({ hasHotels, onAddHotel
           <p className="text-muted-foreground">
             {hasHotels 
               ? 'Tap on a hotel from the list to view its details and information.' 
-              : 'Get started by adding your first hotel to the system.'}
+              : 'Get started by adding your first hotel using the button below.'}
           </p>
         </div>
-        
-        <motion.div
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.98 }}
-        >
-          <Button 
-            onClick={onAddHotel}
-            size="lg"
-            className="bg-indigo-600 hover:bg-indigo-700 text-white dark:bg-indigo-700 dark:hover:bg-indigo-600"
-          >
-            <Plus className="mr-2 h-4 w-4" />
-            Add New Hotel
-          </Button>
-        </motion.div>
         
         {hasHotels && (
           <div className="flex items-center text-sm text-muted-foreground">

@@ -8,6 +8,7 @@ import HotelEditForm from '../HotelEditForm';
 import HotelDetailsWrapper from '../HotelDetailsWrapper';
 import HotelEmptyState from '../HotelEmptyState';
 import NoHotelSelected from '../NoHotelSelected';
+import { FixedHotelSelector } from '../card';
 import { Hotel, HotelFormData } from '@/models/HotelModel';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -70,7 +71,7 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
 
   return (
     <motion.div 
-      className="h-full w-full p-2 sm:p-4 overflow-auto"
+      className="h-full w-full p-2 sm:p-4 overflow-auto relative"
       initial="hidden"
       animate="visible"
       variants={contentVariants}
@@ -139,6 +140,14 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
           posName={posName}
           hasHotels={hasHotels}
           onAddHotel={onAddHotel}
+        />
+      )}
+
+      {/* Fixed position selector that is always visible unless we're in add/edit mode */}
+      {!showAddForm && !isEditing && (
+        <FixedHotelSelector 
+          hasHotels={hasHotels} 
+          onAddHotel={onAddHotel} 
         />
       )}
     </motion.div>
