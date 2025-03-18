@@ -1,0 +1,117 @@
+
+/* Form field readability on small screens */
+@media (max-width: 640px) {
+  input, select, textarea {
+    @apply text-xs;
+  }
+  
+  button {
+    @apply py-1 px-2 text-xs;
+  }
+  
+  /* Prevent horizontal overflow */
+  .overflow-x-auto {
+    max-width: 100vw;
+  }
+}
+
+/* Mobile optimizations */
+@media (max-width: 640px) {
+  .mobile-p-reduced {
+    @apply p-1;
+  }
+  
+  .mobile-text-reduced {
+    @apply text-[10px];
+  }
+  
+  .mobile-space-reduced {
+    @apply space-y-1;
+  }
+  
+  /* Prevent horizontal overflow */
+  .container, .max-w-6xl, .max-w-full {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding-left: 0.25rem !important;
+    padding-right: 0.25rem !important;
+    overflow-x: hidden !important;
+  }
+  
+  /* Reduce the size of select triggers */
+  .select-trigger {
+    @apply h-6 text-[10px] py-0 px-1;
+  }
+  
+  /* Make cards more compact */
+  .card-content {
+    @apply p-1;
+  }
+  
+  /* Reduce gap in flex layouts */
+  .flex.gap-2, .flex.gap-3, .flex.gap-4 {
+    @apply gap-0.5;
+  }
+  
+  /* Better handle long URLs and paths */
+  .font-mono {
+    font-size: 8px !important;
+    word-break: break-all;
+  }
+  
+  /* Fix resizable panels from causing horizontal scroll */
+  .ResizablePanel {
+    min-width: 0 !important;
+  }
+  
+  /* Adjust sidebar for mobile */
+  .SidebarContent {
+    padding: 0.25rem;
+  }
+  
+  /* More compact buttons on mobile */
+  button {
+    @apply py-0.5 px-1 text-[10px];
+  }
+  
+  /* More compact card headers and content */
+  .card > .p-6 {
+    @apply p-2;
+  }
+  
+  /* Smaller inputs on mobile */
+  input {
+    @apply h-6 py-0 px-1 text-[10px];
+  }
+  
+  /* Smaller text on mobile */
+  .text-sm {
+    @apply text-[10px];
+  }
+  
+  /* Smaller select dropdown */
+  [data-radix-select-viewport] {
+    @apply p-0.5;
+  }
+}
+
+/* Extra compact mode for very small screens */
+@media (max-width: 375px) {
+  .container, .max-w-6xl, .max-w-full {
+    padding-left: 0.125rem !important;
+    padding-right: 0.125rem !important;
+  }
+  
+  .card-content {
+    @apply p-0.5;
+  }
+  
+  .mobile-text-reduced {
+    @apply text-[8px];
+  }
+  
+  /* Stack horizontal layouts */
+  .flex.flex-row {
+    @apply flex-col;
+  }
+}

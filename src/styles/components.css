@@ -1,0 +1,24 @@
+
+/* Custom styles for dropdown text in dark mode */
+.dark .text-black {
+  @apply text-white;
+}
+
+.dark .text-black.bg-white {
+  @apply bg-gray-800 text-white;
+}
+
+/* Custom transition for theme toggle */
+.theme-transition {
+  @apply transition-colors duration-300;
+}
+
+/* Logo specific animations */
+.logo-hover {
+  @apply transition-transform duration-300 hover:scale-110;
+}
+
+.logo-text {
+  @apply transition-colors duration-300;
+  color: hsl(var(--logo-text));
+}
