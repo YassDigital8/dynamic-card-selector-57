@@ -26,7 +26,7 @@ export const cardVariants = {
       damping: 25 
     }
   },
-  hidden: { opacity: 0, y: 10 },
+  hidden: { opacity: 0, y: 5 },
   show: { 
     opacity: 1, 
     y: 0,
@@ -34,11 +34,37 @@ export const cardVariants = {
   }
 };
 
-export const containerAnimation: AnimationProps = {
+// Separate animation props for use with motion components
+export const containerAnimation = {
   variants: cardVariants,
   whileHover: "hover",
   whileTap: "tap",
   initial: "hidden",
   animate: "show",
   layout: true
+};
+
+// Staggered children animation variants
+export const staggerContainerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.035,
+      delayChildren: 0.05
+    }
+  }
+};
+
+export const staggerItemVariants = {
+  hidden: { opacity: 0, y: 5 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: "spring",
+      stiffness: 400,
+      damping: 20
+    }
+  }
 };

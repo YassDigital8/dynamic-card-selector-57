@@ -5,20 +5,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { motion } from 'framer-motion';
 import { HotelAmenities } from '@/models/HotelModel';
 import AmenityDisplay from './AmenityDisplay';
+import { springConfig } from '../animations/cardAnimations';
 
 interface AmenitiesCardProps {
   amenities: HotelAmenities;
 }
 
 const AmenitiesCard: React.FC<AmenitiesCardProps> = ({ amenities }) => {
-  // Spring configuration for natural animations
-  const springConfig = {
-    type: "spring" as const,
-    stiffness: 280,
-    damping: 24,
-    mass: 0.9
-  };
-  
   return (
     <motion.div
       custom={1}

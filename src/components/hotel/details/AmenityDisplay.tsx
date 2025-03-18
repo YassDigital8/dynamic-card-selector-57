@@ -3,6 +3,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Check, X } from 'lucide-react';
 import { HotelAmenities } from '@/models/HotelModel';
+import { staggerContainerVariants, staggerItemVariants } from '../animations/cardAnimations';
 
 interface AmenityDisplayProps {
   amenities: HotelAmenities;
@@ -24,37 +25,12 @@ const amenityDisplayNames: Record<keyof HotelAmenities, string> = {
 };
 
 const AmenityDisplay: React.FC<AmenityDisplayProps> = ({ amenities }) => {
-  // Extract amenity keys and values
+  // Extract amenity entries
   const amenityEntries = Object.entries(amenities) as [keyof HotelAmenities, boolean][];
-
-  // Configure staggered animation
-  const container = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.035,
-        delayChildren: 0.05
-      }
-    }
-  };
-  
-  const item = {
-    hidden: { opacity: 0, y: 5 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        type: "spring",
-        stiffness: 400,
-        damping: 20
-      }
-    }
-  };
 
   return (
     <motion.div 
-      variants={container}
+      variants={staggerContainerVariants}
       initial="hidden"
       animate="visible"
       className="grid grid-cols-2 md:grid-cols-3 gap-3"
@@ -62,7 +38,7 @@ const AmenityDisplay: React.FC<AmenityDisplayProps> = ({ amenities }) => {
       {amenityEntries.map(([key, value]) => (
         <motion.div 
           key={key}
-          variants={item}
+          variants={staggerItemVariants}
           whileHover={{ 
             scale: 1.03,
             transition: {
