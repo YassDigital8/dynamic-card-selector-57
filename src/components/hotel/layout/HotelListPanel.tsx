@@ -63,7 +63,7 @@ const HotelListPanel: React.FC<HotelListPanelProps> = ({
       animate={isExpanded ? "expanded" : "contracted"}
       variants={panelVariants}
     >
-      <Card className="h-full overflow-hidden border-indigo-100 dark:border-indigo-900 shadow-md backdrop-blur-sm bg-white/90 dark:bg-slate-900/90 rounded-xl transition-all duration-300 ease-in-out">
+      <Card className="h-full overflow-hidden border-indigo-100 dark:border-indigo-900 shadow-md bg-white dark:bg-slate-900 rounded-xl transition-all duration-300 ease-in-out">
         <ScrollArea className="h-[calc(100vh-230px)] overflow-y-auto">
           <HotelList
             hotels={filteredHotels}

@@ -60,10 +60,15 @@ const HotelCardHeader: React.FC<HotelCardHeaderProps> = ({ hotel, useGridView })
               {hotel.name}
             </CardTitle>
           </motion.div>
-          <motion.div layoutId={`hotel-badge-${hotel.id}`}>
-            <Badge variant="outline" className={`uppercase ${isMobile ? 'text-[10px]' : 'text-xs'} bg-indigo-50 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-400 font-medium mt-1`}>
+          <motion.div className="flex items-center mt-1 gap-2" layoutId={`hotel-badges-${hotel.id}`}>
+            <Badge variant="outline" className={`uppercase ${isMobile ? 'text-[10px]' : 'text-xs'} bg-indigo-50 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-400 font-medium`}>
               {hotel.posKey}
             </Badge>
+            {hotel.country && (
+              <Badge variant="outline" className={`${isMobile ? 'text-[10px]' : 'text-xs'} bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-medium`}>
+                {hotel.country}
+              </Badge>
+            )}
           </motion.div>
         </div>
       </div>
