@@ -66,9 +66,9 @@ const HotelCard: React.FC<HotelCardProps> = ({
     }
   };
 
-  // List view styles - more compact
+  // List view styles - with consistent padding
   const cardStyles = `flex ${isMobile ? 'flex-col' : 'flex-row'} min-h-[70px]`;
-  const contentStyles = `flex-1 space-y-1 ${isMobile ? 'p-1' : 'p-2'}`;
+  const contentStyles = `flex-1 space-y-1 py-2 px-3`;
 
   return (
     <motion.div 

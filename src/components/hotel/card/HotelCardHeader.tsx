@@ -29,7 +29,7 @@ const HotelCardHeader: React.FC<HotelCardHeaderProps> = ({ hotel, useGridView })
   };
   
   return (
-    <CardHeader className="p-1 pb-0 flex-shrink-0">
+    <CardHeader className="p-3 pb-1 flex-shrink-0">
       <div className="flex flex-row items-center space-x-2">
         <motion.div 
           layoutId={`hotel-image-${hotel.id}`}

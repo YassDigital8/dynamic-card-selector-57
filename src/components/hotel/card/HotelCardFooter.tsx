@@ -13,7 +13,7 @@ interface HotelCardFooterProps {
 const HotelCardFooter: React.FC<HotelCardFooterProps> = ({ hotel, onEdit, onDelete }) => {
   return (
     <div className="pt-2 flex justify-between items-center border-t border-indigo-100 dark:border-indigo-900/30">
-      <div className="flex items-center text-sm">
+      <div className="flex items-center text-sm ml-1">
         <Users className="mr-1 h-3.5 w-3.5 text-indigo-500" />
         <span className="text-indigo-600 dark:text-indigo-400 font-medium">
           {hotel.roomTypes.length} room type{hotel.roomTypes.length !== 1 ? 's' : ''}
