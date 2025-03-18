@@ -17,15 +17,14 @@ const AmenitiesCard: React.FC<AmenitiesCardProps> = ({ amenities }) => {
       initial="hidden"
       animate="visible"
       variants={{
-        hidden: { opacity: 0, y: 8 },
+        hidden: { opacity: 0, y: 15 },
         visible: (i: number) => ({
           opacity: 1,
           y: 0,
           transition: {
-            delay: i * 0.02,
-            type: "spring",
-            stiffness: 500,
-            damping: 40
+            delay: i * 0.1,
+            duration: 0.25,
+            ease: [0.25, 0.1, 0.25, 1.0]
           }
         })
       }}

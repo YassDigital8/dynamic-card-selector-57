@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Hotel } from '@/models/HotelModel';
@@ -43,29 +42,25 @@ const HotelList: React.FC<HotelListProps> = ({
     }
   };
 
-  // Filter hotels based on search term
   const filteredHotels = hotels.filter(hotel => 
     hotel.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     hotel.country.toLowerCase().includes(searchTerm.toLowerCase()) ||
     hotel.governorate.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Animation variants for list container
   const container = {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.02,
-        delayChildren: 0.01,
-        type: "spring",
-        stiffness: 300,
-        damping: 30
+        staggerChildren: 0.05,
+        delayChildren: 0.02,
+        ease: [0.22, 1, 0.36, 1],
+        duration: 0.35
       }
     }
   };
 
-  // Display the current view mode
   const ViewModeIcon = useGridView ? LayoutGrid : LayoutList;
 
   return (
