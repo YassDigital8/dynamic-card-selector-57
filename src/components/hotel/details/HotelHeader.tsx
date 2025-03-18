@@ -43,24 +43,21 @@ const HotelHeader: React.FC<HotelHeaderProps> = ({
             layoutId={`hotel-title-${posKey}`}
             className="flex items-center gap-2"
           >
-            <HotelIcon className={`${isMobile ? 'h-5 w-5' : 'h-6 w-6'} text-indigo-600 dark:text-indigo-400`} />
+            <HotelIcon className={`${isMobile ? 'h-6 w-6' : 'h-7 w-7'} text-indigo-600 dark:text-indigo-400`} />
             <h1 className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold text-indigo-700 dark:text-indigo-300`}>{name}</h1>
           </motion.div>
           
-          <div className="flex flex-wrap items-center gap-2">
-            <motion.div layoutId={`hotel-badge-${posKey}`}>
+          <motion.div 
+            className="text-base text-gray-600 dark:text-gray-400 ml-9"
+            layoutId={`hotel-country-${posKey}`}
+          >
+            {country}
+          </motion.div>
+          
+          <div className="flex flex-wrap items-center gap-2 mt-2">
+            <motion.div layoutId={`hotel-badge-${posKey}`} className="ml-1">
               <Badge variant="outline" className="bg-indigo-50 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-400 border-indigo-200 dark:border-indigo-800 uppercase">
                 {posKey}
-              </Badge>
-            </motion.div>
-            
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.1 }}
-            >
-              <Badge variant="secondary" className="bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800">
-                {country}
               </Badge>
             </motion.div>
             

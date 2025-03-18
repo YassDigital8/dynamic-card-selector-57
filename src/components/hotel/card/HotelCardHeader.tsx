@@ -33,7 +33,7 @@ const HotelCardHeader: React.FC<HotelCardHeaderProps> = ({ hotel, useGridView })
       <div className="flex flex-row items-center space-x-3">
         <motion.div 
           layoutId={`hotel-image-${hotel.id}`}
-          className="h-10 w-10 overflow-hidden rounded-lg flex-shrink-0"
+          className="h-14 w-14 overflow-hidden rounded-lg flex-shrink-0"
           variants={imageVariants}
           initial="rest"
           whileHover="hover"
@@ -56,15 +56,15 @@ const HotelCardHeader: React.FC<HotelCardHeaderProps> = ({ hotel, useGridView })
               {hotel.name}
             </CardTitle>
           </motion.div>
-          <motion.div className="flex items-center mt-1 gap-1.5 flex-wrap" layoutId={`hotel-badges-${hotel.id}`}>
+          
+          <motion.div className="mt-1 text-sm text-gray-600 dark:text-gray-400" layoutId={`hotel-country-${hotel.id}`}>
+            {hotel.country}
+          </motion.div>
+          
+          <motion.div className="flex items-center mt-1.5 gap-1.5 flex-wrap" layoutId={`hotel-badges-${hotel.id}`}>
             <Badge variant="outline" className="uppercase text-xs px-2 py-0.5 bg-indigo-50 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-400 font-medium">
               {hotel.posKey}
             </Badge>
-            {hotel.country && (
-              <Badge variant="outline" className="text-xs px-2 py-0.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-medium">
-                {hotel.country}
-              </Badge>
-            )}
           </motion.div>
         </div>
       </div>
