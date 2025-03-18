@@ -26,12 +26,6 @@ const HotelListPanel: React.FC<HotelListPanelProps> = ({
   onDeleteHotel,
   panelSize = 100
 }) => {
-  const isMobile = useIsMobile();
-
-  // Determine if we should show grid or list view based on panel size
-  // Show list view when panel size is smaller (details panel is visible)
-  const useGridView = isMobile ? panelSize > 80 : panelSize > 60;
-
   return (
     <div className="h-full w-full p-2 sm:p-4">
       <Card className="h-full overflow-hidden border-indigo-100 dark:border-indigo-900 shadow-md bg-white dark:bg-slate-900 rounded-xl transition-all duration-300 ease-in-out">
@@ -42,7 +36,6 @@ const HotelListPanel: React.FC<HotelListPanelProps> = ({
             onSelectHotel={onSelectHotel}
             onEditHotel={onEditHotel}
             onDeleteHotel={onDeleteHotel}
-            useGridView={useGridView}
           />
         </ScrollArea>
       </Card>

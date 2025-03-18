@@ -1,10 +1,7 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Hotel } from '@/models/HotelModel';
-import { LayoutGrid, LayoutList } from 'lucide-react';
-import { Button } from "@/components/ui/button";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import DeleteHotelDialog from './DeleteHotelDialog';
 import HotelCard from './HotelCard';
 import HotelListEmptyState from './HotelListEmptyState';
@@ -16,7 +13,6 @@ interface HotelListProps {
   onSelectHotel: (hotel: Hotel) => void;
   onEditHotel: (hotel: Hotel) => void;
   onDeleteHotel: (id: string) => void;
-  useGridView?: boolean;
 }
 
 const HotelList: React.FC<HotelListProps> = ({
@@ -25,17 +21,10 @@ const HotelList: React.FC<HotelListProps> = ({
   onSelectHotel,
   onEditHotel,
   onDeleteHotel,
-  useGridView = false
 }) => {
   const [hotelToDelete, setHotelToDelete] = useState<Hotel | null>(null);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>(useGridView ? 'grid' : 'list');
-
-  // Update viewMode when useGridView prop changes
-  useEffect(() => {
-    setViewMode(useGridView ? 'grid' : 'list');
-  }, [useGridView]);
 
   const handleDeleteClick = (hotel: Hotel) => {
     setHotelToDelete(hotel);
@@ -48,10 +37,6 @@ const HotelList: React.FC<HotelListProps> = ({
       setConfirmDialogOpen(false);
       setHotelToDelete(null);
     }
-  };
-
-  const toggleViewMode = () => {
-    setViewMode(prev => prev === 'grid' ? 'list' : 'grid');
   };
 
   const filteredHotels = hotels.filter(hotel => 
@@ -80,10 +65,6 @@ const HotelList: React.FC<HotelListProps> = ({
     }
   };
 
-  // Determine if we should actually use grid view based on our internal state and prop
-  // Allow manual toggling only when view is free to change (not forced by layout)
-  const activeGridView = useGridView ? true : viewMode === 'grid';
-
   return (
     <div className="space-y-6 w-full p-4">
       <motion.div 
@@ -95,24 +76,6 @@ const HotelList: React.FC<HotelListProps> = ({
         <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-blue-600 dark:from-indigo-400 dark:to-blue-400">
           Hotels ({filteredHotels.length})
         </h2>
-        <motion.div 
-          whileHover={{ scale: 1.05 }}
-          transition={{ type: "spring", stiffness: 400, damping: 10 }}
-          className="flex items-center gap-2"
-        >
-          {!useGridView && (
-            <ToggleGroup type="single" value={viewMode} onValueChange={(value) => value && setViewMode(value as 'grid' | 'list')}>
-              <ToggleGroupItem value="grid" aria-label="Grid view" className="flex items-center gap-1.5 text-indigo-600 dark:text-indigo-400">
-                <LayoutGrid size={16} />
-                <span className="text-xs hidden sm:inline">Grid</span>
-              </ToggleGroupItem>
-              <ToggleGroupItem value="list" aria-label="List view" className="flex items-center gap-1.5 text-indigo-600 dark:text-indigo-400">
-                <LayoutList size={16} />
-                <span className="text-xs hidden sm:inline">List</span>
-              </ToggleGroupItem>
-            </ToggleGroup>
-          )}
-        </motion.div>
       </motion.div>
       
       {hotels.length > 0 && (
@@ -146,7 +109,7 @@ const HotelList: React.FC<HotelListProps> = ({
         ) : (
           <motion.div 
             key="results"
-            className={`grid ${activeGridView ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3' : 'grid-cols-1'} gap-4`}
+            className="grid grid-cols-1 gap-4"
             variants={container}
             initial="hidden"
             animate="show"
@@ -161,7 +124,7 @@ const HotelList: React.FC<HotelListProps> = ({
                 onSelect={() => onSelectHotel(hotel)}
                 onEdit={() => onEditHotel(hotel)}
                 onDelete={() => handleDeleteClick(hotel)}
-                useGridView={activeGridView}
+                useGridView={false}
               />
             ))}
           </motion.div>
