@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Pencil, Trash2, MapPin, Flag, Users, Hotel as HotelIcon } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -86,7 +85,6 @@ const HotelCard: React.FC<HotelCardProps> = ({
       whileHover="hover"
       whileTap="tap"
       variants={cardVariants}
-      // Removing the duplicate attributes - there were two instances of 'initial' and 'animate'
       initial="hidden"
       animate="show"
     >
