@@ -90,7 +90,7 @@ const Carousel = React.forwardRef<
     return (
       <CarouselContext.Provider
         value={{
-          carouselRef,
+          carouselRef: carouselRef as React.RefObject<HTMLDivElement>,
           api: api,
           opts,
           orientation:
