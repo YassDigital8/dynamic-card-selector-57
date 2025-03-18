@@ -31,6 +31,7 @@ const HotelListPanel: React.FC<HotelListPanelProps> = ({
     mass: 1
   };
 
+  // Always show all the hotels (fullspan or sidebar) based on the isExpanded prop
   return (
     <motion.div 
       className={`lg:col-span-${isExpanded ? '3' : '12'}`}

@@ -25,7 +25,8 @@ export const useHotelNetwork = (selectedPOS: string = '') => {
         setSelectedHotel(null);
       }
     } else {
-      setFilteredHotels(hotels);
+      // Show all hotels when no POS is selected or 'all' is selected
+      setFilteredHotels([...hotels]);
     }
   }, [selectedPOS, hotels, selectedHotel]);
 
