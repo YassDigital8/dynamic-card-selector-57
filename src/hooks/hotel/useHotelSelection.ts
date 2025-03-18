@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Hotel, HotelFormData } from '@/models/HotelModel';
 
@@ -12,16 +13,8 @@ export const useHotelSelection = (
   const [isSelectingNewHotel, setIsSelectingNewHotel] = useState(false);
 
   const handleSelectHotel = (hotel: Hotel) => {
+    // Direct hotel selection without any clearing or transition flags
     setSelectedHotel(hotel);
-    
-    if (selectedHotel && selectedHotel.id !== hotel.id) {
-      setIsSelectingNewHotel(true);
-      
-      setTimeout(() => {
-        setIsSelectingNewHotel(false);
-      }, 10);
-    }
-    
     setIsEditing(false);
     setShowAddForm(false);
     setIsExpanded(true);

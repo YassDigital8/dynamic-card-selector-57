@@ -94,55 +94,53 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
         </motion.div>
       )}
       
-      {/* Use AnimatePresence with wait mode to prevent removal animation when switching */}
-      <AnimatePresence mode="wait">
-        {showAddForm && (
-          <HotelAddForm
-            key="add-form"
-            isLoading={isLoading}
-            onSubmit={onSubmitAdd}
-            selectedPOS={selectedPOS}
-            posName={posName}
-          />
-        )}
+      {/* Direct component rendering without any exit animations or waiting */}
+      {showAddForm && (
+        <HotelAddForm
+          key="add-form"
+          isLoading={isLoading}
+          onSubmit={onSubmitAdd}
+          selectedPOS={selectedPOS}
+          posName={posName}
+        />
+      )}
 
-        {isEditing && selectedHotel && (
-          <HotelEditForm
-            key="edit-form"
-            selectedHotel={selectedHotel}
-            isLoading={isLoading}
-            onSubmit={onSubmitEdit}
-            onCancel={onCancelEdit}
-          />
-        )}
+      {isEditing && selectedHotel && (
+        <HotelEditForm
+          key="edit-form"
+          selectedHotel={selectedHotel}
+          isLoading={isLoading}
+          onSubmit={onSubmitEdit}
+          onCancel={onCancelEdit}
+        />
+      )}
 
-        {!showAddForm && !isEditing && selectedHotel && (
-          <HotelDetailsWrapper 
-            key={`hotel-details-${selectedHotel.id}`}
-            hotel={selectedHotel} 
-            onEdit={onCancelEdit} 
-            onBack={onBackToList}
-          />
-        )}
+      {!showAddForm && !isEditing && selectedHotel && (
+        <HotelDetailsWrapper 
+          key={`hotel-details-${selectedHotel.id}`}
+          hotel={selectedHotel} 
+          onEdit={onCancelEdit} 
+          onBack={onBackToList}
+        />
+      )}
 
-        {!showContent && isExpanded && hasHotels && (
-          <NoHotelSelected
-            key="no-hotel-selected"
-            hasHotels={hasHotels}
-            onAddHotel={onAddHotel}
-          />
-        )}
+      {!showContent && isExpanded && hasHotels && (
+        <NoHotelSelected
+          key="no-hotel-selected"
+          hasHotels={hasHotels}
+          onAddHotel={onAddHotel}
+        />
+      )}
 
-        {!showContent && isExpanded && !hasHotels && (
-          <HotelEmptyState
-            key="empty-state"
-            selectedPOS={selectedPOS}
-            posName={posName}
-            hasHotels={hasHotels}
-            onAddHotel={onAddHotel}
-          />
-        )}
-      </AnimatePresence>
+      {!showContent && isExpanded && !hasHotels && (
+        <HotelEmptyState
+          key="empty-state"
+          selectedPOS={selectedPOS}
+          posName={posName}
+          hasHotels={hasHotels}
+          onAddHotel={onAddHotel}
+        />
+      )}
     </motion.div>
   );
 };

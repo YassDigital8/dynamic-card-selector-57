@@ -27,12 +27,12 @@ const HotelDetailsWrapper: React.FC<HotelDetailsWrapperProps> = memo(({
   const isMobile = useIsMobile();
   const { width } = useScreenSize();
   
-  // Enhanced spring animation configurations - gentler for smoother transitions
+  // Smooth animation configuration with no jarring transitions
   const springConfig = {
     type: "spring",
-    stiffness: 300, // Reduced stiffness
-    damping: 30,
-    mass: 0.8 // Increased mass for smoother motion
+    stiffness: 280,
+    damping: 25,
+    mass: 0.9
   };
 
   // Staggered content animation
@@ -56,12 +56,12 @@ const HotelDetailsWrapper: React.FC<HotelDetailsWrapperProps> = memo(({
     }
   };
 
-  // Card animation - ultra-soft for seamless transitions between hotels
+  // Card animation - simpler with no harsh transitions
   const cardVariants = {
     hidden: { 
-      opacity: 0.9, // Start with higher opacity to reduce flicker
-      scale: 0.99, // Very subtle scale change
-      y: 2 // Minimal vertical movement
+      opacity: 0.95,
+      scale: 0.995,
+      y: 2
     },
     visible: { 
       opacity: 1, 
@@ -69,7 +69,7 @@ const HotelDetailsWrapper: React.FC<HotelDetailsWrapperProps> = memo(({
       y: 0,
       transition: {
         ...springConfig,
-        duration: 0.2 // Shorter, more direct transition
+        duration: 0.25
       }
     }
   };
@@ -81,9 +81,6 @@ const HotelDetailsWrapper: React.FC<HotelDetailsWrapperProps> = memo(({
       animate="visible"
       variants={cardVariants}
       className="w-full h-full"
-      // Explicitly prevent exit animations to avoid any removal effect
-      exit={{ opacity: 1, scale: 1, y: 0 }}
-      transition={{ duration: 0 }}
     >
       <Card className="p-4 sm:p-6 border-indigo-100 dark:border-indigo-900 shadow-lg rounded-xl overflow-hidden bg-white dark:bg-slate-900">
         <Carousel className="w-full relative">
