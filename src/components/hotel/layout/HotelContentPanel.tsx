@@ -70,7 +70,7 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
 
   return (
     <motion.div 
-      className="h-full w-full p-2 sm:p-4 overflow-auto"
+      className="h-full w-full p-2 sm:p-4 overflow-y-auto relative"
       initial="hidden"
       animate="visible"
       variants={contentVariants}
@@ -126,8 +126,7 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
 
       {/* Only render NoHotelSelected when no content is shown, and it's not in a collapsed state */}
       {!showContent && isExpanded && hasHotels && (
-        <div className="relative z-0">
-          {/* The NoHotelSelected component will position itself with position: fixed */}
+        <div className="relative min-h-[calc(100vh-200px)]">
           <NoHotelSelected
             key="no-hotel-selected"
             hasHotels={hasHotels}
