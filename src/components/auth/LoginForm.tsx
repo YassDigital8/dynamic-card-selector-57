@@ -105,28 +105,30 @@ const LoginForm = () => {
       )}
       
       <div className="space-y-2">
-        <Label htmlFor="email">Email</Label>
+        <Label htmlFor="email" required>Email</Label>
         <Input
           id="email"
           type="email"
           placeholder="your.email@example.com"
+          error={!!errors.email}
           {...register('email')}
         />
         {errors.email && (
-          <p className="text-sm text-red-500">{errors.email.message}</p>
+          <p className="text-sm text-destructive mt-1">{errors.email.message}</p>
         )}
       </div>
       
       <div className="space-y-2">
-        <Label htmlFor="password">Password</Label>
+        <Label htmlFor="password" required>Password</Label>
         <Input
           id="password"
           type="password"
           placeholder="••••••••"
+          error={!!errors.password}
           {...register('password')}
         />
         {errors.password && (
-          <p className="text-sm text-red-500">{errors.password.message}</p>
+          <p className="text-sm text-destructive mt-1">{errors.password.message}</p>
         )}
       </div>
       

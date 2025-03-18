@@ -20,6 +20,10 @@ interface PageDetailsViewProps {
   selectedSubSlug?: string;
   selectedPathId?: number | null;
   selectedSubPathId?: number | null;
+  validationErrors?: {
+    title?: string;
+    content?: string;
+  };
 }
 
 const PageDetailsView = ({
@@ -32,7 +36,8 @@ const PageDetailsView = ({
   selectedPOS,
   selectedLanguage,
   selectedSlug,
-  selectedSubSlug
+  selectedSubSlug,
+  validationErrors = {}
 }: PageDetailsViewProps) => {
   const isMobile = useIsMobile();
   
@@ -60,11 +65,17 @@ const PageDetailsView = ({
       </div>
       
       {isEditing ? (
-        <Input 
-          value={editedTitle}
-          onChange={(e) => setEditedTitle(e.target.value)}
-          className="font-medium text-xs md:text-base"
-        />
+        <div className="space-y-2">
+          <Input 
+            value={editedTitle}
+            onChange={(e) => setEditedTitle(e.target.value)}
+            className="font-medium text-xs md:text-base"
+            error={!!validationErrors.title}
+          />
+          {validationErrors.title && (
+            <p className="text-sm text-destructive">{validationErrors.title}</p>
+          )}
+        </div>
       ) : (
         <div className="text-xs md:text-lg font-medium text-gray-800 dark:text-gray-200 break-words">{pageData.title}</div>
       )}
@@ -72,12 +83,18 @@ const PageDetailsView = ({
       <div>
         <h3 className="text-[10px] md:text-sm font-medium text-gray-500 mb-1 md:mb-2">Content</h3>
         {isEditing ? (
-          <Textarea 
-            value={editedContent}
-            onChange={(e) => setEditedContent(e.target.value)}
-            rows={isMobile ? 3 : 6}
-            className="resize-y text-[10px] md:text-sm"
-          />
+          <div className="space-y-2">
+            <Textarea 
+              value={editedContent}
+              onChange={(e) => setEditedContent(e.target.value)}
+              rows={isMobile ? 3 : 6}
+              className="resize-y text-[10px] md:text-sm"
+              error={!!validationErrors.content}
+            />
+            {validationErrors.content && (
+              <p className="text-sm text-destructive">{validationErrors.content}</p>
+            )}
+          </div>
         ) : (
           <div className="p-1.5 md:p-4 bg-gray-50 dark:bg-gray-700 rounded-md border border-gray-100 dark:border-gray-600 text-gray-700 dark:text-gray-300 whitespace-pre-wrap text-[9px] md:text-sm overflow-x-auto">
             {pageData.content}

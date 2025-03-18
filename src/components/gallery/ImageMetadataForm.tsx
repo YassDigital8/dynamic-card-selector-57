@@ -18,12 +18,14 @@ interface ImageMetadataFormProps {
   metadata: ImageMetadata;
   onMetadataChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   isImage: boolean;
+  errors?: Partial<Record<keyof ImageMetadata, string>>;
 }
 
 export const ImageMetadataForm: React.FC<ImageMetadataFormProps> = ({
   metadata,
   onMetadataChange,
-  isImage
+  isImage,
+  errors = {}
 }) => {
   const isMobile = useIsMobile();
   
@@ -37,53 +39,54 @@ export const ImageMetadataForm: React.FC<ImageMetadataFormProps> = ({
         
         <div className={isMobile ? "space-y-3" : "space-y-4"}>
           <div className="space-y-2">
-            <Label htmlFor="title" className="flex items-center">
-              Title <span className="text-red-500 ml-1">*</span>
-            </Label>
+            <Label htmlFor="title" required>Title</Label>
             <Input
               id="title"
               name="title"
               value={metadata.title}
               onChange={onMetadataChange}
               placeholder="Enter file title"
-              required
+              error={!!errors.title}
             />
+            {errors.title && (
+              <p className="text-sm text-destructive mt-1">{errors.title}</p>
+            )}
           </div>
           
           {isImage && (
             <div className="space-y-2">
-              <Label htmlFor="altText" className="flex items-center">
-                Alternative Text <span className="text-red-500 ml-1">*</span>
-              </Label>
+              <Label htmlFor="altText" required>Alternative Text</Label>
               <Input
                 id="altText"
                 name="altText"
                 value={metadata.altText}
                 onChange={onMetadataChange}
                 placeholder="Describe the image for accessibility"
-                required
+                error={!!errors.altText}
               />
+              {errors.altText && (
+                <p className="text-sm text-destructive mt-1">{errors.altText}</p>
+              )}
             </div>
           )}
           
           <div className="space-y-2">
-            <Label htmlFor="caption" className="flex items-center">
-              Caption <span className="text-red-500 ml-1">*</span>
-            </Label>
+            <Label htmlFor="caption" required>Caption</Label>
             <Input
               id="caption"
               name="caption"
               value={metadata.caption}
               onChange={onMetadataChange}
               placeholder="Enter a caption for the file"
-              required
+              error={!!errors.caption}
             />
+            {errors.caption && (
+              <p className="text-sm text-destructive mt-1">{errors.caption}</p>
+            )}
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="description" className="flex items-center">
-              Description <span className="text-red-500 ml-1">*</span>
-            </Label>
+            <Label htmlFor="description" required>Description</Label>
             <Textarea
               id="description"
               name="description"
@@ -91,8 +94,11 @@ export const ImageMetadataForm: React.FC<ImageMetadataFormProps> = ({
               onChange={onMetadataChange}
               placeholder="Enter a detailed description"
               rows={isMobile ? 3 : 4}
-              required
+              error={!!errors.description}
             />
+            {errors.description && (
+              <p className="text-sm text-destructive mt-1">{errors.description}</p>
+            )}
           </div>
         </div>
       </CardContent>

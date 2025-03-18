@@ -26,6 +26,7 @@ const HotelSearch: React.FC<HotelSearchProps> = ({
         value={searchTerm}
         onChange={(e) => onSearchChange(e.target.value)}
         className="border-0 shadow-none rounded-md focus-visible:ring-1 focus-visible:ring-indigo-400 focus-visible:ring-offset-0 flex-grow"
+        aria-label="Search hotels"
       />
     </div>
   );

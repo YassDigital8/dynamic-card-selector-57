@@ -17,6 +17,7 @@ interface GalleryFormProps {
   submitLabel?: string;
   cancelLabel?: string;
   showFooter?: boolean;
+  nameError?: string;
 }
 
 export const GalleryForm: React.FC<GalleryFormProps> = ({
@@ -29,6 +30,7 @@ export const GalleryForm: React.FC<GalleryFormProps> = ({
   submitLabel = 'Save Changes',
   cancelLabel = 'Cancel',
   showFooter = true,
+  nameError
 }) => {
   const isMobile = useIsMobile();
   
@@ -38,14 +40,17 @@ export const GalleryForm: React.FC<GalleryFormProps> = ({
       onSubmit(e);
     }} className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="name">Gallery Name</Label>
+        <Label htmlFor="name" required>Gallery Name</Label>
         <Input
           id="name"
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Enter gallery name"
-          required
+          error={!!nameError}
         />
+        {nameError && (
+          <p className="text-sm text-destructive mt-1">{nameError}</p>
+        )}
       </div>
       
       <div className="space-y-2">

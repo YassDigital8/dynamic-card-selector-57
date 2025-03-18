@@ -29,9 +29,13 @@ const BasicInformation: React.FC<BasicInformationProps> = ({ form }) => {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Hotel Name</FormLabel>
+              <FormLabel required>Hotel Name</FormLabel>
               <FormControl>
-                <Input placeholder="Enter hotel name" {...field} />
+                <Input 
+                  placeholder="Enter hotel name" 
+                  {...field} 
+                  error={!!form.formState.errors.name}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -43,11 +47,16 @@ const BasicInformation: React.FC<BasicInformationProps> = ({ form }) => {
           name="country"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Country</FormLabel>
+              <FormLabel required>Country</FormLabel>
               <FormControl>
                 <div className="relative">
                   <Flag className={`absolute left-2 top-${isMobile ? '1.5' : '2'} h-4 w-4 text-muted-foreground`} />
-                  <Input className="pl-8" placeholder="Enter country" {...field} />
+                  <Input 
+                    className="pl-8" 
+                    placeholder="Enter country" 
+                    {...field} 
+                    error={!!form.formState.errors.country}
+                  />
                 </div>
               </FormControl>
               <FormMessage />
@@ -60,11 +69,16 @@ const BasicInformation: React.FC<BasicInformationProps> = ({ form }) => {
           name="governorate"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Governorate/State</FormLabel>
+              <FormLabel required>Governorate/State</FormLabel>
               <FormControl>
                 <div className="relative">
                   <Building className={`absolute left-2 top-${isMobile ? '1.5' : '2'} h-4 w-4 text-muted-foreground`} />
-                  <Input className="pl-8" placeholder="Enter governorate or state" {...field} />
+                  <Input 
+                    className="pl-8" 
+                    placeholder="Enter governorate or state" 
+                    {...field} 
+                    error={!!form.formState.errors.governorate}
+                  />
                 </div>
               </FormControl>
               <FormMessage />
@@ -77,11 +91,16 @@ const BasicInformation: React.FC<BasicInformationProps> = ({ form }) => {
           name="streetAddress"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Street Address</FormLabel>
+              <FormLabel required>Street Address</FormLabel>
               <FormControl>
                 <div className="relative">
                   <MapPin className={`absolute left-2 top-${isMobile ? '1.5' : '2'} h-4 w-4 text-muted-foreground`} />
-                  <Input className="pl-8" placeholder="Enter street address" {...field} />
+                  <Input 
+                    className="pl-8" 
+                    placeholder="Enter street address" 
+                    {...field} 
+                    error={!!form.formState.errors.streetAddress}
+                  />
                 </div>
               </FormControl>
               <FormMessage />

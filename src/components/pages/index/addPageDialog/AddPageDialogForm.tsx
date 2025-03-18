@@ -79,11 +79,12 @@ const AddPageDialogForm = ({
           name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Title</FormLabel>
+              <FormLabel required>Title</FormLabel>
               <FormControl>
                 <Input 
                   placeholder="Page Title" 
                   {...field} 
+                  error={!!form.formState.errors.title}
                 />
               </FormControl>
               <FormMessage />
@@ -96,12 +97,13 @@ const AddPageDialogForm = ({
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Description</FormLabel>
+              <FormLabel required>Description</FormLabel>
               <FormControl>
                 <Textarea 
                   placeholder="Page Description" 
                   {...field} 
                   className="min-h-[120px]"
+                  error={!!form.formState.errors.description}
                 />
               </FormControl>
               <FormMessage />
