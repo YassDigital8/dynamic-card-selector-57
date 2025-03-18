@@ -131,7 +131,7 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
       )}
 
       {!showContent && isExpanded && hasHotels && (
-        <div className="flex-1 relative h-full">
+        <div className="flex-1 relative h-full" style={{ position: 'relative' }}>
           <NoHotelSelected
             key="no-hotel-selected"
             hasHotels={hasHotels}
