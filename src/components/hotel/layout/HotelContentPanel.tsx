@@ -70,14 +70,14 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
 
   return (
     <motion.div 
-      className="h-full w-full p-2 sm:p-4 overflow-auto"
+      className="h-full w-full p-2 sm:p-4 overflow-auto relative"
       initial="hidden"
       animate="visible"
       variants={contentVariants}
     >
       {isExpanded && showContent && (
         <motion.div 
-          className="mb-2 sm:mb-4"
+          className="mb-2 sm:mb-4 sticky top-0 z-20 bg-background pt-2 pb-1"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.2 }}
