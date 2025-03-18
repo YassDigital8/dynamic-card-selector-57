@@ -3,11 +3,22 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Hotel } from '@/models/HotelModel';
 import { Card, CardContent } from '@/components/ui/card';
-import HotelCardHeader from './card/HotelCardHeader';
-import HotelLocationInfo from './card/HotelLocationInfo';
-import HotelCardAmenities from './card/HotelCardAmenities';
-import HotelCardFooter from './card/HotelCardFooter';
+import { 
+  HotelCardHeader, 
+  HotelLocationInfo, 
+  HotelCardAmenities, 
+  HotelCardFooter 
+} from './card';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { 
+  Carousel, 
+  CarouselContent, 
+  CarouselItem, 
+  CarouselNext, 
+  CarouselPrevious, 
+  CarouselIndicators 
+} from "@/components/ui/carousel";
+import { getHotelAvatar } from './card/HotelCardUtils';
 
 interface HotelCardProps {
   hotel: Hotel;
@@ -65,6 +76,13 @@ const HotelCard: React.FC<HotelCardProps> = ({
     }
   };
 
+  // Sample images for demonstration - in a real app, these would come from your API
+  const hotelImages = [
+    getHotelAvatar(hotel.name),
+    getHotelAvatar(hotel.name + "1"),
+    getHotelAvatar(hotel.name + "2"),
+  ];
+
   // Conditional styles for list vs grid view
   const cardStyles = useGridView
     ? 'h-full'
@@ -73,6 +91,38 @@ const HotelCard: React.FC<HotelCardProps> = ({
   const contentStyles = useGridView
     ? 'space-y-3 p-3 pt-0'
     : `flex-1 space-y-2 ${isMobile ? 'p-2' : 'p-4'}`;
+
+  // Grid view has a carousel for images, list view has a single image
+  const renderImages = () => {
+    if (useGridView) {
+      return (
+        <Carousel className="w-full h-32 sm:h-40" aria-label={`${hotel.name} image gallery`}>
+          <CarouselContent>
+            {hotelImages.map((image, index) => (
+              <CarouselItem key={index} className="basis-full">
+                <div className="h-full w-full overflow-hidden rounded-lg">
+                  <img 
+                    src={image} 
+                    alt={`${hotel.name} - image ${index + 1}`} 
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.currentTarget.src = 'https://placehold.co/300x150/indigo/white?text=Hotel';
+                    }}
+                  />
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious className="left-1 h-8 w-8" />
+          <CarouselNext className="right-1 h-8 w-8" />
+          <CarouselIndicators className="absolute bottom-1 left-0 right-0" variant="dots" />
+        </Carousel>
+      );
+    }
+    
+    // For list view, just show one image
+    return null; // The image is handled in HotelCardHeader for list view
+  };
 
   return (
     <motion.div 
@@ -92,6 +142,7 @@ const HotelCard: React.FC<HotelCardProps> = ({
           : 'hover:border-indigo-200 dark:hover:border-indigo-800'
         }`}
       >
+        {useGridView && renderImages()}
         <HotelCardHeader hotel={hotel} useGridView={useGridView} />
         
         <CardContent className={contentStyles}>

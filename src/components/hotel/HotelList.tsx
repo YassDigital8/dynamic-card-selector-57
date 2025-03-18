@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Hotel } from '@/models/HotelModel';
 import { LayoutGrid, LayoutList } from 'lucide-react';
 import { Button } from "@/components/ui/button";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import DeleteHotelDialog from './DeleteHotelDialog';
 import HotelCard from './HotelCard';
 import HotelListEmptyState from './HotelListEmptyState';
@@ -100,24 +101,16 @@ const HotelList: React.FC<HotelListProps> = ({
           className="flex items-center gap-2"
         >
           {!useGridView && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={toggleViewMode}
-              className="flex items-center gap-1.5 text-indigo-600 dark:text-indigo-400"
-            >
-              {viewMode === 'grid' ? (
-                <>
-                  <LayoutList size={16} />
-                  <span className="text-xs">List View</span>
-                </>
-              ) : (
-                <>
-                  <LayoutGrid size={16} />
-                  <span className="text-xs">Grid View</span>
-                </>
-              )}
-            </Button>
+            <ToggleGroup type="single" value={viewMode} onValueChange={(value) => value && setViewMode(value as 'grid' | 'list')}>
+              <ToggleGroupItem value="grid" aria-label="Grid view" className="flex items-center gap-1.5 text-indigo-600 dark:text-indigo-400">
+                <LayoutGrid size={16} />
+                <span className="text-xs hidden sm:inline">Grid</span>
+              </ToggleGroupItem>
+              <ToggleGroupItem value="list" aria-label="List view" className="flex items-center gap-1.5 text-indigo-600 dark:text-indigo-400">
+                <LayoutList size={16} />
+                <span className="text-xs hidden sm:inline">List</span>
+              </ToggleGroupItem>
+            </ToggleGroup>
           )}
         </motion.div>
       </motion.div>
