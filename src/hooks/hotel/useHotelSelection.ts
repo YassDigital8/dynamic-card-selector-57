@@ -13,19 +13,21 @@ export const useHotelSelection = (
   const [isSelectingNewHotel, setIsSelectingNewHotel] = useState(false);
 
   const handleSelectHotel = (hotel: Hotel) => {
-    // Check if we're selecting a different hotel than the currently selected one
+    // Skip the clearing animation when selecting a different hotel
+    // This makes transitions between hotels more seamless
     if (selectedHotel && selectedHotel.id !== hotel.id) {
-      // If so, temporarily clear the selection to trigger the animation
+      // Just set a flag that we're selecting a new hotel without clearing the current one
       setIsSelectingNewHotel(true);
-      setSelectedHotel(null);
       
-      // Shorter delay for a less jarring transition
+      // Directly update to the new hotel without the temporary clearing
+      setSelectedHotel(hotel);
+      
+      // Reset the flag after a very short delay
       setTimeout(() => {
-        setSelectedHotel(hotel);
         setIsSelectingNewHotel(false);
-      }, 20); // Reduced for smoother transition
+      }, 10);
     } else {
-      // If no hotel was selected before or it's the same hotel, just set it directly
+      // If no hotel was selected before, just set it directly
       setSelectedHotel(hotel);
     }
     
