@@ -29,19 +29,17 @@ const HotelCard: React.FC<HotelCardProps> = ({
 }) => {
   const isMobile = useIsMobile();
 
-  // Enhanced card animation variants - modified to prevent disappearing
+  // Animation variants - optimized to prevent disappearing during selection
   const cardAnimation = {
     rest: { 
       scale: 1,
       boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
-      y: 0,
-      opacity: 1
+      y: 0
     },
     hover: { 
       scale: 1.02,
       boxShadow: "0 10px 15px -3px rgba(79, 70, 229, 0.15), 0 4px 6px -2px rgba(79, 70, 229, 0.1)",
       y: -4,
-      opacity: 1,
       transition: {
         type: "spring",
         stiffness: 400,
@@ -51,7 +49,6 @@ const HotelCard: React.FC<HotelCardProps> = ({
     tap: { 
       scale: 0.98, 
       boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
-      opacity: 1,
       transition: {
         type: "spring",
         stiffness: 400,
@@ -61,7 +58,6 @@ const HotelCard: React.FC<HotelCardProps> = ({
     selected: {
       scale: 1.01,
       boxShadow: "0 10px 15px -3px rgba(79, 70, 229, 0.2), 0 4px 6px -2px rgba(79, 70, 229, 0.15)",
-      opacity: 1, // Keep opacity at 1 to prevent disappearing
       transition: {
         type: "spring",
         stiffness: 400,
@@ -76,7 +72,7 @@ const HotelCard: React.FC<HotelCardProps> = ({
 
   return (
     <motion.div 
-      layoutId={`hotel-card-container-${hotel.id}`}
+      layoutId={`hotel-card-${hotel.id}`}
       className="cursor-pointer relative overflow-hidden w-full mb-2"
       onClick={onSelect}
       initial="rest"
@@ -84,12 +80,11 @@ const HotelCard: React.FC<HotelCardProps> = ({
       whileTap="tap"
       animate={isSelected ? "selected" : "rest"}
       variants={cardAnimation}
-      // Added transition config to ensure smooth transitions without disappearing
       transition={{
         type: "spring",
         stiffness: 300,
         damping: 25,
-        opacity: { duration: 0.2 } // Faster opacity transition
+        layout: { duration: 0.2 } // Smoother layout transitions
       }}
     >
       <Card 

@@ -45,21 +45,21 @@ const HotelList: React.FC<HotelListProps> = ({
     hotel.governorate.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Modified spring configuration for smoother animations
+  // Optimized animation settings for smoother transitions
   const springConfig = {
     type: "spring" as const,
-    stiffness: 250,
+    stiffness: 220,
     damping: 28,
-    mass: 0.8
+    mass: 0.7
   };
 
   const container = {
-    hidden: { opacity: 0 },
+    hidden: { opacity: 1 }, // Start with opacity 1 to prevent disappearing
     show: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.03, // Slightly faster stagger
-        delayChildren: 0.01,
+        staggerChildren: 0.02, // Faster stagger for smoother appearance
+        delayChildren: 0,
         ...springConfig
       }
     }
@@ -92,7 +92,7 @@ const HotelList: React.FC<HotelListProps> = ({
         </motion.div>
       )}
       
-      <AnimatePresence mode="sync"> {/* Changed from "wait" to "sync" to maintain cards during transitions */}
+      <AnimatePresence mode="popLayout"> {/* Changed to popLayout for better card handling */}
         {hotels.length === 0 ? (
           <HotelListEmptyState key="empty-state" />
         ) : filteredHotels.length === 0 ? (
@@ -113,8 +113,7 @@ const HotelList: React.FC<HotelListProps> = ({
             variants={container}
             initial="hidden"
             animate="show"
-            layout
-            layoutRoot
+            layout="position"
           >
             {filteredHotels.map((hotel) => (
               <HotelCard

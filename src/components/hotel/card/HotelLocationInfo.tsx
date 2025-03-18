@@ -12,8 +12,15 @@ const HotelLocationInfo: React.FC<HotelLocationInfoProps> = ({ hotel }) => {
   return (
     <>
       <motion.div 
-        layoutId={`hotel-country-${hotel.id}`}
         className="flex items-center text-sm sm:text-base text-muted-foreground mb-1"
+        layout
+        layoutId={`hotel-country-${hotel.id}`}
+        transition={{ 
+          type: "spring", 
+          stiffness: 300, 
+          damping: 25, 
+          duration: 0.2 
+        }}
       >
         <Flag className="mr-1.5 h-4 w-4 text-indigo-500" />
         <span className="font-medium">{hotel.country}</span>
@@ -22,8 +29,15 @@ const HotelLocationInfo: React.FC<HotelLocationInfoProps> = ({ hotel }) => {
       </motion.div>
       
       <motion.div 
-        layoutId={`hotel-address-${hotel.id}`}
         className="flex items-center text-sm text-muted-foreground"
+        layout
+        layoutId={`hotel-address-${hotel.id}`}
+        transition={{ 
+          type: "spring", 
+          stiffness: 300, 
+          damping: 25, 
+          duration: 0.2 
+        }}
       >
         <MapPin className="mr-1.5 h-4 w-4 text-pink-500" />
         <span className="truncate">{hotel.streetAddress}</span>
