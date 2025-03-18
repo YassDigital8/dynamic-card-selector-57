@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -94,7 +93,6 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
         </motion.div>
       )}
       
-      {/* Direct component rendering without any exit animations or waiting */}
       {showAddForm && (
         <div className="flex-1 overflow-auto">
           <HotelAddForm
@@ -131,7 +129,7 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
       )}
 
       {!showContent && isExpanded && hasHotels && (
-        <div className="flex-1 relative h-full w-full" style={{ position: 'relative' }}>
+        <div className="flex-1 relative h-full w-full overflow-hidden">
           <NoHotelSelected
             key="no-hotel-selected"
             hasHotels={hasHotels}
