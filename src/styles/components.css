@@ -22,3 +22,31 @@
   @apply transition-colors duration-300;
   color: hsl(var(--logo-text));
 }
+
+/* Consistent spacing for components */
+.card, .form-section, .content-block {
+  @apply p-4 md:p-6; /* 16px padding on mobile, 24px on larger screens */
+  @apply mb-4; /* 16px margin between cards/sections */
+}
+
+.form-group, .input-group {
+  @apply mb-4; /* 16px spacing between form groups */
+}
+
+.button-group {
+  @apply flex gap-2 mt-4; /* 8px gap between buttons, 16px margin top */
+}
+
+/* Consistent form layout */
+label {
+  @apply block mb-2 text-left; /* 8px spacing after labels, left-aligned */
+}
+
+input, select, textarea {
+  @apply mb-1; /* 4px margin after inputs */
+}
+
+/* Proper spacing for lists */
+ul, ol {
+  @apply pl-5 my-2 space-y-1; /* Indented lists with consistent spacing */
+}

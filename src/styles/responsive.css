@@ -13,6 +13,15 @@
   .overflow-x-auto {
     max-width: 100vw;
   }
+
+  /* Reduced spacing on mobile */
+  .card, .form-section, .content-block {
+    @apply p-3; /* 12px padding on mobile */
+  }
+
+  .form-group, .input-group {
+    @apply mb-3; /* 12px spacing between form groups */
+  }
 }
 
 /* Mobile optimizations */
