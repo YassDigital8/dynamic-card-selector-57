@@ -14,24 +14,22 @@ export function useIsMobile() {
   })
 
   React.useEffect(() => {
-    // Initial check for mobile state
     const checkMobile = () => {
       setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
     }
     
-    // Run the check immediately
+    // Run immediately and add listener
     checkMobile()
     
-    // Add event listener for resize events with debounce
+    // Add event listener for resize events with improved debounce
     let timeoutId: ReturnType<typeof setTimeout>
     const handleResize = () => {
       clearTimeout(timeoutId)
-      timeoutId = setTimeout(checkMobile, 100)
+      timeoutId = setTimeout(checkMobile, 50) // Reduced from 100ms to 50ms for more responsive feel
     }
     
     window.addEventListener("resize", handleResize)
     
-    // Clean up the event listener on component unmount
     return () => {
       clearTimeout(timeoutId)
       window.removeEventListener("resize", handleResize)
@@ -48,15 +46,26 @@ export function useScreenSize() {
   })
 
   React.useEffect(() => {
+    // More responsive resize handler with improved debounce
+    let timeoutId: ReturnType<typeof setTimeout>
     const handleResize = () => {
-      setScreenSize({
-        width: window.innerWidth,
-        height: window.innerHeight,
-      })
+      clearTimeout(timeoutId)
+      timeoutId = setTimeout(() => {
+        setScreenSize({
+          width: window.innerWidth,
+          height: window.innerHeight,
+        })
+      }, 50) // Reduced from default to 50ms for more responsive feel
     }
 
+    // Initial call
+    handleResize()
+    
     window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
+    return () => {
+      clearTimeout(timeoutId)
+      window.removeEventListener('resize', handleResize)
+    }
   }, [])
 
   return {

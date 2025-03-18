@@ -22,9 +22,10 @@ const CarouselPrevious = React.forwardRef<
         "absolute h-8 w-8 rounded-full",
         orientation === "horizontal"
           ? isMobile 
-            ? "left-2 top-1/2 -translate-y-1/2" 
-            : "-left-12 top-1/2 -translate-y-1/2"
+            ? "left-1 top-1/2 -translate-y-1/2" 
+            : "-left-4 sm:-left-12 top-1/2 -translate-y-1/2"
           : "-top-12 left-1/2 -translate-x-1/2 rotate-90",
+        !canScrollPrev && "opacity-50 pointer-events-none",
         className
       )}
       disabled={!canScrollPrev}

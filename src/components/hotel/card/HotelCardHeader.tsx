@@ -15,7 +15,7 @@ interface HotelCardHeaderProps {
 const HotelCardHeader: React.FC<HotelCardHeaderProps> = ({ hotel, useGridView }) => {
   const isMobile = useIsMobile();
   
-  // Image animation variants
+  // Enhanced image animation variants
   const imageVariants = {
     rest: { scale: 1 },
     hover: { 

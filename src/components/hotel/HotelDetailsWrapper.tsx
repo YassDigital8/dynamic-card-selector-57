@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import HotelDetails from './HotelDetails';
 import { Hotel } from '@/models/HotelModel';
+import { useIsMobile, useScreenSize } from '@/hooks/use-mobile';
 import { 
   Carousel, 
   CarouselContent, 
@@ -23,6 +24,9 @@ const HotelDetailsWrapper: React.FC<HotelDetailsWrapperProps> = memo(({
   onEdit,
   onBack
 }) => {
+  const isMobile = useIsMobile();
+  const { width } = useScreenSize();
+  
   // Enhanced spring animation configurations
   const springConfig = {
     type: "spring",
@@ -80,7 +84,7 @@ const HotelDetailsWrapper: React.FC<HotelDetailsWrapperProps> = memo(({
       variants={cardVariants}
       className="w-full h-full"
     >
-      <Card className="p-6 border-indigo-100 dark:border-indigo-900 shadow-lg rounded-xl overflow-hidden bg-white dark:bg-slate-900 backdrop-blur-sm">
+      <Card className="p-4 sm:p-6 border-indigo-100 dark:border-indigo-900 shadow-lg rounded-xl overflow-hidden bg-white dark:bg-slate-900">
         <Carousel className="w-full relative">
           <CarouselContent>
             <CarouselItem>
@@ -88,42 +92,43 @@ const HotelDetailsWrapper: React.FC<HotelDetailsWrapperProps> = memo(({
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
+                className="px-0.5 sm:px-2"
               >
                 <HotelDetails hotel={hotel} onEdit={onEdit} onBack={onBack} />
               </motion.div>
             </CarouselItem>
             <CarouselItem>
-              <div className="h-full flex items-center justify-center p-6">
+              <div className="h-full flex items-center justify-center p-3 sm:p-6">
                 <motion.div
                   variants={itemVariants}
                   className="space-y-4 text-center"
                 >
-                  <h3 className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">Room Availability</h3>
+                  <h3 className="text-xl sm:text-2xl font-bold text-indigo-600 dark:text-indigo-400">Room Availability</h3>
                   <motion.div 
-                    className="bg-indigo-50 dark:bg-indigo-900/30 p-8 rounded-xl"
+                    className="bg-indigo-50 dark:bg-indigo-900/30 p-4 sm:p-8 rounded-xl"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3, ...springConfig }}
                   >
-                    <p className="text-muted-foreground">Room availability information will be displayed here in future updates.</p>
+                    <p className="text-sm sm:text-base text-muted-foreground">Room availability information will be displayed here in future updates.</p>
                   </motion.div>
                 </motion.div>
               </div>
             </CarouselItem>
             <CarouselItem>
-              <div className="h-full flex items-center justify-center p-6">
+              <div className="h-full flex items-center justify-center p-3 sm:p-6">
                 <motion.div
                   variants={itemVariants}
                   className="space-y-4 text-center"
                 >
-                  <h3 className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">Hotel Gallery</h3>
+                  <h3 className="text-xl sm:text-2xl font-bold text-indigo-600 dark:text-indigo-400">Hotel Gallery</h3>
                   <motion.div 
-                    className="bg-indigo-50 dark:bg-indigo-900/30 p-8 rounded-xl"
+                    className="bg-indigo-50 dark:bg-indigo-900/30 p-4 sm:p-8 rounded-xl"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3, ...springConfig }}
                   >
-                    <p className="text-muted-foreground">Photo gallery will be displayed here in future updates.</p>
+                    <p className="text-sm sm:text-base text-muted-foreground">Photo gallery will be displayed here in future updates.</p>
                   </motion.div>
                 </motion.div>
               </div>
