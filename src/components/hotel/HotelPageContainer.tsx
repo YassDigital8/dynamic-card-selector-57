@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Hotel, HotelFormData } from '@/models/HotelModel';
 import HotelPageHeader from './HotelPageHeader';
@@ -34,19 +35,30 @@ const HotelPageContainer: React.FC = () => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [isExpanded, setIsExpanded] = useState(true);
   
-  // Set fixed panel sizes based on screen size
+  // Set dynamic panel sizes based on whether there's a selected hotel
   const getInitialLeftPanelSize = () => {
-    if (screenSize.width < 640) return 50; // Mobile
-    if (screenSize.width < 1024) return 45; // Tablet
-    return 40; // Desktop
+    // If no hotel is selected and not adding or editing, make the list panel wider
+    const hasSelectedContent = selectedHotel || showAddForm || isEditing;
+    
+    if (!hasSelectedContent) {
+      // Make panel wider when nothing is selected
+      if (screenSize.width < 640) return 65; // Mobile
+      if (screenSize.width < 1024) return 60; // Tablet
+      return 55; // Desktop
+    } else {
+      // Normal size when something is selected
+      if (screenSize.width < 640) return 50; // Mobile
+      if (screenSize.width < 1024) return 45; // Tablet
+      return 40; // Desktop
+    }
   };
 
   const [panelSize, setPanelSize] = useState(getInitialLeftPanelSize());
 
-  // Effect to handle panel size based on device type
+  // Effect to handle panel size based on device type and selection state
   useEffect(() => {
     setPanelSize(getInitialLeftPanelSize());
-  }, [screenSize.width]);
+  }, [screenSize.width, selectedHotel, showAddForm, isEditing]);
 
   const handleSelectHotel = (hotel: Hotel) => {
     setSelectedHotel(hotel);
@@ -117,13 +129,16 @@ const HotelPageContainer: React.FC = () => {
         direction="horizontal"
         className="min-h-[calc(100vh-180px)] sm:min-h-[calc(100vh-200px)] rounded-lg border border-indigo-100 dark:border-indigo-900 bg-white dark:bg-slate-900 shadow-lg"
         onLayout={(sizes) => {
-          setPanelSize(getInitialLeftPanelSize());
+          // This will run when the panels are resized by the user
+          if (sizes.length > 0) {
+            setPanelSize(sizes[0]);
+          }
         }}
       >
         <ResizablePanel 
           defaultSize={panelSize}
           minSize={35}
-          maxSize={50}
+          maxSize={65} // Increased max size to allow wider panel when needed
           className="transition-all duration-300"
         >
           <HotelListPanel 
@@ -141,7 +156,7 @@ const HotelPageContainer: React.FC = () => {
         
         <ResizablePanel 
           defaultSize={100 - panelSize}
-          minSize={50}
+          minSize={35} // Decreased min size to allow left panel to be wider
           maxSize={65}
           className="transition-all duration-300"
         >
