@@ -29,7 +29,9 @@ const HotelCard: React.FC<HotelCardProps> = ({
   return (
     <motion.div 
       layoutId={`hotel-card-container-${hotel.id}`}
-      className="cursor-pointer relative overflow-hidden"
+      className={`cursor-pointer relative overflow-hidden ${
+        !useGridView ? 'sm:col-span-2 lg:col-span-2 xl:col-span-3' : ''
+      }`}
       onClick={onSelect}
       {...containerAnimation}
     >
@@ -40,19 +42,23 @@ const HotelCard: React.FC<HotelCardProps> = ({
           : 'hover:border-indigo-200 dark:hover:border-indigo-800'
         }`}
       >
-        <HotelCardHeader hotel={hotel} useGridView={useGridView} />
-        
-        <CardContent className={`space-y-3 ${useGridView ? 'p-3 pt-0' : ''}`}>
-          <HotelLocationInfo hotel={hotel} />
+        <div className={!useGridView ? 'md:flex md:items-start' : ''}>
+          <div className={!useGridView ? 'md:w-1/4' : 'w-full'}>
+            <HotelCardHeader hotel={hotel} useGridView={useGridView} />
+          </div>
           
-          {!useGridView && <HotelCardAmenities amenities={hotel.amenities} />}
-          
-          <HotelCardFooter 
-            hotel={hotel} 
-            onEdit={onEdit} 
-            onDelete={onDelete} 
-          />
-        </CardContent>
+          <CardContent className={`space-y-3 ${useGridView ? 'p-3 pt-0' : 'md:w-3/4 p-3 md:p-4'}`}>
+            <HotelLocationInfo hotel={hotel} />
+            
+            {(!useGridView || !isExpanded) && <HotelCardAmenities amenities={hotel.amenities} />}
+            
+            <HotelCardFooter 
+              hotel={hotel} 
+              onEdit={onEdit} 
+              onDelete={onDelete} 
+            />
+          </CardContent>
+        </div>
       </Card>
     </motion.div>
   );

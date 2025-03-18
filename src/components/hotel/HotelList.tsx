@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Hotel } from '@/models/HotelModel';
 import { Badge } from "@/components/ui/badge";
 import { LayoutGrid, LayoutList } from 'lucide-react';
+import { Button } from "@/components/ui/button";
 import DeleteHotelDialog from './DeleteHotelDialog';
 import HotelCard from './HotelCard';
 import HotelListEmptyState from './HotelListEmptyState';
@@ -29,6 +30,7 @@ const HotelList: React.FC<HotelListProps> = ({
   const [hotelToDelete, setHotelToDelete] = useState<Hotel | null>(null);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>(useGridView ? 'grid' : 'list');
 
   const handleDeleteClick = (hotel: Hotel) => {
     setHotelToDelete(hotel);
@@ -41,6 +43,10 @@ const HotelList: React.FC<HotelListProps> = ({
       setConfirmDialogOpen(false);
       setHotelToDelete(null);
     }
+  };
+
+  const toggleViewMode = () => {
+    setViewMode(prev => prev === 'grid' ? 'list' : 'grid');
   };
 
   const filteredHotels = hotels.filter(hotel => 
@@ -69,7 +75,8 @@ const HotelList: React.FC<HotelListProps> = ({
     }
   };
 
-  const ViewModeIcon = useGridView ? LayoutGrid : LayoutList;
+  // Determine if we should actually use grid view based on our internal state and prop
+  const activeGridView = viewMode === 'grid' || useGridView;
 
   return (
     <div className="space-y-6 w-full">
@@ -87,10 +94,24 @@ const HotelList: React.FC<HotelListProps> = ({
           transition={{ type: "spring", stiffness: 400, damping: 10 }}
           className="flex items-center gap-2"
         >
-          <ViewModeIcon size={16} className="text-indigo-500" />
-          <Badge variant="outline" className="text-xs border-indigo-200 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-400">
-            {useGridView ? 'Grid View' : 'List View'}
-          </Badge>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={toggleViewMode}
+            className="flex items-center gap-1.5 text-indigo-600 dark:text-indigo-400"
+          >
+            {viewMode === 'grid' ? (
+              <>
+                <LayoutList size={16} />
+                <span className="text-xs">List View</span>
+              </>
+            ) : (
+              <>
+                <LayoutGrid size={16} />
+                <span className="text-xs">Grid View</span>
+              </>
+            )}
+          </Button>
         </motion.div>
       </motion.div>
       
@@ -125,7 +146,7 @@ const HotelList: React.FC<HotelListProps> = ({
         ) : (
           <motion.div 
             key="results"
-            className={`grid ${useGridView ? 'grid-cols-2 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3' : 'grid-cols-1'} gap-4`}
+            className={`grid ${activeGridView ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3' : 'grid-cols-1'} gap-4`}
             variants={container}
             initial="hidden"
             animate="show"
@@ -140,7 +161,7 @@ const HotelList: React.FC<HotelListProps> = ({
                 onSelect={() => onSelectHotel(hotel)}
                 onEdit={() => onEditHotel(hotel)}
                 onDelete={() => handleDeleteClick(hotel)}
-                useGridView={useGridView}
+                useGridView={activeGridView}
               />
             ))}
           </motion.div>
