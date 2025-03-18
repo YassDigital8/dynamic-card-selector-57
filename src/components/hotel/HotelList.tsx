@@ -1,8 +1,7 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Hotel } from '@/models/HotelModel';
-import { Badge } from "@/components/ui/badge";
 import { LayoutGrid, LayoutList } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import DeleteHotelDialog from './DeleteHotelDialog';
@@ -31,6 +30,11 @@ const HotelList: React.FC<HotelListProps> = ({
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>(useGridView ? 'grid' : 'list');
+
+  // Update viewMode when useGridView prop changes
+  useEffect(() => {
+    setViewMode(useGridView ? 'grid' : 'list');
+  }, [useGridView]);
 
   const handleDeleteClick = (hotel: Hotel) => {
     setHotelToDelete(hotel);
@@ -76,10 +80,11 @@ const HotelList: React.FC<HotelListProps> = ({
   };
 
   // Determine if we should actually use grid view based on our internal state and prop
-  const activeGridView = viewMode === 'grid' || useGridView;
+  // Allow manual toggling only when view is free to change (not forced by layout)
+  const activeGridView = useGridView ? true : viewMode === 'grid';
 
   return (
-    <div className="space-y-6 w-full">
+    <div className="space-y-6 w-full p-4">
       <motion.div 
         initial={{ opacity: 0, y: -5 }}
         animate={{ opacity: 1, y: 0 }}
@@ -94,24 +99,26 @@ const HotelList: React.FC<HotelListProps> = ({
           transition={{ type: "spring", stiffness: 400, damping: 10 }}
           className="flex items-center gap-2"
         >
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={toggleViewMode}
-            className="flex items-center gap-1.5 text-indigo-600 dark:text-indigo-400"
-          >
-            {viewMode === 'grid' ? (
-              <>
-                <LayoutList size={16} />
-                <span className="text-xs">List View</span>
-              </>
-            ) : (
-              <>
-                <LayoutGrid size={16} />
-                <span className="text-xs">Grid View</span>
-              </>
-            )}
-          </Button>
+          {!useGridView && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={toggleViewMode}
+              className="flex items-center gap-1.5 text-indigo-600 dark:text-indigo-400"
+            >
+              {viewMode === 'grid' ? (
+                <>
+                  <LayoutList size={16} />
+                  <span className="text-xs">List View</span>
+                </>
+              ) : (
+                <>
+                  <LayoutGrid size={16} />
+                  <span className="text-xs">Grid View</span>
+                </>
+              )}
+            </Button>
+          )}
         </motion.div>
       </motion.div>
       

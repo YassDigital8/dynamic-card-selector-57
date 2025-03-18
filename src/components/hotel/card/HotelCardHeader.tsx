@@ -1,10 +1,8 @@
 
 import React from 'react';
-import { Hotel as HotelIcon } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Hotel } from '@/models/HotelModel';
 import { getHotelAvatar } from './HotelCardUtils';
 
@@ -16,7 +14,7 @@ interface HotelCardHeaderProps {
 const HotelCardHeader: React.FC<HotelCardHeaderProps> = ({ hotel, useGridView }) => {
   return (
     <CardHeader className={`pb-2 ${useGridView ? 'p-3' : 'p-4'}`}>
-      <div className={`${useGridView ? 'flex flex-col' : 'flex md:flex-col items-center md:items-start space-x-3 md:space-x-0'}`}>
+      <div className={`${useGridView ? 'flex flex-col' : 'flex flex-row md:flex-col items-center md:items-start space-x-3 md:space-x-0'}`}>
         <motion.div 
           layoutId={`hotel-image-${hotel.id}`}
           className={`${useGridView ? 'w-full h-32 mb-3 overflow-hidden rounded-lg' : 'h-16 w-16 md:w-full md:h-32 md:mb-3 overflow-hidden rounded-lg'}`}

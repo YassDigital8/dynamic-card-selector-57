@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import HotelAddForm from '../HotelAddForm';
@@ -40,80 +40,16 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
   onSubmitEdit,
   onCancelEdit
 }) => {
-  // Panel animation variants with smooth spring physics
-  const panelVariants = {
-    collapsed: { 
-      opacity: 0,
-      x: 20,
-      width: 0,
-      display: "none",
-      transition: { 
-        type: "spring",
-        stiffness: 350,
-        damping: 30,
-        mass: 1
-      }
-    },
-    expanded: { 
-      opacity: 1, 
-      x: 0,
-      width: "100%",
-      display: "block",
-      transition: { 
-        type: "spring",
-        stiffness: 350,
-        damping: 30,
-        mass: 1
-      }
-    }
-  };
-
-  // Button animation variants
-  const buttonVariants = {
-    initial: { opacity: 0, y: -5 },
-    animate: { 
-      opacity: 1, 
-      y: 0,
-      transition: { 
-        type: "spring",
-        stiffness: 400,
-        damping: 20
-      }
-    },
-    exit: {
-      opacity: 0,
-      y: -5,
-      transition: { duration: 0.15 }
-    }
-  };
-
   // Determine if we should show content (either a selected hotel, add form, or edit form)
   const showContent = selectedHotel || showAddForm || isEditing;
 
   // This will handle the render conditions for the empty state
   const shouldShowEmptyState = !showContent;
 
-  // If no content to show and not expanded, don't render anything
-  if (!showContent && !isExpanded) {
-    return null;
-  }
-
   return (
-    <motion.div 
-      className="lg:col-span-9"
-      initial="collapsed"
-      animate={isExpanded ? "expanded" : "collapsed"}
-      variants={panelVariants}
-      style={{ gridColumn: isExpanded ? "span 9 / span 9" : "span 0 / span 0" }}
-    >
+    <div className="h-full w-full p-4 overflow-auto">
       {isExpanded && (
-        <motion.div 
-          variants={buttonVariants}
-          initial="initial"
-          animate="animate"
-          exit="exit"
-          className="mb-4"
-        >
+        <div className="mb-4">
           <Button 
             variant="outline" 
             onClick={onBackToList}
@@ -122,7 +58,7 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
             <ArrowLeft className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" />
             Back to hotels
           </Button>
-        </motion.div>
+        </div>
       )}
       
       <AnimatePresence mode="sync">
@@ -165,7 +101,7 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
           />
         )}
       </AnimatePresence>
-    </motion.div>
+    </div>
   );
 };
 

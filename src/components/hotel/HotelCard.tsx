@@ -30,7 +30,7 @@ const HotelCard: React.FC<HotelCardProps> = ({
     <motion.div 
       layoutId={`hotel-card-container-${hotel.id}`}
       className={`cursor-pointer relative overflow-hidden ${
-        !useGridView ? 'sm:col-span-2 lg:col-span-2 xl:col-span-3' : ''
+        !useGridView ? 'w-full' : ''
       }`}
       onClick={onSelect}
       {...containerAnimation}
@@ -42,17 +42,14 @@ const HotelCard: React.FC<HotelCardProps> = ({
           : 'hover:border-indigo-200 dark:hover:border-indigo-800'
         }`}
       >
-        <div className={!useGridView ? 'md:flex md:items-start' : ''}>
-          <div className={!useGridView ? 'md:w-1/4' : 'w-full'}>
+        <div className={!useGridView ? 'flex flex-col md:flex-row md:items-start' : ''}>
+          <div className={!useGridView ? 'w-full md:w-1/4' : 'w-full'}>
             <HotelCardHeader hotel={hotel} useGridView={useGridView} />
           </div>
           
-          <CardContent className={`space-y-3 ${useGridView ? 'p-3 pt-0' : 'md:w-3/4 p-3 md:p-4'}`}>
+          <CardContent className={`space-y-3 ${useGridView ? 'p-3 pt-0' : 'w-full md:w-3/4 p-3 md:p-6'}`}>
             <HotelLocationInfo hotel={hotel} />
-            
-            {/* Show amenities always in grid view, or in list view */}
             <HotelCardAmenities amenities={hotel.amenities} />
-            
             <HotelCardFooter 
               hotel={hotel} 
               onEdit={onEdit} 
