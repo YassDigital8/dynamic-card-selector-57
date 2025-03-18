@@ -70,7 +70,7 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
 
   return (
     <motion.div 
-      className="h-full w-full p-2 sm:p-4 overflow-auto relative"
+      className="h-full w-full p-2 sm:p-4 overflow-auto relative flex flex-col"
       initial="hidden"
       animate="visible"
       variants={contentVariants}
@@ -125,21 +125,25 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
       )}
 
       {!showContent && isExpanded && hasHotels && (
-        <NoHotelSelected
-          key="no-hotel-selected"
-          hasHotels={hasHotels}
-          onAddHotel={onAddHotel}
-        />
+        <div className="flex-1 flex items-center justify-center">
+          <NoHotelSelected
+            key="no-hotel-selected"
+            hasHotels={hasHotels}
+            onAddHotel={onAddHotel}
+          />
+        </div>
       )}
 
       {!showContent && isExpanded && !hasHotels && (
-        <HotelEmptyState
-          key="empty-state"
-          selectedPOS={selectedPOS}
-          posName={posName}
-          hasHotels={hasHotels}
-          onAddHotel={onAddHotel}
-        />
+        <div className="flex-1 flex items-center justify-center">
+          <HotelEmptyState
+            key="empty-state"
+            selectedPOS={selectedPOS}
+            posName={posName}
+            hasHotels={hasHotels}
+            onAddHotel={onAddHotel}
+          />
+        </div>
       )}
     </motion.div>
   );
