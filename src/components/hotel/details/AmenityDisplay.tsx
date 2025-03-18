@@ -1,70 +1,95 @@
 
 import React from 'react';
-import { 
-  AirVent, 
-  Utensils, 
-  Coffee, 
-  Wifi, 
-  PawPrint, 
-  BedDouble,
-  Dumbbell,
-  GlassWater,
-  HotelIcon,
-  Bath,
-  Waves
-} from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Check, X } from 'lucide-react';
 import { HotelAmenities } from '@/models/HotelModel';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 
-interface AmenityDisplayProps { 
+interface AmenityDisplayProps {
   amenities: HotelAmenities;
 }
 
+// This is our mapping of amenity keys to display names
+const amenityDisplayNames: Record<keyof HotelAmenities, string> = {
+  airConditioning: 'Air Conditioning',
+  bar: 'Bar',
+  gym: 'Gym',
+  parking: 'Parking',
+  spa: 'Spa',
+  restaurant: 'Restaurant',
+  breakfast: 'Breakfast',
+  wifi: 'Wi-Fi',
+  swimmingPool: 'Swimming Pool',
+  petsAllowed: 'Pets Allowed',
+  extraBed: 'Extra Bed'
+};
+
 const AmenityDisplay: React.FC<AmenityDisplayProps> = ({ amenities }) => {
-  const amenityItems = [
-    { key: 'airConditioning', label: 'Air Conditioning', icon: AirVent, color: 'text-blue-500' },
-    { key: 'bar', label: 'Bar', icon: GlassWater, color: 'text-purple-500' },
-    { key: 'gym', label: 'Gym', icon: Dumbbell, color: 'text-green-500' },
-    { key: 'parking', label: 'Parking', icon: HotelIcon, color: 'text-gray-500' },
-    { key: 'spa', label: 'Spa', icon: Bath, color: 'text-pink-500' },
-    { key: 'restaurant', label: 'Restaurant', icon: Utensils, color: 'text-amber-500' },
-    { key: 'breakfast', label: 'Breakfast', icon: Coffee, color: 'text-yellow-700' },
-    { key: 'wifi', label: 'WiFi', icon: Wifi, color: 'text-indigo-500' },
-    { key: 'swimmingPool', label: 'Swimming Pool', icon: Waves, color: 'text-cyan-500' },
-    { key: 'petsAllowed', label: 'Pets Allowed', icon: PawPrint, color: 'text-orange-500' },
-    { key: 'extraBed', label: 'Extra Bed', icon: BedDouble, color: 'text-violet-500' }
-  ];
+  // Extract amenity keys and values
+  const amenityEntries = Object.entries(amenities) as [keyof HotelAmenities, boolean][];
+
+  // Configure staggered animation
+  const container = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.035,
+        delayChildren: 0.05
+      }
+    }
+  };
+  
+  const item = {
+    hidden: { opacity: 0, y: 5 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: "spring",
+        stiffness: 400,
+        damping: 20
+      }
+    }
+  };
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
-      {amenityItems.map(({ key, label, icon: Icon, color }) => {
-        const isAvailable = amenities[key as keyof HotelAmenities];
-        return (
-          <TooltipProvider key={key}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <div className={`flex items-center gap-2 p-3 rounded-md ${
-                  isAvailable 
-                  ? `bg-white dark:bg-slate-800 shadow-sm border border-blue-100 dark:border-blue-900 ${color}` 
-                  : 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-600'
-                }`}>
-                  <Icon className="h-5 w-5" />
-                  <span className={`text-sm truncate ${isAvailable ? 'font-medium' : ''}`}>{label}</span>
-                </div>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>{isAvailable ? `${label} available` : `${label} not available`}</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        );
-      })}
-    </div>
+    <motion.div 
+      variants={container}
+      initial="hidden"
+      animate="visible"
+      className="grid grid-cols-2 md:grid-cols-3 gap-3"
+    >
+      {amenityEntries.map(([key, value]) => (
+        <motion.div 
+          key={key}
+          variants={item}
+          whileHover={{ 
+            scale: 1.03,
+            transition: {
+              type: "spring",
+              stiffness: 400,
+              damping: 10
+            }
+          }}
+          className={`flex items-center p-2 rounded-md ${
+            value 
+              ? 'border border-green-100 dark:border-green-900 bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-300' 
+              : 'border border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/20 text-gray-500 dark:text-gray-400'
+          }`}
+        >
+          <div className="mr-2">
+            {value ? (
+              <Check className="h-4 w-4 text-green-500 dark:text-green-400" />
+            ) : (
+              <X className="h-4 w-4 text-gray-400 dark:text-gray-500" />
+            )}
+          </div>
+          <span className="text-sm font-medium truncate">
+            {amenityDisplayNames[key]}
+          </span>
+        </motion.div>
+      ))}
+    </motion.div>
   );
 };
 

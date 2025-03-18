@@ -23,6 +23,14 @@ const HotelListPanel: React.FC<HotelListPanelProps> = ({
   onEditHotel,
   onDeleteHotel
 }) => {
+  // Spring configuration for list panel animations
+  const springConfig = {
+    type: "spring" as const,
+    stiffness: 350,
+    damping: 30,
+    mass: 1
+  };
+
   return (
     <motion.div 
       className={`lg:col-span-${isExpanded ? '3' : '12'}`}
@@ -32,11 +40,9 @@ const HotelListPanel: React.FC<HotelListPanelProps> = ({
         gridColumn: isExpanded ? "span 3 / span 3" : "span 12 / span 12"
       }}
       transition={{ 
-        duration: 0.35,
-        ease: [0.22, 1, 0.36, 1],
+        ...springConfig,
         layout: { 
-          duration: 0.35,
-          ease: [0.22, 1, 0.36, 1]
+          ...springConfig
         }
       }}
       layout

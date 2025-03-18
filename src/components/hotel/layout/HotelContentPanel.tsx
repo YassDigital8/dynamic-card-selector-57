@@ -40,16 +40,18 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
   onSubmitEdit,
   onCancelEdit
 }) => {
-  // Panel animation variants
+  // Panel animation variants with smooth spring physics
   const panelVariants = {
     collapsed: { 
       opacity: 0,
-      x: 0,
+      x: 20,
       width: 0,
       display: "none",
       transition: { 
-        duration: 0.35,
-        ease: [0.22, 1, 0.36, 1]
+        type: "spring",
+        stiffness: 350,
+        damping: 30,
+        mass: 1
       }
     },
     expanded: { 
@@ -58,8 +60,10 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
       width: "100%",
       display: "block",
       transition: { 
-        duration: 0.35,
-        ease: [0.22, 1, 0.36, 1]
+        type: "spring",
+        stiffness: 350,
+        damping: 30,
+        mass: 1
       }
     }
   };
@@ -71,8 +75,9 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
       opacity: 1, 
       y: 0,
       transition: { 
-        duration: 0.2,
-        ease: [0.22, 1, 0.36, 1]
+        type: "spring",
+        stiffness: 400,
+        damping: 20
       }
     },
     exit: {
@@ -120,7 +125,7 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
         </motion.div>
       )}
       
-      <AnimatePresence mode="wait">
+      <AnimatePresence mode="sync">
         {showAddForm && (
           <HotelAddForm
             key="add-form"

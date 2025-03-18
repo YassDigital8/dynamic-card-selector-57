@@ -1,9 +1,9 @@
 
 import React from 'react';
-import { Flag, Building, MapPin, Globe } from 'lucide-react';
+import { MapPin } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { motion } from 'framer-motion';
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 
 interface LocationCardProps {
   country: string;
@@ -15,67 +15,115 @@ interface LocationCardProps {
 const LocationCard: React.FC<LocationCardProps> = ({ 
   country, 
   governorate, 
-  streetAddress, 
-  posKey 
+  streetAddress,
+  posKey
 }) => {
+  // Staggered animation for location card elements
+  const container = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.08,
+        delayChildren: 0.1,
+        when: "beforeChildren"
+      }
+    }
+  };
+  
+  const item = {
+    hidden: { opacity: 0, y: 10 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: "spring",
+        stiffness: 260,
+        damping: 20
+      }
+    }
+  };
+
   return (
     <motion.div
       custom={0}
       initial="hidden"
       animate="visible"
       variants={{
-        hidden: { opacity: 0, y: 20 },
-        visible: (i: number) => ({
+        hidden: { opacity: 0, y: 15 },
+        visible: {
           opacity: 1,
           y: 0,
           transition: {
-            delay: i * 0.05, // Reduced from 0.1 to 0.05 seconds
-            duration: 0.2, // Reduced from 0.3 to 0.2 seconds
-            ease: "easeOut"
+            type: "spring",
+            stiffness: 300,
+            damping: 24,
+            mass: 0.8,
+            delay: 0.05
           }
-        })
+        }
       }}
     >
       <Card className="border-blue-100 dark:border-blue-900 overflow-hidden">
         <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-900 border-b border-blue-100 dark:border-blue-900">
           <CardTitle className="text-lg flex items-center gap-2 text-blue-700 dark:text-blue-300">
-            <MapPin className="h-5 w-5 text-blue-500" />
-            Location
+            <motion.div
+              whileHover={{ scale: 1.1 }}
+              transition={{ type: "spring", stiffness: 400, damping: 10 }}
+            >
+              <MapPin className="h-5 w-5 text-blue-500" />
+            </motion.div>
+            Location Details
           </CardTitle>
         </CardHeader>
         <CardContent className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 text-sm">
-            <div className="bg-white dark:bg-slate-800 p-4 rounded-md shadow-sm border border-blue-50 dark:border-blue-900">
-              <p className="font-medium text-blue-600 dark:text-blue-400 mb-1 flex items-center gap-1">
-                <Flag className="h-4 w-4" />
-                Country
-              </p>
-              <p className="text-muted-foreground">{country}</p>
-            </div>
-            <div className="bg-white dark:bg-slate-800 p-4 rounded-md shadow-sm border border-blue-50 dark:border-blue-900">
-              <p className="font-medium text-blue-600 dark:text-blue-400 mb-1 flex items-center gap-1">
-                <Building className="h-4 w-4" />
-                Governorate/State
-              </p>
-              <p className="text-muted-foreground">{governorate}</p>
-            </div>
-            <div className="bg-white dark:bg-slate-800 p-4 rounded-md shadow-sm border border-blue-50 dark:border-blue-900">
-              <p className="font-medium text-blue-600 dark:text-blue-400 mb-1 flex items-center gap-1">
-                <MapPin className="h-4 w-4" />
-                Street Address
-              </p>
-              <p className="text-muted-foreground">{streetAddress}</p>
-            </div>
-            <div className="bg-white dark:bg-slate-800 p-4 rounded-md shadow-sm border border-blue-50 dark:border-blue-900">
-              <p className="font-medium text-blue-600 dark:text-blue-400 mb-1 flex items-center gap-1">
-                <Globe className="h-4 w-4" />
-                POS Region
-              </p>
-              <p className="text-muted-foreground flex items-center gap-1">
-                <Badge className="uppercase">{posKey}</Badge>
-              </p>
-            </div>
-          </div>
+          <motion.div
+            className="space-y-4"
+            variants={container}
+            initial="hidden"
+            animate="visible"
+          >
+            <motion.div variants={item} layoutId={`hotel-address-${posKey}`} className="text-base">
+              <div className="font-medium text-blue-700 dark:text-blue-400 mb-1">Address</div>
+              <div className="text-gray-600 dark:text-gray-300">{streetAddress}</div>
+            </motion.div>
+            
+            <motion.div variants={item} className="grid grid-cols-2 gap-4">
+              <div>
+                <div className="font-medium text-blue-700 dark:text-blue-400 mb-1">Country</div>
+                <HoverCard>
+                  <HoverCardTrigger asChild>
+                    <div className="text-gray-600 dark:text-gray-300 cursor-help">{country}</div>
+                  </HoverCardTrigger>
+                  <HoverCardContent className="w-80">
+                    <div className="flex justify-between space-x-4">
+                      <div className="space-y-1">
+                        <h4 className="text-sm font-semibold">{country}</h4>
+                        <p className="text-sm">
+                          View all hotels in {country}
+                        </p>
+                      </div>
+                    </div>
+                  </HoverCardContent>
+                </HoverCard>
+              </div>
+              
+              <div>
+                <div className="font-medium text-blue-700 dark:text-blue-400 mb-1">Governorate</div>
+                <div className="text-gray-600 dark:text-gray-300">{governorate}</div>
+              </div>
+            </motion.div>
+            
+            <motion.div
+              variants={item}
+              className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-900/40 rounded-lg text-sm text-blue-700 dark:text-blue-300"
+            >
+              <div className="flex items-center">
+                <MapPin className="h-4 w-4 mr-2 text-blue-500" />
+                <span>This hotel belongs to the <strong>{posKey}</strong> point of sale.</span>
+              </div>
+            </motion.div>
+          </motion.div>
         </CardContent>
       </Card>
     </motion.div>

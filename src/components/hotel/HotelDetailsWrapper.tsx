@@ -16,28 +16,31 @@ const HotelDetailsWrapper: React.FC<HotelDetailsWrapperProps> = memo(({
   onEdit,
   onBack
 }) => {
+  // Spring animation configurations for natural movement
+  const springConfig = {
+    type: "spring",
+    stiffness: 300,
+    damping: 30,
+    mass: 1
+  };
+
   return (
     <motion.div
       key="details"
-      layoutId={`hotel-detail-${hotel.id}`}
+      layoutId={`hotel-card-container-${hotel.id}`}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ 
-        type: "tween",
-        ease: "easeInOut",
-        duration: 0.25
-      }}
+      exit={{ opacity: 0, y: 10 }}
+      transition={springConfig}
       className="w-full h-full"
     >
       <Card className="p-6 border-indigo-100 dark:border-indigo-900 shadow-lg rounded-xl overflow-hidden bg-white dark:bg-slate-900 backdrop-blur-sm">
         <motion.div 
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           transition={{ 
-            duration: 0.2, 
-            ease: "easeOut",
-            delay: 0.05
+            delay: 0.1,
+            ...springConfig
           }}
         >
           <HotelDetails hotel={hotel} onEdit={onEdit} onBack={onBack} />

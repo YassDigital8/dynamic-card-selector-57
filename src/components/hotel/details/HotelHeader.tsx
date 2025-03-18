@@ -1,6 +1,7 @@
 
 import React from 'react';
-import { Flag, ArrowLeft, Pencil } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Pencil, ArrowLeft, Hotel as HotelIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
@@ -13,51 +14,98 @@ interface HotelHeaderProps {
   onBack?: () => void;
 }
 
-const HotelHeader: React.FC<HotelHeaderProps> = ({ 
-  name, 
-  posKey, 
-  country, 
-  governorate, 
-  onEdit, 
-  onBack 
+const HotelHeader: React.FC<HotelHeaderProps> = ({
+  name,
+  posKey,
+  country,
+  governorate,
+  onEdit,
+  onBack
 }) => {
   return (
-    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-900 p-6 rounded-xl -m-6 mb-6">
-      <div className="flex justify-between items-start">
-        <div>
-          <div className="flex items-center gap-2">
-            <h2 className="text-2xl font-bold text-blue-700 dark:text-blue-300">{name}</h2>
-            <Badge variant="outline" className="uppercase text-xs bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400">
-              {posKey}
-            </Badge>
-          </div>
-          <div className="flex items-center text-sm text-muted-foreground mt-1">
-            <Flag className="mr-1 h-3.5 w-3.5 text-indigo-500" />
-            <span>{country}</span>
-            <span className="px-1">•</span>
-            <span>{governorate}</span>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
+    <div className="flex flex-col space-y-4">
+      <div className="flex items-start justify-between">
+        <div className="flex flex-col space-y-1">
           {onBack && (
-            <Button 
-              variant="outline" 
-              onClick={onBack} 
-              size="sm"
-              className="group border-blue-200 dark:border-blue-900 hover:bg-blue-50 dark:hover:bg-blue-900/30"
+            <motion.div
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{
+                type: "spring",
+                stiffness: 300,
+                damping: 30
+              }}
+              className="mb-2"
             >
-              <ArrowLeft className="mr-1 h-4 w-4 transition-transform group-hover:-translate-x-1" />
-              Back
-            </Button>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={onBack}
+                className="group p-0 h-8 hover:bg-transparent"
+              >
+                <ArrowLeft className="mr-1 h-4 w-4 text-indigo-500 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-transform group-hover:-translate-x-1" />
+                <span className="text-indigo-500 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">Back</span>
+              </Button>
+            </motion.div>
           )}
-          <Button 
-            onClick={onEdit} 
-            className="gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+          
+          <motion.div 
+            layoutId={`hotel-title-${posKey}`}
+            className="flex items-center gap-2"
           >
-            <Pencil className="h-4 w-4" />
-            Edit Hotel
-          </Button>
+            <HotelIcon className="h-6 w-6 text-indigo-600 dark:text-indigo-400" />
+            <h1 className="text-2xl font-bold text-indigo-700 dark:text-indigo-300">{name}</h1>
+          </motion.div>
+          
+          <div className="flex items-center space-x-2">
+            <motion.div layoutId={`hotel-badge-${posKey}`}>
+              <Badge variant="outline" className="bg-indigo-50 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-400 border-indigo-200 dark:border-indigo-800 uppercase">
+                {posKey}
+              </Badge>
+            </motion.div>
+            
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.1 }}
+            >
+              <Badge variant="secondary" className="bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800">
+                {country}
+              </Badge>
+            </motion.div>
+            
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.15 }}
+            >
+              <Badge variant="secondary" className="bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800">
+                {governorate}
+              </Badge>
+            </motion.div>
+          </div>
         </div>
+        
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{
+            type: "spring",
+            stiffness: 300,
+            damping: 30,
+            delay: 0.2
+          }}
+        >
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onEdit}
+            className="group border-indigo-200 dark:border-indigo-800 hover:bg-indigo-50 dark:hover:bg-indigo-900/30"
+          >
+            <Pencil className="mr-2 h-4 w-4 text-indigo-500 group-hover:text-indigo-600 dark:group-hover:text-indigo-400" />
+            <span className="text-indigo-600 dark:text-indigo-400 group-hover:text-indigo-700 dark:group-hover:text-indigo-300">Edit Hotel</span>
+          </Button>
+        </motion.div>
       </div>
     </div>
   );
