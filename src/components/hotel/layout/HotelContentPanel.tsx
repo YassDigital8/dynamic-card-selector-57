@@ -98,7 +98,7 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
         </motion.div>
       )}
       
-      <AnimatePresence mode="sync">
+      <AnimatePresence mode="wait">
         {showAddForm && (
           <HotelAddForm
             key="add-form"

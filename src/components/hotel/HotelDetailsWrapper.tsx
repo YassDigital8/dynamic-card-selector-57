@@ -56,12 +56,12 @@ const HotelDetailsWrapper: React.FC<HotelDetailsWrapperProps> = memo(({
     }
   };
 
-  // Card animation
+  // Card animation - softer for transitions between hotels
   const cardVariants = {
     hidden: { 
       opacity: 0, 
-      scale: 0.95,
-      y: 10
+      scale: 0.98,
+      y: 5
     },
     visible: { 
       opacity: 1, 
@@ -69,18 +69,24 @@ const HotelDetailsWrapper: React.FC<HotelDetailsWrapperProps> = memo(({
       y: 0,
       transition: {
         ...springConfig,
-        delay: 0.05
+        delay: 0.02
+      }
+    },
+    exit: {
+      opacity: 0,
+      scale: 0.98,
+      transition: {
+        duration: 0.15
       }
     }
   };
 
   return (
     <motion.div
-      key="details"
-      layoutId={`hotel-card-container-${hotel.id}`}
+      key={`hotel-card-container-${hotel.id}`}
       initial="hidden"
       animate="visible"
-      exit={{ opacity: 0, y: 10, transition: springConfig }}
+      exit="exit"
       variants={cardVariants}
       className="w-full h-full"
     >
