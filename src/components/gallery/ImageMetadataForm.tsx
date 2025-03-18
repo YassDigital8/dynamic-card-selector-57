@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Image } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface ImageMetadata {
   title: string;
@@ -24,16 +25,18 @@ export const ImageMetadataForm: React.FC<ImageMetadataFormProps> = ({
   onMetadataChange,
   isImage
 }) => {
+  const isMobile = useIsMobile();
+  
   return (
     <Card>
-      <CardContent className="p-6 space-y-4">
+      <CardContent className={isMobile ? "p-3 space-y-3" : "p-6 space-y-4"}>
         <div className="flex items-center">
           <Image className="h-5 w-5 mr-2 text-blue-500" />
           <h2 className="text-lg font-medium">File Information</h2>
         </div>
         
-        <div className="space-y-4">
-          <div>
+        <div className={isMobile ? "space-y-3" : "space-y-4"}>
+          <div className="space-y-2">
             <Label htmlFor="title" className="flex items-center">
               Title <span className="text-red-500 ml-1">*</span>
             </Label>
@@ -42,14 +45,13 @@ export const ImageMetadataForm: React.FC<ImageMetadataFormProps> = ({
               name="title"
               value={metadata.title}
               onChange={onMetadataChange}
-              className="mt-1"
               placeholder="Enter file title"
               required
             />
           </div>
           
           {isImage && (
-            <div>
+            <div className="space-y-2">
               <Label htmlFor="altText" className="flex items-center">
                 Alternative Text <span className="text-red-500 ml-1">*</span>
               </Label>
@@ -58,14 +60,13 @@ export const ImageMetadataForm: React.FC<ImageMetadataFormProps> = ({
                 name="altText"
                 value={metadata.altText}
                 onChange={onMetadataChange}
-                className="mt-1"
                 placeholder="Describe the image for accessibility"
                 required
               />
             </div>
           )}
           
-          <div>
+          <div className="space-y-2">
             <Label htmlFor="caption" className="flex items-center">
               Caption <span className="text-red-500 ml-1">*</span>
             </Label>
@@ -74,13 +75,12 @@ export const ImageMetadataForm: React.FC<ImageMetadataFormProps> = ({
               name="caption"
               value={metadata.caption}
               onChange={onMetadataChange}
-              className="mt-1"
               placeholder="Enter a caption for the file"
               required
             />
           </div>
           
-          <div>
+          <div className="space-y-2">
             <Label htmlFor="description" className="flex items-center">
               Description <span className="text-red-500 ml-1">*</span>
             </Label>
@@ -89,9 +89,8 @@ export const ImageMetadataForm: React.FC<ImageMetadataFormProps> = ({
               name="description"
               value={metadata.description}
               onChange={onMetadataChange}
-              className="mt-1"
               placeholder="Enter a detailed description"
-              rows={4}
+              rows={isMobile ? 3 : 4}
               required
             />
           </div>

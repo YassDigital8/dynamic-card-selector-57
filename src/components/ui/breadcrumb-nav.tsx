@@ -3,6 +3,7 @@ import * as React from "react";
 import { ChevronRight, Home } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/use-mobile";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -24,14 +25,16 @@ interface BreadcrumbNavProps {
 }
 
 export function BreadcrumbNav({ items, className }: BreadcrumbNavProps) {
+  const isMobile = useIsMobile();
+  
   return (
-    <Breadcrumb className={cn("mb-4 md:mb-6", className)}>
-      <BreadcrumbList className="text-xs md:text-sm">
+    <Breadcrumb className={cn(`mb-${isMobile ? '3' : '6'}`, className)}>
+      <BreadcrumbList className={`text-xs ${isMobile ? '' : 'md:text-sm'}`}>
         <BreadcrumbItem>
           <BreadcrumbLink asChild>
             <Link to="/" className="flex items-center gap-1 hover:text-primary">
-              <Home className="h-3 w-3 md:h-4 md:w-4" />
-              <span className="sr-only md:not-sr-only">Home</span>
+              <Home className={`h-${isMobile ? '3' : '4'} w-${isMobile ? '3' : '4'}`} />
+              <span className={isMobile ? "sr-only" : "hidden sm:inline"}>Home</span>
             </Link>
           </BreadcrumbLink>
         </BreadcrumbItem>
@@ -47,7 +50,7 @@ export function BreadcrumbNav({ items, className }: BreadcrumbNavProps) {
               <BreadcrumbItem>
                 {isLastItem ? (
                   <BreadcrumbPage className="flex items-center gap-1 text-xs md:text-sm">
-                    {item.icon && <item.icon className="h-3 w-3 md:h-4 md:w-4" />}
+                    {item.icon && <item.icon className={`h-${isMobile ? '3' : '4'} w-${isMobile ? '3' : '4'}`} />}
                     <span>{item.label}</span>
                   </BreadcrumbPage>
                 ) : (
@@ -56,7 +59,7 @@ export function BreadcrumbNav({ items, className }: BreadcrumbNavProps) {
                       to={item.href || "#"} 
                       className="flex items-center gap-1 hover:text-primary text-xs md:text-sm"
                     >
-                      {item.icon && <item.icon className="h-3 w-3 md:h-4 md:w-4" />}
+                      {item.icon && <item.icon className={`h-${isMobile ? '3' : '4'} w-${isMobile ? '3' : '4'}`} />}
                       <span>{item.label}</span>
                     </Link>
                   </BreadcrumbLink>

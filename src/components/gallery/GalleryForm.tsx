@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { DialogFooter } from '@/components/ui/dialog';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface GalleryFormProps {
   name: string;
@@ -29,6 +30,8 @@ export const GalleryForm: React.FC<GalleryFormProps> = ({
   cancelLabel = 'Cancel',
   showFooter = true,
 }) => {
+  const isMobile = useIsMobile();
+  
   return (
     <form onSubmit={(e) => {
       e.preventDefault();
@@ -52,12 +55,12 @@ export const GalleryForm: React.FC<GalleryFormProps> = ({
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Enter gallery description"
-          rows={3}
+          rows={isMobile ? 2 : 3}
         />
       </div>
       
       {showFooter && (
-        <DialogFooter className="mt-4">
+        <DialogFooter className={isMobile ? "mt-3" : "mt-4"}>
           <Button type="button" variant="outline" onClick={onCancel}>
             {cancelLabel}
           </Button>

@@ -5,6 +5,7 @@ import { Pencil, ArrowLeft, Hotel as HotelIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { BreadcrumbNav } from '@/components/ui/breadcrumb-nav';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface HotelHeaderProps {
   name: string;
@@ -23,8 +24,10 @@ const HotelHeader: React.FC<HotelHeaderProps> = ({
   onEdit,
   onBack
 }) => {
+  const isMobile = useIsMobile();
+  
   return (
-    <div className="flex flex-col space-y-4">
+    <div className={`flex flex-col space-y-${isMobile ? '3' : '4'}`}>
       <BreadcrumbNav 
         items={[
           { label: 'Dashboard', href: '/' },
@@ -35,16 +38,16 @@ const HotelHeader: React.FC<HotelHeaderProps> = ({
       />
       
       <div className="flex items-start justify-between">
-        <div className="flex flex-col space-y-1">          
+        <div className={`flex flex-col space-y-${isMobile ? '1' : '2'}`}>          
           <motion.div 
             layoutId={`hotel-title-${posKey}`}
             className="flex items-center gap-2"
           >
-            <HotelIcon className="h-6 w-6 text-indigo-600 dark:text-indigo-400" />
-            <h1 className="text-2xl font-bold text-indigo-700 dark:text-indigo-300">{name}</h1>
+            <HotelIcon className={`${isMobile ? 'h-5 w-5' : 'h-6 w-6'} text-indigo-600 dark:text-indigo-400`} />
+            <h1 className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold text-indigo-700 dark:text-indigo-300`}>{name}</h1>
           </motion.div>
           
-          <div className="flex items-center space-x-2">
+          <div className="flex flex-wrap items-center gap-2">
             <motion.div layoutId={`hotel-badge-${posKey}`}>
               <Badge variant="outline" className="bg-indigo-50 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-400 border-indigo-200 dark:border-indigo-800 uppercase">
                 {posKey}
@@ -85,7 +88,7 @@ const HotelHeader: React.FC<HotelHeaderProps> = ({
         >
           <Button
             variant="outline"
-            size="sm"
+            size={isMobile ? "sm" : "default"}
             onClick={onEdit}
             className="group border-indigo-200 dark:border-indigo-800 hover:bg-indigo-50 dark:hover:bg-indigo-900/30"
           >
