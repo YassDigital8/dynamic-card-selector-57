@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { MapPin, Hotel, HandPointer, Plus } from 'lucide-react';
+import { MapPin, Hotel, PointerIcon, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface NoHotelSelectedProps {
@@ -20,7 +20,7 @@ const NoHotelSelected: React.FC<NoHotelSelectedProps> = ({ hasHotels, onAddHotel
       <div className="flex flex-col items-center text-center max-w-md space-y-6">
         <div className="p-6 rounded-full bg-indigo-100 dark:bg-indigo-900/30">
           {hasHotels ? (
-            <HandPointer size={48} className="text-indigo-500 dark:text-indigo-400" />
+            <PointerIcon size={48} className="text-indigo-500 dark:text-indigo-400" />
           ) : (
             <Hotel size={48} className="text-indigo-500 dark:text-indigo-400" />
           )}
