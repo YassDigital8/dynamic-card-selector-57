@@ -68,6 +68,10 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
     }
   };
 
+  // Key for forcing re-render of details component when hotel changes
+  // This creates the same effect as when no hotel was selected
+  const detailsKey = selectedHotel ? `hotel-details-${selectedHotel.id}` : 'no-hotel';
+
   return (
     <motion.div 
       className="h-full w-full p-2 sm:p-4 overflow-auto"
@@ -94,7 +98,7 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
         </motion.div>
       )}
       
-      <AnimatePresence mode="sync">
+      <AnimatePresence mode="wait">
         {showAddForm && (
           <HotelAddForm
             key="add-form"
@@ -117,7 +121,7 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
 
         {!showAddForm && !isEditing && selectedHotel && (
           <HotelDetailsWrapper 
-            key="details"
+            key={detailsKey}
             hotel={selectedHotel} 
             onEdit={onCancelEdit} 
             onBack={onBackToList}

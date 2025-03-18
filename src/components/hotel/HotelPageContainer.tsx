@@ -34,6 +34,7 @@ const HotelPageContainer: React.FC = () => {
   
   const [showAddForm, setShowAddForm] = useState(false);
   const [isExpanded, setIsExpanded] = useState(true);
+  const [isSelectingNewHotel, setIsSelectingNewHotel] = useState(false);
   
   // Set dynamic panel sizes based on whether there's a selected hotel
   const getInitialLeftPanelSize = () => {
@@ -61,7 +62,22 @@ const HotelPageContainer: React.FC = () => {
   }, [screenSize.width, selectedHotel, showAddForm, isEditing]);
 
   const handleSelectHotel = (hotel: Hotel) => {
-    setSelectedHotel(hotel);
+    // Check if we're selecting a different hotel than the currently selected one
+    if (selectedHotel && selectedHotel.id !== hotel.id) {
+      // If so, temporarily clear the selection to trigger the animation
+      setIsSelectingNewHotel(true);
+      setSelectedHotel(null);
+      
+      // Then set the new hotel after a small delay (just enough for animation)
+      setTimeout(() => {
+        setSelectedHotel(hotel);
+        setIsSelectingNewHotel(false);
+      }, 50);
+    } else {
+      // If no hotel was selected before or it's the same hotel, just set it directly
+      setSelectedHotel(hotel);
+    }
+    
     setIsEditing(false);
     setShowAddForm(false);
     setIsExpanded(true);
@@ -161,7 +177,7 @@ const HotelPageContainer: React.FC = () => {
           className="transition-all duration-300"
         >
           <HotelContentPanel 
-            selectedHotel={selectedHotel}
+            selectedHotel={isSelectingNewHotel ? null : selectedHotel}
             isLoading={isLoading}
             isEditing={isEditing}
             showAddForm={showAddForm}
