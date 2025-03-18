@@ -29,15 +29,11 @@ const HotelCardHeader: React.FC<HotelCardHeaderProps> = ({ hotel, useGridView })
   };
   
   return (
-    <CardHeader className={`pb-2 ${useGridView ? 'p-2 sm:p-3' : `${isMobile ? 'p-2' : 'p-3 sm:p-4'}`}`}>
-      <div className={`${useGridView ? 'flex flex-col' : `flex ${isMobile ? 'flex-row gap-2' : 'flex-row'} items-center space-x-2 sm:space-x-3`}`}>
+    <CardHeader className="p-2 pb-1 flex-shrink-0">
+      <div className="flex flex-row items-center space-x-2">
         <motion.div 
           layoutId={`hotel-image-${hotel.id}`}
-          className={`${
-            useGridView 
-              ? 'w-full h-24 sm:h-32 mb-2 sm:mb-3 overflow-hidden rounded-lg' 
-              : `${isMobile ? 'h-12 w-12' : 'h-14 w-14 sm:h-16 sm:w-16'} overflow-hidden rounded-lg flex-shrink-0`
-          }`}
+          className="h-10 w-10 overflow-hidden rounded-lg flex-shrink-0"
           variants={imageVariants}
           initial="rest"
           whileHover="hover"
@@ -54,18 +50,18 @@ const HotelCardHeader: React.FC<HotelCardHeaderProps> = ({ hotel, useGridView })
             }}
           />
         </motion.div>
-        <div className="flex-1">
+        <div className="flex-1 min-w-0">
           <motion.div layoutId={`hotel-title-${hotel.id}`}>
-            <CardTitle className={`${useGridView ? 'text-sm sm:text-base' : `${isMobile ? 'text-xs sm:text-sm' : 'text-base sm:text-lg'}`} text-indigo-700 dark:text-indigo-300 line-clamp-2`}>
+            <CardTitle className="text-xs sm:text-sm text-indigo-700 dark:text-indigo-300 truncate">
               {hotel.name}
             </CardTitle>
           </motion.div>
-          <motion.div className="flex items-center mt-1 gap-1 sm:gap-2 flex-wrap" layoutId={`hotel-badges-${hotel.id}`}>
-            <Badge variant="outline" className={`uppercase ${isMobile ? 'text-[9px] px-1 py-0' : 'text-[10px] sm:text-xs'} bg-indigo-50 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-400 font-medium`}>
+          <motion.div className="flex items-center mt-1 gap-1 flex-wrap" layoutId={`hotel-badges-${hotel.id}`}>
+            <Badge variant="outline" className="uppercase text-[9px] px-1 py-0 bg-indigo-50 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-400 font-medium">
               {hotel.posKey}
             </Badge>
             {hotel.country && (
-              <Badge variant="outline" className={`${isMobile ? 'text-[9px] px-1 py-0' : 'text-[10px] sm:text-xs'} bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-medium`}>
+              <Badge variant="outline" className="text-[9px] px-1 py-0 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-medium">
                 {hotel.country}
               </Badge>
             )}
