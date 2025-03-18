@@ -1,29 +1,26 @@
 
-import React, { useState, useEffect } from 'react';
-import { Hotel, HotelFormData } from '@/models/HotelModel';
+import React, { useState } from 'react';
+import { HotelFormData } from '@/models/HotelModel';
 import HotelPageHeader from './HotelPageHeader';
-import HotelListPanel from './layout/HotelListPanel';
-import HotelContentPanel from './layout/HotelContentPanel';
+import HotelResizablePanels from './layout/HotelResizablePanels';
 import { usePageSelectionViewModel } from '@/viewmodels/PageSelectionViewModel';
 import useHotelNetwork from '@/hooks/hotel';
 import useHotelFilters from '@/hooks/hotel/useHotelFilters';
-import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable';
-import { useIsMobile, useScreenSize } from '@/hooks/use-mobile';
+import useHotelSelection from '@/hooks/hotel/useHotelSelection';
+import usePanelSizing from '@/hooks/hotel/usePanelSizing';
 import { motion } from 'framer-motion';
 
 const HotelPageContainer: React.FC = () => {
   const { posOptions } = usePageSelectionViewModel();
   const [selectedPOS, setSelectedPOS] = useState<string>('');
-  const isMobile = useIsMobile();
-  const screenSize = useScreenSize();
   
   const {
     hotels,
-    selectedHotel,
+    selectedHotel: networkSelectedHotel,
     isLoading,
-    isEditing,
-    setSelectedHotel,
-    setIsEditing,
+    isEditing: networkIsEditing,
+    setSelectedHotel: networkSetSelectedHotel,
+    setIsEditing: networkSetIsEditing,
     addHotel,
     updateHotel,
     deleteHotel
@@ -32,76 +29,27 @@ const HotelPageContainer: React.FC = () => {
   // Setup filter state through the custom hook
   const { filters, setFilters, filteredHotels } = useHotelFilters(hotels);
   
-  const [showAddForm, setShowAddForm] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(true);
-  const [isSelectingNewHotel, setIsSelectingNewHotel] = useState(false);
+  // Use the hotel selection hook to manage selection state
+  const {
+    selectedHotel,
+    isEditing,
+    showAddForm,
+    isExpanded,
+    isSelectingNewHotel,
+    handleSelectHotel,
+    handleEditHotel,
+    handleAddHotel,
+    handleBackToList,
+    handleSubmitEdit,
+    handleCancelEdit
+  } = useHotelSelection(updateHotel, deleteHotel);
   
-  // Set dynamic panel sizes based on whether there's a selected hotel
-  const getInitialLeftPanelSize = () => {
-    // If no hotel is selected and not adding or editing, make the list panel wider
-    const hasSelectedContent = selectedHotel || showAddForm || isEditing;
-    
-    if (!hasSelectedContent) {
-      // Make panel wider when nothing is selected
-      if (screenSize.width < 640) return 65; // Mobile
-      if (screenSize.width < 1024) return 60; // Tablet
-      return 55; // Desktop
-    } else {
-      // Normal size when something is selected
-      if (screenSize.width < 640) return 50; // Mobile
-      if (screenSize.width < 1024) return 45; // Tablet
-      return 40; // Desktop
-    }
-  };
-
-  const [panelSize, setPanelSize] = useState(getInitialLeftPanelSize());
-
-  // Effect to handle panel size based on device type and selection state
-  useEffect(() => {
-    setPanelSize(getInitialLeftPanelSize());
-  }, [screenSize.width, selectedHotel, showAddForm, isEditing]);
-
-  const handleSelectHotel = (hotel: Hotel) => {
-    // Check if we're selecting a different hotel than the currently selected one
-    if (selectedHotel && selectedHotel.id !== hotel.id) {
-      // If so, temporarily clear the selection to trigger the animation
-      setIsSelectingNewHotel(true);
-      setSelectedHotel(null);
-      
-      // Shorter delay for a less jarring transition
-      setTimeout(() => {
-        setSelectedHotel(hotel);
-        setIsSelectingNewHotel(false);
-      }, 20); // Reduced from 50ms to 20ms for smoother transition
-    } else {
-      // If no hotel was selected before or it's the same hotel, just set it directly
-      setSelectedHotel(hotel);
-    }
-    
-    setIsEditing(false);
-    setShowAddForm(false);
-    setIsExpanded(true);
-  };
-
-  const handleEditHotel = (hotel: Hotel) => {
-    setSelectedHotel(hotel);
-    setIsEditing(true);
-    setShowAddForm(false);
-    setIsExpanded(true);
-  };
-
-  const handleAddHotel = () => {
-    setSelectedHotel(null);
-    setIsEditing(false);
-    setShowAddForm(true);
-    setIsExpanded(true);
-  };
-
-  const handleBackToList = () => {
-    setSelectedHotel(null);
-    setShowAddForm(false);
-    setIsEditing(false);
-  };
+  // Use the panel sizing hook
+  const { panelSize, setPanelSize } = usePanelSizing({
+    selectedHotel,
+    showAddForm,
+    isEditing
+  });
 
   const handleSubmitAdd = (data: HotelFormData) => {
     const hotelWithPOS = {
@@ -109,17 +57,8 @@ const HotelPageContainer: React.FC = () => {
       posKey: selectedPOS === 'all' ? '' : selectedPOS
     };
     addHotel(hotelWithPOS);
-    setShowAddForm(false);
+    handleBackToList();
   };
-
-  const handleSubmitEdit = (data: HotelFormData) => {
-    if (selectedHotel) {
-      updateHotel(selectedHotel.id, data);
-      setIsEditing(false);
-    }
-  };
-  
-  const handleCancelEdit = () => setIsEditing(false);
 
   const getSelectedPOSName = () => {
     if (!selectedPOS || selectedPOS === 'all') return undefined;
@@ -141,58 +80,28 @@ const HotelPageContainer: React.FC = () => {
         onFilterChange={setFilters}
       />
 
-      <ResizablePanelGroup
-        direction="horizontal"
-        className="min-h-[calc(100vh-180px)] sm:min-h-[calc(100vh-200px)] rounded-lg border border-indigo-100 dark:border-indigo-900 bg-white dark:bg-slate-900 shadow-lg"
-        onLayout={(sizes) => {
-          // This will run when the panels are resized by the user
-          if (sizes.length > 0) {
-            setPanelSize(sizes[0]);
-          }
-        }}
-      >
-        <ResizablePanel 
-          defaultSize={panelSize}
-          minSize={35}
-          maxSize={65}
-          className="transition-all duration-300"
-        >
-          <HotelListPanel 
-            filteredHotels={filteredHotels}
-            selectedHotel={selectedHotel}
-            isExpanded={!isExpanded}
-            onSelectHotel={handleSelectHotel}
-            onEditHotel={handleEditHotel}
-            onDeleteHotel={deleteHotel}
-            panelSize={panelSize}
-          />
-        </ResizablePanel>
-        
-        <ResizableHandle withHandle className="transition-colors bg-indigo-100 dark:bg-indigo-900 hover:bg-indigo-200 dark:hover:bg-indigo-800" />
-        
-        <ResizablePanel 
-          defaultSize={100 - panelSize}
-          minSize={35}
-          maxSize={65}
-          className="transition-all duration-300"
-        >
-          <HotelContentPanel 
-            selectedHotel={isSelectingNewHotel ? null : selectedHotel}
-            isLoading={isLoading}
-            isEditing={isEditing}
-            showAddForm={showAddForm}
-            isExpanded={isExpanded}
-            selectedPOS={selectedPOS}
-            posName={getSelectedPOSName()}
-            hasHotels={hotels.length > 0}
-            onAddHotel={handleAddHotel}
-            onBackToList={handleBackToList}
-            onSubmitAdd={handleSubmitAdd}
-            onSubmitEdit={handleSubmitEdit}
-            onCancelEdit={handleCancelEdit}
-          />
-        </ResizablePanel>
-      </ResizablePanelGroup>
+      <HotelResizablePanels
+        panelSize={panelSize}
+        setPanelSize={setPanelSize}
+        filteredHotels={filteredHotels}
+        selectedHotel={selectedHotel}
+        isSelectingNewHotel={isSelectingNewHotel}
+        isLoading={isLoading}
+        isEditing={isEditing}
+        showAddForm={showAddForm}
+        isExpanded={isExpanded}
+        selectedPOS={selectedPOS}
+        posName={getSelectedPOSName()}
+        hasHotels={hotels.length > 0}
+        onSelectHotel={handleSelectHotel}
+        onEditHotel={handleEditHotel}
+        onDeleteHotel={deleteHotel}
+        onAddHotel={handleAddHotel}
+        onBackToList={handleBackToList}
+        onSubmitAdd={handleSubmitAdd}
+        onSubmitEdit={handleSubmitEdit}
+        onCancelEdit={handleCancelEdit}
+      />
     </motion.div>
   );
 };
