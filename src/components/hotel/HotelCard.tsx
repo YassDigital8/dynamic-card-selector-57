@@ -67,13 +67,13 @@ const HotelCard: React.FC<HotelCardProps> = ({
   };
 
   // List view styles - with consistent padding
-  const cardStyles = `flex ${isMobile ? 'flex-col' : 'flex-row'} min-h-[70px]`;
-  const contentStyles = `flex-1 space-y-1 py-2 px-3`;
+  const cardStyles = `flex ${isMobile ? 'flex-col' : 'flex-row'} min-h-[80px]`;
+  const contentStyles = `flex-1 space-y-2 py-3 px-4`;
 
   return (
     <motion.div 
       layoutId={`hotel-card-container-${hotel.id}`}
-      className="cursor-pointer relative overflow-hidden w-full"
+      className="cursor-pointer relative overflow-hidden w-full mb-2"
       onClick={onSelect}
       initial="rest"
       whileHover="hover"

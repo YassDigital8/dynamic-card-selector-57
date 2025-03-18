@@ -84,16 +84,16 @@ const LocationCard: React.FC<LocationCardProps> = ({
             animate="visible"
           >
             <motion.div variants={item} layoutId={`hotel-address-${posKey}`} className="text-base">
-              <div className="font-medium text-blue-700 dark:text-blue-400 mb-1">Address</div>
-              <div className="text-gray-600 dark:text-gray-300">{streetAddress}</div>
+              <div className="font-medium text-blue-700 dark:text-blue-400 mb-1.5">Address</div>
+              <div className="text-gray-600 dark:text-gray-300 text-base">{streetAddress}</div>
             </motion.div>
             
             <motion.div variants={item} className="grid grid-cols-2 gap-4">
               <div>
-                <div className="font-medium text-blue-700 dark:text-blue-400 mb-1">Country</div>
+                <div className="font-medium text-blue-700 dark:text-blue-400 mb-1.5">Country</div>
                 <HoverCard>
                   <HoverCardTrigger asChild>
-                    <div className="text-gray-600 dark:text-gray-300 cursor-help">{country}</div>
+                    <div className="text-gray-600 dark:text-gray-300 cursor-help text-base font-medium">{country}</div>
                   </HoverCardTrigger>
                   <HoverCardContent className="w-80">
                     <div className="flex justify-between space-x-4">
@@ -109,8 +109,8 @@ const LocationCard: React.FC<LocationCardProps> = ({
               </div>
               
               <div>
-                <div className="font-medium text-blue-700 dark:text-blue-400 mb-1">Governorate</div>
-                <div className="text-gray-600 dark:text-gray-300">{governorate}</div>
+                <div className="font-medium text-blue-700 dark:text-blue-400 mb-1.5">Governorate</div>
+                <div className="text-gray-600 dark:text-gray-300 text-base font-medium">{governorate}</div>
               </div>
             </motion.div>
             
@@ -120,7 +120,7 @@ const LocationCard: React.FC<LocationCardProps> = ({
             >
               <div className="flex items-center">
                 <MapPin className="h-4 w-4 mr-2 text-blue-500" />
-                <span>This hotel belongs to the <strong>{posKey}</strong> point of sale.</span>
+                <span>This hotel belongs to the <strong className="text-base uppercase">{posKey}</strong> point of sale.</span>
               </div>
             </motion.div>
           </motion.div>
