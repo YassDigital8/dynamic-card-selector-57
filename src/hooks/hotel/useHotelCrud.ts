@@ -24,7 +24,7 @@ export const useHotelCrud = () => {
       toast({
         title: "Hotel Added Successfully",
         description: `${newHotel.name} has been added to your hotel network`,
-        variant: "success",
+        variant: "default", // Changed from "success" to "default"
       });
       
       return { success: true, hotel: newHotel };
@@ -67,7 +67,7 @@ export const useHotelCrud = () => {
       toast({
         title: "Hotel Updated Successfully",
         description: `${updatedHotel?.name || 'Hotel'} information has been updated`,
-        variant: "success",
+        variant: "default", // Changed from "success" to "default"
       });
       
       return { success: true, hotel: updatedHotel };
@@ -101,7 +101,7 @@ export const useHotelCrud = () => {
       toast({
         title: "Hotel Deleted Successfully",
         description: `${hotelToDelete.name} has been removed from your hotel network`,
-        variant: "success",
+        variant: "default", // Changed from "success" to "default"
       });
       
       return { success: true, hotelName: hotelToDelete.name };
