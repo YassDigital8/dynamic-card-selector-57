@@ -12,8 +12,8 @@ export function useTheme() {
       return savedTheme;
     }
     
-    // Default to light if no valid theme is saved
-    return 'light';
+    // Default to system if no valid theme is saved
+    return 'system';
   });
 
   // Get the effective theme (resolving 'system' to either 'light' or 'dark')
@@ -48,15 +48,26 @@ export function useTheme() {
     }
   }, [theme]);
 
-  // Update document class when effective theme changes
+  // Update document class when effective theme changes with smooth transition
   useEffect(() => {
     const root = window.document.documentElement;
     
-    if (effectiveTheme === 'dark') {
-      root.classList.add('dark');
-    } else {
-      root.classList.remove('dark');
-    }
+    // Add transition class before changing theme
+    root.classList.add('theme-transition');
+    
+    // Set timeout to ensure transition is applied before changing theme
+    setTimeout(() => {
+      if (effectiveTheme === 'dark') {
+        root.classList.add('dark');
+      } else {
+        root.classList.remove('dark');
+      }
+      
+      // Remove transition class after theme change
+      setTimeout(() => {
+        root.classList.remove('theme-transition');
+      }, 300);
+    }, 10);
     
     // Save to localStorage
     localStorage.setItem('theme', theme);

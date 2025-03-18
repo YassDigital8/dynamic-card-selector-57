@@ -19,7 +19,7 @@ const CarouselPrevious = React.forwardRef<
       variant={variant}
       size={size}
       className={cn(
-        "absolute h-8 w-8 rounded-full",
+        "absolute h-8 w-8 rounded-full shadow-md bg-background/90 backdrop-blur-sm border-border",
         orientation === "horizontal"
           ? isMobile 
             ? "left-1 top-1/2 -translate-y-1/2" 

@@ -15,9 +15,9 @@ export function ThemeToggle() {
     setTheme(newTheme);
     
     const descriptions = {
-      light: 'Bright mode activated - easier on the eyes in daylight',
-      dark: 'Dark mode activated - easier on the eyes at night',
-      system: 'Using your system preference for theme'
+      light: 'Light mode activated - high contrast for daytime use',
+      dark: 'Dark mode activated - reduced eye strain in low light',
+      system: 'Following your system preference for theme'
     };
     
     toast(`${newTheme.charAt(0).toUpperCase() + newTheme.slice(1)} theme`, {
@@ -35,7 +35,7 @@ export function ThemeToggle() {
           size="icon" 
           className={cn(
             "rounded-full w-9 h-9 border-sidebar-border bg-sidebar-accent hover:bg-sidebar-accent/80",
-            "relative overflow-hidden transition-all duration-300"
+            "relative overflow-hidden transition-all duration-300 shadow-sm"
           )}
         >
           <Sun className={cn(
@@ -49,7 +49,7 @@ export function ThemeToggle() {
           <span className="sr-only">Toggle theme</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-40 backdrop-blur-sm bg-popover/95 border border-border/50">
+      <DropdownMenuContent align="end" className="w-42 backdrop-blur-sm bg-popover/95 border border-border/50 shadow-lg">
         <DropdownMenuItem 
           onClick={() => handleThemeChange('light')}
           className={cn(
