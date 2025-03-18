@@ -30,6 +30,8 @@ const Carousel = React.forwardRef<
     )
     const [canScrollPrev, setCanScrollPrev] = React.useState(false)
     const [canScrollNext, setCanScrollNext] = React.useState(false)
+    const [activeIndex, setActiveIndex] = React.useState(0)
+    const [slideCount, setSlideCount] = React.useState(0)
 
     const onSelect = React.useCallback((api: UseEmblaCarouselType[1]) => {
       if (!api) {
@@ -38,6 +40,8 @@ const Carousel = React.forwardRef<
 
       setCanScrollPrev(api.canScrollPrev())
       setCanScrollNext(api.canScrollNext())
+      setActiveIndex(api.selectedScrollSnap())
+      setSlideCount(api.scrollSnapList().length)
     }, [])
 
     const scrollPrev = React.useCallback(() => {
@@ -95,6 +99,8 @@ const Carousel = React.forwardRef<
           scrollNext,
           canScrollPrev,
           canScrollNext,
+          activeIndex,
+          slideCount
         }}
       >
         <div
@@ -103,6 +109,8 @@ const Carousel = React.forwardRef<
           className={cn("relative", className)}
           role="region"
           aria-roledescription="carousel"
+          aria-label={props['aria-label'] || "Image carousel"}
+          tabIndex={0}
           {...props}
         >
           {children}

@@ -21,15 +21,23 @@ export const GallerySelector: React.FC<GallerySelectorProps> = ({
   selectedGalleryId,
   onGalleryChange
 }) => {
+  const gallerySelectId = React.useId();
+  
   return (
     <div className="space-y-2">
-      <Label htmlFor="gallery-select">Select Gallery</Label>
+      <Label htmlFor={gallerySelectId}>Select Gallery</Label>
       <Select
         value={selectedGalleryId}
         onValueChange={onGalleryChange}
         disabled={galleries.length === 0}
       >
-        <SelectTrigger id="gallery-select" className="w-full">
+        <SelectTrigger 
+          id={gallerySelectId} 
+          className="w-full"
+          aria-label="Select a gallery"
+          aria-invalid={galleries.length === 0 ? "true" : "false"}
+          aria-describedby={galleries.length === 0 ? `${gallerySelectId}-error` : undefined}
+        >
           <SelectValue placeholder="Select a gallery" />
         </SelectTrigger>
         <SelectContent>
@@ -41,7 +49,7 @@ export const GallerySelector: React.FC<GallerySelectorProps> = ({
         </SelectContent>
       </Select>
       {galleries.length === 0 && (
-        <p className="text-sm text-muted-foreground">
+        <p id={`${gallerySelectId}-error`} className="text-sm text-muted-foreground">
           No galleries available. Please create a gallery first.
         </p>
       )}

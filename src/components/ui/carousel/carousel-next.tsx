@@ -8,9 +8,9 @@ import { useIsMobile } from "@/hooks/use-mobile"
 
 const CarouselNext = React.forwardRef<
   HTMLButtonElement,
-  React.ComponentProps<typeof Button>
+  React.ComponentPropsWithoutRef<typeof Button>
 >(({ className, variant = "outline", size = "icon", ...props }, ref) => {
-  const { orientation, scrollNext, canScrollNext } = useCarousel()
+  const { orientation, scrollNext, canScrollNext, activeIndex, slideCount } = useCarousel()
   const isMobile = useIsMobile()
 
   return (
@@ -30,10 +30,12 @@ const CarouselNext = React.forwardRef<
       )}
       disabled={!canScrollNext}
       onClick={scrollNext}
+      aria-label="Next slide" 
+      aria-controls="carousel-items"
+      aria-disabled={!canScrollNext}
       {...props}
     >
-      <ArrowRight className="h-4 w-4" />
-      <span className="sr-only">Next slide</span>
+      <ArrowRight className="h-4 w-4" aria-hidden="true" />
     </Button>
   )
 })

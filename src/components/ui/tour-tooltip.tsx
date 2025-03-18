@@ -54,6 +54,18 @@ export const TourTooltip: React.FC<TourTooltipProps> = ({
   });
 
   const isMobile = useIsMobile();
+  const tooltipRef = React.useRef<HTMLDivElement>(null);
+
+  // Move focus to tooltip when it becomes visible
+  React.useEffect(() => {
+    if (isVisible && tooltipRef.current) {
+      // Short timeout to ensure the tooltip is visible before focusing
+      const timer = setTimeout(() => {
+        tooltipRef.current?.focus();
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [isVisible]);
 
   // Handle next click with prevention of event bubbling
   const handleNextClick = (e: React.MouseEvent) => {
@@ -82,6 +94,25 @@ export const TourTooltip: React.FC<TourTooltipProps> = ({
     console.log("Confirm button clicked");
     if (onConfirm) {
       onConfirm();
+    }
+  };
+
+  // Handle keyboard navigation
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      if (!needsConfirmation) {
+        onClose();
+      }
+    } else if (e.key === 'ArrowRight' || e.key === 'Enter') {
+      if (step < totalSteps) {
+        onNext();
+      } else if (onConfirm) {
+        onConfirm();
+      }
+    } else if (e.key === 'ArrowLeft') {
+      if (step > 1) {
+        onPrev();
+      }
     }
   };
 
@@ -152,10 +183,14 @@ export const TourTooltip: React.FC<TourTooltipProps> = ({
               handleCloseClick(e);
             }
           }}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="tour-title"
         >
           <TourHighlight position={highlightPosition} isVisible={isVisible} />
 
           <motion.div
+            ref={tooltipRef}
             style={getTooltipStyles(tooltipPosition, effectivePosition)}
             initial="hidden"
             animate="visible"
@@ -163,6 +198,10 @@ export const TourTooltip: React.FC<TourTooltipProps> = ({
             variants={tooltipVariants}
             className="pointer-events-auto z-[100]"
             onClick={(e) => e.stopPropagation()} // Prevent clicks from bubbling to parent
+            tabIndex={0}
+            onKeyDown={handleKeyDown}
+            role="tooltip"
+            aria-live="assertive"
           >
             <TourContent
               step={step}

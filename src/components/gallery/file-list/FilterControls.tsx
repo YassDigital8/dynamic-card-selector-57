@@ -3,6 +3,7 @@ import React from 'react';
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
 
 interface FilterControlsProps {
   searchQuery: string;
@@ -30,34 +31,45 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
     return type.split('/').pop() || type;
   };
 
+  // Generate unique IDs for accessibility
+  const searchId = React.useId();
+  const filterTypeId = React.useId();
+
   return (
     <div className="flex flex-col sm:flex-row gap-4 w-full">
       <div className="relative flex-1">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Label htmlFor={searchId} className="sr-only">Search files</Label>
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" aria-hidden="true" />
         <Input
+          id={searchId}
           placeholder="Search files..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="pl-9"
+          aria-label="Search files"
         />
       </div>
       
-      <Select
-        value={selectedType}
-        onValueChange={setSelectedType}
-      >
-        <SelectTrigger className="w-full sm:w-[180px]">
-          <SelectValue placeholder="All file types" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">All file types</SelectItem>
-          {uniqueFileTypes.map((type) => (
-            <SelectItem key={type} value={type}>
-              {getTypeLabel(type)}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      <div>
+        <Label htmlFor={filterTypeId} className="sr-only">Filter by file type</Label>
+        <Select
+          value={selectedType}
+          onValueChange={setSelectedType}
+          aria-label="Filter by file type"
+        >
+          <SelectTrigger id={filterTypeId} className="w-full sm:w-[180px]">
+            <SelectValue placeholder="All file types" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All file types</SelectItem>
+            {uniqueFileTypes.map((type) => (
+              <SelectItem key={type} value={type}>
+                {getTypeLabel(type)}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
     </div>
   );
 };

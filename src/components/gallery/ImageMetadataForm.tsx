@@ -33,11 +33,11 @@ export const ImageMetadataForm: React.FC<ImageMetadataFormProps> = ({
     <Card>
       <CardContent className={isMobile ? "p-3 space-y-3" : "p-6 space-y-4"}>
         <div className="flex items-center">
-          <Image className="h-5 w-5 mr-2 text-blue-500" />
-          <h2 className="text-lg font-medium">File Information</h2>
+          <Image className="h-5 w-5 mr-2 text-blue-500" aria-hidden="true" />
+          <h2 className="text-lg font-medium" id="file-info-heading">File Information</h2>
         </div>
         
-        <div className={isMobile ? "space-y-3" : "space-y-4"}>
+        <div className={isMobile ? "space-y-3" : "space-y-4"} role="group" aria-labelledby="file-info-heading">
           <div className="space-y-2">
             <Label htmlFor="title" required>Title</Label>
             <Input
@@ -47,9 +47,11 @@ export const ImageMetadataForm: React.FC<ImageMetadataFormProps> = ({
               onChange={onMetadataChange}
               placeholder="Enter file title"
               error={!!errors.title}
+              aria-describedby={errors.title ? "title-error" : undefined}
+              required
             />
             {errors.title && (
-              <p className="text-sm text-destructive mt-1">{errors.title}</p>
+              <p id="title-error" className="text-sm text-destructive mt-1" role="alert">{errors.title}</p>
             )}
           </div>
           
@@ -63,9 +65,11 @@ export const ImageMetadataForm: React.FC<ImageMetadataFormProps> = ({
                 onChange={onMetadataChange}
                 placeholder="Describe the image for accessibility"
                 error={!!errors.altText}
+                aria-describedby={errors.altText ? "altText-error" : undefined}
+                required
               />
               {errors.altText && (
-                <p className="text-sm text-destructive mt-1">{errors.altText}</p>
+                <p id="altText-error" className="text-sm text-destructive mt-1" role="alert">{errors.altText}</p>
               )}
             </div>
           )}
@@ -79,9 +83,11 @@ export const ImageMetadataForm: React.FC<ImageMetadataFormProps> = ({
               onChange={onMetadataChange}
               placeholder="Enter a caption for the file"
               error={!!errors.caption}
+              aria-describedby={errors.caption ? "caption-error" : undefined}
+              required
             />
             {errors.caption && (
-              <p className="text-sm text-destructive mt-1">{errors.caption}</p>
+              <p id="caption-error" className="text-sm text-destructive mt-1" role="alert">{errors.caption}</p>
             )}
           </div>
           
@@ -95,9 +101,11 @@ export const ImageMetadataForm: React.FC<ImageMetadataFormProps> = ({
               placeholder="Enter a detailed description"
               rows={isMobile ? 3 : 4}
               error={!!errors.description}
+              aria-describedby={errors.description ? "description-error" : undefined}
+              required
             />
             {errors.description && (
-              <p className="text-sm text-destructive mt-1">{errors.description}</p>
+              <p id="description-error" className="text-sm text-destructive mt-1" role="alert">{errors.description}</p>
             )}
           </div>
         </div>

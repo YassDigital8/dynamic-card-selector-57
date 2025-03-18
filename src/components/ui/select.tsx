@@ -30,7 +30,7 @@ const SelectTrigger = React.forwardRef<
     >
       {children}
       <SelectPrimitive.Icon asChild>
-        <ChevronDown className={`opacity-50 ${isMobile ? 'h-3 w-3' : 'h-4 w-4'}`} />
+        <ChevronDown className={`opacity-50 ${isMobile ? 'h-3 w-3' : 'h-4 w-4'}`} aria-hidden="true" />
       </SelectPrimitive.Icon>
     </SelectPrimitive.Trigger>
   );
@@ -49,7 +49,8 @@ const SelectScrollUpButton = React.forwardRef<
     )}
     {...props}
   >
-    <ChevronUp className="h-4 w-4" />
+    <ChevronUp className="h-4 w-4" aria-hidden="true" />
+    <span className="sr-only">Scroll up</span>
   </SelectPrimitive.ScrollUpButton>
 ))
 SelectScrollUpButton.displayName = SelectPrimitive.ScrollUpButton.displayName
@@ -66,7 +67,8 @@ const SelectScrollDownButton = React.forwardRef<
     )}
     {...props}
   >
-    <ChevronDown className="h-4 w-4" />
+    <ChevronDown className="h-4 w-4" aria-hidden="true" />
+    <span className="sr-only">Scroll down</span>
   </SelectPrimitive.ScrollDownButton>
 ))
 SelectScrollDownButton.displayName =
@@ -139,7 +141,7 @@ const SelectItem = React.forwardRef<
     >
       <span className={`absolute left-2 flex items-center justify-center ${isMobile ? 'h-3 w-3' : 'h-3.5 w-3.5'}`}>
         <SelectPrimitive.ItemIndicator>
-          <Check className={isMobile ? "h-3 w-3" : "h-4 w-4"} />
+          <Check className={isMobile ? "h-3 w-3" : "h-4 w-4"} aria-hidden="true" />
         </SelectPrimitive.ItemIndicator>
       </span>
 
