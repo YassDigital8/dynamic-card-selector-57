@@ -15,6 +15,7 @@ interface HotelListPanelProps {
   onEditHotel: (hotel: Hotel) => void;
   onDeleteHotel: (id: string) => void;
   panelSize?: number;
+  isEditing?: boolean;
 }
 
 const HotelListPanel: React.FC<HotelListPanelProps> = ({
@@ -24,7 +25,8 @@ const HotelListPanel: React.FC<HotelListPanelProps> = ({
   onSelectHotel,
   onEditHotel,
   onDeleteHotel,
-  panelSize = 100
+  panelSize = 100,
+  isEditing = false
 }) => {
   const [contentHeight, setContentHeight] = useState<string>('auto');
   const listRef = useRef<HTMLDivElement>(null);
@@ -52,6 +54,7 @@ const HotelListPanel: React.FC<HotelListPanelProps> = ({
               onSelectHotel={onSelectHotel}
               onEditHotel={onEditHotel}
               onDeleteHotel={onDeleteHotel}
+              isEditing={isEditing}
             />
           </div>
         </ScrollArea>
