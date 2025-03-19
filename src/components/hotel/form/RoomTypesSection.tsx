@@ -24,7 +24,7 @@ const RoomTypesSection: React.FC<RoomTypesSectionProps> = ({ form }) => {
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
   const [currentRoomTypeIndex, setCurrentRoomTypeIndex] = useState(0);
   
-  // Mock gallery files - in a real app, these would come from your gallery service
+  // Mock gallery files with correct FileInfo properties
   const galleryFiles: FileInfo[] = [
     {
       id: '1',
@@ -32,8 +32,8 @@ const RoomTypesSection: React.FC<RoomTypesSectionProps> = ({ form }) => {
       name: 'Hotel Room',
       type: 'image/png',
       size: 10000,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      uploadedBy: 'admin',
+      uploadedOn: '2023-06-15',
       galleryId: '1',
       metadata: {
         title: 'Deluxe Room',
@@ -48,8 +48,8 @@ const RoomTypesSection: React.FC<RoomTypesSectionProps> = ({ form }) => {
       name: 'Suite Room',
       type: 'image/png',
       size: 12000,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      uploadedBy: 'admin',
+      uploadedOn: '2023-06-20',
       galleryId: '1',
       metadata: {
         title: 'Executive Suite',
@@ -224,11 +224,10 @@ const RoomTypesSection: React.FC<RoomTypesSectionProps> = ({ form }) => {
           </DialogHeader>
           <div className="overflow-y-auto max-h-[60vh]">
             <FileGrid 
-              files={galleryFiles} 
-              onFileClick={handleSelectImage}
-              showCheckbox={false}
-              selectedFiles={[]}
-              onFileSelect={() => {}}
+              files={galleryFiles}
+              onViewFile={handleSelectImage}
+              onShareFile={(file, e) => { e.preventDefault(); }}
+              onDeleteFile={(file, e) => { e.preventDefault(); }}
             />
           </div>
         </DialogContent>
