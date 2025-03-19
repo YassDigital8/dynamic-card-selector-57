@@ -126,7 +126,7 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
 
       {/* Only render NoHotelSelected when no content is shown, and it's not in a collapsed state */}
       {!showContent && isExpanded && hasHotels && (
-        <div className="relative min-h-[calc(100vh-200px)] overflow-auto pt-0">
+        <div className="relative min-h-[calc(100vh-200px)] overflow-auto pt-0 -mt-4">
           <NoHotelSelected
             key="no-hotel-selected"
             hasHotels={hasHotels}
