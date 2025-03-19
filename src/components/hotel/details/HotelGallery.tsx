@@ -16,12 +16,16 @@ import {
   CarouselNext, 
   CarouselPrevious 
 } from '@/components/ui/carousel';
+import { Card, CardContent } from '@/components/ui/card';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface HotelGalleryProps {
   hotel: Hotel;
 }
 
 const HotelGallery: React.FC<HotelGalleryProps> = ({ hotel }) => {
+  const isMobile = useIsMobile();
+  
   // Extract all amenity images
   const amenityImagesMap = new Map<string, AmenityImage[]>();
   
@@ -87,24 +91,36 @@ const HotelGallery: React.FC<HotelGalleryProps> = ({ hotel }) => {
                         variants={staggerItemVariants}
                         className="p-1 flex items-center justify-center"
                       >
-                        <div className="h-64 md:h-80 w-full relative rounded-xl overflow-hidden border border-indigo-100 dark:border-indigo-900">
-                          <img 
-                            src={image.url} 
-                            alt={image.description || `${category} image ${index + 1}`}
-                            className="h-full w-full object-cover"
-                          />
-                          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
-                            <p className="text-white text-sm truncate">
+                        <Card className="w-full overflow-hidden">
+                          <div className="h-64 md:h-80 w-full relative overflow-hidden border border-indigo-100 dark:border-indigo-900">
+                            <img 
+                              src={image.url} 
+                              alt={image.description || `${category} image ${index + 1}`}
+                              className="h-full w-full object-cover"
+                            />
+                          </div>
+                          <CardContent className="p-4 space-y-2">
+                            {image.title && (
+                              <h4 className="font-medium text-indigo-700 dark:text-indigo-300">
+                                {image.title}
+                              </h4>
+                            )}
+                            <p className="text-sm text-gray-700 dark:text-gray-300">
                               {image.description || `${category} image ${index + 1}`}
                             </p>
-                          </div>
-                        </div>
+                            {image.caption && (
+                              <p className="text-xs text-gray-500 dark:text-gray-400 italic">
+                                {image.caption}
+                              </p>
+                            )}
+                          </CardContent>
+                        </Card>
                       </motion.div>
                     </CarouselItem>
                   ))}
                 </CarouselContent>
-                <CarouselPrevious className="left-2" />
-                <CarouselNext className="right-2" />
+                <CarouselPrevious className={`left-2 ${isMobile ? '-translate-y-1/2' : '-translate-y-1/3'}`} />
+                <CarouselNext className={`right-2 ${isMobile ? '-translate-y-1/2' : '-translate-y-1/3'}`} />
               </Carousel>
               
               <div className="text-center mt-4 text-sm text-muted-foreground">

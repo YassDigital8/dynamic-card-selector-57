@@ -4,6 +4,9 @@ import * as z from 'zod';
 const amenityImageSchema = z.object({
   url: z.string(),
   description: z.string().optional(),
+  title: z.string().optional(),
+  caption: z.string().optional(),
+  metadata: z.record(z.any()).optional(),
 });
 
 export const formSchema = z.object({

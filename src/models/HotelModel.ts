@@ -1,4 +1,3 @@
-
 export interface RoomType {
   id: string;
   name: string;
@@ -13,6 +12,15 @@ export interface RoomType {
 export interface AmenityImage {
   url: string;
   description?: string;
+  title?: string;
+  caption?: string;
+  metadata?: {
+    title?: string;
+    altText?: string;
+    caption?: string;
+    description?: string;
+    [key: string]: any;
+  };
 }
 
 export interface HotelAmenities {

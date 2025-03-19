@@ -9,14 +9,16 @@ import {
   amenitiesWithImages, 
   amenitiesList 
 } from './amenities';
+import { FileMetadataValues } from '@/hooks/upload/useFileMetadata';
 
 interface AmenitiesSectionProps {
   form: UseFormReturn<FormValues>;
+  hotelId?: string;
 }
 
 type AmenityWithImages = 'bar' | 'gym' | 'spa' | 'restaurant' | 'breakfast' | 'swimmingPool';
 
-const AmenitiesSection: React.FC<AmenitiesSectionProps> = ({ form }) => {
+const AmenitiesSection: React.FC<AmenitiesSectionProps> = ({ form, hotelId }) => {
   const [selectedAmenity, setSelectedAmenity] = useState<AmenityWithImages | null>(null);
   const [isImageDialogOpen, setIsImageDialogOpen] = useState(false);
   
@@ -27,7 +29,7 @@ const AmenitiesSection: React.FC<AmenitiesSectionProps> = ({ form }) => {
     setIsImageDialogOpen(true);
   };
   
-  const handleAddImage = (imageUrl: string) => {
+  const handleAddImage = (imageUrl: string, metadata?: FileMetadataValues) => {
     if (!selectedAmenity || !imageUrl) {
       return;
     }
@@ -37,7 +39,10 @@ const AmenitiesSection: React.FC<AmenitiesSectionProps> = ({ form }) => {
     
     const newImage: AmenityImage = {
       url: imageUrl,
-      description: `${amenitiesWithImages[selectedAmenity]} image`
+      description: metadata?.altText || `${amenitiesWithImages[selectedAmenity]} image`,
+      title: metadata?.title || '',
+      caption: metadata?.caption || '',
+      metadata: metadata
     };
     
     form.setValue(imageFieldName as any, [...currentImages, newImage], { shouldDirty: true });
@@ -90,6 +95,7 @@ const AmenitiesSection: React.FC<AmenitiesSectionProps> = ({ form }) => {
           onClose={handleCloseDialog}
           onAddImage={handleAddImage}
           amenityLabel={amenitiesWithImages[selectedAmenity]}
+          hotelId={hotelId}
         />
       )}
     </div>
