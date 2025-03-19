@@ -21,7 +21,7 @@ const HotelCardAvatar: React.FC<HotelCardAvatarProps> = ({
     lg: 'h-12 w-12'
   };
   
-  const avatarUrl = getHotelAvatar(hotel);
+  const avatarUrl = getHotelAvatar(hotel.name);
   const fallbackText = hotel.name.substring(0, 2).toUpperCase();
   
   return (
