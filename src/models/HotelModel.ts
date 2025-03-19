@@ -31,6 +31,7 @@ export interface Hotel {
   posKey: string; // POS key
   amenities: HotelAmenities;
   roomTypes: RoomType[];
+  rating?: number; // New field for star rating (0-5)
   createdAt: Date;
   updatedAt: Date;
 }

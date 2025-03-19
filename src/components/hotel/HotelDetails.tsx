@@ -17,6 +17,7 @@ const HotelDetails: React.FC<HotelDetailsProps> = memo(({ hotel, onEdit, onBack 
         posKey={hotel.posKey}
         country={hotel.country}
         governorate={hotel.governorate}
+        rating={hotel.rating}
         onEdit={onEdit}
         onBack={onBack}
       />

@@ -1,140 +1,104 @@
 
 import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
-import { 
+import {
+  FormControl,
   FormField,
   FormItem,
-  FormControl,
+  FormLabel,
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Flag, Building, MapPin, AlertCircle } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { FormValues } from './formSchema';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { Label } from '@/components/ui/label';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import RatingInput from './RatingInput';
 
 interface BasicInformationProps {
   form: UseFormReturn<FormValues>;
 }
 
 const BasicInformation: React.FC<BasicInformationProps> = ({ form }) => {
-  const isMobile = useIsMobile();
-  
-  // Check if there are any errors in the basic information section
-  const hasErrors = 
-    !!form.formState.errors.name || 
-    !!form.formState.errors.country || 
-    !!form.formState.errors.governorate || 
-    !!form.formState.errors.streetAddress;
-  
   return (
-    <div className={`space-y-${isMobile ? '4' : '6'} col-span-2`}>
-      <h3 className="text-lg font-medium text-foreground">Basic Information</h3>
-      
-      {hasErrors && (
-        <Alert variant="error" className="mb-4">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            Please correct the highlighted fields to continue.
-          </AlertDescription>
-        </Alert>
-      )}
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <Card className="col-span-1 md:col-span-2">
+      <CardHeader>
+        <CardTitle className="text-xl">Basic Information</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
         <FormField
           control={form.control}
           name="name"
           render={({ field }) => (
             <FormItem>
-              <Label htmlFor="name" required>Hotel Name</Label>
+              <FormLabel>Hotel Name</FormLabel>
               <FormControl>
-                <Input 
-                  id="name"
-                  placeholder="Enter hotel name" 
-                  {...field} 
-                  error={!!form.formState.errors.name}
-                  aria-describedby={form.formState.errors.name ? "name-error" : undefined}
-                />
+                <Input placeholder="Enter hotel name" {...field} />
               </FormControl>
-              <FormMessage id="name-error" />
+              <FormMessage />
             </FormItem>
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="country"
-          render={({ field }) => (
-            <FormItem>
-              <Label htmlFor="country" required>Country</Label>
-              <FormControl>
-                <div className="relative">
-                  <Flag className={`absolute left-2 top-${isMobile ? '1.5' : '2'} h-4 w-4 text-muted-foreground`} aria-hidden="true" />
-                  <Input 
-                    id="country"
-                    className="pl-8" 
-                    placeholder="Enter country" 
-                    {...field} 
-                    error={!!form.formState.errors.country}
-                    aria-describedby={form.formState.errors.country ? "country-error" : undefined}
-                  />
-                </div>
-              </FormControl>
-              <FormMessage id="country-error" />
-            </FormItem>
-          )}
-        />
+        <RatingInput form={form} />
 
-        <FormField
-          control={form.control}
-          name="governorate"
-          render={({ field }) => (
-            <FormItem>
-              <Label htmlFor="governorate" required>Governorate/State</Label>
-              <FormControl>
-                <div className="relative">
-                  <Building className={`absolute left-2 top-${isMobile ? '1.5' : '2'} h-4 w-4 text-muted-foreground`} aria-hidden="true" />
-                  <Input 
-                    id="governorate"
-                    className="pl-8" 
-                    placeholder="Enter governorate or state" 
-                    {...field} 
-                    error={!!form.formState.errors.governorate}
-                    aria-describedby={form.formState.errors.governorate ? "governorate-error" : undefined}
-                  />
-                </div>
-              </FormControl>
-              <FormMessage id="governorate-error" />
-            </FormItem>
-          )}
-        />
-
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="country"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Country</FormLabel>
+                <FormControl>
+                  <Input placeholder="Enter country" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          
+          <FormField
+            control={form.control}
+            name="governorate"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Governorate/City</FormLabel>
+                <FormControl>
+                  <Input placeholder="Enter governorate or city" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        
         <FormField
           control={form.control}
           name="streetAddress"
           render={({ field }) => (
             <FormItem>
-              <Label htmlFor="streetAddress" required>Street Address</Label>
+              <FormLabel>Street Address</FormLabel>
               <FormControl>
-                <div className="relative">
-                  <MapPin className={`absolute left-2 top-${isMobile ? '1.5' : '2'} h-4 w-4 text-muted-foreground`} aria-hidden="true" />
-                  <Input 
-                    id="streetAddress"
-                    className="pl-8" 
-                    placeholder="Enter street address" 
-                    {...field} 
-                    error={!!form.formState.errors.streetAddress}
-                    aria-describedby={form.formState.errors.streetAddress ? "streetAddress-error" : undefined}
-                  />
-                </div>
+                <Input placeholder="Enter street address" {...field} />
               </FormControl>
-              <FormMessage id="streetAddress-error" />
+              <FormMessage />
             </FormItem>
           )}
         />
-      </div>
-    </div>
+        
+        <FormField
+          control={form.control}
+          name="posKey"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>POS Key</FormLabel>
+              <FormControl>
+                <Input placeholder="Enter POS key (e.g. UAE, UK)" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </CardContent>
+    </Card>
   );
 };
 

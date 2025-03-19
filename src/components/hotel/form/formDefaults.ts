@@ -7,6 +7,7 @@ export const defaultValues: HotelFormData = {
   governorate: '',
   streetAddress: '',
   posKey: '',
+  rating: 0,
   amenities: {
     airConditioning: false,
     bar: false,

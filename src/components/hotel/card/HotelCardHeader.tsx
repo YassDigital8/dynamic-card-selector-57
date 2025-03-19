@@ -5,6 +5,7 @@ import { CardHeader, CardTitle } from '@/components/ui/card';
 import { Hotel } from '@/models/HotelModel';
 import { getHotelAvatar } from './HotelCardUtils';
 import { Flag } from 'lucide-react';
+import StarRating from './StarRating';
 
 interface HotelCardHeaderProps {
   hotel: Hotel;
@@ -61,6 +62,13 @@ const HotelCardHeader: React.FC<HotelCardHeaderProps> = ({ hotel, useGridView })
                 </div>
               </motion.div>
             </motion.div>
+            
+            {/* Display star rating if available */}
+            {hotel.rating !== undefined && (
+              <motion.div layoutId={`hotel-rating-${hotel.id}`} className="mt-1">
+                <StarRating rating={hotel.rating} size="sm" />
+              </motion.div>
+            )}
             
             <motion.div className="mt-1 text-xs text-gray-600 dark:text-gray-400" layoutId={`hotel-country-${hotel.id}`}>
               {hotel.country}
