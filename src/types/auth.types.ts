@@ -1,12 +1,13 @@
 
 export interface AuthResponse {
   message: string;
-  isAuthenticated: boolean;
+  isAuthenticated?: boolean;
   email: string;
   firstName: string;
-  lastName: string | null;
+  lastName?: string | null;
   token: string;
-  expiresOn: string;
+  expiresOn?: string;
+  success?: boolean;
 }
 
 export interface UserInfo {

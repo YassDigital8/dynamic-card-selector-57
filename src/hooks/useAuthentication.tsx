@@ -75,7 +75,7 @@ export const useAuthentication = () => {
           toast({
             title: "Demo Mode Active",
             description: "You are using the application in demo mode due to connection issues",
-            variant: "warning"
+            variant: "destructive"  // Changed from "warning" to "destructive"
           });
         }
         
@@ -138,7 +138,7 @@ export const useAuthentication = () => {
         toast({
           title: "Demo Mode Activated",
           description: "Due to connection issues, you're now in demo mode with limited functionality",
-          variant: "warning"
+          variant: "destructive"  // Changed from "warning" to "destructive"
         });
       }
       

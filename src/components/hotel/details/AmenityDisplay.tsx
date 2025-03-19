@@ -57,6 +57,22 @@ const AmenityDisplay: React.FC<AmenityDisplayProps> = ({ amenities }) => {
     setIsGalleryOpen(true);
   };
 
+  // Helper function to check if an amenity has images
+  const hasAmenityImages = (amenityKey: string): boolean => {
+    if (!amenityImageMapping[amenityKey]) return false;
+    
+    const imagesArray = amenities[amenityImageMapping[amenityKey]];
+    return Array.isArray(imagesArray) && imagesArray.length > 0;
+  };
+
+  // Helper function to get amenity images safely
+  const getAmenityImages = (amenityKey: string | null): AmenityImage[] => {
+    if (!amenityKey || !amenityImageMapping[amenityKey]) return [];
+    
+    const imagesArray = amenities[amenityImageMapping[amenityKey]];
+    return Array.isArray(imagesArray) ? imagesArray : [];
+  };
+
   return (
     <>
       <motion.div 
@@ -67,8 +83,7 @@ const AmenityDisplay: React.FC<AmenityDisplayProps> = ({ amenities }) => {
       >
         {amenityEntries.map(([key, value]) => {
           // Check if this amenity has images
-          const hasImages = amenityImageMapping[key as string] && 
-            amenities[amenityImageMapping[key as string]]?.length > 0;
+          const hasImages = hasAmenityImages(key as string);
 
           return (
             <motion.div 
@@ -125,7 +140,7 @@ const AmenityDisplay: React.FC<AmenityDisplayProps> = ({ amenities }) => {
           {selectedAmenity && (
             <Carousel className="w-full max-w-lg mx-auto">
               <CarouselContent>
-                {amenities[amenityImageMapping[selectedAmenity]]?.map((image: AmenityImage, index: number) => (
+                {getAmenityImages(selectedAmenity).map((image: AmenityImage, index: number) => (
                   <CarouselItem key={index}>
                     <div className="p-1 h-64 flex items-center justify-center">
                       <img 

@@ -10,8 +10,9 @@ interface HotelCardAmenitiesProps {
 }
 
 const HotelCardAmenities: React.FC<HotelCardAmenitiesProps> = ({ amenities }) => {
+  // Only consider boolean amenity properties (not image arrays)
   const amenityKeys = (Object.keys(amenities) as Array<keyof HotelAmenities>)
-    .filter(amenity => amenities[amenity]);
+    .filter(key => !key.toString().includes('Images') && typeof amenities[key] === 'boolean' && amenities[key]);
   
   const displayedAmenities = amenityKeys.slice(0, 6);
   const hasMoreAmenities = amenityKeys.length > 6;
@@ -46,7 +47,7 @@ const HotelCardAmenities: React.FC<HotelCardAmenitiesProps> = ({ amenities }) =>
             } 
           }}
         >
-          <AmenityIcon key={amenity} amenity={amenity} value={amenities[amenity]} />
+          <AmenityIcon key={amenity} amenity={amenity} value={true} />
         </motion.div>
       ))}
       
