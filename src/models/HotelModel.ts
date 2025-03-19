@@ -10,6 +10,11 @@ export interface RoomType {
   images?: string[]; // Add this new field for multiple room images
 }
 
+export interface AmenityImage {
+  url: string;
+  description?: string;
+}
+
 export interface HotelAmenities {
   airConditioning: boolean;
   bar: boolean;
@@ -22,6 +27,13 @@ export interface HotelAmenities {
   swimmingPool: boolean;
   petsAllowed: boolean;
   extraBed: boolean;
+  // Add image fields for the specified amenities
+  barImages?: AmenityImage[];
+  gymImages?: AmenityImage[];
+  spaImages?: AmenityImage[];
+  restaurantImages?: AmenityImage[];
+  breakfastImages?: AmenityImage[];
+  swimmingPoolImages?: AmenityImage[];
 }
 
 export interface Hotel {

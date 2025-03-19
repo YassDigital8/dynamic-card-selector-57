@@ -1,18 +1,7 @@
 
-import { type CarouselApi } from "./types"
-import { Carousel } from "./carousel"
-import { CarouselContent } from "./carousel-content"
-import { CarouselItem } from "./carousel-item"
-import { CarouselPrevious } from "./carousel-previous"
-import { CarouselNext } from "./carousel-next"
-import { CarouselIndicators } from "./carousel-indicators"
-
-export {
-  type CarouselApi,
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselPrevious,
-  CarouselNext,
-  CarouselIndicators,
-}
+export * from "./carousel";
+export * from "./carousel-content";
+export * from "./carousel-item";
+export * from "./carousel-next";
+export * from "./carousel-previous";
+export * from "./carousel-indicators";

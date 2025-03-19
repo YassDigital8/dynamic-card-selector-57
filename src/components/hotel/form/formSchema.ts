@@ -1,6 +1,11 @@
 
 import * as z from 'zod';
 
+const amenityImageSchema = z.object({
+  url: z.string(),
+  description: z.string().optional(),
+});
+
 export const formSchema = z.object({
   name: z.string().min(2, { message: "Hotel name must be at least 2 characters." }),
   country: z.string().min(2, { message: "Country must be at least 2 characters." }),
@@ -20,6 +25,13 @@ export const formSchema = z.object({
     swimmingPool: z.boolean().default(false),
     petsAllowed: z.boolean().default(false),
     extraBed: z.boolean().default(false),
+    // Add image arrays for amenities that can have images
+    barImages: z.array(amenityImageSchema).optional(),
+    gymImages: z.array(amenityImageSchema).optional(),
+    spaImages: z.array(amenityImageSchema).optional(),
+    restaurantImages: z.array(amenityImageSchema).optional(),
+    breakfastImages: z.array(amenityImageSchema).optional(),
+    swimmingPoolImages: z.array(amenityImageSchema).optional(),
   }),
   roomTypes: z.array(
     z.object({
