@@ -27,12 +27,12 @@ const AmenityImageUploadDialog: React.FC<AmenityImageUploadDialogProps> = ({
   hotelId
 }) => {
   const [activeTab, setActiveTab] = useState<string>("upload");
-  const { allFiles } = useGalleryViewModel();
+  const { files } = useGalleryViewModel();
   
   // Filter files for this hotel if hotelId is provided
   const hotelFiles = hotelId 
-    ? allFiles.filter(file => file.metadata?.hotelId === hotelId)
-    : allFiles;
+    ? files.filter(file => file.metadata?.hotelId === hotelId)
+    : files;
 
   const {
     selectedFile,
