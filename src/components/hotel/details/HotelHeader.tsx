@@ -76,6 +76,7 @@ const HotelHeader: React.FC<HotelHeaderProps> = ({
             size={isMobile ? "sm" : "default"}
             onClick={onEdit}
             className="group border-indigo-200 dark:border-indigo-800 hover:bg-indigo-50 dark:hover:bg-indigo-900/30"
+            type="button"
           >
             <Pencil className="mr-2 h-4 w-4 text-indigo-500 group-hover:text-indigo-600 dark:group-hover:text-indigo-400" />
             <span className="text-indigo-600 dark:text-indigo-400 group-hover:text-indigo-700 dark:group-hover:text-indigo-300">Edit Hotel</span>
