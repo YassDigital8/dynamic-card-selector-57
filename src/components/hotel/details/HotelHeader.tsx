@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ArrowLeft, Pencil, Globe, Save } from 'lucide-react';
+import { ArrowLeft, Pencil, Globe, Save, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import StarRating from '../card/StarRating';
 
@@ -13,6 +13,7 @@ interface HotelHeaderProps {
   onEdit: () => void;
   onBack?: () => void;
   onSave?: () => void;
+  onDelete?: () => void;
 }
 
 const HotelHeader: React.FC<HotelHeaderProps> = ({
@@ -23,7 +24,8 @@ const HotelHeader: React.FC<HotelHeaderProps> = ({
   rating,
   onEdit,
   onBack,
-  onSave
+  onSave,
+  onDelete
 }) => {
   return (
     <div className="flex flex-col space-y-3">
@@ -52,6 +54,17 @@ const HotelHeader: React.FC<HotelHeaderProps> = ({
             >
               <Save className="mr-1 h-3.5 w-3.5" />
               Save Hotel
+            </Button>
+          )}
+          {onDelete && (
+            <Button
+              onClick={onDelete}
+              variant="destructive"
+              size="sm"
+              className="text-xs h-8"
+            >
+              <Trash2 className="mr-1 h-3.5 w-3.5" />
+              Delete
             </Button>
           )}
           <Button

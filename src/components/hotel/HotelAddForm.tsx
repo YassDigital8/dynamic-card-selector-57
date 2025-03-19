@@ -5,6 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import HotelForm from './HotelForm';
 import { HotelFormData } from '@/models/HotelModel';
+import { Save, X } from 'lucide-react';
 
 interface HotelAddFormProps {
   isLoading: boolean;
@@ -34,24 +35,41 @@ const HotelAddForm: React.FC<HotelAddFormProps> = ({
           <h2 className="text-2xl font-bold text-blue-600 dark:text-blue-400">
             Add New Hotel {selectedPOS && selectedPOS !== 'all' && posName ? `(${posName})` : ''}
           </h2>
+          {onCancel && (
+            <div className="flex space-x-2">
+              <Button
+                variant="outline"
+                onClick={onCancel}
+                className="border-blue-200 dark:border-blue-800"
+                type="button"
+                size="sm"
+              >
+                <X className="mr-1 h-3.5 w-3.5" />
+                Cancel
+              </Button>
+              <Button 
+                type="submit" 
+                form="hotel-form" 
+                disabled={isLoading}
+                className="bg-blue-600 hover:bg-blue-700"
+                size="sm"
+              >
+                <Save className="mr-1 h-3.5 w-3.5" />
+                {isLoading ? "Saving..." : "Save Hotel"}
+              </Button>
+            </div>
+          )}
         </div>
         <HotelForm onSubmit={onSubmit} isLoading={isLoading} showButtons={onCancel ? false : true} />
-        {onCancel && (
+        {!onCancel && (
           <div className="mt-4 flex justify-end space-x-3">
-            <Button
-              variant="outline"
-              onClick={onCancel}
-              className="border-blue-200 dark:border-blue-800"
-              type="button"
-            >
-              Cancel
-            </Button>
             <Button 
               type="submit" 
               form="hotel-form" 
               disabled={isLoading}
               className="bg-blue-600 hover:bg-blue-700"
             >
+              <Save className="mr-1 h-4 w-4" />
               {isLoading ? "Saving..." : "Save Hotel"}
             </Button>
           </div>

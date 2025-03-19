@@ -8,9 +8,10 @@ interface HotelDetailsProps {
   onEdit: () => void;
   onSave?: () => void;
   onBack?: () => void;
+  onDelete?: () => void;
 }
 
-const HotelDetails: React.FC<HotelDetailsProps> = memo(({ hotel, onEdit, onSave, onBack }) => {
+const HotelDetails: React.FC<HotelDetailsProps> = memo(({ hotel, onEdit, onSave, onBack, onDelete }) => {
   return (
     <div className="space-y-6">
       <HotelHeader 
@@ -22,6 +23,7 @@ const HotelDetails: React.FC<HotelDetailsProps> = memo(({ hotel, onEdit, onSave,
         onEdit={onEdit}
         onBack={onBack}
         onSave={onSave}
+        onDelete={onDelete}
       />
 
       <LocationCard 
