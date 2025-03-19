@@ -14,6 +14,7 @@ import {
   formSchema,
   defaultValues
 } from './form';
+import { Save } from 'lucide-react';
 
 interface HotelFormProps {
   initialData?: Hotel;
@@ -43,7 +44,8 @@ const HotelForm = memo(({ initialData, onSubmit, isLoading, showButtons = true }
 
         {showButtons && (
           <div className="flex justify-end">
-            <Button type="submit" disabled={isLoading}>
+            <Button type="submit" disabled={isLoading} className="bg-blue-600 hover:bg-blue-700">
+              <Save className="mr-1 h-4 w-4" />
               {isLoading ? "Saving..." : "Save Hotel"}
             </Button>
           </div>

@@ -71,8 +71,41 @@ const HotelEditForm: React.FC<HotelEditFormProps> = ({
           initialData={selectedHotel}
           onSubmit={onSubmit}
           isLoading={isLoading}
-          showButtons={false}
+          showButtons={true}
         />
+        <div className="mt-6 flex justify-end space-x-2">
+          <Button
+            variant="outline"
+            onClick={onCancel}
+            className="border-blue-200 dark:border-blue-800"
+            type="button"
+            size="sm"
+          >
+            <X className="mr-1 h-3.5 w-3.5" />
+            Cancel
+          </Button>
+          <Button 
+            type="submit" 
+            form="hotel-form" 
+            disabled={isLoading}
+            className="bg-blue-600 hover:bg-blue-700"
+            size="sm"
+          >
+            <Save className="mr-1 h-3.5 w-3.5" />
+            {isLoading ? "Saving..." : "Save Hotel"}
+          </Button>
+          {onDelete && (
+            <Button 
+              type="button" 
+              variant="destructive"
+              onClick={onDelete}
+              size="sm"
+            >
+              <Trash2 className="mr-1 h-3.5 w-3.5" />
+              Delete
+            </Button>
+          )}
+        </div>
       </Card>
     </motion.div>
   );
