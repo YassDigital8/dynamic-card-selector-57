@@ -13,6 +13,7 @@ interface HotelListProps {
   onSelectHotel: (hotel: Hotel) => void;
   onEditHotel: (hotel: Hotel) => void;
   onDeleteHotel: (id: string) => void;
+  compact?: boolean;
 }
 
 const HotelList: React.FC<HotelListProps> = ({
@@ -21,6 +22,7 @@ const HotelList: React.FC<HotelListProps> = ({
   onSelectHotel,
   onEditHotel,
   onDeleteHotel,
+  compact = true,
 }) => {
   const [hotelToDelete, setHotelToDelete] = useState<Hotel | null>(null);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
@@ -66,14 +68,14 @@ const HotelList: React.FC<HotelListProps> = ({
   };
 
   return (
-    <div className="space-y-6 w-full p-4">
+    <div className={`space-y-${compact ? '4' : '6'} w-full p-${compact ? '2' : '4'}`}>
       <motion.div 
         initial={{ opacity: 0, y: -5 }}
         animate={{ opacity: 1, y: 0 }}
         transition={springConfig}
         className="flex items-center justify-between"
       >
-        <h2 className="text-xl sm:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">
+        <h2 className={`${compact ? 'text-lg' : 'text-xl sm:text-2xl'} font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400`}>
           Hotels ({filteredHotels.length})
         </h2>
       </motion.div>
@@ -109,7 +111,7 @@ const HotelList: React.FC<HotelListProps> = ({
         ) : (
           <motion.div 
             key="results"
-            className="grid grid-cols-1 gap-4"
+            className="grid grid-cols-1 gap-2"
             variants={container}
             initial="hidden"
             animate="show"
@@ -124,6 +126,7 @@ const HotelList: React.FC<HotelListProps> = ({
                 onEdit={() => onEditHotel(hotel)}
                 onDelete={() => handleDeleteClick(hotel)}
                 useGridView={false}
+                compact={compact}
               />
             ))}
           </motion.div>
