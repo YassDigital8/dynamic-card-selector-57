@@ -54,6 +54,7 @@ const PageContainer: React.FC<PageContainerProps> = ({ children }) => {
   const isMobile = useIsMobile();
   const { isApiLive } = useApiStatus();
   const location = useLocation();
+  const isDashboard = location.pathname === '/';
   
   // Generate breadcrumb items based on current route
   const getBreadcrumbItems = () => {
@@ -195,7 +196,7 @@ const PageContainer: React.FC<PageContainerProps> = ({ children }) => {
                 <HelpCircle className="h-3.5 w-3.5 md:h-4 md:w-4" />
                 <span className="text-xs md:text-sm">Need help?</span>
               </div>
-              <LogoutButton variant="ghost" size="sm" showIcon={false} />
+              {/* Removing the LogoutButton from sidebar footer */}
             </div>
           </SidebarFooter>
         </Sidebar>
@@ -226,11 +227,13 @@ const PageContainer: React.FC<PageContainerProps> = ({ children }) => {
                   <div className="flex items-center gap-2 self-start">
                     <SessionTimer />
                     <ApiStatusIndicator isLive={isApiLive} />
-                    <LogoutButton 
-                      variant="outline" 
-                      size="sm" 
-                      className="ml-2" 
-                    />
+                    {isDashboard && (
+                      <LogoutButton 
+                        variant="outline" 
+                        size="sm" 
+                        className="ml-2" 
+                      />
+                    )}
                   </div>
                 </div>
               </div>
