@@ -5,6 +5,7 @@ import { BedDouble, Users, Baby } from 'lucide-react';
 import { format } from 'date-fns';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { RoomType } from '@/models/HotelModel';
+import { RoomImagePreview } from '@/components/hotel/form/room-types';
 
 interface RoomTypesCardProps {
   roomTypes: RoomType[];
@@ -98,10 +99,10 @@ const RoomTypesCard: React.FC<RoomTypesCardProps> = ({ roomTypes, updatedAt }) =
                   <div className="flex flex-col md:flex-row gap-4">
                     {roomType.imageUrl && (
                       <div className="w-full md:w-1/3 flex-shrink-0">
-                        <img 
-                          src={roomType.imageUrl} 
-                          alt={roomType.name} 
-                          className="w-full h-40 object-cover rounded-md"
+                        <RoomImagePreview 
+                          imageUrl={roomType.imageUrl}
+                          onClick={() => {}} 
+                          readOnly={true}
                         />
                       </div>
                     )}
