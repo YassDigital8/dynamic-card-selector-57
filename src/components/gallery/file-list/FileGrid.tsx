@@ -8,6 +8,8 @@ interface FileGridProps {
   onViewFile: (file: FileInfo) => void;
   onShareFile: (file: FileInfo, e: React.MouseEvent) => void;
   onDeleteFile: (file: FileInfo, e: React.MouseEvent) => void;
+  selectedFiles?: FileInfo[]; // Add support for selected files
+  showCheckbox?: boolean; // Add support for showing checkboxes
 }
 
 export const FileGrid: React.FC<FileGridProps> = ({
@@ -15,6 +17,8 @@ export const FileGrid: React.FC<FileGridProps> = ({
   onViewFile,
   onShareFile,
   onDeleteFile,
+  selectedFiles = [],
+  showCheckbox = false,
 }) => {
   if (files.length === 0) {
     return (
@@ -33,6 +37,8 @@ export const FileGrid: React.FC<FileGridProps> = ({
           onView={() => onViewFile(file)}
           onShare={(e) => onShareFile(file, e)}
           onDelete={(e) => onDeleteFile(file, e)}
+          isSelected={selectedFiles.some(selected => selected.id === file.id)}
+          showCheckbox={showCheckbox}
         />
       ))}
     </div>
