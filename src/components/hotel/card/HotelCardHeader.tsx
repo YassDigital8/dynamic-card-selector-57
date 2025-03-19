@@ -2,7 +2,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from "@/components/ui/badge";
 import { Hotel } from '@/models/HotelModel';
 import { getHotelAvatar } from './HotelCardUtils';
 import { Flag } from 'lucide-react';
@@ -10,10 +9,9 @@ import { Flag } from 'lucide-react';
 interface HotelCardHeaderProps {
   hotel: Hotel;
   useGridView: boolean;
-  compact?: boolean;
 }
 
-const HotelCardHeader: React.FC<HotelCardHeaderProps> = ({ hotel, useGridView, compact = false }) => {
+const HotelCardHeader: React.FC<HotelCardHeaderProps> = ({ hotel, useGridView }) => {
   // Enhanced image animation variants
   const imageVariants = {
     rest: { scale: 1 },
@@ -28,11 +26,11 @@ const HotelCardHeader: React.FC<HotelCardHeaderProps> = ({ hotel, useGridView, c
   };
   
   return (
-    <CardHeader className={`${compact ? 'p-2 pb-1.5' : 'p-3 pb-2'} flex-shrink-0`}>
-      <div className="flex flex-row items-start space-x-2">
+    <CardHeader className="p-3 pb-0 flex-shrink-0">
+      <div className="flex flex-row items-start gap-3">
         <motion.div 
           layoutId={`hotel-image-${hotel.id}`}
-          className={`${compact ? 'h-12 w-12' : 'h-16 w-16'} overflow-hidden rounded-lg flex-shrink-0`}
+          className="h-[70px] w-[70px] overflow-hidden rounded-lg flex-shrink-0"
           variants={imageVariants}
           initial="rest"
           whileHover="hover"
@@ -45,29 +43,29 @@ const HotelCardHeader: React.FC<HotelCardHeaderProps> = ({ hotel, useGridView, c
             animate={{ scale: 1 }}
             transition={{ duration: 0.7 }}
             onError={(e) => {
-              e.currentTarget.src = 'https://placehold.co/300x150/6366f1/white?text=Hotel';
+              e.currentTarget.src = 'https://placehold.co/300x150/indigo/white?text=Hotel';
             }}
           />
         </motion.div>
         <div className="flex-1 min-w-0">
-          <div className="flex items-start justify-between gap-1">
-            <motion.div layoutId={`hotel-title-${hotel.id}`} className="flex-1">
-              <CardTitle className={`${compact ? 'text-sm' : 'text-sm sm:text-base'} text-blue-700 dark:text-blue-300 truncate font-semibold`}>
+          <div className="flex flex-col">
+            <motion.div layoutId={`hotel-title-${hotel.id}`} className="flex items-center gap-2">
+              <CardTitle className="text-sm sm:text-base text-indigo-700 dark:text-indigo-300 truncate font-semibold">
                 {hotel.name}
               </CardTitle>
+              
+              <motion.div layoutId={`hotel-flag-${hotel.id}`} className="flex-shrink-0">
+                <div className="flex items-center">
+                  <Flag className="h-3.5 w-3.5 text-indigo-500" />
+                  <span className="text-xs text-indigo-600 dark:text-indigo-400 ml-1">{hotel.posKey}</span>
+                </div>
+              </motion.div>
             </motion.div>
             
-            <motion.div layoutId={`hotel-flag-${hotel.id}`} className="flex-shrink-0">
-              <div className="flex items-center">
-                <Flag className="mr-0.5 h-3 w-3 text-blue-500" />
-                <span className="text-xs text-blue-600 dark:text-blue-400 font-medium">{hotel.posKey}</span>
-              </div>
+            <motion.div className="mt-1 text-xs text-gray-600 dark:text-gray-400" layoutId={`hotel-country-${hotel.id}`}>
+              {hotel.country}
             </motion.div>
           </div>
-          
-          <motion.div className="mt-0.5 text-xs text-gray-600 dark:text-gray-400 flex items-center" layoutId={`hotel-country-${hotel.id}`}>
-            <span className="font-medium">{hotel.country}</span>
-          </motion.div>
         </div>
       </div>
     </CardHeader>
