@@ -64,7 +64,7 @@ const HotelCardHeader: React.FC<HotelCardHeaderProps> = ({ hotel, useGridView })
             </motion.div>
             
             {/* Display star rating if available */}
-            {hotel.rating !== undefined && (
+            {typeof hotel.rating === 'number' && (
               <motion.div layoutId={`hotel-rating-${hotel.id}`} className="mt-1">
                 <StarRating rating={hotel.rating} size="sm" />
               </motion.div>

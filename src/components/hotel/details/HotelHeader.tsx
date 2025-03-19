@@ -52,7 +52,7 @@ const HotelHeader: React.FC<HotelHeaderProps> = ({
       </div>
 
       {/* Star Rating */}
-      {rating !== undefined && (
+      {typeof rating === 'number' && (
         <div className="flex items-center">
           <StarRating rating={rating} size="md" />
         </div>

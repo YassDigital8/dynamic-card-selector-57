@@ -7,8 +7,7 @@ import {
   HotelCardHeader, 
   HotelLocationInfo, 
   HotelCardAmenities, 
-  HotelCardFooter,
-  getHotelAvatar
+  HotelCardFooter
 } from './card';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -32,6 +31,9 @@ const HotelCard: React.FC<HotelCardProps> = ({
   disabled = false
 }) => {
   const isMobile = useIsMobile();
+  
+  // Debug logging to check hotel rating
+  console.log(`Hotel ${hotel.name} rating:`, hotel.rating, typeof hotel.rating);
 
   const cardAnimation = {
     rest: { 
