@@ -60,7 +60,33 @@ const HotelAddForm: React.FC<HotelAddFormProps> = ({
             </div>
           )}
         </div>
-        <HotelForm onSubmit={onSubmit} isLoading={isLoading} showButtons={!onCancel} />
+        <HotelForm onSubmit={onSubmit} isLoading={isLoading} showButtons={false} />
+        
+        {/* Bottom buttons */}
+        {onCancel && (
+          <div className="mt-6 flex justify-end space-x-2">
+            <Button
+              variant="outline"
+              onClick={onCancel}
+              className="border-blue-200 dark:border-blue-800"
+              type="button"
+              size="sm"
+            >
+              <X className="mr-1 h-3.5 w-3.5" />
+              Cancel
+            </Button>
+            <Button 
+              type="submit" 
+              form="hotel-form" 
+              disabled={isLoading}
+              className="bg-blue-600 hover:bg-blue-700"
+              size="sm"
+            >
+              <Save className="mr-1 h-3.5 w-3.5" />
+              {isLoading ? "Saving..." : "Save Hotel"}
+            </Button>
+          </div>
+        )}
       </Card>
     </motion.div>
   );
