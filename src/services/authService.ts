@@ -5,7 +5,7 @@ export const loginUser = async (credentials: LoginCredentials): Promise<AuthResp
   console.log('Attempting to authenticate with:', credentials.email);
   
   // First try the staging URL
-  const authEndpoint = 'http://92.112.184.210:7189/api/Authentication/login';
+  const authEndpoint = 'https://staging.sa3d.online:7182/api/Authentication/login';
   console.log('Using authentication endpoint:', authEndpoint);
   
   try {
