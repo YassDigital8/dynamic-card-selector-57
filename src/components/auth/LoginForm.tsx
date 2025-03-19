@@ -11,6 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import useAuthentication from '@/hooks/useAuthentication';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useNavigate } from 'react-router-dom';
+import { enableDemoMode } from '@/services/authService';
 
 // Define the schema for the login form
 const loginSchema = z.object({
@@ -24,7 +25,7 @@ const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
   const { toast } = useToast();
-  const { login } = useAuthentication();
+  const { login, demoMode } = useAuthentication();
   const navigate = useNavigate();
   
   const {
@@ -87,6 +88,12 @@ const LoginForm = () => {
            error.includes('certificate') || 
            error.includes('Failed to fetch');
   };
+  
+  // Handle entering demo mode
+  const handleEnterDemoMode = () => {
+    enableDemoMode();
+    onSubmit({ email: 'demo@example.com', password: 'demo123456' });
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -101,6 +108,16 @@ const LoginForm = () => {
           }
           <AlertTitle>{isCertificateError(loginError) ? "SSL Certificate Issue" : "Login failed"}</AlertTitle>
           <AlertDescription>{loginError}</AlertDescription>
+          
+          {isCertificateError(loginError) && (
+            <Button 
+              variant="outline" 
+              className="mt-2 bg-amber-50 border-amber-200 text-amber-700 hover:bg-amber-100"
+              onClick={handleEnterDemoMode}
+            >
+              Enter Demo Mode
+            </Button>
+          )}
         </Alert>
       )}
       
@@ -150,8 +167,8 @@ const LoginForm = () => {
           <p>Options to resolve this:</p>
           <ul className="list-disc pl-5 mt-1 space-y-1">
             <li>Visit <a href="https://staging.sa3d.online:7182" target="_blank" rel="noopener noreferrer" className="underline font-medium">https://staging.sa3d.online:7182</a> directly in your browser and accept the certificate</li>
+            <li>Use the "Enter Demo Mode" button to continue with limited functionality</li>
             <li>Contact your system administrator to fix the certificate issue</li>
-            <li>Use a production server with a valid SSL certificate</li>
           </ul>
         </div>
       )}

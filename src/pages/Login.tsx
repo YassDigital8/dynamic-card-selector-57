@@ -7,9 +7,11 @@ import AuthErrorAlert from '@/components/pages/index/AuthErrorAlert';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader2, ShieldAlert } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import { enableDemoMode } from '@/services/authService';
 
 const Login = () => {
-  const { authToken, authLoading, authError } = useAuthentication();
+  const { authToken, authLoading, authError, demoMode } = useAuthentication();
   const navigate = useNavigate();
 
   // Helper to check if the error is related to SSL certificates
@@ -34,6 +36,20 @@ const Login = () => {
     return <Navigate to="/" replace />;
   }
 
+  // Handle entering demo mode
+  const handleEnterDemoMode = async () => {
+    enableDemoMode();
+    try {
+      await (async () => {
+        // Call login with empty credentials to trigger demo mode
+        await useAuthentication().login({ email: 'demo@example.com', password: 'demo' });
+        navigate('/', { replace: true });
+      })();
+    } catch (error) {
+      console.error('Error entering demo mode:', error);
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
       <div className="w-full max-w-md">
@@ -52,6 +68,15 @@ const Login = () => {
             <AlertTitle>SSL Certificate Issue</AlertTitle>
             <AlertDescription>
               {authError}
+              <div className="mt-4">
+                <Button 
+                  variant="outline" 
+                  className="bg-amber-50 border-amber-200 text-amber-700 hover:bg-amber-100"
+                  onClick={handleEnterDemoMode}
+                >
+                  Enter Demo Mode
+                </Button>
+              </div>
             </AlertDescription>
           </Alert>
         )}
@@ -67,7 +92,22 @@ const Login = () => {
                 <span className="ml-2">Authenticating...</span>
               </div>
             ) : (
-              <LoginForm />
+              <>
+                <LoginForm />
+                
+                <div className="mt-4 pt-4 border-t">
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-2 text-center">
+                    Having trouble connecting?
+                  </p>
+                  <Button
+                    variant="outline"
+                    className="w-full"
+                    onClick={handleEnterDemoMode}
+                  >
+                    Enter Demo Mode
+                  </Button>
+                </div>
+              </>
             )}
           </CardContent>
         </Card>

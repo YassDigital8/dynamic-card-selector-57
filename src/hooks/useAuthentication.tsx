@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { UserInfo, LoginCredentials } from '@/types/auth.types';
-import { loginUser } from '@/services/authService';
+import { loginUser, isInDemoMode, enableDemoMode } from '@/services/authService';
 import { useAuthSession } from '@/hooks/useAuthSession';
 
 export const useAuthentication = () => {
@@ -11,6 +11,7 @@ export const useAuthentication = () => {
   const [authLoading, setAuthLoading] = useState<boolean>(true);
   const [authError, setAuthError] = useState<string | null>(null);
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+  const [demoMode, setDemoMode] = useState<boolean>(false);
   const { toast } = useToast();
   const navigate = useNavigate();
   
@@ -21,6 +22,7 @@ export const useAuthentication = () => {
     localStorage.removeItem('sessionExpiresAt');
     setAuthToken('');
     setUserInfo(null);
+    setDemoMode(false);
     
     toast({
       title: "Logged out",
@@ -62,6 +64,19 @@ export const useAuthentication = () => {
         const storedUserInfo = localStorage.getItem('userInfo');
         if (storedUserInfo) {
           setUserInfo(JSON.parse(storedUserInfo));
+        }
+        
+        // Check if demo mode is active
+        if (storedToken === 'demo-mode-token' || isInDemoMode()) {
+          setDemoMode(true);
+          console.log("Demo mode active");
+          
+          // Show toast for demo mode
+          toast({
+            title: "Demo Mode Active",
+            description: "You are using the application in demo mode due to connection issues",
+            variant: "warning"
+          });
         }
         
         // Check for existing session timer
@@ -107,7 +122,7 @@ export const useAuthentication = () => {
     };
 
     checkAuthentication();
-  }, [startSessionTimer]);
+  }, [startSessionTimer, toast]);
 
   const login = async (credentials: LoginCredentials) => {
     setAuthLoading(true);
@@ -115,6 +130,17 @@ export const useAuthentication = () => {
     
     try {
       const authData = await loginUser(credentials);
+      
+      // Check if we're in demo mode
+      if (authData.token === 'demo-mode-token') {
+        setDemoMode(true);
+        
+        toast({
+          title: "Demo Mode Activated",
+          description: "Due to connection issues, you're now in demo mode with limited functionality",
+          variant: "warning"
+        });
+      }
       
       // Store the token and user info
       localStorage.setItem('authToken', authData.token);
@@ -135,8 +161,8 @@ export const useAuthentication = () => {
       setAuthLoading(false); // Set loading to false immediately
       
       toast({
-        title: "Login successful",
-        description: `Welcome back, ${authData.firstName || authData.email}`,
+        title: demoMode ? "Demo Login successful" : "Login successful",
+        description: `Welcome${demoMode ? " to demo mode" : ""}, ${authData.firstName || authData.email}`,
       });
       
       console.log("Authentication successful, token set");
@@ -151,6 +177,12 @@ export const useAuthentication = () => {
         // Add more specific guidance for SSL certificate errors
         if (errorMessage.includes('SSL Certificate Error')) {
           errorMessage += '\n\nThis is typically caused by a self-signed or invalid SSL certificate on the server.';
+          
+          // Offer to enable demo mode for certificate errors
+          if (window.confirm('Would you like to enter demo mode due to SSL certificate issues?')) {
+            enableDemoMode();
+            return login(credentials);
+          }
         }
       } else {
         errorMessage = 'Unknown error occurred during authentication';
@@ -169,6 +201,7 @@ export const useAuthentication = () => {
     authError, 
     userInfo,
     isAuthenticated: !!authToken,
+    demoMode,
     remainingTime,
     resetSessionTimer,
     login,
