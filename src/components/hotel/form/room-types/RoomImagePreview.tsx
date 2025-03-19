@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Image, Plus } from 'lucide-react';
+import { Image, Plus, Trash2 } from 'lucide-react';
 import { FormLabel } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import RoomImagesCarousel from './RoomImagesCarousel';

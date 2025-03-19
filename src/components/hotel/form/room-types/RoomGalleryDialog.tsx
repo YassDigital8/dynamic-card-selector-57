@@ -12,7 +12,7 @@ interface RoomGalleryDialogProps {
   galleryFiles: FileInfo[];
   onSelectImages: (files: FileInfo[]) => void;
   multiSelect?: boolean;
-  currentSelectedImages?: string[]; // Add current selected images URLs
+  currentSelectedImages?: string[]; // Current selected images URLs
 }
 
 const RoomGalleryDialog: React.FC<RoomGalleryDialogProps> = ({ 
@@ -97,7 +97,7 @@ const RoomGalleryDialog: React.FC<RoomGalleryDialogProps> = ({
             </div>
           </div>
         </DialogFooter>
-      </Dialog>
+      </DialogContent>
     </Dialog>
   );
 };
