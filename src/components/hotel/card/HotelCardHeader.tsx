@@ -5,7 +5,7 @@ import { CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from "@/components/ui/badge";
 import { Hotel } from '@/models/HotelModel';
 import { getHotelAvatar } from './HotelCardUtils';
-import { Flag } from 'lucide-react';
+import { Flag, MapPin } from 'lucide-react';
 
 interface HotelCardHeaderProps {
   hotel: Hotel;
@@ -44,22 +44,22 @@ const HotelCardHeader: React.FC<HotelCardHeaderProps> = ({ hotel, useGridView })
             animate={{ scale: 1 }}
             transition={{ duration: 0.7 }}
             onError={(e) => {
-              e.currentTarget.src = 'https://placehold.co/300x150/indigo/white?text=Hotel';
+              e.currentTarget.src = 'https://placehold.co/300x150/6366f1/white?text=Hotel';
             }}
           />
         </motion.div>
         <div className="flex-1 min-w-0">
           <div className="flex items-start gap-2">
             <motion.div layoutId={`hotel-title-${hotel.id}`} className="flex-1">
-              <CardTitle className="text-sm sm:text-base text-indigo-700 dark:text-indigo-300 truncate font-semibold">
+              <CardTitle className="text-sm sm:text-base text-blue-700 dark:text-blue-300 truncate font-semibold">
                 {hotel.name}
               </CardTitle>
             </motion.div>
             
             <motion.div layoutId={`hotel-flag-${hotel.id}`} className="flex-shrink-0">
               <div className="flex items-center">
-                <Flag className="mr-1 h-3.5 w-3.5 text-indigo-500" />
-                <span className="text-xs text-indigo-600 dark:text-indigo-400">{hotel.posKey}</span>
+                <Flag className="mr-1 h-3.5 w-3.5 text-blue-500" />
+                <span className="text-xs text-blue-600 dark:text-blue-400">{hotel.posKey}</span>
               </div>
             </motion.div>
           </div>

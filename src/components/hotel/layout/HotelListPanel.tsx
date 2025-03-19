@@ -5,7 +5,6 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import HotelList from '../HotelList';
 import { Hotel } from '@/models/HotelModel';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { motion } from 'framer-motion';
 
 interface HotelListPanelProps {
   filteredHotels: Hotel[];
@@ -28,6 +27,7 @@ const HotelListPanel: React.FC<HotelListPanelProps> = ({
 }) => {
   const [contentHeight, setContentHeight] = useState<string>('auto');
   const listRef = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
   
   // Dynamically adjust content height based on the number of hotels
   useEffect(() => {
@@ -41,7 +41,7 @@ const HotelListPanel: React.FC<HotelListPanelProps> = ({
 
   return (
     <div className="h-full w-full p-2 sm:p-4">
-      <Card className="h-full overflow-hidden border-indigo-100 dark:border-indigo-900 shadow-md bg-white dark:bg-slate-900 rounded-xl transition-all duration-300 ease-in-out">
+      <Card className="h-full overflow-hidden border-blue-100 dark:border-blue-900 shadow-md bg-white dark:bg-slate-900 rounded-xl transition-all duration-300 ease-in-out">
         <ScrollArea 
           className={`${contentHeight === 'auto' ? 'h-auto' : 'h-[calc(100vh-130px)] sm:h-[calc(100vh-140px)] md:h-[calc(100vh-145px)] lg:h-[calc(100vh-150px)]'} overflow-y-auto`}
         >

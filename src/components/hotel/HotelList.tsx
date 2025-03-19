@@ -73,7 +73,7 @@ const HotelList: React.FC<HotelListProps> = ({
         transition={springConfig}
         className="flex items-center justify-between"
       >
-        <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-blue-600 dark:from-indigo-400 dark:to-blue-400">
+        <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">
           Hotels ({filteredHotels.length})
         </h2>
       </motion.div>
@@ -83,7 +83,7 @@ const HotelList: React.FC<HotelListProps> = ({
           initial={{ opacity: 0, y: 5 }}
           animate={{ opacity: 1, y: 0 }}
           transition={springConfig}
-          className="rounded-lg overflow-hidden border border-indigo-100 dark:border-indigo-900"
+          className="rounded-lg overflow-hidden border border-blue-100 dark:border-blue-900"
         >
           <HotelSearch 
             searchTerm={searchTerm} 
@@ -102,7 +102,7 @@ const HotelList: React.FC<HotelListProps> = ({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={springConfig}
-            className="p-8 text-center border border-dashed border-indigo-200 dark:border-indigo-800 rounded-lg bg-indigo-50/50 dark:bg-indigo-900/20"
+            className="p-8 text-center border border-dashed border-blue-200 dark:border-blue-800 rounded-lg bg-blue-50/50 dark:bg-blue-900/20"
           >
             <p className="text-muted-foreground">No hotels match your search criteria</p>
           </motion.div>

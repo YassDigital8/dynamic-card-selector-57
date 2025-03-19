@@ -23,7 +23,7 @@ const HotelLocationInfo: React.FC<HotelLocationInfoProps> = ({ hotel }) => {
         }}
       >
         <div className="flex items-center w-full">
-          <MapPin className="mr-1.5 h-4 w-4 text-pink-500 flex-shrink-0" />
+          <MapPin className="mr-1.5 h-4 w-4 text-rose-500 flex-shrink-0" />
           <span className="truncate">{hotel.streetAddress}</span>
         </div>
       </motion.div>

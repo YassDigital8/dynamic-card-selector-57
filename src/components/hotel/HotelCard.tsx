@@ -10,6 +10,7 @@ import {
   HotelCardFooter 
 } from './card';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { MapPin, Flag, User } from 'lucide-react';
 
 interface HotelCardProps {
   hotel: Hotel;
@@ -57,7 +58,7 @@ const HotelCard: React.FC<HotelCardProps> = ({
     },
     selected: {
       scale: 1.01,
-      boxShadow: "0 10px 15px -3px rgba(79, 70, 229, 0.2), 0 4px 6px -2px rgba(79, 70, 229, 0.15)",
+      boxShadow: "0 10px 15px -3px rgba(99, 102, 241, 0.2), 0 4px 6px -2px rgba(99, 102, 241, 0.15)",
       transition: {
         type: "spring",
         stiffness: 400,
@@ -90,8 +91,8 @@ const HotelCard: React.FC<HotelCardProps> = ({
       <Card 
         className={`transition-all will-change-transform ${cardStyles} ${
           isSelected 
-          ? 'border-indigo-400 dark:border-indigo-500 shadow-md bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-900/40 dark:to-indigo-800/40' 
-          : 'hover:border-indigo-200 dark:hover:border-indigo-800'
+          ? 'border-blue-400 dark:border-blue-500 shadow-md bg-blue-50 dark:bg-blue-900/40' 
+          : 'hover:border-blue-200 dark:hover:border-blue-800'
         }`}
       >
         <HotelCardHeader hotel={hotel} useGridView={false} />
