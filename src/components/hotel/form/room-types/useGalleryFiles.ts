@@ -13,6 +13,7 @@ export const useGalleryFiles = () => {
       uploadedBy: 'admin',
       uploadedOn: '2023-06-15',
       galleryId: '1',
+      galleryName: 'Room Images',
       metadata: {
         title: 'Deluxe Room',
         altText: 'Deluxe hotel room with king size bed',
@@ -29,11 +30,46 @@ export const useGalleryFiles = () => {
       uploadedBy: 'admin',
       uploadedOn: '2023-06-20',
       galleryId: '1',
+      galleryName: 'Room Images',
       metadata: {
         title: 'Executive Suite',
         altText: 'Executive suite with living area',
         caption: 'Premium suite',
         description: 'Luxurious suite with separate living area'
+      }
+    },
+    {
+      id: '3',
+      url: 'https://images.unsplash.com/photo-1566665797739-1674de7a421a',
+      name: 'Bathroom',
+      type: 'image/jpeg',
+      size: 8500,
+      uploadedBy: 'admin',
+      uploadedOn: '2023-07-10',
+      galleryId: '1',
+      galleryName: 'Room Images',
+      metadata: {
+        title: 'Modern Bathroom',
+        altText: 'Luxury bathroom with shower and bathtub',
+        caption: 'Room bathroom',
+        description: 'Modern bathroom with premium fixtures'
+      }
+    },
+    {
+      id: '4',
+      url: 'https://images.unsplash.com/photo-1621293954908-907159247fc8',
+      name: 'Room View',
+      type: 'image/jpeg',
+      size: 9200,
+      uploadedBy: 'admin',
+      uploadedOn: '2023-07-15',
+      galleryId: '1',
+      galleryName: 'Room Images',
+      metadata: {
+        title: 'Sea View',
+        altText: 'Room with beautiful sea view',
+        caption: 'Scenic view',
+        description: 'Room with panoramic ocean view'
       }
     }
   ];

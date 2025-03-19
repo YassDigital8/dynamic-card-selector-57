@@ -30,6 +30,7 @@ export const formSchema = z.object({
       description: z.string().optional(),
       price: z.number().optional(),
       imageUrl: z.string().optional(),
+      images: z.array(z.string()).optional().default([]),
     })
   ).default([]),
 });

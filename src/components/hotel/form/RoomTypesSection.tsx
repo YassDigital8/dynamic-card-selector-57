@@ -16,17 +16,45 @@ interface RoomTypesSectionProps {
 
 const RoomTypesSection: React.FC<RoomTypesSectionProps> = ({ form }) => {
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
+  const [isMultiGalleryOpen, setIsMultiGalleryOpen] = useState(false);
   const [currentRoomTypeIndex, setCurrentRoomTypeIndex] = useState(0);
   const { galleryFiles } = useGalleryFiles();
 
-  const handleSelectImage = (file: FileInfo) => {
-    form.setValue(`roomTypes.${currentRoomTypeIndex}.imageUrl`, file.url);
-    setIsGalleryOpen(false);
+  const handleSelectSingleImage = (files: FileInfo[]) => {
+    if (files.length > 0) {
+      form.setValue(`roomTypes.${currentRoomTypeIndex}.imageUrl`, files[0].url);
+      setIsGalleryOpen(false);
+    }
+  };
+
+  const handleSelectMultipleImages = (files: FileInfo[]) => {
+    if (files.length > 0) {
+      const imageUrls = files.map(file => file.url);
+      
+      // Get existing images (if any)
+      const existingImages = form.getValues(`roomTypes.${currentRoomTypeIndex}.images`) || [];
+      
+      // Set images array without duplicates
+      const uniqueUrls = [...new Set([...existingImages, ...imageUrls])];
+      form.setValue(`roomTypes.${currentRoomTypeIndex}.images`, uniqueUrls);
+      
+      // If this is the first image and no main image is set, set the first as main
+      if (!form.getValues(`roomTypes.${currentRoomTypeIndex}.imageUrl`)) {
+        form.setValue(`roomTypes.${currentRoomTypeIndex}.imageUrl`, imageUrls[0]);
+      }
+      
+      setIsMultiGalleryOpen(false);
+    }
   };
 
   const openGallery = (index: number) => {
     setCurrentRoomTypeIndex(index);
     setIsGalleryOpen(true);
+  };
+
+  const openMultiGallery = (index: number) => {
+    setCurrentRoomTypeIndex(index);
+    setIsMultiGalleryOpen(true);
   };
 
   return (
@@ -42,6 +70,7 @@ const RoomTypesSection: React.FC<RoomTypesSectionProps> = ({ form }) => {
             form.setValue('roomTypes', currentRoomTypes.filter((_, i) => i !== index));
           }}
           onOpenGallery={() => openGallery(index)}
+          onOpenMultiGallery={() => openMultiGallery(index)}
         />
       ))}
       <Button
@@ -51,7 +80,7 @@ const RoomTypesSection: React.FC<RoomTypesSectionProps> = ({ form }) => {
           const currentRoomTypes = form.getValues('roomTypes');
           form.setValue('roomTypes', [
             ...currentRoomTypes,
-            { name: '', maxAdults: 1, maxChildren: 0 }
+            { name: '', maxAdults: 1, maxChildren: 0, images: [] }
           ]);
         }}
       >
@@ -62,7 +91,16 @@ const RoomTypesSection: React.FC<RoomTypesSectionProps> = ({ form }) => {
         isOpen={isGalleryOpen}
         onOpenChange={setIsGalleryOpen}
         galleryFiles={galleryFiles}
-        onSelectImage={handleSelectImage}
+        onSelectImages={handleSelectSingleImage}
+        multiSelect={false}
+      />
+
+      <RoomGalleryDialog 
+        isOpen={isMultiGalleryOpen}
+        onOpenChange={setIsMultiGalleryOpen}
+        galleryFiles={galleryFiles}
+        onSelectImages={handleSelectMultipleImages}
+        multiSelect={true}
       />
     </div>
   );
