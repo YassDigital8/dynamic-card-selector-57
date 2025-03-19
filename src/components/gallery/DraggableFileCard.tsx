@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { FileInfo } from '@/models/FileModel';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Eye, Download, Trash2, Share2 } from 'lucide-react';
+import { Eye, Download, Trash2, Share2, Check } from 'lucide-react';
 import { FilePreview } from './FilePreview';
 import { useDrag, useGlobalDragState } from '@/hooks/gallery/useDragAndDrop';
 
@@ -12,13 +12,17 @@ interface DraggableFileCardProps {
   onView: () => void;
   onShare: (e: React.MouseEvent) => void;
   onDelete: (e: React.MouseEvent) => void;
+  isSelected?: boolean;
+  showCheckbox?: boolean;
 }
 
 export const DraggableFileCard: React.FC<DraggableFileCardProps> = ({ 
   file, 
   onView, 
   onShare,
-  onDelete 
+  onDelete,
+  isSelected = false,
+  showCheckbox = false
 }) => {
   const { isDragging: globalIsDragging, resetDragState } = useGlobalDragState();
   const { dragRef, isDragging: isThisCardDragging } = useDrag<FileInfo>(file);
@@ -55,11 +59,18 @@ export const DraggableFileCard: React.FC<DraggableFileCardProps> = ({
       ref={dragRef}
       className={`overflow-hidden h-full flex flex-col transition-all ${
         isThisCardDragging ? 'opacity-50 scale-95 shadow-lg' : ''
-      }`}
+      } ${isSelected ? 'ring-2 ring-primary' : ''}`}
       data-file-id={file.id}
       draggable="true"
     >
       <div className="relative h-40 bg-gray-100 flex items-center justify-center overflow-hidden">
+        {showCheckbox && (
+          <div className="absolute top-2 left-2 z-10">
+            <div className={`w-5 h-5 rounded-full flex items-center justify-center ${isSelected ? 'bg-primary text-white' : 'bg-white border border-gray-300'}`}>
+              {isSelected && <Check className="h-3 w-3" />}
+            </div>
+          </div>
+        )}
         <FilePreview file={file} />
       </div>
       <CardContent className="p-3 flex-1 flex flex-col">
