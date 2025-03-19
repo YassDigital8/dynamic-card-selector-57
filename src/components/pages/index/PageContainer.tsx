@@ -1,11 +1,8 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import { SidebarProvider, Sidebar, SidebarContent, SidebarInset } from '@/components/ui/sidebar';
 import { useIsMobile } from '@/hooks/use-mobile';
-import SidebarNavigation from './sidebar/SidebarNavigation';
-import SidebarHeader from './sidebar/SidebarHeader';
-import SidebarFooter from './sidebar/SidebarFooter';
+import { SidebarNavigation, SidebarHeader, SidebarFooter } from './sidebar';
 import PageHeader from './header/PageHeader';
 import { useBreadcrumbGenerator } from './utils/BreadcrumbGenerator';
 
