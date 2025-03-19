@@ -31,7 +31,7 @@ export interface Hotel {
   posKey: string; // POS key
   amenities: HotelAmenities;
   roomTypes: RoomType[];
-  rating?: number; // Star rating (0-5)
+  rating: number; // Star rating (0-5) - Changed from optional to required
   createdAt: Date;
   updatedAt: Date;
 }

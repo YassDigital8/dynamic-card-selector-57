@@ -10,6 +10,7 @@ export const defaultHotels: Hotel[] = [
     governorate: 'Dubai',
     streetAddress: '123 Sheikh Zayed Road',
     posKey: 'UAE',
+    rating: 5, // Added explicit rating
     amenities: {
       airConditioning: true,
       bar: true,
@@ -51,6 +52,7 @@ export const defaultHotels: Hotel[] = [
     governorate: 'Damascus',
     streetAddress: '45 Al-Mutanabbi Street',
     posKey: 'SY',
+    rating: 4, // Added explicit rating
     amenities: {
       airConditioning: true,
       bar: false,
@@ -92,6 +94,7 @@ export const defaultHotels: Hotel[] = [
     governorate: 'London',
     streetAddress: '78 Baker Street',
     posKey: 'UK',
+    rating: 4.5, // Added explicit rating
     amenities: {
       airConditioning: true,
       bar: true,
@@ -133,6 +136,7 @@ export const defaultHotels: Hotel[] = [
     governorate: 'Phuket',
     streetAddress: '15 Patong Beach Road',
     posKey: 'TH',
+    rating: 5, // Added explicit rating
     amenities: {
       airConditioning: true,
       bar: true,
@@ -174,6 +178,7 @@ export const defaultHotels: Hotel[] = [
     governorate: 'Toronto',
     streetAddress: '33 Young Street',
     posKey: 'CA',
+    rating: 3.5, // Added explicit rating
     amenities: {
       airConditioning: true,
       bar: true,
@@ -215,6 +220,7 @@ export const defaultHotels: Hotel[] = [
     governorate: 'Shanghai',
     streetAddress: '88 Nanjing Road',
     posKey: 'CN',
+    rating: 5, // Added explicit rating
     amenities: {
       airConditioning: true,
       bar: true,
@@ -256,6 +262,7 @@ export const defaultHotels: Hotel[] = [
     governorate: 'Marrakech',
     streetAddress: '24 Medina Avenue',
     posKey: 'MA',
+    rating: 4, // Added explicit rating
     amenities: {
       airConditioning: true,
       bar: false,
@@ -297,6 +304,7 @@ export const defaultHotels: Hotel[] = [
     governorate: 'Rio de Janeiro',
     streetAddress: '56 Copacabana Boulevard',
     posKey: 'BR',
+    rating: 4.5, // Added explicit rating
     amenities: {
       airConditioning: true,
       bar: true,
@@ -338,6 +346,7 @@ export const defaultHotels: Hotel[] = [
     governorate: 'Tromsø',
     streetAddress: '12 Aurora Street',
     posKey: 'NO',
+    rating: 4, // Added explicit rating
     amenities: {
       airConditioning: true,
       bar: true,
@@ -379,6 +388,7 @@ export const defaultHotels: Hotel[] = [
     governorate: 'Kyoto',
     streetAddress: '72 Gion District',
     posKey: 'JP',
+    rating: 4.5, // Added explicit rating
     amenities: {
       airConditioning: true,
       bar: false,
