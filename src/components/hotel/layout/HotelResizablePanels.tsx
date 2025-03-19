@@ -77,7 +77,6 @@ const HotelResizablePanels: React.FC<HotelResizablePanelsProps> = ({
           onEditHotel={onEditHotel}
           onDeleteHotel={onDeleteHotel}
           panelSize={panelSize}
-          isEditing={isEditing || showAddForm}
         />
       </ResizablePanel>
       

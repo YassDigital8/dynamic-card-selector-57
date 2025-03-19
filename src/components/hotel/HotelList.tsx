@@ -13,7 +13,6 @@ interface HotelListProps {
   onSelectHotel: (hotel: Hotel) => void;
   onEditHotel: (hotel: Hotel) => void;
   onDeleteHotel: (id: string) => void;
-  isEditing?: boolean;
 }
 
 const HotelList: React.FC<HotelListProps> = ({
@@ -22,14 +21,12 @@ const HotelList: React.FC<HotelListProps> = ({
   onSelectHotel,
   onEditHotel,
   onDeleteHotel,
-  isEditing = false,
 }) => {
   const [hotelToDelete, setHotelToDelete] = useState<Hotel | null>(null);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
 
   const handleDeleteClick = (hotel: Hotel) => {
-    if (isEditing) return;
     setHotelToDelete(hotel);
     setConfirmDialogOpen(true);
   };
@@ -39,18 +36,6 @@ const HotelList: React.FC<HotelListProps> = ({
       onDeleteHotel(hotelToDelete.id);
       setConfirmDialogOpen(false);
       setHotelToDelete(null);
-    }
-  };
-
-  const handleSelectHotel = (hotel: Hotel) => {
-    if (!isEditing) {
-      onSelectHotel(hotel);
-    }
-  };
-
-  const handleEditHotel = (hotel: Hotel) => {
-    if (!isEditing) {
-      onEditHotel(hotel);
     }
   };
 
@@ -98,12 +83,11 @@ const HotelList: React.FC<HotelListProps> = ({
           initial={{ opacity: 0, y: 5 }}
           animate={{ opacity: 1, y: 0 }}
           transition={springConfig}
-          className={`rounded-lg overflow-hidden border border-indigo-100 dark:border-indigo-900 ${isEditing ? 'opacity-70' : ''}`}
+          className="rounded-lg overflow-hidden border border-indigo-100 dark:border-indigo-900"
         >
           <HotelSearch 
             searchTerm={searchTerm} 
             onSearchChange={setSearchTerm} 
-            disabled={isEditing}
           />
         </motion.div>
       )}
@@ -125,7 +109,7 @@ const HotelList: React.FC<HotelListProps> = ({
         ) : (
           <motion.div 
             key="results"
-            className={`grid grid-cols-1 gap-4 ${isEditing ? 'opacity-70' : ''}`}
+            className="grid grid-cols-1 gap-4"
             variants={container}
             initial="hidden"
             animate="show"
@@ -136,11 +120,10 @@ const HotelList: React.FC<HotelListProps> = ({
                 key={hotel.id}
                 hotel={hotel}
                 isSelected={selectedHotel?.id === hotel.id}
-                onSelect={() => handleSelectHotel(hotel)}
-                onEdit={() => handleEditHotel(hotel)}
+                onSelect={() => onSelectHotel(hotel)}
+                onEdit={() => onEditHotel(hotel)}
                 onDelete={() => handleDeleteClick(hotel)}
                 useGridView={false}
-                disabled={isEditing}
               />
             ))}
           </motion.div>

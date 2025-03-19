@@ -1,29 +1,32 @@
 
 import React from 'react';
-import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface HotelSearchProps {
   searchTerm: string;
   onSearchChange: (value: string) => void;
-  disabled?: boolean;
 }
 
 const HotelSearch: React.FC<HotelSearchProps> = ({
   searchTerm,
-  onSearchChange,
-  disabled = false
+  onSearchChange
 }) => {
+  const isMobile = useIsMobile();
+  
   return (
-    <div className="relative w-full bg-white dark:bg-slate-950">
-      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+    <div className="flex items-center gap-2 p-2 bg-white dark:bg-slate-800 rounded-md">
+      <div className="text-indigo-500 flex-shrink-0">
+        <Search className={`${isMobile ? 'h-4 w-4' : 'h-5 w-5'}`} />
+      </div>
       <Input
         type="text"
-        placeholder="Search hotels..."
+        placeholder={isMobile ? "Search hotels..." : "Search hotels by name or location..."}
         value={searchTerm}
         onChange={(e) => onSearchChange(e.target.value)}
-        className="pl-10 border-0 focus-visible:ring-0 focus-visible:ring-offset-0 rounded-none"
-        disabled={disabled}
+        className="border-0 shadow-none rounded-md focus-visible:ring-1 focus-visible:ring-indigo-400 focus-visible:ring-offset-0 flex-grow"
+        aria-label="Search hotels"
       />
     </div>
   );
