@@ -5,6 +5,7 @@ import { UseFormReturn } from 'react-hook-form';
 import { FormValues } from '../formSchema';
 import RoomTypeForm from './RoomTypeForm';
 import RoomImagePreview from './RoomImagePreview';
+import { toast } from '@/hooks/use-toast';
 
 interface RoomTypeCardProps {
   index: number;
@@ -23,6 +24,22 @@ const RoomTypeCard: React.FC<RoomTypeCardProps> = ({
 }) => {
   const imageUrl = form.watch(`roomTypes.${index}.imageUrl`);
   const images = form.watch(`roomTypes.${index}.images`) || [];
+
+  const handleDeleteImage = (imageToDelete: string) => {
+    // Remove from images array
+    const updatedImages = images.filter(img => img !== imageToDelete);
+    form.setValue(`roomTypes.${index}.images`, updatedImages);
+
+    // If we're deleting the main image, set a new one if available
+    if (imageUrl === imageToDelete) {
+      form.setValue(`roomTypes.${index}.imageUrl`, updatedImages.length > 0 ? updatedImages[0] : '');
+    }
+
+    toast({
+      title: "Image removed",
+      description: "The image has been removed from this room type",
+    });
+  };
 
   return (
     <div className="p-4 border rounded-md space-y-4">
@@ -45,6 +62,7 @@ const RoomTypeCard: React.FC<RoomTypeCardProps> = ({
         images={images}
         onClick={onOpenGallery}
         onAddMore={onOpenMultiGallery}
+        onDeleteImage={handleDeleteImage}
       />
       
       <RoomTypeForm form={form} index={index} />

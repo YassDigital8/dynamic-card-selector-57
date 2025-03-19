@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Button } from '@/components/ui/button';
 import { FileInfo } from '@/models/FileModel';
 import { FileGrid } from '@/components/gallery/file-list/FileGrid';
+import { toast } from '@/hooks/use-toast';
 
 interface RoomGalleryDialogProps {
   isOpen: boolean;
@@ -11,6 +12,7 @@ interface RoomGalleryDialogProps {
   galleryFiles: FileInfo[];
   onSelectImages: (files: FileInfo[]) => void;
   multiSelect?: boolean;
+  currentSelectedImages?: string[]; // Add current selected images URLs
 }
 
 const RoomGalleryDialog: React.FC<RoomGalleryDialogProps> = ({ 
@@ -18,9 +20,15 @@ const RoomGalleryDialog: React.FC<RoomGalleryDialogProps> = ({
   onOpenChange, 
   galleryFiles, 
   onSelectImages,
-  multiSelect = false
+  multiSelect = false,
+  currentSelectedImages = []
 }) => {
-  const [selectedFiles, setSelectedFiles] = useState<FileInfo[]>([]);
+  // Pre-select files that are already selected
+  const initialSelectedFiles = galleryFiles.filter(file => 
+    currentSelectedImages.includes(file.url)
+  );
+
+  const [selectedFiles, setSelectedFiles] = useState<FileInfo[]>(initialSelectedFiles);
 
   const handleFileSelect = (file: FileInfo) => {
     if (multiSelect) {
@@ -40,13 +48,22 @@ const RoomGalleryDialog: React.FC<RoomGalleryDialogProps> = ({
   };
 
   const handleConfirm = () => {
+    if (selectedFiles.length === 0) {
+      toast({
+        title: "No images selected",
+        description: "Please select at least one image",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     onSelectImages(selectedFiles);
     onOpenChange(false);
-    setSelectedFiles([]);
   };
 
   const handleClose = () => {
-    setSelectedFiles([]);
+    // Reset to initial selection when closing without confirming
+    setSelectedFiles(initialSelectedFiles);
     onOpenChange(false);
   };
 
@@ -62,26 +79,25 @@ const RoomGalleryDialog: React.FC<RoomGalleryDialogProps> = ({
             onViewFile={handleFileSelect}
             onShareFile={(file, e) => { e.preventDefault(); }}
             onDeleteFile={(file, e) => { e.preventDefault(); }}
-            selectedFiles={multiSelect ? selectedFiles : []}
-            showCheckbox={multiSelect}
+            selectedFiles={selectedFiles}
+            showCheckbox={true}
+            onSelectFile={handleFileSelect}
           />
         </div>
-        {multiSelect && (
-          <DialogFooter>
-            <div className="flex justify-between w-full items-center">
-              <div className="text-sm text-gray-500">
-                {selectedFiles.length} {selectedFiles.length === 1 ? 'image' : 'images'} selected
-              </div>
-              <div className="space-x-2">
-                <Button variant="outline" onClick={handleClose}>Cancel</Button>
-                <Button onClick={handleConfirm} disabled={selectedFiles.length === 0}>
-                  Add Selected Images
-                </Button>
-              </div>
+        <DialogFooter>
+          <div className="flex justify-between w-full items-center">
+            <div className="text-sm text-gray-500">
+              {selectedFiles.length} {selectedFiles.length === 1 ? 'image' : 'images'} selected
             </div>
-          </DialogFooter>
-        )}
-      </DialogContent>
+            <div className="space-x-2">
+              <Button variant="outline" onClick={handleClose}>Cancel</Button>
+              <Button onClick={handleConfirm} disabled={selectedFiles.length === 0}>
+                {multiSelect ? 'Add Selected Images' : 'Select Image'}
+              </Button>
+            </div>
+          </div>
+        </DialogFooter>
+      </Dialog>
     </Dialog>
   );
 };

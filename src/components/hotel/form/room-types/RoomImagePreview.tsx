@@ -11,6 +11,7 @@ interface RoomImagePreviewProps {
   onClick: () => void;
   onAddMore?: () => void;
   readOnly?: boolean;
+  onDeleteImage?: (imageUrl: string) => void; // Add ability to delete images
 }
 
 const RoomImagePreview: React.FC<RoomImagePreviewProps> = ({ 
@@ -18,10 +19,14 @@ const RoomImagePreview: React.FC<RoomImagePreviewProps> = ({
   images = [], 
   onClick, 
   onAddMore,
-  readOnly = false 
+  readOnly = false,
+  onDeleteImage
 }) => {
   // Combine legacy imageUrl with images array for backward compatibility
-  const allImages = imageUrl ? [imageUrl, ...images.filter(img => img !== imageUrl)] : images;
+  const allImages = imageUrl 
+    ? [imageUrl, ...images.filter(img => img !== imageUrl)] 
+    : images;
+  
   const hasImages = allImages.length > 0;
 
   return (
@@ -29,39 +34,66 @@ const RoomImagePreview: React.FC<RoomImagePreviewProps> = ({
       {!readOnly && (
         <div className="flex justify-between items-center">
           <FormLabel>Room Images</FormLabel>
-          {hasImages && onAddMore && (
-            <Button 
-              type="button" 
-              variant="outline" 
-              size="sm" 
-              onClick={onAddMore}
-              className="flex items-center gap-1"
-            >
-              <Plus className="h-4 w-4" />
-              Add More
-            </Button>
-          )}
+          <div className="flex gap-2">
+            {hasImages && (
+              <Button 
+                type="button" 
+                variant="outline" 
+                size="sm" 
+                onClick={onClick}
+                className="flex items-center gap-1"
+              >
+                Manage Images
+              </Button>
+            )}
+            {hasImages && onAddMore && (
+              <Button 
+                type="button" 
+                variant="outline" 
+                size="sm" 
+                onClick={onAddMore}
+                className="flex items-center gap-1"
+              >
+                <Plus className="h-4 w-4" />
+                Add More
+              </Button>
+            )}
+          </div>
         </div>
       )}
       
       {hasImages ? (
         <div className="space-y-2 w-full mt-2">
           {allImages.length > 1 ? (
-            <RoomImagesCarousel images={allImages} />
+            <RoomImagesCarousel images={allImages} onDeleteImage={!readOnly ? onDeleteImage : undefined} />
           ) : (
-            <img 
-              src={allImages[0]} 
-              alt="Room preview" 
-              className="w-full h-48 object-cover rounded-md"
-            />
+            <div className="relative">
+              <img 
+                src={allImages[0]} 
+                alt="Room preview" 
+                className="w-full h-48 object-cover rounded-md"
+              />
+              {!readOnly && onDeleteImage && (
+                <div className="absolute top-2 right-2">
+                  <Button 
+                    variant="destructive" 
+                    size="sm" 
+                    className="h-7 w-7 p-0 rounded-full" 
+                    onClick={() => onDeleteImage(allImages[0])}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              )}
+            </div>
           )}
           
-          {!readOnly && (
+          {!readOnly && !hasImages && (
             <div 
               className="text-center text-sm text-gray-500 cursor-pointer hover:underline"
               onClick={onClick}
             >
-              Click to {hasImages ? 'change' : 'add'} images
+              Click to add images
             </div>
           )}
         </div>

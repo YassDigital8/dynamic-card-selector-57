@@ -14,6 +14,7 @@ interface DraggableFileCardProps {
   onDelete: (e: React.MouseEvent) => void;
   isSelected?: boolean;
   showCheckbox?: boolean;
+  onSelect?: () => void;  // Add this prop for handling selection
 }
 
 export const DraggableFileCard: React.FC<DraggableFileCardProps> = ({ 
@@ -22,7 +23,8 @@ export const DraggableFileCard: React.FC<DraggableFileCardProps> = ({
   onShare,
   onDelete,
   isSelected = false,
-  showCheckbox = false
+  showCheckbox = false,
+  onSelect
 }) => {
   const { isDragging: globalIsDragging, resetDragState } = useGlobalDragState();
   const { dragRef, isDragging: isThisCardDragging } = useDrag<FileInfo>(file);
@@ -54,14 +56,21 @@ export const DraggableFileCard: React.FC<DraggableFileCardProps> = ({
     onDelete(e);
   };
 
+  const handleCardClick = () => {
+    if (showCheckbox && onSelect) {
+      onSelect();
+    }
+  };
+
   return (
     <Card 
       ref={dragRef}
-      className={`overflow-hidden h-full flex flex-col transition-all ${
+      className={`overflow-hidden h-full flex flex-col transition-all cursor-pointer ${
         isThisCardDragging ? 'opacity-50 scale-95 shadow-lg' : ''
       } ${isSelected ? 'ring-2 ring-primary' : ''}`}
       data-file-id={file.id}
       draggable="true"
+      onClick={handleCardClick}
     >
       <div className="relative h-40 bg-gray-100 flex items-center justify-center overflow-hidden">
         {showCheckbox && (

@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { FormValues } from './formSchema';
@@ -20,9 +19,18 @@ const RoomTypesSection: React.FC<RoomTypesSectionProps> = ({ form }) => {
   const [currentRoomTypeIndex, setCurrentRoomTypeIndex] = useState(0);
   const { galleryFiles } = useGalleryFiles();
 
+  const getCurrentRoomImages = () => {
+    const mainImage = form.getValues(`roomTypes.${currentRoomTypeIndex}.imageUrl`);
+    const additionalImages = form.getValues(`roomTypes.${currentRoomTypeIndex}.images`) || [];
+    return [mainImage, ...additionalImages].filter(Boolean);
+  };
+
   const handleSelectSingleImage = (files: FileInfo[]) => {
     if (files.length > 0) {
       form.setValue(`roomTypes.${currentRoomTypeIndex}.imageUrl`, files[0].url);
+      const existingImages = form.getValues(`roomTypes.${currentRoomTypeIndex}.images`) || [];
+      const filteredImages = existingImages.filter(img => img !== files[0].url);
+      form.setValue(`roomTypes.${currentRoomTypeIndex}.images`, filteredImages);
       setIsGalleryOpen(false);
     }
   };
@@ -31,16 +39,15 @@ const RoomTypesSection: React.FC<RoomTypesSectionProps> = ({ form }) => {
     if (files.length > 0) {
       const imageUrls = files.map(file => file.url);
       
-      // Get existing images (if any)
-      const existingImages = form.getValues(`roomTypes.${currentRoomTypeIndex}.images`) || [];
+      const mainImageUrl = form.getValues(`roomTypes.${currentRoomTypeIndex}.imageUrl`);
       
-      // Set images array without duplicates
-      const uniqueUrls = [...new Set([...existingImages, ...imageUrls])];
-      form.setValue(`roomTypes.${currentRoomTypeIndex}.images`, uniqueUrls);
-      
-      // If this is the first image and no main image is set, set the first as main
-      if (!form.getValues(`roomTypes.${currentRoomTypeIndex}.imageUrl`)) {
+      if (!mainImageUrl && imageUrls.length > 0) {
         form.setValue(`roomTypes.${currentRoomTypeIndex}.imageUrl`, imageUrls[0]);
+        const additionalImages = imageUrls.slice(1);
+        form.setValue(`roomTypes.${currentRoomTypeIndex}.images`, additionalImages);
+      } else {
+        const additionalImages = imageUrls.filter(url => url !== mainImageUrl);
+        form.setValue(`roomTypes.${currentRoomTypeIndex}.images`, additionalImages);
       }
       
       setIsMultiGalleryOpen(false);
@@ -93,6 +100,7 @@ const RoomTypesSection: React.FC<RoomTypesSectionProps> = ({ form }) => {
         galleryFiles={galleryFiles}
         onSelectImages={handleSelectSingleImage}
         multiSelect={false}
+        currentSelectedImages={[form.getValues(`roomTypes.${currentRoomTypeIndex}.imageUrl`)].filter(Boolean)}
       />
 
       <RoomGalleryDialog 
@@ -101,6 +109,7 @@ const RoomTypesSection: React.FC<RoomTypesSectionProps> = ({ form }) => {
         galleryFiles={galleryFiles}
         onSelectImages={handleSelectMultipleImages}
         multiSelect={true}
+        currentSelectedImages={getCurrentRoomImages()}
       />
     </div>
   );
