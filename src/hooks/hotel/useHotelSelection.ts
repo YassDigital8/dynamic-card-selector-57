@@ -27,6 +27,12 @@ export const useHotelSelection = (
     setIsExpanded(true);
   };
 
+  const handleStartEdit = () => {
+    setIsEditing(true);
+    setShowAddForm(false);
+    setIsExpanded(true);
+  };
+
   const handleAddHotel = () => {
     setSelectedHotel(null);
     setIsEditing(false);
@@ -61,6 +67,7 @@ export const useHotelSelection = (
     setIsExpanded,
     handleSelectHotel,
     handleEditHotel,
+    handleStartEdit,
     handleAddHotel,
     handleBackToList,
     handleSubmitEdit,

@@ -25,6 +25,7 @@ interface HotelContentPanelProps {
   onSubmitAdd: (data: HotelFormData) => void;
   onSubmitEdit: (data: HotelFormData) => void;
   onCancelEdit: () => void;
+  onStartEdit: () => void;
 }
 
 const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
@@ -40,7 +41,8 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
   onBackToList,
   onSubmitAdd,
   onSubmitEdit,
-  onCancelEdit
+  onCancelEdit,
+  onStartEdit
 }) => {
   // Determine if we should show content (either a selected hotel, add form, or edit form)
   const showContent = selectedHotel || showAddForm || isEditing;
@@ -87,6 +89,7 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
             onClick={onBackToList}
             size={isMobile ? "sm" : "default"}
             className="group mb-2 sm:mb-4 border-indigo-200 dark:border-indigo-800 hover:bg-indigo-50 dark:hover:bg-indigo-900/30"
+            type="button"
           >
             <ArrowLeft className={`mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4 transition-transform group-hover:-translate-x-1`} />
             <span className="text-xs sm:text-sm">Back to hotels</span>
@@ -119,7 +122,7 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
         <HotelDetailsWrapper 
           key={`hotel-details-${selectedHotel.id}`}
           hotel={selectedHotel} 
-          onEdit={onCancelEdit} 
+          onEdit={onStartEdit} 
           onBack={onBackToList}
         />
       )}
