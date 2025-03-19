@@ -80,7 +80,7 @@ const RoomTypesCard: React.FC<RoomTypesCardProps> = ({ roomTypes, updatedAt }) =
               variants={container}
               initial="hidden"
               animate="visible"
-              className="space-y-4"
+              className="space-y-6"
             >
               {roomTypes.map((roomType) => (
                 <motion.div
@@ -94,58 +94,56 @@ const RoomTypesCard: React.FC<RoomTypesCardProps> = ({ roomTypes, updatedAt }) =
                       damping: 15
                     }
                   }}
-                  className="p-4 rounded-lg border border-purple-100 dark:border-purple-900 bg-white dark:bg-slate-900"
+                  className="rounded-lg border border-purple-100 dark:border-purple-900 bg-white dark:bg-slate-900 overflow-hidden"
                 >
-                  <div className="flex flex-col gap-4">
-                    <div className="flex flex-col md:flex-row gap-4">
-                      {/* Room details section */}
-                      <div className="flex-1">
-                        <div className="flex justify-between items-start">
-                          <div className="flex-1">
-                            <div className="font-medium text-purple-700 dark:text-purple-300 text-lg">{roomType.name}</div>
-                            {roomType.description && (
-                              <div className="text-gray-600 dark:text-gray-300 text-sm mt-1">{roomType.description}</div>
-                            )}
-                          </div>
-                          {roomType.price && (
-                            <div className="text-right">
-                              <div className="bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 px-3 py-1 rounded-full font-semibold">
-                                ${roomType.price.toFixed(2)}
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                        <div className="flex items-center mt-3 space-x-4">
-                          <div className="flex items-center text-gray-600 dark:text-gray-300">
-                            <Users className="h-4 w-4 mr-1 text-purple-500" />
-                            <span className="text-sm">{roomType.maxAdults} Adults</span>
-                          </div>
-                          <div className="flex items-center text-gray-600 dark:text-gray-300">
-                            <Baby className="h-4 w-4 mr-1 text-purple-500" />
-                            <span className="text-sm">{roomType.maxChildren} Children</span>
-                          </div>
-                        </div>
+                  <div className="p-4">
+                    <div className="flex justify-between items-start mb-2">
+                      <div>
+                        <h3 className="font-medium text-purple-700 dark:text-purple-300 text-lg">{roomType.name}</h3>
+                        {roomType.description && (
+                          <p className="text-gray-600 dark:text-gray-300 text-sm mt-1">{roomType.description}</p>
+                        )}
                       </div>
+                      {roomType.price && (
+                        <div className="text-right">
+                          <div className="bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 px-3 py-1 rounded-full font-semibold">
+                            ${roomType.price.toFixed(2)}
+                          </div>
+                        </div>
+                      )}
                     </div>
                     
-                    {/* Images carousel section - only show if images exist */}
-                    {((roomType.images && roomType.images.length > 0) || roomType.imageUrl) && (
-                      <div className="w-full">
-                        {roomType.images && roomType.images.length > 0 ? (
-                          <RoomImagesCarousel 
-                            images={roomType.images} 
-                            className="mt-2"
-                          />
-                        ) : roomType.imageUrl ? (
+                    <div className="flex items-center mt-2 mb-3 space-x-4">
+                      <div className="flex items-center text-gray-600 dark:text-gray-300">
+                        <Users className="h-4 w-4 mr-1 text-purple-500" />
+                        <span className="text-sm">{roomType.maxAdults} Adults</span>
+                      </div>
+                      <div className="flex items-center text-gray-600 dark:text-gray-300">
+                        <Baby className="h-4 w-4 mr-1 text-purple-500" />
+                        <span className="text-sm">{roomType.maxChildren} Children</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Images carousel section - only show if images exist */}
+                  {((roomType.images && roomType.images.length > 0) || roomType.imageUrl) && (
+                    <div>
+                      {roomType.images && roomType.images.length > 0 ? (
+                        <RoomImagesCarousel 
+                          images={roomType.imageUrl ? [roomType.imageUrl, ...roomType.images.filter(img => img !== roomType.imageUrl)] : roomType.images}
+                          className="w-full border-t border-purple-100 dark:border-purple-900/50"
+                        />
+                      ) : roomType.imageUrl ? (
+                        <div className="border-t border-purple-100 dark:border-purple-900/50">
                           <img 
                             src={roomType.imageUrl} 
                             alt={`${roomType.name} room`}
-                            className="w-full h-48 object-cover rounded-md mt-2"
+                            className="w-full h-48 object-cover"
                           />
-                        ) : null}
-                      </div>
-                    )}
-                  </div>
+                        </div>
+                      ) : null}
+                    </div>
+                  )}
                 </motion.div>
               ))}
               <motion.div 

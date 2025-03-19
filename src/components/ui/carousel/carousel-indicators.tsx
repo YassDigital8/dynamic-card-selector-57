@@ -1,93 +1,45 @@
 
-import React from "react";
-import { cn } from "@/lib/utils";
-import { useCarousel } from "./carousel-context";
+import * as React from "react"
+import { cn } from "@/lib/utils"
+import { useCarousel } from "./carousel-context"
 
-interface CarouselIndicatorsProps extends React.HTMLAttributes<HTMLDivElement> {
-  className?: string;
-  variant?: "dots" | "bars" | "numbers";
-}
+const CarouselIndicators = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => {
+  const { api, slideCount, activeIndex } = useCarousel()
 
-export const CarouselIndicators = ({
-  className,
-  variant = "dots",
-  ...props
-}: CarouselIndicatorsProps) => {
-  const { api, activeIndex, slideCount } = useCarousel();
-
-  const handleIndicatorClick = (idx: number) => {
-    api?.scrollTo(idx);
-  };
-
-  const renderIndicators = () => {
-    return Array.from({ length: slideCount }).map((_, idx) => {
-      const isActive = idx === activeIndex;
-
-      // Different variants
-      if (variant === "numbers") {
-        return (
-          <button
-            key={idx}
-            onClick={() => handleIndicatorClick(idx)}
-            className={cn(
-              "flex h-7 w-7 items-center justify-center rounded-full text-xs font-medium transition-colors",
-              isActive
-                ? "bg-primary text-primary-foreground"
-                : "bg-muted hover:bg-muted/80"
-            )}
-            aria-current={isActive ? "true" : "false"}
-            aria-label={`Go to slide ${idx + 1}`}
-          >
-            {idx + 1}
-          </button>
-        );
-      }
-
-      if (variant === "bars") {
-        return (
-          <button
-            key={idx}
-            onClick={() => handleIndicatorClick(idx)}
-            className={cn(
-              "h-1.5 rounded-full transition-all",
-              isActive
-                ? "w-8 bg-primary"
-                : "w-4 bg-muted hover:bg-muted/80 hover:w-6"
-            )}
-            aria-current={isActive ? "true" : "false"}
-            aria-label={`Go to slide ${idx + 1}`}
-          />
-        );
-      }
-
-      // Default dots
-      return (
-        <button
-          key={idx}
-          onClick={() => handleIndicatorClick(idx)}
-          className={cn(
-            "h-2.5 w-2.5 rounded-full transition-colors",
-            isActive
-              ? "bg-primary"
-              : "bg-muted hover:bg-muted/80"
-          )}
-          aria-current={isActive ? "true" : "false"}
-          aria-label={`Go to slide ${idx + 1}`}
-        />
-      );
-    });
-  };
+  const dots = React.useMemo(() => {
+    return Array.from({ length: slideCount }).map((_, index) => {
+      const isActive = activeIndex === index
+      return { isActive, index }
+    })
+  }, [activeIndex, slideCount])
 
   return (
-    <div
-      className={cn(
-        "flex gap-2 justify-center mt-3",
-        variant === "bars" && "h-1.5",
-        className
-      )}
+    <div 
+      ref={ref}
+      className={cn("flex items-center justify-center gap-2", className)}
       {...props}
     >
-      {renderIndicators()}
+      {dots.map((dot) => (
+        <button
+          key={dot.index}
+          type="button"
+          onClick={() => api?.scrollTo(dot.index)}
+          className={cn(
+            "h-2 w-2 rounded-full transition-all",
+            dot.isActive 
+              ? "bg-purple-600 dark:bg-purple-400 w-3" 
+              : "bg-gray-300 dark:bg-gray-600 hover:bg-purple-400 dark:hover:bg-purple-500"
+          )}
+          aria-label={`Go to slide ${dot.index + 1}`}
+          aria-current={dot.isActive}
+        />
+      ))}
     </div>
-  );
-};
+  )
+})
+CarouselIndicators.displayName = "CarouselIndicators"
+
+export { CarouselIndicators }
