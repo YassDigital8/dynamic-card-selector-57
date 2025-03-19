@@ -1,36 +1,21 @@
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { useNavigate } from 'react-router-dom';
-import { UserInfo, LoginCredentials } from '@/types/auth.types';
-import { loginUser, isInDemoMode, enableDemoMode } from '@/services/authService';
+import { LoginCredentials } from '@/types/auth.types';
+import { loginUser } from '@/services/authService';
 import { useAuthSession } from '@/hooks/useAuthSession';
+import { useAuthState } from '@/hooks/useAuthState';
+import { useDemoMode } from '@/hooks/useDemoMode';
 
 export const useAuthentication = () => {
-  const [authToken, setAuthToken] = useState<string>('');
-  const [authLoading, setAuthLoading] = useState<boolean>(true);
-  const [authError, setAuthError] = useState<string | null>(null);
-  const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
-  const [demoMode, setDemoMode] = useState<boolean>(false);
   const { toast } = useToast();
-  const navigate = useNavigate();
+  const authState = useAuthState();
+  const demoModeState = useDemoMode();
   
   // Define logout function here to pass to useAuthSession
   const logout = () => {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('userInfo');
-    localStorage.removeItem('sessionExpiresAt');
-    setAuthToken('');
-    setUserInfo(null);
-    setDemoMode(false);
-    
-    toast({
-      title: "Logged out",
-      description: "You have been successfully logged out",
-    });
-    
-    // Redirect to login page after logout
-    navigate('/login', { replace: true });
+    demoModeState.resetDemoMode();
+    authState.clearAuthData();
   };
   
   // Use the session management hook
@@ -39,21 +24,21 @@ export const useAuthentication = () => {
     startSessionTimer, 
     resetSessionTimer 
   } = useAuthSession({ 
-    authToken, 
+    authToken: authState.authToken, 
     logout 
   });
   
   useEffect(() => {
     const checkAuthentication = async () => {
-      setAuthLoading(true);
-      setAuthError(null);
+      authState.setLoading(true);
+      authState.setError(null);
       
       // Check if we have a token in localStorage
       const storedToken = localStorage.getItem('authToken');
       
       if (!storedToken) {
         console.log("No authentication token found");
-        setAuthLoading(false);
+        authState.setLoading(false);
         return;
       }
       
@@ -62,22 +47,15 @@ export const useAuthentication = () => {
         
         // Get stored user info if available
         const storedUserInfo = localStorage.getItem('userInfo');
+        let userInfo = null;
+        
         if (storedUserInfo) {
-          setUserInfo(JSON.parse(storedUserInfo));
+          userInfo = JSON.parse(storedUserInfo);
+          authState.setAuthData(storedToken, userInfo);
         }
         
         // Check if demo mode is active
-        if (storedToken === 'demo-mode-token' || isInDemoMode()) {
-          setDemoMode(true);
-          console.log("Demo mode active");
-          
-          // Show toast for demo mode
-          toast({
-            title: "Demo Mode Active",
-            description: "You are using the application in demo mode due to connection issues",
-            variant: "destructive"  // Changed from "warning" to "destructive"
-          });
-        }
+        demoModeState.checkForDemoMode(storedToken);
         
         // Check for existing session timer
         const storedExpiryTime = localStorage.getItem('sessionExpiresAt');
@@ -97,7 +75,6 @@ export const useAuthentication = () => {
           startSessionTimer();
         }
         
-        setAuthToken(storedToken);
         console.log("Authentication successful with stored token");
         
       } catch (error) {
@@ -115,54 +92,44 @@ export const useAuthentication = () => {
           errorMessage = 'Unknown error occurred during authentication validation';
         }
         
-        setAuthError(errorMessage);
+        authState.setError(errorMessage);
       } finally {
-        setAuthLoading(false);
+        authState.setLoading(false);
       }
     };
 
     checkAuthentication();
-  }, [startSessionTimer, toast]);
+  }, [startSessionTimer, toast, authState, demoModeState]);
 
   const login = async (credentials: LoginCredentials) => {
-    setAuthLoading(true);
-    setAuthError(null);
+    authState.setLoading(true);
+    authState.setError(null);
     
     try {
       const authData = await loginUser(credentials);
       
       // Check if we're in demo mode
       if (authData.token === 'demo-mode-token') {
-        setDemoMode(true);
-        
-        toast({
-          title: "Demo Mode Activated",
-          description: "Due to connection issues, you're now in demo mode with limited functionality",
-          variant: "destructive"  // Changed from "warning" to "destructive"
-        });
+        demoModeState.activateDemoMode();
       }
       
       // Store the token and user info
-      localStorage.setItem('authToken', authData.token);
-      
       const userInfoToStore = {
         firstName: authData.firstName,
         email: authData.email
       };
       
-      localStorage.setItem('userInfo', JSON.stringify(userInfoToStore));
+      // Update auth state
+      authState.setAuthData(authData.token, userInfoToStore);
       
       // Start session timer
       startSessionTimer();
       
-      // Update state
-      setAuthToken(authData.token);
-      setUserInfo(userInfoToStore);
-      setAuthLoading(false); // Set loading to false immediately
+      authState.setLoading(false); // Set loading to false immediately
       
       toast({
-        title: demoMode ? "Demo Login successful" : "Login successful",
-        description: `Welcome${demoMode ? " to demo mode" : ""}, ${authData.firstName || authData.email}`,
+        title: demoModeState.demoMode ? "Demo Login successful" : "Login successful",
+        description: `Welcome${demoModeState.demoMode ? " to demo mode" : ""}, ${authData.firstName || authData.email}`,
       });
       
       console.log("Authentication successful, token set");
@@ -180,7 +147,7 @@ export const useAuthentication = () => {
           
           // Offer to enable demo mode for certificate errors
           if (window.confirm('Would you like to enter demo mode due to SSL certificate issues?')) {
-            enableDemoMode();
+            demoModeState.activateDemoMode();
             return login(credentials);
           }
         }
@@ -188,22 +155,29 @@ export const useAuthentication = () => {
         errorMessage = 'Unknown error occurred during authentication';
       }
       
-      setAuthError(errorMessage);
+      authState.setError(errorMessage);
       throw error;
     } finally {
-      setAuthLoading(false);
+      authState.setLoading(false);
     }
   };
 
   return { 
-    authToken, 
-    authLoading, 
-    authError, 
-    userInfo,
-    isAuthenticated: !!authToken,
-    demoMode,
+    // Forward auth state
+    authToken: authState.authToken, 
+    authLoading: authState.authLoading, 
+    authError: authState.authError, 
+    userInfo: authState.userInfo,
+    isAuthenticated: authState.isAuthenticated,
+    
+    // Forward demo mode state
+    demoMode: demoModeState.demoMode,
+    
+    // Forward session management
     remainingTime,
     resetSessionTimer,
+    
+    // Methods
     login,
     logout 
   };
