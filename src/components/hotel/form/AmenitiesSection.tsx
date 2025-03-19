@@ -36,8 +36,8 @@ const AmenitiesSection: React.FC<AmenitiesSectionProps> = ({ form }) => {
     setIsImageDialogOpen(true);
   };
   
-  const handleAddImage = () => {
-    if (!selectedAmenity || !selectedFile || !filePreview) {
+  const handleAddImage = (imageUrl: string) => {
+    if (!selectedAmenity || !imageUrl) {
       return;
     }
     
@@ -45,13 +45,12 @@ const AmenitiesSection: React.FC<AmenitiesSectionProps> = ({ form }) => {
     const currentImages = form.getValues(imageFieldName as any) || [];
     
     const newImage: AmenityImage = {
-      url: filePreview,
+      url: imageUrl,
       description: `${amenitiesWithImages[selectedAmenity]} image`
     };
     
     form.setValue(imageFieldName as any, [...currentImages, newImage], { shouldDirty: true });
     
-    resetFileSelection();
     setIsImageDialogOpen(false);
   };
   

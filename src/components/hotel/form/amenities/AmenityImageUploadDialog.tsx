@@ -8,7 +8,7 @@ import { useFileSelection } from '@/hooks/upload/useFileSelection';
 interface AmenityImageUploadDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onAddImage: () => void;
+  onAddImage: (imageUrl: string) => void;
   amenityLabel: string;
 }
 
@@ -32,7 +32,11 @@ const AmenityImageUploadDialog: React.FC<AmenityImageUploadDialogProps> = ({
   };
 
   const handleAdd = () => {
-    onAddImage();
+    if (filePreview && isImage) {
+      onAddImage(filePreview);
+      resetFileSelection();
+      onClose();
+    }
   };
 
   return (
