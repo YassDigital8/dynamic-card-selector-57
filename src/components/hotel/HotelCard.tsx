@@ -18,6 +18,7 @@ interface HotelCardProps {
   onEdit: () => void;
   onDelete: () => void;
   useGridView?: boolean;
+  compact?: boolean;
 }
 
 const HotelCard: React.FC<HotelCardProps> = ({
@@ -26,6 +27,8 @@ const HotelCard: React.FC<HotelCardProps> = ({
   onSelect,
   onEdit,
   onDelete,
+  useGridView = false,
+  compact = false
 }) => {
   const isMobile = useIsMobile();
 
@@ -57,7 +60,7 @@ const HotelCard: React.FC<HotelCardProps> = ({
     },
     selected: {
       scale: 1.01,
-      boxShadow: "0 10px 15px -3px rgba(79, 70, 229, 0.2), 0 4px 6px -2px rgba(79, 70, 229, 0.15)",
+      boxShadow: "0 10px 15px -3px rgba(99, 102, 241, 0.2), 0 4px 6px -2px rgba(99, 102, 241, 0.15)",
       transition: {
         type: "spring",
         stiffness: 400,
@@ -67,13 +70,13 @@ const HotelCard: React.FC<HotelCardProps> = ({
   };
 
   // Consistent card styles
-  const cardStyles = `flex ${isMobile ? 'flex-col' : 'flex-row'} min-h-[160px]`;
-  const contentStyles = `flex-1 space-y-2.5 py-3 px-4`;
+  const cardStyles = `flex ${isMobile ? 'flex-col' : 'flex-row'} ${compact ? 'min-h-[120px]' : 'min-h-[160px]'}`;
+  const contentStyles = `flex-1 space-y-${compact ? '1.5' : '3'} ${compact ? 'py-1.5 px-2' : 'py-3 px-4'}`;
 
   return (
     <motion.div 
       layoutId={`hotel-card-${hotel.id}`}
-      className="cursor-pointer relative overflow-hidden w-full mb-2"
+      className="cursor-pointer relative overflow-hidden w-full mb-3"
       onClick={onSelect}
       initial="rest"
       whileHover="hover"
@@ -90,19 +93,20 @@ const HotelCard: React.FC<HotelCardProps> = ({
       <Card 
         className={`transition-all will-change-transform ${cardStyles} ${
           isSelected 
-          ? 'border-indigo-400 dark:border-indigo-500 shadow-md bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-900/40 dark:to-indigo-800/40' 
-          : 'hover:border-indigo-200 dark:hover:border-indigo-800'
+          ? 'border-blue-400 dark:border-blue-500 shadow-md bg-blue-50 dark:bg-blue-900/40' 
+          : 'hover:border-blue-200 dark:hover:border-blue-800'
         }`}
       >
-        <HotelCardHeader hotel={hotel} useGridView={false} />
+        <HotelCardHeader hotel={hotel} useGridView={useGridView} compact={compact} />
         
         <CardContent className={contentStyles}>
-          <HotelLocationInfo hotel={hotel} />
-          <HotelCardAmenities amenities={hotel.amenities} />
+          <HotelLocationInfo hotel={hotel} compact={compact} />
+          <HotelCardAmenities amenities={hotel.amenities} compact={compact} />
           <HotelCardFooter 
             hotel={hotel} 
             onEdit={onEdit} 
-            onDelete={onDelete} 
+            onDelete={onDelete}
+            compact={compact} 
           />
         </CardContent>
       </Card>

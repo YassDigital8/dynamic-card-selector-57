@@ -13,6 +13,7 @@ interface HotelListProps {
   onSelectHotel: (hotel: Hotel) => void;
   onEditHotel: (hotel: Hotel) => void;
   onDeleteHotel: (id: string) => void;
+  compact?: boolean;
 }
 
 const HotelList: React.FC<HotelListProps> = ({
@@ -21,6 +22,7 @@ const HotelList: React.FC<HotelListProps> = ({
   onSelectHotel,
   onEditHotel,
   onDeleteHotel,
+  compact = true,
 }) => {
   const [hotelToDelete, setHotelToDelete] = useState<Hotel | null>(null);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
@@ -66,14 +68,14 @@ const HotelList: React.FC<HotelListProps> = ({
   };
 
   return (
-    <div className="space-y-6 w-full p-4">
+    <div className={`space-y-${compact ? '4' : '6'} w-full p-${compact ? '2' : '4'}`}>
       <motion.div 
         initial={{ opacity: 0, y: -5 }}
         animate={{ opacity: 1, y: 0 }}
         transition={springConfig}
         className="flex items-center justify-between"
       >
-        <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-blue-600 dark:from-indigo-400 dark:to-blue-400">
+        <h2 className={`${compact ? 'text-lg' : 'text-xl sm:text-2xl'} font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400`}>
           Hotels ({filteredHotels.length})
         </h2>
       </motion.div>
@@ -83,7 +85,7 @@ const HotelList: React.FC<HotelListProps> = ({
           initial={{ opacity: 0, y: 5 }}
           animate={{ opacity: 1, y: 0 }}
           transition={springConfig}
-          className="rounded-lg overflow-hidden border border-indigo-100 dark:border-indigo-900"
+          className="rounded-lg overflow-hidden border border-blue-100 dark:border-blue-900"
         >
           <HotelSearch 
             searchTerm={searchTerm} 
@@ -92,7 +94,7 @@ const HotelList: React.FC<HotelListProps> = ({
         </motion.div>
       )}
       
-      <AnimatePresence mode="popLayout"> {/* Changed to popLayout for better card handling */}
+      <AnimatePresence mode="popLayout">
         {hotels.length === 0 ? (
           <HotelListEmptyState key="empty-state" />
         ) : filteredHotels.length === 0 ? (
@@ -102,14 +104,14 @@ const HotelList: React.FC<HotelListProps> = ({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={springConfig}
-            className="p-8 text-center border border-dashed border-indigo-200 dark:border-indigo-800 rounded-lg bg-indigo-50/50 dark:bg-indigo-900/20"
+            className="p-8 text-center border border-dashed border-blue-200 dark:border-blue-800 rounded-lg bg-blue-50/50 dark:bg-blue-900/20"
           >
             <p className="text-muted-foreground">No hotels match your search criteria</p>
           </motion.div>
         ) : (
           <motion.div 
             key="results"
-            className="grid grid-cols-1 gap-4"
+            className="grid grid-cols-1 gap-2"
             variants={container}
             initial="hidden"
             animate="show"
@@ -124,6 +126,7 @@ const HotelList: React.FC<HotelListProps> = ({
                 onEdit={() => onEditHotel(hotel)}
                 onDelete={() => handleDeleteClick(hotel)}
                 useGridView={false}
+                compact={compact}
               />
             ))}
           </motion.div>

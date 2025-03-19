@@ -7,14 +7,19 @@ import AmenityIcon from '../AmenityIcon';
 
 interface HotelCardAmenitiesProps {
   amenities: HotelAmenities;
+  compact?: boolean;
 }
 
-const HotelCardAmenities: React.FC<HotelCardAmenitiesProps> = ({ amenities }) => {
+const HotelCardAmenities: React.FC<HotelCardAmenitiesProps> = ({ amenities, compact = false }) => {
   const amenityKeys = (Object.keys(amenities) as Array<keyof HotelAmenities>)
     .filter(amenity => amenities[amenity]);
   
-  const displayedAmenities = amenityKeys.slice(0, 6);
-  const hasMoreAmenities = amenityKeys.length > 6;
+  // Display fewer amenities in compact mode
+  const displayCount = compact ? 3 : 6;
+  const displayedAmenities = amenityKeys.slice(0, displayCount);
+  const hasMoreAmenities = amenityKeys.length > displayCount;
+  
+  if (amenityKeys.length === 0) return null;
   
   return (
     <motion.div 
@@ -29,7 +34,9 @@ const HotelCardAmenities: React.FC<HotelCardAmenitiesProps> = ({ amenities }) =>
           damping: 20 
         } 
       }}
-      className="flex flex-wrap gap-1.5 bg-blue-50/50 dark:bg-blue-900/20 p-2 rounded-md border border-blue-100 dark:border-blue-900/50"
+      className={`flex flex-wrap gap-1 ${
+        compact ? 'py-1 px-1.5' : 'p-2.5'
+      } bg-blue-50/50 dark:bg-blue-900/20 rounded-md border border-blue-100 dark:border-blue-900/50`}
     >
       {displayedAmenities.map((amenity, index) => (
         <motion.div
@@ -46,13 +53,13 @@ const HotelCardAmenities: React.FC<HotelCardAmenitiesProps> = ({ amenities }) =>
             } 
           }}
         >
-          <AmenityIcon key={amenity} amenity={amenity} value={amenities[amenity]} />
+          <AmenityIcon key={amenity} amenity={amenity} value={amenities[amenity]} compact={compact} />
         </motion.div>
       ))}
       
       {hasMoreAmenities && (
-        <Badge variant="outline" className="bg-indigo-50 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-400 font-medium text-xs">
-          +{amenityKeys.length - 6} more
+        <Badge variant="outline" className="bg-indigo-50 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-400 font-medium text-[10px]">
+          +{amenityKeys.length - displayCount}
         </Badge>
       )}
     </motion.div>

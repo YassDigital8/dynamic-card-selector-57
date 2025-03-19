@@ -10,9 +10,10 @@ import { Flag } from 'lucide-react';
 interface HotelCardHeaderProps {
   hotel: Hotel;
   useGridView: boolean;
+  compact?: boolean;
 }
 
-const HotelCardHeader: React.FC<HotelCardHeaderProps> = ({ hotel, useGridView }) => {
+const HotelCardHeader: React.FC<HotelCardHeaderProps> = ({ hotel, useGridView, compact = false }) => {
   // Enhanced image animation variants
   const imageVariants = {
     rest: { scale: 1 },
@@ -27,11 +28,11 @@ const HotelCardHeader: React.FC<HotelCardHeaderProps> = ({ hotel, useGridView })
   };
   
   return (
-    <CardHeader className="p-3 pb-1 flex-shrink-0">
-      <div className="flex flex-row items-start space-x-3">
+    <CardHeader className={`${compact ? 'p-2 pb-1.5' : 'p-3 pb-2'} flex-shrink-0`}>
+      <div className="flex flex-row items-start space-x-2">
         <motion.div 
           layoutId={`hotel-image-${hotel.id}`}
-          className="h-16 w-16 overflow-hidden rounded-lg flex-shrink-0"
+          className={`${compact ? 'h-12 w-12' : 'h-16 w-16'} overflow-hidden rounded-lg flex-shrink-0`}
           variants={imageVariants}
           initial="rest"
           whileHover="hover"
@@ -44,28 +45,28 @@ const HotelCardHeader: React.FC<HotelCardHeaderProps> = ({ hotel, useGridView })
             animate={{ scale: 1 }}
             transition={{ duration: 0.7 }}
             onError={(e) => {
-              e.currentTarget.src = 'https://placehold.co/300x150/indigo/white?text=Hotel';
+              e.currentTarget.src = 'https://placehold.co/300x150/6366f1/white?text=Hotel';
             }}
           />
         </motion.div>
         <div className="flex-1 min-w-0">
-          <div className="flex items-start gap-2">
+          <div className="flex items-start justify-between gap-1">
             <motion.div layoutId={`hotel-title-${hotel.id}`} className="flex-1">
-              <CardTitle className="text-sm sm:text-base text-indigo-700 dark:text-indigo-300 truncate font-semibold">
+              <CardTitle className={`${compact ? 'text-sm' : 'text-sm sm:text-base'} text-blue-700 dark:text-blue-300 truncate font-semibold`}>
                 {hotel.name}
               </CardTitle>
             </motion.div>
             
             <motion.div layoutId={`hotel-flag-${hotel.id}`} className="flex-shrink-0">
               <div className="flex items-center">
-                <Flag className="mr-1 h-3.5 w-3.5 text-indigo-500" />
-                <span className="text-xs text-indigo-600 dark:text-indigo-400">{hotel.posKey}</span>
+                <Flag className="mr-0.5 h-3 w-3 text-blue-500" />
+                <span className="text-xs text-blue-600 dark:text-blue-400 font-medium">{hotel.posKey}</span>
               </div>
             </motion.div>
           </div>
           
-          <motion.div className="mt-1 text-xs text-gray-600 dark:text-gray-400" layoutId={`hotel-country-${hotel.id}`}>
-            {hotel.country}
+          <motion.div className="mt-0.5 text-xs text-gray-600 dark:text-gray-400 flex items-center" layoutId={`hotel-country-${hotel.id}`}>
+            <span className="font-medium">{hotel.country}</span>
           </motion.div>
         </div>
       </div>
