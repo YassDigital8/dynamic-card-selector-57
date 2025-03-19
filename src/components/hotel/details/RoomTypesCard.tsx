@@ -5,7 +5,6 @@ import { BedDouble, Users, Baby } from 'lucide-react';
 import { format } from 'date-fns';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { RoomType } from '@/models/HotelModel';
-import { RoomImagePreview } from '@/components/hotel/form/room-types';
 import RoomImagesCarousel from '../form/room-types/RoomImagesCarousel';
 
 interface RoomTypesCardProps {
@@ -97,45 +96,55 @@ const RoomTypesCard: React.FC<RoomTypesCardProps> = ({ roomTypes, updatedAt }) =
                   }}
                   className="p-4 rounded-lg border border-purple-100 dark:border-purple-900 bg-white dark:bg-slate-900"
                 >
-                  <div className="flex flex-col md:flex-row gap-4">
-                    <div className="w-full md:w-1/3 flex-shrink-0">
-                      {roomType.images && roomType.images.length > 0 ? (
-                        <RoomImagesCarousel images={roomType.images} />
-                      ) : roomType.imageUrl ? (
-                        <RoomImagePreview 
-                          imageUrl={roomType.imageUrl}
-                          onClick={() => {}} 
-                          readOnly={true}
-                        />
-                      ) : null}
-                    </div>
-                    <div className={`flex-1 ${!roomType.imageUrl && (!roomType.images || roomType.images.length === 0) ? 'w-full' : ''}`}>
-                      <div className="flex justify-between items-start">
-                        <div className="flex-1">
-                          <div className="font-medium text-purple-700 dark:text-purple-300 text-lg">{roomType.name}</div>
-                          {roomType.description && (
-                            <div className="text-gray-600 dark:text-gray-300 text-sm mt-1">{roomType.description}</div>
+                  <div className="flex flex-col gap-4">
+                    <div className="flex flex-col md:flex-row gap-4">
+                      {/* Room details section */}
+                      <div className="flex-1">
+                        <div className="flex justify-between items-start">
+                          <div className="flex-1">
+                            <div className="font-medium text-purple-700 dark:text-purple-300 text-lg">{roomType.name}</div>
+                            {roomType.description && (
+                              <div className="text-gray-600 dark:text-gray-300 text-sm mt-1">{roomType.description}</div>
+                            )}
+                          </div>
+                          {roomType.price && (
+                            <div className="text-right">
+                              <div className="bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 px-3 py-1 rounded-full font-semibold">
+                                ${roomType.price.toFixed(2)}
+                              </div>
+                            </div>
                           )}
                         </div>
-                        {roomType.price && (
-                          <div className="text-right">
-                            <div className="bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 px-3 py-1 rounded-full font-semibold">
-                              ${roomType.price.toFixed(2)}
-                            </div>
+                        <div className="flex items-center mt-3 space-x-4">
+                          <div className="flex items-center text-gray-600 dark:text-gray-300">
+                            <Users className="h-4 w-4 mr-1 text-purple-500" />
+                            <span className="text-sm">{roomType.maxAdults} Adults</span>
                           </div>
-                        )}
-                      </div>
-                      <div className="flex items-center mt-3 space-x-4">
-                        <div className="flex items-center text-gray-600 dark:text-gray-300">
-                          <Users className="h-4 w-4 mr-1 text-purple-500" />
-                          <span className="text-sm">{roomType.maxAdults} Adults</span>
-                        </div>
-                        <div className="flex items-center text-gray-600 dark:text-gray-300">
-                          <Baby className="h-4 w-4 mr-1 text-purple-500" />
-                          <span className="text-sm">{roomType.maxChildren} Children</span>
+                          <div className="flex items-center text-gray-600 dark:text-gray-300">
+                            <Baby className="h-4 w-4 mr-1 text-purple-500" />
+                            <span className="text-sm">{roomType.maxChildren} Children</span>
+                          </div>
                         </div>
                       </div>
                     </div>
+                    
+                    {/* Images carousel section - only show if images exist */}
+                    {((roomType.images && roomType.images.length > 0) || roomType.imageUrl) && (
+                      <div className="w-full">
+                        {roomType.images && roomType.images.length > 0 ? (
+                          <RoomImagesCarousel 
+                            images={roomType.images} 
+                            className="mt-2"
+                          />
+                        ) : roomType.imageUrl ? (
+                          <img 
+                            src={roomType.imageUrl} 
+                            alt={`${roomType.name} room`}
+                            className="w-full h-48 object-cover rounded-md mt-2"
+                          />
+                        ) : null}
+                      </div>
+                    )}
                   </div>
                 </motion.div>
               ))}

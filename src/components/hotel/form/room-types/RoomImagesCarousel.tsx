@@ -6,7 +6,6 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-  CarouselIndicators
 } from '@/components/ui/carousel';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -57,9 +56,8 @@ const RoomImagesCarousel: React.FC<RoomImagesCarouselProps> = ({
           </CarouselItem>
         ))}
       </CarouselContent>
-      <CarouselPrevious />
-      <CarouselNext />
-      <CarouselIndicators />
+      <CarouselPrevious className="h-8 w-8 -left-3"/>
+      <CarouselNext className="h-8 w-8 -right-3"/>
     </Carousel>
   );
 };

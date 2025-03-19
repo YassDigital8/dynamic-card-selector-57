@@ -65,7 +65,10 @@ const RoomImagePreview: React.FC<RoomImagePreviewProps> = ({
       {hasImages ? (
         <div className="space-y-2 w-full mt-2">
           {allImages.length > 1 ? (
-            <RoomImagesCarousel images={allImages} onDeleteImage={!readOnly ? onDeleteImage : undefined} />
+            <RoomImagesCarousel 
+              images={allImages} 
+              onDeleteImage={!readOnly ? onDeleteImage : undefined} 
+            />
           ) : (
             <div className="relative">
               <img 
@@ -85,15 +88,6 @@ const RoomImagePreview: React.FC<RoomImagePreviewProps> = ({
                   </Button>
                 </div>
               )}
-            </div>
-          )}
-          
-          {!readOnly && !hasImages && (
-            <div 
-              className="text-center text-sm text-gray-500 cursor-pointer hover:underline"
-              onClick={onClick}
-            >
-              Click to add images
             </div>
           )}
         </div>
