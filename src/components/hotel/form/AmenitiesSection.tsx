@@ -9,7 +9,6 @@ import {
   amenitiesWithImages, 
   amenitiesList 
 } from './amenities';
-import { useFileSelection } from '@/hooks/upload/useFileSelection';
 
 interface AmenitiesSectionProps {
   form: UseFormReturn<FormValues>;
@@ -21,14 +20,6 @@ const AmenitiesSection: React.FC<AmenitiesSectionProps> = ({ form }) => {
   const [selectedAmenity, setSelectedAmenity] = useState<AmenityWithImages | null>(null);
   const [isImageDialogOpen, setIsImageDialogOpen] = useState(false);
   
-  const {
-    selectedFile,
-    filePreview,
-    isImage,
-    handleFile,
-    resetFileSelection
-  } = useFileSelection();
-
   const openImageDialog = (amenityName: string) => {
     // Extract just the amenity key from the full path (e.g., "amenities.bar" -> "bar")
     const amenityKey = amenityName.split('.')[1] as AmenityWithImages;
@@ -64,13 +55,18 @@ const AmenitiesSection: React.FC<AmenitiesSectionProps> = ({ form }) => {
   };
   
   const handleCloseDialog = () => {
-    resetFileSelection();
     setIsImageDialogOpen(false);
   };
 
   return (
     <div className="space-y-6 col-span-2">
-      <h3 className="text-lg font-medium text-foreground">Amenities</h3>
+      <div className="flex flex-col space-y-2">
+        <h3 className="text-lg font-medium text-foreground">Amenities</h3>
+        <p className="text-sm text-muted-foreground">
+          Select amenities available at your hotel. For amenities with images, you can add photos that will appear in the hotel gallery.
+        </p>
+      </div>
+      
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         {amenitiesList.map((amenity) => (
           <AmenityItem
