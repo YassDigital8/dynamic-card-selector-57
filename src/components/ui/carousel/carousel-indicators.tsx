@@ -19,7 +19,7 @@ const CarouselIndicators = React.forwardRef<
   return (
     <div 
       ref={ref}
-      className={cn("flex items-center justify-center gap-2", className)}
+      className={cn("flex items-center justify-center gap-1.5", className)}
       {...props}
     >
       {dots.map((dot) => (
@@ -30,8 +30,8 @@ const CarouselIndicators = React.forwardRef<
           className={cn(
             "h-2 w-2 rounded-full transition-all",
             dot.isActive 
-              ? "bg-purple-600 dark:bg-purple-400 w-3" 
-              : "bg-gray-300 dark:bg-gray-600 hover:bg-purple-400 dark:hover:bg-purple-500"
+              ? "bg-purple-600 dark:bg-purple-400 w-4" 
+              : "bg-gray-300/70 dark:bg-gray-600/70 hover:bg-purple-400 dark:hover:bg-purple-500"
           )}
           aria-label={`Go to slide ${dot.index + 1}`}
           aria-current={dot.isActive}

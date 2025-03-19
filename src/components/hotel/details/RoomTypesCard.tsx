@@ -125,23 +125,13 @@ const RoomTypesCard: React.FC<RoomTypesCardProps> = ({ roomTypes, updatedAt }) =
                     </div>
                   </div>
                   
-                  {/* Images carousel section - only show if images exist */}
-                  {((roomType.images && roomType.images.length > 0) || roomType.imageUrl) && (
-                    <div>
-                      {roomType.images && roomType.images.length > 0 ? (
-                        <RoomImagesCarousel 
-                          images={roomType.imageUrl ? [roomType.imageUrl, ...roomType.images.filter(img => img !== roomType.imageUrl)] : roomType.images}
-                          className="w-full border-t border-purple-100 dark:border-purple-900/50"
-                        />
-                      ) : roomType.imageUrl ? (
-                        <div className="border-t border-purple-100 dark:border-purple-900/50">
-                          <img 
-                            src={roomType.imageUrl} 
-                            alt={`${roomType.name} room`}
-                            className="w-full h-48 object-cover"
-                          />
-                        </div>
-                      ) : null}
+                  {/* Images carousel section - display if the roomType has images */}
+                  {hasImages(roomType) && (
+                    <div className="border-t border-purple-100 dark:border-purple-900/50">
+                      <RoomImagesCarousel 
+                        images={getAllImages(roomType)}
+                        className="w-full"
+                      />
                     </div>
                   )}
                 </motion.div>
@@ -159,5 +149,33 @@ const RoomTypesCard: React.FC<RoomTypesCardProps> = ({ roomTypes, updatedAt }) =
     </motion.div>
   );
 };
+
+// Helper functions to handle image fields
+function hasImages(roomType: RoomType): boolean {
+  return Boolean(
+    (roomType.images && roomType.images.length > 0) || 
+    roomType.imageUrl
+  );
+}
+
+function getAllImages(roomType: RoomType): string[] {
+  const images: string[] = [];
+  
+  // Add main image first if exists
+  if (roomType.imageUrl) {
+    images.push(roomType.imageUrl);
+  }
+  
+  // Add other images if they exist and aren't duplicates of the main image
+  if (roomType.images && roomType.images.length > 0) {
+    roomType.images.forEach(img => {
+      if (img !== roomType.imageUrl) {
+        images.push(img);
+      }
+    });
+  }
+  
+  return images;
+}
 
 export default RoomTypesCard;

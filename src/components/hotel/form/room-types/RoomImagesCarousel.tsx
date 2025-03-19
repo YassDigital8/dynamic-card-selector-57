@@ -31,8 +31,8 @@ const RoomImagesCarousel: React.FC<RoomImagesCarouselProps> = ({
     <Carousel className={cn("w-full relative", className)}>
       <CarouselContent>
         {images.map((image, index) => (
-          <CarouselItem key={index}>
-            <div className="relative">
+          <CarouselItem key={index} className="flex justify-center">
+            <div className="relative w-full">
               <img 
                 src={image} 
                 alt={`Room image ${index + 1}`} 
@@ -57,13 +57,15 @@ const RoomImagesCarousel: React.FC<RoomImagesCarouselProps> = ({
           </CarouselItem>
         ))}
       </CarouselContent>
-      <CarouselPrevious className="h-8 w-8 -left-3 bg-white/80 border-gray-200 hover:bg-white"/>
-      <CarouselNext className="h-8 w-8 -right-3 bg-white/80 border-gray-200 hover:bg-white"/>
       
       {images.length > 1 && (
-        <div className="flex justify-center mt-2">
-          <CarouselIndicators className="gap-1" />
-        </div>
+        <>
+          <CarouselPrevious className="h-8 w-8 -left-3 sm:left-1 bg-white/80 border-gray-200 hover:bg-white"/>
+          <CarouselNext className="h-8 w-8 -right-3 sm:right-1 bg-white/80 border-gray-200 hover:bg-white"/>
+          <div className="absolute bottom-1 left-0 right-0">
+            <CarouselIndicators className="gap-1" />
+          </div>
+        </>
       )}
     </Carousel>
   );
