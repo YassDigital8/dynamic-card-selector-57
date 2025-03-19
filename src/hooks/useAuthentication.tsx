@@ -57,24 +57,6 @@ export const useAuthentication = () => {
         // Check if demo mode is active
         demoModeState.checkForDemoMode(storedToken);
         
-        // Check for existing session timer
-        const storedExpiryTime = localStorage.getItem('sessionExpiresAt');
-        if (storedExpiryTime) {
-          const expiryTime = parseInt(storedExpiryTime, 10);
-          const now = Date.now();
-          
-          if (now > expiryTime) {
-            // Session expired
-            throw new Error('Session expired');
-          } else {
-            // Valid session, continue with remaining time
-            // setSessionExpiresAt handled in useAuthSession
-          }
-        } else {
-          // No session timer found, start a new one
-          startSessionTimer();
-        }
-        
         console.log("Authentication successful with stored token");
         
       } catch (error) {
@@ -99,7 +81,7 @@ export const useAuthentication = () => {
     };
 
     checkAuthentication();
-  }, [startSessionTimer, toast, authState, demoModeState]);
+  }, [toast, authState, demoModeState]);
 
   const login = async (credentials: LoginCredentials) => {
     authState.setLoading(true);

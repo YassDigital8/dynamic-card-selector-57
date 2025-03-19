@@ -15,6 +15,8 @@ export const useAuthSession = ({ authToken, logout }: UseAuthSessionProps) => {
 
   // Start session timer
   const startSessionTimer = useCallback(() => {
+    if (!authToken) return;
+    
     const expiryTime = Date.now() + SESSION_DURATION;
     setSessionExpiresAt(expiryTime);
     
@@ -22,7 +24,7 @@ export const useAuthSession = ({ authToken, logout }: UseAuthSessionProps) => {
     localStorage.setItem('sessionExpiresAt', expiryTime.toString());
     
     console.log(`Session started, will expire at ${new Date(expiryTime).toLocaleTimeString()}`);
-  }, []);
+  }, [authToken]);
   
   // Reset session timer (e.g., on user activity)
   const resetSessionTimer = useCallback(() => {
@@ -31,6 +33,32 @@ export const useAuthSession = ({ authToken, logout }: UseAuthSessionProps) => {
       console.log('Session timer reset due to user activity');
     }
   }, [authToken, startSessionTimer]);
+
+  // Initialize session from localStorage or start new one
+  useEffect(() => {
+    if (!authToken) return;
+    
+    const storedExpiryTime = localStorage.getItem('sessionExpiresAt');
+    if (storedExpiryTime) {
+      const expiryTime = parseInt(storedExpiryTime, 10);
+      const now = Date.now();
+      
+      if (now > expiryTime) {
+        // Session already expired
+        logout();
+        toast({
+          title: "Session Expired",
+          description: "Your session has expired. Please log in again.",
+        });
+      } else {
+        // Valid session exists
+        setSessionExpiresAt(expiryTime);
+      }
+    } else {
+      // No existing session, start a new one
+      startSessionTimer();
+    }
+  }, [authToken, logout, startSessionTimer, toast]);
   
   // Handle checking session expiration
   useEffect(() => {
@@ -72,19 +100,6 @@ export const useAuthSession = ({ authToken, logout }: UseAuthSessionProps) => {
       });
     };
   }, [authToken, resetSessionTimer]);
-
-  // Initialize the timer on first load
-  useEffect(() => {
-    if (authToken) {
-      const storedExpiryTime = localStorage.getItem('sessionExpiresAt');
-      if (storedExpiryTime) {
-        const expiryTime = parseInt(storedExpiryTime, 10);
-        setSessionExpiresAt(expiryTime);
-      } else {
-        startSessionTimer();
-      }
-    }
-  }, [authToken, startSessionTimer]);
 
   return {
     sessionExpiresAt,
