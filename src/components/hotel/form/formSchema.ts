@@ -29,6 +29,7 @@ export const formSchema = z.object({
       maxChildren: z.number().min(0),
       description: z.string().optional(),
       price: z.number().optional(),
+      imageUrl: z.string().optional(),
     })
   ).default([]),
 });

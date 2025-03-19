@@ -6,6 +6,7 @@ export interface RoomType {
   maxChildren: number;
   description?: string;
   price?: number;
+  imageUrl?: string; // Add this new field for room type images
 }
 
 export interface HotelAmenities {

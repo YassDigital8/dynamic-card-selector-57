@@ -95,29 +95,42 @@ const RoomTypesCard: React.FC<RoomTypesCardProps> = ({ roomTypes, updatedAt }) =
                   }}
                   className="p-4 rounded-lg border border-purple-100 dark:border-purple-900 bg-white dark:bg-slate-900"
                 >
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <div className="font-medium text-purple-700 dark:text-purple-300 text-lg">{roomType.name}</div>
-                      {roomType.description && (
-                        <div className="text-gray-600 dark:text-gray-300 text-sm mt-1">{roomType.description}</div>
-                      )}
-                    </div>
-                    {roomType.price && (
-                      <div className="text-right">
-                        <div className="bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 px-3 py-1 rounded-full font-semibold">
-                          ${roomType.price.toFixed(2)}
-                        </div>
+                  <div className="flex flex-col md:flex-row gap-4">
+                    {roomType.imageUrl && (
+                      <div className="w-full md:w-1/3 flex-shrink-0">
+                        <img 
+                          src={roomType.imageUrl} 
+                          alt={roomType.name} 
+                          className="w-full h-40 object-cover rounded-md"
+                        />
                       </div>
                     )}
-                  </div>
-                  <div className="flex items-center mt-3 space-x-4">
-                    <div className="flex items-center text-gray-600 dark:text-gray-300">
-                      <Users className="h-4 w-4 mr-1 text-purple-500" />
-                      <span className="text-sm">{roomType.maxAdults} Adults</span>
-                    </div>
-                    <div className="flex items-center text-gray-600 dark:text-gray-300">
-                      <Baby className="h-4 w-4 mr-1 text-purple-500" />
-                      <span className="text-sm">{roomType.maxChildren} Children</span>
+                    <div className={`flex-1 ${!roomType.imageUrl ? 'w-full' : ''}`}>
+                      <div className="flex justify-between items-start">
+                        <div className="flex-1">
+                          <div className="font-medium text-purple-700 dark:text-purple-300 text-lg">{roomType.name}</div>
+                          {roomType.description && (
+                            <div className="text-gray-600 dark:text-gray-300 text-sm mt-1">{roomType.description}</div>
+                          )}
+                        </div>
+                        {roomType.price && (
+                          <div className="text-right">
+                            <div className="bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 px-3 py-1 rounded-full font-semibold">
+                              ${roomType.price.toFixed(2)}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex items-center mt-3 space-x-4">
+                        <div className="flex items-center text-gray-600 dark:text-gray-300">
+                          <Users className="h-4 w-4 mr-1 text-purple-500" />
+                          <span className="text-sm">{roomType.maxAdults} Adults</span>
+                        </div>
+                        <div className="flex items-center text-gray-600 dark:text-gray-300">
+                          <Baby className="h-4 w-4 mr-1 text-purple-500" />
+                          <span className="text-sm">{roomType.maxChildren} Children</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </motion.div>
