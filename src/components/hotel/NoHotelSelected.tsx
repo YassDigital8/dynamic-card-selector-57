@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { motion } from 'framer-motion';
 import { MapPin, Hotel, PointerIcon, Plus } from 'lucide-react';
@@ -20,7 +21,7 @@ const NoHotelSelected: React.FC<NoHotelSelectedProps> = ({
     type: "spring",
     stiffness: 350,
     damping: 30
-  }} className="sticky top-20 bg-background/95 border border-border shadow-lg z-50 flex flex-col items-center justify-center p-4 sm:p-8 my-[20px] mx-0 px-[3px] rounded-lg">
+  }} className="sticky top-8 bg-background/95 border border-border shadow-lg z-50 flex flex-col items-center justify-center p-4 sm:p-8 my-[20px] mx-0 px-[3px] rounded-lg">
       <div className="flex flex-col items-center text-center max-w-md space-y-6">
         <div className="p-6 rounded-full bg-indigo-100 dark:bg-indigo-900/30">
           {hasHotels ? <PointerIcon size={48} className="text-indigo-500 dark:text-indigo-400" /> : <Hotel size={48} className="text-indigo-500 dark:text-indigo-400" />}
