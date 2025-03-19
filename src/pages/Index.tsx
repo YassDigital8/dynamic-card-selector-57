@@ -19,14 +19,11 @@ import AddPageDialog from '@/components/pages/index/addPageDialog';
 import PageContainer from '@/components/pages/index/PageContainer';
 import PagesTour from '@/components/pages/index/PagesTour';
 import AuthenticatedContent from '@/components/pages/index/AuthenticatedContent';
-import { useLocation } from 'react-router-dom';
 
 const Index = () => {
   const [initialLoading, setInitialLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("pages");
   const { userInfo } = useAuthentication();
-  const location = useLocation();
-  const isDashboard = location.pathname === '/';
 
   // Refs for tour highlights
   const pageSelectorsRef = useRef<HTMLDivElement>(null);
@@ -61,7 +58,7 @@ const Index = () => {
 
   return (
     <PageContainer>
-      {isDashboard && <AuthenticatedContent userInfo={userInfo} />}
+      <AuthenticatedContent userInfo={userInfo} />
       
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <div ref={tabsRef} className="flex items-center justify-between mb-6">
