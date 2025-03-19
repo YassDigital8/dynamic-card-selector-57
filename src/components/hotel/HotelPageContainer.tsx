@@ -38,6 +38,7 @@ const HotelPageContainer: React.FC = () => {
     isSelectingNewHotel,
     handleSelectHotel,
     handleEditHotel,
+    handleStartEdit,
     handleAddHotel,
     handleBackToList,
     handleSubmitEdit,
@@ -101,6 +102,7 @@ const HotelPageContainer: React.FC = () => {
         onSubmitAdd={handleSubmitAdd}
         onSubmitEdit={handleSubmitEdit}
         onCancelEdit={handleCancelEdit}
+        onStartEdit={handleStartEdit}
       />
     </motion.div>
   );

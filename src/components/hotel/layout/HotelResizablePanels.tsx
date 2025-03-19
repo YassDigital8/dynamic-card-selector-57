@@ -26,6 +26,7 @@ interface HotelResizablePanelsProps {
   onSubmitAdd: (data: HotelFormData) => void;
   onSubmitEdit: (data: HotelFormData) => void;
   onCancelEdit: () => void;
+  onStartEdit: () => void;
 }
 
 const HotelResizablePanels: React.FC<HotelResizablePanelsProps> = ({
@@ -48,7 +49,8 @@ const HotelResizablePanels: React.FC<HotelResizablePanelsProps> = ({
   onBackToList,
   onSubmitAdd,
   onSubmitEdit,
-  onCancelEdit
+  onCancelEdit,
+  onStartEdit
 }) => {
   return (
     <ResizablePanelGroup
@@ -100,6 +102,7 @@ const HotelResizablePanels: React.FC<HotelResizablePanelsProps> = ({
           onSubmitAdd={onSubmitAdd}
           onSubmitEdit={onSubmitEdit}
           onCancelEdit={onCancelEdit}
+          onStartEdit={onStartEdit}
         />
       </ResizablePanel>
     </ResizablePanelGroup>
