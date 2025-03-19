@@ -32,6 +32,7 @@ import SessionTimer from '@/components/auth/SessionTimer';
 import { ApiStatusIndicator } from '@/components/ui/api-status-indicator';
 import useApiStatus from '@/hooks/useApiStatus';
 import { BreadcrumbNav } from '@/components/ui/breadcrumb-nav';
+import LogoutButton from '@/components/auth/LogoutButton';
 
 interface PageContainerProps {
   children: React.ReactNode;
@@ -189,9 +190,12 @@ const PageContainer: React.FC<PageContainerProps> = ({ children }) => {
           </SidebarContent>
           
           <SidebarFooter className="border-t border-sidebar-border p-2 md:p-4">
-            <div className="flex items-center gap-1.5 md:gap-2 text-xs md:text-sm text-muted-foreground">
-              <HelpCircle className="h-3.5 w-3.5 md:h-4 md:w-4" />
-              <span className="text-xs md:text-sm">Need help?</span>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1.5 md:gap-2 text-xs md:text-sm text-muted-foreground">
+                <HelpCircle className="h-3.5 w-3.5 md:h-4 md:w-4" />
+                <span className="text-xs md:text-sm">Need help?</span>
+              </div>
+              <LogoutButton variant="ghost" size="sm" showIcon={false} />
             </div>
           </SidebarFooter>
         </Sidebar>
@@ -222,6 +226,11 @@ const PageContainer: React.FC<PageContainerProps> = ({ children }) => {
                   <div className="flex items-center gap-2 self-start">
                     <SessionTimer />
                     <ApiStatusIndicator isLive={isApiLive} />
+                    <LogoutButton 
+                      variant="outline" 
+                      size="sm" 
+                      className="ml-2" 
+                    />
                   </div>
                 </div>
               </div>
