@@ -19,9 +19,10 @@ interface HotelFormProps {
   initialData?: Hotel;
   onSubmit: (data: HotelFormData) => void;
   isLoading: boolean;
+  showButtons?: boolean;
 }
 
-const HotelForm = memo(({ initialData, onSubmit, isLoading }: HotelFormProps) => {
+const HotelForm = memo(({ initialData, onSubmit, isLoading, showButtons = true }: HotelFormProps) => {
   const form = useForm<typeof formSchema._type>({
     resolver: zodResolver(formSchema),
     defaultValues: initialData || defaultValues,
@@ -33,16 +34,20 @@ const HotelForm = memo(({ initialData, onSubmit, isLoading }: HotelFormProps) =>
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
+      <form id="hotel-form" onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <BasicInformation form={form} />
           <AmenitiesSection form={form} />
           <RoomTypesSection form={form} />
         </div>
 
-        <Button type="submit" disabled={isLoading}>
-          {isLoading ? "Saving..." : "Save Hotel"}
-        </Button>
+        {showButtons && (
+          <div className="flex justify-end">
+            <Button type="submit" disabled={isLoading}>
+              {isLoading ? "Saving..." : "Save Hotel"}
+            </Button>
+          </div>
+        )}
       </form>
     </Form>
   );

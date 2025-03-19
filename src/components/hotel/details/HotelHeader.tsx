@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ArrowLeft, Pencil, Globe } from 'lucide-react';
+import { ArrowLeft, Pencil, Globe, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import StarRating from '../card/StarRating';
 
@@ -12,6 +12,7 @@ interface HotelHeaderProps {
   rating?: number;
   onEdit: () => void;
   onBack?: () => void;
+  onSave?: () => void;
 }
 
 const HotelHeader: React.FC<HotelHeaderProps> = ({
@@ -21,7 +22,8 @@ const HotelHeader: React.FC<HotelHeaderProps> = ({
   governorate,
   rating,
   onEdit,
-  onBack
+  onBack,
+  onSave
 }) => {
   return (
     <div className="flex flex-col space-y-3">
@@ -40,15 +42,28 @@ const HotelHeader: React.FC<HotelHeaderProps> = ({
           )}
           <h1 className="text-2xl font-bold">{name}</h1>
         </div>
-        <Button
-          onClick={onEdit}
-          variant="outline"
-          size="sm"
-          className="text-xs h-8"
-        >
-          <Pencil className="mr-1 h-3.5 w-3.5" />
-          Edit
-        </Button>
+        <div className="flex space-x-2">
+          {onSave && (
+            <Button
+              onClick={onSave}
+              variant="default"
+              size="sm"
+              className="text-xs h-8 bg-green-600 hover:bg-green-700"
+            >
+              <Save className="mr-1 h-3.5 w-3.5" />
+              Save Hotel
+            </Button>
+          )}
+          <Button
+            onClick={onEdit}
+            variant="outline"
+            size="sm"
+            className="text-xs h-8"
+          >
+            <Pencil className="mr-1 h-3.5 w-3.5" />
+            Edit
+          </Button>
+        </div>
       </div>
 
       {/* Star Rating */}

@@ -6,10 +6,11 @@ import { HotelHeader, LocationCard, AmenitiesCard, RoomTypesCard } from './detai
 interface HotelDetailsProps {
   hotel: Hotel;
   onEdit: () => void;
+  onSave?: () => void;
   onBack?: () => void;
 }
 
-const HotelDetails: React.FC<HotelDetailsProps> = memo(({ hotel, onEdit, onBack }) => {
+const HotelDetails: React.FC<HotelDetailsProps> = memo(({ hotel, onEdit, onSave, onBack }) => {
   return (
     <div className="space-y-6">
       <HotelHeader 
@@ -20,6 +21,7 @@ const HotelDetails: React.FC<HotelDetailsProps> = memo(({ hotel, onEdit, onBack 
         rating={hotel.rating}
         onEdit={onEdit}
         onBack={onBack}
+        onSave={onSave}
       />
 
       <LocationCard 
