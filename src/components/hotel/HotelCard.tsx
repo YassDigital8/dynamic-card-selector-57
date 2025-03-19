@@ -10,7 +10,6 @@ import {
   HotelCardFooter 
 } from './card';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { MapPin, Flag, User } from 'lucide-react';
 
 interface HotelCardProps {
   hotel: Hotel;
@@ -69,12 +68,12 @@ const HotelCard: React.FC<HotelCardProps> = ({
 
   // Consistent card styles
   const cardStyles = `flex ${isMobile ? 'flex-col' : 'flex-row'} min-h-[160px]`;
-  const contentStyles = `flex-1 space-y-2.5 py-3 px-4`;
+  const contentStyles = `flex-1 space-y-3 py-3 px-4`;
 
   return (
     <motion.div 
       layoutId={`hotel-card-${hotel.id}`}
-      className="cursor-pointer relative overflow-hidden w-full mb-2"
+      className="cursor-pointer relative overflow-hidden w-full mb-3"
       onClick={onSelect}
       initial="rest"
       whileHover="hover"

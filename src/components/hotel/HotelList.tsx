@@ -73,7 +73,7 @@ const HotelList: React.FC<HotelListProps> = ({
         transition={springConfig}
         className="flex items-center justify-between"
       >
-        <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">
+        <h2 className="text-xl sm:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">
           Hotels ({filteredHotels.length})
         </h2>
       </motion.div>
@@ -92,7 +92,7 @@ const HotelList: React.FC<HotelListProps> = ({
         </motion.div>
       )}
       
-      <AnimatePresence mode="popLayout"> {/* Changed to popLayout for better card handling */}
+      <AnimatePresence mode="popLayout">
         {hotels.length === 0 ? (
           <HotelListEmptyState key="empty-state" />
         ) : filteredHotels.length === 0 ? (

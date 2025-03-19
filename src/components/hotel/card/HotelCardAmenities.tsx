@@ -29,7 +29,7 @@ const HotelCardAmenities: React.FC<HotelCardAmenitiesProps> = ({ amenities }) =>
           damping: 20 
         } 
       }}
-      className="flex flex-wrap gap-1.5 bg-blue-50/50 dark:bg-blue-900/20 p-2 rounded-md border border-blue-100 dark:border-blue-900/50"
+      className="flex flex-wrap gap-1.5 bg-blue-50/50 dark:bg-blue-900/20 p-2.5 rounded-md border border-blue-100 dark:border-blue-900/50"
     >
       {displayedAmenities.map((amenity, index) => (
         <motion.div

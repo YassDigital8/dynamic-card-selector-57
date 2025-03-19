@@ -43,7 +43,7 @@ const HotelListPanel: React.FC<HotelListPanelProps> = ({
     <div className="h-full w-full p-2 sm:p-4">
       <Card className="h-full overflow-hidden border-blue-100 dark:border-blue-900 shadow-md bg-white dark:bg-slate-900 rounded-xl transition-all duration-300 ease-in-out">
         <ScrollArea 
-          className={`${contentHeight === 'auto' ? 'h-auto' : 'h-[calc(100vh-130px)] sm:h-[calc(100vh-140px)] md:h-[calc(100vh-145px)] lg:h-[calc(100vh-150px)]'} overflow-y-auto`}
+          className={`${contentHeight === 'auto' ? 'h-auto' : 'h-[calc(100vh-130px)] sm:h-[calc(100vh-140px)] md:h-[calc(100vh-145px)] lg:h-[calc(100vh-150px)]'} px-2 pb-4 overflow-y-auto`}
         >
           <div ref={listRef}>
             <HotelList
