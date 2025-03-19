@@ -18,6 +18,7 @@ import { HotelAmenities } from '@/models/HotelModel';
 interface AmenityIconProps { 
   amenity: keyof HotelAmenities; 
   value: boolean;
+  compact?: boolean; // Added compact prop to the interface
 }
 
 export const formatAmenityName = (amenity: keyof HotelAmenities): string => {
@@ -28,22 +29,26 @@ export const formatAmenityName = (amenity: keyof HotelAmenities): string => {
 
 export const AmenityIcon: React.FC<AmenityIconProps> = ({ 
   amenity, 
-  value 
+  value,
+  compact = false // Default value for compact
 }) => {
   if (!value) return null;
   
+  // Adjust icon size based on compact mode
+  const iconSize = compact ? 'h-3.5 w-3.5' : 'h-4 w-4';
+  
   const iconMap = {
-    airConditioning: <AirVent className="h-4 w-4 text-blue-500" />,
-    bar: <GlassWater className="h-4 w-4 text-purple-500" />,
-    gym: <Dumbbell className="h-4 w-4 text-green-500" />,
-    parking: <HotelIcon className="h-4 w-4 text-gray-500" />,
-    spa: <Bath className="h-4 w-4 text-pink-500" />,
-    restaurant: <Utensils className="h-4 w-4 text-amber-500" />,
-    breakfast: <Coffee className="h-4 w-4 text-brown-500" />,
-    wifi: <Wifi className="h-4 w-4 text-indigo-500" />,
-    swimmingPool: <Waves className="h-4 w-4 text-cyan-500" />,
-    petsAllowed: <PawPrint className="h-4 w-4 text-orange-500" />,
-    extraBed: <BedDouble className="h-4 w-4 text-violet-500" />
+    airConditioning: <AirVent className={`${iconSize} text-blue-500`} />,
+    bar: <GlassWater className={`${iconSize} text-purple-500`} />,
+    gym: <Dumbbell className={`${iconSize} text-green-500`} />,
+    parking: <HotelIcon className={`${iconSize} text-gray-500`} />,
+    spa: <Bath className={`${iconSize} text-pink-500`} />,
+    restaurant: <Utensils className={`${iconSize} text-amber-500`} />,
+    breakfast: <Coffee className={`${iconSize} text-brown-500`} />,
+    wifi: <Wifi className={`${iconSize} text-indigo-500`} />,
+    swimmingPool: <Waves className={`${iconSize} text-cyan-500`} />,
+    petsAllowed: <PawPrint className={`${iconSize} text-orange-500`} />,
+    extraBed: <BedDouble className={`${iconSize} text-violet-500`} />
   };
 
   return (
