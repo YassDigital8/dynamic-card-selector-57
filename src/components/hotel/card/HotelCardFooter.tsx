@@ -33,25 +33,25 @@ export const HotelCardFooter = ({ hotel, onEdit, onDelete, disabled = false }: H
     <div className="flex justify-end space-x-2 pt-1 mt-auto">
       <Button 
         variant="outline" 
-        size={isMobile ? "icon-sm" : "icon"}
+        size="icon"
         onClick={handleEdit}
         type="button"
         className={`h-8 w-8 bg-white dark:bg-slate-900 border-indigo-100 dark:border-indigo-800 hover:bg-indigo-50 dark:hover:bg-indigo-950 ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
         disabled={disabled}
       >
-        <Pencil className="h-3.5 w-3.5 text-indigo-700 dark:text-indigo-400" />
+        <Pencil className={`${isMobile ? 'h-3.5 w-3.5' : 'h-4 w-4'} text-indigo-700 dark:text-indigo-400`} />
         <span className="sr-only">Edit</span>
       </Button>
       
       <Button 
         variant="outline" 
-        size={isMobile ? "icon-sm" : "icon"} 
+        size="icon"
         onClick={handleDelete}
         type="button"
         className={`h-8 w-8 bg-white dark:bg-slate-900 border-red-100 dark:border-red-900 hover:bg-red-50 dark:hover:bg-red-950 ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
         disabled={disabled}
       >
-        <Trash2 className="h-3.5 w-3.5 text-red-600 dark:text-red-400" />
+        <Trash2 className={`${isMobile ? 'h-3.5 w-3.5' : 'h-4 w-4'} text-red-600 dark:text-red-400`} />
         <span className="sr-only">Delete</span>
       </Button>
     </div>
