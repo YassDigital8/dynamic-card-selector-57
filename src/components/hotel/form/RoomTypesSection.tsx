@@ -81,7 +81,6 @@ const RoomTypesSection: React.FC<RoomTypesSectionProps> = ({ form }) => {
             form.setValue('roomTypes', currentRoomTypes.filter((_, i) => i !== index));
           }}
           onOpenGallery={() => openImageDialog(index)}
-          onOpenMultiGallery={() => openMultiImageDialog(index)}
         />
       ))}
       <Button
