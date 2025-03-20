@@ -1,26 +1,12 @@
 
-import React, { lazy, Suspense } from 'react';
+import React from 'react';
 import PageContainer from '@/components/pages/index/PageContainer';
-import { Skeleton } from '@/components/ui/skeleton';
-
-// Lazy load the HotelPage component to improve initial page load
-const HotelPage = lazy(() => import('@/components/hotel/HotelPage'));
-
-const LoadingSkeleton = () => (
-  <div className="container mx-auto py-6 space-y-6">
-    <Skeleton className="h-12 w-full md:w-3/4 rounded-lg" />
-    <div className="grid grid-cols-1 gap-6">
-      <Skeleton className="h-[calc(100vh-200px)] rounded-lg" />
-    </div>
-  </div>
-);
+import HotelPage from '@/components/hotel/HotelPage';
 
 const Hotel = () => {
   return (
     <PageContainer>
-      <Suspense fallback={<LoadingSkeleton />}>
-        <HotelPage />
-      </Suspense>
+      <HotelPage />
     </PageContainer>
   );
 };

@@ -1,5 +1,5 @@
 
-import React, { useMemo } from 'react';
+import React from 'react';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable';
 import HotelListPanel from './HotelListPanel';
 import HotelContentPanel from './HotelContentPanel';
@@ -52,45 +52,22 @@ const HotelResizablePanels: React.FC<HotelResizablePanelsProps> = ({
   onCancelEdit,
   onStartEdit
 }) => {
-  // Memoize the calculation for whether content is showing
-  const hasSelectedContent = useMemo(() => {
-    return Boolean(selectedHotel || showAddForm || isEditing);
-  }, [selectedHotel, showAddForm, isEditing]);
-
-  // Memoize panel sizes to prevent unnecessary calculations
-  const leftPanelDefaultSize = useMemo(() => {
-    return hasSelectedContent ? 30 : panelSize;
-  }, [hasSelectedContent, panelSize]);
-
-  const rightPanelDefaultSize = useMemo(() => {
-    return hasSelectedContent ? 70 : 100 - panelSize;
-  }, [hasSelectedContent, panelSize]);
-
-  // Fixed maximum size for the left panel
-  const maxLeftPanelSize = 40;
-  // Fixed minimum size for the right panel
-  const minRightPanelSize = 60;
-
   return (
     <ResizablePanelGroup
       direction="horizontal"
       className="min-h-[calc(100vh-180px)] sm:min-h-[calc(100vh-200px)] rounded-lg border border-indigo-100 dark:border-indigo-900 bg-white dark:bg-slate-900 shadow-lg"
       onLayout={(sizes) => {
         // This will run when the panels are resized by the user
-        // Enforce the size limits
         if (sizes.length > 0) {
-          // Ensure we don't exceed the maximum left panel size
-          const newLeftSize = Math.min(sizes[0], maxLeftPanelSize);
-          setPanelSize(newLeftSize);
+          setPanelSize(sizes[0]);
         }
       }}
     >
       <ResizablePanel 
-        defaultSize={leftPanelDefaultSize}
-        minSize={25}
-        maxSize={maxLeftPanelSize}
+        defaultSize={panelSize}
+        minSize={35}
+        maxSize={65}
         className="transition-all duration-300"
-        collapsible={false}
       >
         <HotelListPanel 
           filteredHotels={filteredHotels}
@@ -107,11 +84,10 @@ const HotelResizablePanels: React.FC<HotelResizablePanelsProps> = ({
       <ResizableHandle withHandle className="transition-colors bg-indigo-100 dark:bg-indigo-900 hover:bg-indigo-200 dark:hover:bg-indigo-800" />
       
       <ResizablePanel 
-        defaultSize={rightPanelDefaultSize}
-        minSize={minRightPanelSize}
-        maxSize={75}
+        defaultSize={100 - panelSize}
+        minSize={35}
+        maxSize={65}
         className="transition-all duration-300"
-        collapsible={false}
       >
         <HotelContentPanel 
           selectedHotel={isSelectingNewHotel ? null : selectedHotel}
@@ -134,4 +110,4 @@ const HotelResizablePanels: React.FC<HotelResizablePanelsProps> = ({
   );
 };
 
-export default React.memo(HotelResizablePanels);
+export default HotelResizablePanels;

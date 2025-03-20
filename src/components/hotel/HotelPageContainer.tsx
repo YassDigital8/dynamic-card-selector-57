@@ -1,5 +1,5 @@
 
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { HotelFormData } from '@/models/HotelModel';
 import HotelPageHeader from './HotelPageHeader';
 import HotelResizablePanels from './layout/HotelResizablePanels';
@@ -61,22 +61,17 @@ const HotelPageContainer: React.FC = () => {
     handleBackToList();
   };
 
-  const getSelectedPOSName = useMemo(() => {
+  const getSelectedPOSName = () => {
     if (!selectedPOS || selectedPOS === 'all') return undefined;
     return posOptions.find(p => p.key.toLowerCase() === selectedPOS.toLowerCase())?.englishName;
-  }, [selectedPOS, posOptions]);
-
-  // Animation variants memoized to avoid recreation
-  const pageAnimation = useMemo(() => ({
-    initial: { opacity: 0 },
-    animate: { opacity: 1 },
-    transition: { duration: 0.3 }
-  }), []);
+  };
 
   return (
     <motion.div 
       className="container mx-auto py-3 sm:py-4 md:py-6 space-y-4 sm:space-y-6 md:space-y-8 px-2 sm:px-4"
-      {...pageAnimation}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
     >
       <HotelPageHeader 
         selectedPOS={selectedPOS}
@@ -97,7 +92,7 @@ const HotelPageContainer: React.FC = () => {
         showAddForm={showAddForm}
         isExpanded={isExpanded}
         selectedPOS={selectedPOS}
-        posName={getSelectedPOSName}
+        posName={getSelectedPOSName()}
         hasHotels={hotels.length > 0}
         onSelectHotel={handleSelectHotel}
         onEditHotel={handleEditHotel}

@@ -1,10 +1,11 @@
 
-import React, { useRef, useEffect, useState, useMemo } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import HotelList from '../HotelList';
 import { Hotel } from '@/models/HotelModel';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { motion } from 'framer-motion';
 
 interface HotelListPanelProps {
   filteredHotels: Hotel[];
@@ -27,11 +28,17 @@ const HotelListPanel: React.FC<HotelListPanelProps> = ({
   panelSize = 100,
   isEditing = false
 }) => {
-  // Memoize content height calculation to prevent unnecessary recalculations
-  const contentHeight = useMemo(() => {
-    return filteredHotels.length <= 10 
-      ? 'auto' 
-      : 'calc(100vh-130px)';
+  const [contentHeight, setContentHeight] = useState<string>('auto');
+  const listRef = useRef<HTMLDivElement>(null);
+  
+  // Dynamically adjust content height based on the number of hotels
+  useEffect(() => {
+    if (listRef.current) {
+      const newHeight = filteredHotels.length <= 10 
+        ? 'auto' 
+        : 'calc(100vh-130px)';
+      setContentHeight(newHeight);
+    }
   }, [filteredHotels.length]);
 
   return (
@@ -40,18 +47,20 @@ const HotelListPanel: React.FC<HotelListPanelProps> = ({
         <ScrollArea 
           className={`${contentHeight === 'auto' ? 'h-auto' : 'h-[calc(100vh-130px)] sm:h-[calc(100vh-140px)] md:h-[calc(100vh-145px)] lg:h-[calc(100vh-150px)]'} overflow-y-auto`}
         >
-          <HotelList
-            hotels={filteredHotels}
-            selectedHotel={selectedHotel}
-            onSelectHotel={onSelectHotel}
-            onEditHotel={onEditHotel}
-            onDeleteHotel={onDeleteHotel}
-            isEditing={isEditing}
-          />
+          <div ref={listRef}>
+            <HotelList
+              hotels={filteredHotels}
+              selectedHotel={selectedHotel}
+              onSelectHotel={onSelectHotel}
+              onEditHotel={onEditHotel}
+              onDeleteHotel={onDeleteHotel}
+              isEditing={isEditing}
+            />
+          </div>
         </ScrollArea>
       </Card>
     </div>
   );
 };
 
-export default React.memo(HotelListPanel);
+export default HotelListPanel;
