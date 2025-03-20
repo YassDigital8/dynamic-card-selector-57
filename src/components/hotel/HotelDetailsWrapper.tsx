@@ -1,4 +1,3 @@
-
 import React, { memo, useMemo, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
@@ -19,25 +18,25 @@ interface HotelDetailsWrapperProps {
   onEdit: () => void;
   onBack?: () => void;
   onUpdateHotel?: (id: string, data: Partial<Hotel>) => void;
+  isEditing?: boolean;
 }
 
 const HotelDetailsWrapper: React.FC<HotelDetailsWrapperProps> = memo(({
   hotel,
   onEdit,
   onBack,
-  onUpdateHotel
+  onUpdateHotel,
+  isEditing = false
 }) => {
   const isMobile = useIsMobile();
   const { width } = useScreenSize();
   
-  // Handle logo change
   const handleLogoChange = useCallback((hotelId: string, logo: string | null) => {
     if (onUpdateHotel) {
       onUpdateHotel(hotelId, { logoUrl: logo || undefined });
     }
   }, [onUpdateHotel]);
   
-  // Smooth animation configuration with no jarring transitions
   const springConfig = useMemo(() => ({
     type: "spring",
     stiffness: 280,
@@ -45,7 +44,6 @@ const HotelDetailsWrapper: React.FC<HotelDetailsWrapperProps> = memo(({
     mass: 0.9
   }), []);
 
-  // Staggered content animation
   const containerVariants = useMemo(() => ({
     hidden: { opacity: 0 },
     visible: {
@@ -66,7 +64,6 @@ const HotelDetailsWrapper: React.FC<HotelDetailsWrapperProps> = memo(({
     }
   }), [springConfig]);
 
-  // Card animation - simpler with no harsh transitions
   const cardVariants = useMemo(() => ({
     hidden: { 
       opacity: 0.95,
@@ -106,7 +103,8 @@ const HotelDetailsWrapper: React.FC<HotelDetailsWrapperProps> = memo(({
                   hotel={hotel} 
                   onEdit={onEdit} 
                   onBack={onBack} 
-                  onLogoChange={handleLogoChange} 
+                  onLogoChange={handleLogoChange}
+                  isEditing={isEditing}
                 />
               </motion.div>
             </CarouselItem>

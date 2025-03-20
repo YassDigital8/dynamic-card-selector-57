@@ -10,6 +10,7 @@ interface HotelDetailsProps {
   onBack?: () => void;
   onDelete?: () => void;
   onLogoChange?: (hotelId: string, logo: string | null) => void;
+  isEditing?: boolean;
 }
 
 const HotelDetails: React.FC<HotelDetailsProps> = memo(({ 
@@ -18,7 +19,8 @@ const HotelDetails: React.FC<HotelDetailsProps> = memo(({
   onSave, 
   onBack, 
   onDelete,
-  onLogoChange
+  onLogoChange,
+  isEditing = false
 }) => {
   const [customLogo, setCustomLogo] = useState<string | null>(hotel.logoUrl || null);
   
@@ -48,6 +50,7 @@ const HotelDetails: React.FC<HotelDetailsProps> = memo(({
         onDelete={onDelete}
         customLogo={customLogo || undefined}
         onLogoChange={handleLogoChange}
+        isEditing={isEditing}
       />
 
       <LocationCard 

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -18,6 +17,7 @@ interface HotelHeaderProps {
   onDelete?: () => void;
   customLogo?: string;
   onLogoChange?: (logo: string | null) => void;
+  isEditing?: boolean;
 }
 
 const HotelHeader: React.FC<HotelHeaderProps> = ({
@@ -31,7 +31,8 @@ const HotelHeader: React.FC<HotelHeaderProps> = ({
   onSave,
   onDelete,
   customLogo,
-  onLogoChange
+  onLogoChange,
+  isEditing = false
 }) => {
   const [isLogoDialogOpen, setIsLogoDialogOpen] = useState(false);
   const { toast } = useToast();
@@ -102,11 +103,12 @@ const HotelHeader: React.FC<HotelHeaderProps> = ({
             </Button>
           )}
           
-          {/* Hotel Logo with edit functionality */}
+          {/* Hotel Logo with edit functionality - only when in edit mode */}
           <HotelAvatar 
             name={name}
             customLogo={customLogo}
             onEditClick={() => setIsLogoDialogOpen(true)}
+            isEditing={isEditing}
           />
           
           {/* Hotel Information */}
@@ -127,7 +129,7 @@ const HotelHeader: React.FC<HotelHeaderProps> = ({
         />
       </div>
       
-      {/* Logo Dialog */}
+      {/* Logo Dialog - only shown when edit button is clicked */}
       <LogoDialog 
         isOpen={isLogoDialogOpen}
         onOpenChange={setIsLogoDialogOpen}
@@ -142,4 +144,3 @@ const HotelHeader: React.FC<HotelHeaderProps> = ({
 };
 
 export default HotelHeader;
-

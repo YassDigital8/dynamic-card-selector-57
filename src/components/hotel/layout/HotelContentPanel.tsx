@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -126,6 +125,7 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
           onEdit={onStartEdit} 
           onBack={onBackToList}
           onUpdateHotel={onUpdateHotel}
+          isEditing={isEditing}
         />
       )}
 
