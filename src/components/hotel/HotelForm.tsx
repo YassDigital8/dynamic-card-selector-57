@@ -36,6 +36,7 @@ const HotelForm = memo(({ initialData, onSubmit, isLoading, showButtons = true }
     // Log amenity image fields in initialData
     if (initialData?.amenities) {
       const { amenities } = initialData;
+      console.log('HotelForm - Initial amenities state:', JSON.stringify(amenities, null, 2));
       console.log('HotelForm - Initial spa enabled:', amenities.spa);
       console.log('HotelForm - Initial spa images:', amenities.spaImages);
       console.log('HotelForm - Initial gym enabled:', amenities.gym);
@@ -54,7 +55,7 @@ const HotelForm = memo(({ initialData, onSubmit, isLoading, showButtons = true }
   }, [initialData, form]);
 
   const handleSubmit = useCallback((values: typeof formSchema._type) => {
-    console.log('HotelForm - Submitting form with values:', values);
+    console.log('HotelForm - Submitting form with values:', JSON.stringify(values, null, 2));
     console.log('HotelForm - Form is dirty before submission:', form.formState.isDirty);
     
     // Log specific amenity data before submission

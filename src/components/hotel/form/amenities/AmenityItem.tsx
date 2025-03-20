@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/form';
 import { AmenityImage } from '@/models/HotelModel';
 import { FormValues } from '../formSchema';
-import { RoomImagesCarousel } from '../../form/room-types';
+import { RoomImagesCarousel } from '../room-types';
 
 interface AmenityItemProps {
   name: string;
