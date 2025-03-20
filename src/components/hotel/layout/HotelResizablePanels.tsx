@@ -66,22 +66,31 @@ const HotelResizablePanels: React.FC<HotelResizablePanelsProps> = ({
     return hasSelectedContent ? 70 : 100 - panelSize;
   }, [hasSelectedContent, panelSize]);
 
+  // Fixed maximum size for the left panel
+  const maxLeftPanelSize = 40;
+  // Fixed minimum size for the right panel
+  const minRightPanelSize = 60;
+
   return (
     <ResizablePanelGroup
       direction="horizontal"
       className="min-h-[calc(100vh-180px)] sm:min-h-[calc(100vh-200px)] rounded-lg border border-indigo-100 dark:border-indigo-900 bg-white dark:bg-slate-900 shadow-lg"
       onLayout={(sizes) => {
         // This will run when the panels are resized by the user
+        // Enforce the size limits
         if (sizes.length > 0) {
-          setPanelSize(sizes[0]);
+          // Ensure we don't exceed the maximum left panel size
+          const newLeftSize = Math.min(sizes[0], maxLeftPanelSize);
+          setPanelSize(newLeftSize);
         }
       }}
     >
       <ResizablePanel 
         defaultSize={leftPanelDefaultSize}
         minSize={25}
-        maxSize={40}
+        maxSize={maxLeftPanelSize}
         className="transition-all duration-300"
+        collapsible={false}
       >
         <HotelListPanel 
           filteredHotels={filteredHotels}
@@ -99,9 +108,10 @@ const HotelResizablePanels: React.FC<HotelResizablePanelsProps> = ({
       
       <ResizablePanel 
         defaultSize={rightPanelDefaultSize}
-        minSize={60}
+        minSize={minRightPanelSize}
         maxSize={75}
         className="transition-all duration-300"
+        collapsible={false}
       >
         <HotelContentPanel 
           selectedHotel={isSelectingNewHotel ? null : selectedHotel}

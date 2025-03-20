@@ -18,9 +18,9 @@ export const usePanelSizing = ({ selectedHotel, showAddForm, isEditing }: UsePan
     const hasSelectedContent = selectedHotel || showAddForm || isEditing;
     
     if (!hasSelectedContent) {
-      // Make panel wider when nothing is selected
-      if (screenSize.width < 640) return 60; // Mobile
-      if (screenSize.width < 1024) return 55; // Tablet
+      // Make panel wider when nothing is selected, but respect max width limit
+      if (screenSize.width < 640) return 40; // Mobile - limit to max 40%
+      if (screenSize.width < 1024) return 40; // Tablet - limit to max 40%
       return 40; // Desktop - limit maximum width to 40% when expanded
     } else {
       // Normal size when something is selected
@@ -34,12 +34,20 @@ export const usePanelSizing = ({ selectedHotel, showAddForm, isEditing }: UsePan
 
   // Effect to handle panel size based on device type and selection state
   useEffect(() => {
+    // When selection state changes, reset the panel size
     setPanelSize(getInitialLeftPanelSize);
   }, [getInitialLeftPanelSize]);
 
+  // Custom setPanelSize function that enforces the size limit
+  const setLimitedPanelSize = (size: number) => {
+    // Ensure we don't exceed the maximum size limit (40%)
+    const limitedSize = Math.min(size, 40);
+    setPanelSize(limitedSize);
+  };
+
   return {
     panelSize,
-    setPanelSize
+    setPanelSize: setLimitedPanelSize
   };
 };
 
