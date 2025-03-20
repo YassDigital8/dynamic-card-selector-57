@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { AmenityImage } from '@/models/HotelModel';
 import { FormValues } from './formSchema';
@@ -23,15 +23,28 @@ const AmenitiesSection: React.FC<AmenitiesSectionProps> = ({ form, hotelId }) =>
   const [selectedAmenity, setSelectedAmenity] = useState<AmenityWithImages | null>(null);
   const [isImageDialogOpen, setIsImageDialogOpen] = useState(false);
   
+  // Debug current amenity values
+  useEffect(() => {
+    const amenities = form.getValues('amenities');
+    console.log('Current form amenities:', amenities);
+    
+    // Check if spa is enabled and has images
+    if (amenities.spa) {
+      console.log('Spa is enabled, images:', amenities.spaImages || 'No spa images yet');
+    }
+  }, [form]);
+  
   const openImageDialog = (amenityName: string) => {
     // Extract just the amenity key from the full path (e.g., "amenities.bar" -> "bar")
     const amenityKey = amenityName.split('.')[1] as AmenityWithImages;
+    console.log('Opening image dialog for:', amenityKey);
     setSelectedAmenity(amenityKey);
     setIsImageDialogOpen(true);
   };
   
   const handleAddImage = (imageUrl: string, metadata?: FileMetadataValues) => {
     if (!selectedAmenity || !imageUrl) {
+      console.log('Missing selectedAmenity or imageUrl:', { selectedAmenity, imageUrl });
       return;
     }
     
@@ -46,18 +59,29 @@ const AmenitiesSection: React.FC<AmenitiesSectionProps> = ({ form, hotelId }) =>
       metadata: metadata
     };
     
+    console.log(`Adding image to ${selectedAmenity}:`, newImage);
+    console.log('Current images before adding:', currentImages);
+    
     form.setValue(imageFieldName as any, [...currentImages, newImage], { shouldDirty: true });
+    
+    // Get updated images to verify
+    const updatedImages = form.getValues(imageFieldName as any);
+    console.log('Updated images after adding:', updatedImages);
     
     setIsImageDialogOpen(false);
   };
 
   const handleAddMultipleImages = (files: FileInfo[]) => {
     if (!selectedAmenity || files.length === 0) {
+      console.log('Missing selectedAmenity or files:', { selectedAmenity, fileCount: files.length });
       return;
     }
     
     const imageFieldName = `amenities.${selectedAmenity}Images` as const;
     const currentImages = form.getValues(imageFieldName as any) || [];
+    
+    console.log(`Adding ${files.length} images to ${selectedAmenity}`);
+    console.log('Files to add:', files);
     
     const newImages = files.map(file => ({
       url: file.url,
@@ -69,6 +93,10 @@ const AmenitiesSection: React.FC<AmenitiesSectionProps> = ({ form, hotelId }) =>
     
     form.setValue(imageFieldName as any, [...currentImages, ...newImages], { shouldDirty: true });
     
+    // Verify updated images
+    const updatedImages = form.getValues(imageFieldName as any);
+    console.log('Updated images after adding multiple:', updatedImages);
+    
     setIsImageDialogOpen(false);
   };
   
@@ -76,9 +104,16 @@ const AmenitiesSection: React.FC<AmenitiesSectionProps> = ({ form, hotelId }) =>
     const imageFieldName = `amenities.${amenityName}Images` as const;
     const currentImages = form.getValues(imageFieldName as any) || [];
     
+    console.log(`Removing image at index ${index} from ${amenityName}`);
+    console.log('Current images before removal:', currentImages);
+    
     const updatedImages = currentImages.filter((_, i) => i !== index);
     
     form.setValue(imageFieldName as any, updatedImages, { shouldDirty: true });
+    
+    // Verify updated images
+    const imagesAfterRemoval = form.getValues(imageFieldName as any);
+    console.log('Images after removal:', imagesAfterRemoval);
   };
   
   const handleCloseDialog = () => {

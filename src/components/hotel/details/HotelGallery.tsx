@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Hotel, AmenityImage } from '@/models/HotelModel';
 import { staggerContainerVariants, staggerItemVariants } from '../animations/cardAnimations';
@@ -33,9 +33,23 @@ const HotelGallery: React.FC<HotelGalleryProps> = ({ hotel }) => {
   // Function to add images to our map if they exist
   const addImagesToMap = (key: string, displayName: string, images?: AmenityImage[]) => {
     if (images && images.length > 0) {
+      console.log(`Adding ${images.length} images for ${displayName}:`, images);
       amenityImagesMap.set(displayName, images);
+    } else {
+      console.log(`No images found for ${displayName}`);
     }
   };
+  
+  // Collect images from all amenities
+  useEffect(() => {
+    console.log('Hotel amenities complete object:', hotel.amenities);
+    
+    // Check if the amenities object is properly structured
+    if (!hotel.amenities) {
+      console.error('Hotel amenities object is missing or undefined');
+      return;
+    }
+  }, [hotel.amenities]);
   
   // Collect images from all amenities
   addImagesToMap('bar', 'Bar', hotel.amenities.barImages);
@@ -78,6 +92,8 @@ const HotelGallery: React.FC<HotelGalleryProps> = ({ hotel }) => {
   console.log('Hotel amenities:', hotel.amenities);
   console.log('Gallery image map:', amenityImagesMap);
   console.log('Room types:', hotel.roomTypes);
+  console.log('Spa images specifically:', hotel.amenities.spaImages);
+  console.log('Total categories with images:', amenityCategories.length);
   
   if (amenityCategories.length === 0) {
     return (

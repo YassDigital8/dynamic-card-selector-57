@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Check, X, Image as ImageIcon } from 'lucide-react';
 import { HotelAmenities, AmenityImage } from '@/models/HotelModel';
@@ -44,6 +44,12 @@ const amenityImageMapping: Record<string, keyof HotelAmenities> = {
 };
 
 const AmenityDisplay: React.FC<AmenityDisplayProps> = ({ amenities }) => {
+  useEffect(() => {
+    // Add debug logging for spa images
+    console.log('Spa amenity enabled:', amenities.spa);
+    console.log('Spa images available:', amenities.spaImages);
+  }, [amenities]);
+
   // Extract amenity entries, filtering out the image arrays
   const amenityEntries = Object.entries(amenities)
     .filter(([key]) => !key.includes('Images'))
@@ -53,6 +59,8 @@ const AmenityDisplay: React.FC<AmenityDisplayProps> = ({ amenities }) => {
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
 
   const handleViewImages = (amenity: string) => {
+    console.log(`Viewing images for ${amenity}:`, 
+      amenityImageMapping[amenity] ? amenities[amenityImageMapping[amenity]] : 'No images found');
     setSelectedAmenity(amenity);
     setIsGalleryOpen(true);
   };
