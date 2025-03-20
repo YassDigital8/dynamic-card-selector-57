@@ -45,25 +45,20 @@ const amenityImageMapping: Record<string, keyof HotelAmenities> = {
 
 const AmenityDisplay: React.FC<AmenityDisplayProps> = ({ amenities }) => {
   useEffect(() => {
-    // Debug logging for spa images
-    console.log('AmenityDisplay - Full amenities object:', amenities);
-    console.log('Spa amenity enabled:', amenities.spa);
-    console.log('Spa images available:', amenities.spaImages);
+    // More detailed debugging to identify any issues with the amenities object
+    console.log('AmenityDisplay - Full amenities object:', JSON.stringify(amenities, null, 2));
     
-    // Check all possible image arrays
-    const imageArrays = [
-      { name: 'Spa', arr: amenities.spaImages },
-      { name: 'Bar', arr: amenities.barImages },
-      { name: 'Gym', arr: amenities.gymImages },
-      { name: 'Restaurant', arr: amenities.restaurantImages },
-      { name: 'Breakfast', arr: amenities.breakfastImages },
-      { name: 'Swimming Pool', arr: amenities.swimmingPoolImages }
-    ];
-    
-    imageArrays.forEach(({ name, arr }) => {
-      console.log(`AmenityDisplay - ${name} images:`, arr);
-      if (arr && arr.length > 0) {
-        console.log(`${name} has ${arr.length} images. First image:`, arr[0]);
+    // Check all possible image arrays with more detail
+    Object.entries(amenityImageMapping).forEach(([amenityKey, imagesKey]) => {
+      const hasAmenity = amenities[amenityKey as keyof HotelAmenities];
+      const images = amenities[imagesKey];
+      console.log(`AmenityDisplay - ${amenityKey} enabled:`, hasAmenity);
+      console.log(`AmenityDisplay - ${amenityKey} images:`, images);
+      
+      if (Array.isArray(images) && images.length > 0) {
+        console.log(`${amenityKey} has ${images.length} images. First image:`, images[0]);
+      } else if (hasAmenity) {
+        console.log(`WARNING: ${amenityKey} is enabled but has no images or images array is invalid`);
       }
     });
   }, [amenities]);

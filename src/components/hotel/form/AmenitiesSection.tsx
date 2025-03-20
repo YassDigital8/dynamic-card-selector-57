@@ -11,6 +11,7 @@ import {
 } from './amenities';
 import { FileMetadataValues } from '@/hooks/upload/useFileMetadata';
 import { FileInfo } from '@/models/FileModel';
+import { useToast } from '@/hooks/use-toast';
 
 interface AmenitiesSectionProps {
   form: UseFormReturn<FormValues>;
@@ -22,6 +23,7 @@ type AmenityWithImages = 'bar' | 'gym' | 'spa' | 'restaurant' | 'breakfast' | 's
 const AmenitiesSection: React.FC<AmenitiesSectionProps> = ({ form, hotelId }) => {
   const [selectedAmenity, setSelectedAmenity] = useState<AmenityWithImages | null>(null);
   const [isImageDialogOpen, setIsImageDialogOpen] = useState(false);
+  const { toast } = useToast();
   
   // Debug current amenity values
   useEffect(() => {
@@ -33,10 +35,16 @@ const AmenitiesSection: React.FC<AmenitiesSectionProps> = ({ form, hotelId }) =>
       console.log('Spa is enabled, images:', amenities.spaImages || 'No spa images yet');
     }
     
+    // Check if gym is enabled and has images
+    if (amenities.gym) {
+      console.log('Gym is enabled, images:', amenities.gymImages || 'No gym images yet');
+    }
+    
     // For critical debugging, monitor changes
     const subscription = form.watch((value, { name, type }) => {
       if (name?.startsWith('amenities.') && name.includes('Images')) {
         console.log(`Form field changed: ${name}`, value);
+        console.log('Form is dirty:', form.formState.isDirty);
       }
     });
     
@@ -74,7 +82,11 @@ const AmenitiesSection: React.FC<AmenitiesSectionProps> = ({ form, hotelId }) =>
     // First, ensure the amenity is enabled
     if (!form.getValues(`amenities.${selectedAmenity}`)) {
       console.log(`Enabling ${selectedAmenity} since an image is being added`);
-      form.setValue(`amenities.${selectedAmenity}`, true, { shouldDirty: true });
+      form.setValue(`amenities.${selectedAmenity}`, true, { 
+        shouldDirty: true,
+        shouldTouch: true,
+        shouldValidate: true
+      });
     }
     
     // Set the images array with proper dirty flag to mark the form as changed
@@ -84,13 +96,20 @@ const AmenitiesSection: React.FC<AmenitiesSectionProps> = ({ form, hotelId }) =>
       shouldValidate: true
     });
     
-    // Force form change to ensure the form recognizes changes
+    // Force form state update to ensure changes are recognized
     form.trigger();
     
     // Get updated images to verify
     const updatedImages = form.getValues(imageFieldName as any);
     console.log('Updated images after adding:', updatedImages);
     console.log('Form is dirty:', form.formState.isDirty);
+    
+    // Notify user
+    toast({
+      title: "Image added",
+      description: `Image was added to ${amenitiesWithImages[selectedAmenity]}. Don't forget to save your changes.`,
+      variant: "default",
+    });
     
     setIsImageDialogOpen(false);
   };
@@ -110,7 +129,11 @@ const AmenitiesSection: React.FC<AmenitiesSectionProps> = ({ form, hotelId }) =>
     // First, ensure the amenity is enabled
     if (!form.getValues(`amenities.${selectedAmenity}`)) {
       console.log(`Enabling ${selectedAmenity} since images are being added`);
-      form.setValue(`amenities.${selectedAmenity}`, true, { shouldDirty: true });
+      form.setValue(`amenities.${selectedAmenity}`, true, { 
+        shouldDirty: true,
+        shouldTouch: true,
+        shouldValidate: true
+      });
     }
     
     const newImages = files.map(file => ({
@@ -128,13 +151,20 @@ const AmenitiesSection: React.FC<AmenitiesSectionProps> = ({ form, hotelId }) =>
       shouldValidate: true
     });
     
-    // Force form change to ensure the form recognizes changes
+    // Force form state update to ensure changes are recognized
     form.trigger();
     
     // Verify updated images
     const updatedImages = form.getValues(imageFieldName as any);
     console.log('Updated images after adding multiple:', updatedImages);
     console.log('Form is dirty:', form.formState.isDirty);
+    
+    // Notify user
+    toast({
+      title: "Images added",
+      description: `${files.length} images were added to ${amenitiesWithImages[selectedAmenity]}. Don't forget to save your changes.`,
+      variant: "default",
+    });
     
     setIsImageDialogOpen(false);
   };
@@ -154,13 +184,20 @@ const AmenitiesSection: React.FC<AmenitiesSectionProps> = ({ form, hotelId }) =>
       shouldValidate: true 
     });
     
-    // Force form change to ensure the form recognizes changes
+    // Force form state update to ensure changes are recognized
     form.trigger();
     
     // Verify updated images
     const imagesAfterRemoval = form.getValues(imageFieldName as any);
     console.log('Images after removal:', imagesAfterRemoval);
     console.log('Form is dirty:', form.formState.isDirty);
+    
+    // Notify user
+    toast({
+      title: "Image removed",
+      description: `Image was removed from ${amenitiesWithImages[amenityName]}. Don't forget to save your changes.`,
+      variant: "default",
+    });
   };
   
   const handleCloseDialog = () => {

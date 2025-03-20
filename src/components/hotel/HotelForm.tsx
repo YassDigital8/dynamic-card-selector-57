@@ -1,5 +1,5 @@
 
-import React, { useCallback, memo } from 'react';
+import React, { useCallback, memo, useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
@@ -28,17 +28,51 @@ const HotelForm = memo(({ initialData, onSubmit, isLoading, showButtons = true }
     resolver: zodResolver(formSchema),
     defaultValues: initialData || defaultValues,
   });
+  
+  // Debug form state to verify values are being captured correctly
+  useEffect(() => {
+    console.log('HotelForm - Form initialized with:', initialData ? 'existing hotel data' : 'default values');
+    
+    // Log amenity image fields in initialData
+    if (initialData?.amenities) {
+      const { amenities } = initialData;
+      console.log('HotelForm - Initial spa enabled:', amenities.spa);
+      console.log('HotelForm - Initial spa images:', amenities.spaImages);
+      console.log('HotelForm - Initial gym enabled:', amenities.gym);
+      console.log('HotelForm - Initial gym images:', amenities.gymImages);
+    }
+    
+    // Subscribe to form state changes
+    const subscription = form.watch((value, { name, type }) => {
+      if (name?.startsWith('amenities.') && name.includes('Images')) {
+        console.log(`HotelForm - Form field changed: ${name}`, value);
+        console.log('HotelForm - Form is dirty:', form.formState.isDirty);
+      }
+    });
+    
+    return () => subscription.unsubscribe();
+  }, [initialData, form]);
 
   const handleSubmit = useCallback((values: typeof formSchema._type) => {
+    console.log('HotelForm - Submitting form with values:', values);
+    console.log('HotelForm - Form is dirty before submission:', form.formState.isDirty);
+    
+    // Log specific amenity data before submission
+    console.log('HotelForm - Spa enabled on submit:', values.amenities.spa);
+    console.log('HotelForm - Spa images on submit:', values.amenities.spaImages);
+    console.log('HotelForm - Gym enabled on submit:', values.amenities.gym);
+    console.log('HotelForm - Gym images on submit:', values.amenities.gymImages);
+    
+    // Pass the form values to the parent component
     onSubmit(values as HotelFormData);
-  }, [onSubmit]);
+  }, [onSubmit, form]);
 
   return (
     <Form {...form}>
       <form id="hotel-form" onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <BasicInformation form={form} />
-          <AmenitiesSection form={form} />
+          <AmenitiesSection form={form} hotelId={initialData?.id} />
           <RoomTypesSection form={form} />
         </div>
 

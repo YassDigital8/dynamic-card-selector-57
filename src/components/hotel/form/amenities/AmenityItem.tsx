@@ -49,6 +49,19 @@ const AmenityItem: React.FC<AmenityItemProps> = ({
     }
   };
 
+  // Debug for this specific amenity
+  React.useEffect(() => {
+    if (hasImages && imageField) {
+      const amenityKey = name.split('.')[1];
+      console.log(`AmenityItem - ${label} (${amenityKey}) - enabled:`, isChecked);
+      console.log(`AmenityItem - ${label} (${amenityKey}) - images:`, images);
+      
+      if (Array.isArray(images) && images.length > 0) {
+        console.log(`${label} has ${images.length} images in form state`);
+      }
+    }
+  }, [hasImages, imageField, images, isChecked, name, label]);
+
   return (
     <div className="space-y-2">
       <FormItem className="flex flex-row items-center space-x-3 space-y-0 rounded-md border p-3">
@@ -56,7 +69,11 @@ const AmenityItem: React.FC<AmenityItemProps> = ({
           <Checkbox
             checked={isChecked}
             onCheckedChange={(checked) => {
-              form.setValue(name as any, !!checked, { shouldDirty: true });
+              form.setValue(name as any, !!checked, { 
+                shouldDirty: true,
+                shouldTouch: true,
+                shouldValidate: true 
+              });
             }}
           />
         </FormControl>
