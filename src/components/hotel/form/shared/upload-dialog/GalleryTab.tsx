@@ -3,6 +3,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { useGalleryViewModel } from '@/hooks/useGalleryViewModel';
 import { FileInfo } from '@/models/FileModel';
+import { Check } from 'lucide-react';
 
 interface GalleryTabProps {
   itemLabel: string;
@@ -38,21 +39,31 @@ export const GalleryTab: React.FC<GalleryTabProps> = ({
             <div 
               key={file.id} 
               className={`cursor-pointer border rounded-md overflow-hidden hover:border-primary transition-colors ${
-                multiSelect && isFileSelected(file) 
+                isFileSelected(file) 
                   ? 'ring-2 ring-primary border-primary' 
                   : ''
               }`}
               onClick={() => onSelectFile(file)}
             >
-              <div className="aspect-square bg-gray-100 flex items-center justify-center overflow-hidden">
+              <div className="aspect-square bg-gray-100 flex items-center justify-center overflow-hidden relative">
                 <img 
                   src={file.url} 
                   alt={file.metadata?.altText || file.name} 
                   className="h-full w-full object-cover"
                 />
+                {multiSelect && isFileSelected(file) && (
+                  <div className="absolute top-2 right-2 bg-primary text-white rounded-full p-1">
+                    <Check className="h-4 w-4" />
+                  </div>
+                )}
               </div>
               <div className="p-2">
                 <p className="text-xs font-medium truncate">{file.metadata?.title || file.name}</p>
+                {multiSelect && (
+                  <p className="text-xs text-muted-foreground">
+                    {isFileSelected(file) ? 'Selected' : 'Click to select'}
+                  </p>
+                )}
               </div>
             </div>
           ))}

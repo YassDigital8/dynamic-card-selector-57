@@ -6,21 +6,20 @@ import { FormValues } from '../formSchema';
 import RoomTypeForm from './RoomTypeForm';
 import RoomImagePreview from './RoomImagePreview';
 import { toast } from '@/hooks/use-toast';
+import { Plus } from 'lucide-react';
 
 interface RoomTypeCardProps {
   index: number;
   form: UseFormReturn<FormValues>;
   onRemove: () => void;
   onOpenGallery: () => void;
-  onOpenMultiGallery: () => void;
 }
 
 const RoomTypeCard: React.FC<RoomTypeCardProps> = ({ 
   index, 
   form, 
   onRemove, 
-  onOpenGallery,
-  onOpenMultiGallery
+  onOpenGallery
 }) => {
   const imageUrl = form.watch(`roomTypes.${index}.imageUrl`);
   const images = form.watch(`roomTypes.${index}.images`) || [];
@@ -61,7 +60,6 @@ const RoomTypeCard: React.FC<RoomTypeCardProps> = ({
         imageUrl={imageUrl}
         images={images}
         onClick={onOpenGallery}
-        onAddMore={onOpenMultiGallery}
         onDeleteImage={handleDeleteImage}
       />
       

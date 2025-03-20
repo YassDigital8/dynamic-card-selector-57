@@ -34,7 +34,7 @@ const ImageUploadDialog: React.FC<ImageUploadDialogProps> = ({
   };
 
   const handleSelectFromGallery = (file: FileInfo) => {
-    if (multiSelect && onSelectMultiple) {
+    if (multiSelect) {
       // For multi-select mode
       const isSelected = selectedGalleryFiles.some(f => f.id === file.id);
       
@@ -68,11 +68,11 @@ const ImageUploadDialog: React.FC<ImageUploadDialogProps> = ({
       <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
-            {multiSelect ? `Select ${itemLabel} Images` : `Add ${itemLabel} Image`}
+            {`Add ${itemLabel} Image${multiSelect ? '(s)' : ''}`}
           </DialogTitle>
           <DialogDescription>
             {multiSelect 
-              ? 'Select multiple images from your gallery or upload new ones'
+              ? `Upload new images, enter URLs, or select from your gallery. You can select multiple images.`
               : 'Upload a new image, enter a URL, or select from your gallery'}
           </DialogDescription>
         </DialogHeader>

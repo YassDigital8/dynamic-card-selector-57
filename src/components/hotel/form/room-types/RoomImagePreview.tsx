@@ -1,106 +1,53 @@
 
 import React from 'react';
-import { Image, Plus, Trash2 } from 'lucide-react';
-import { FormLabel } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
-import RoomImagesCarousel from './RoomImagesCarousel';
+import { Plus } from 'lucide-react';
+import { RoomImagesCarousel } from './RoomImagesCarousel';
 
 interface RoomImagePreviewProps {
-  imageUrl?: string;
-  images?: string[];
+  imageUrl: string | undefined;
+  images: string[];
   onClick: () => void;
-  onAddMore?: () => void;
-  readOnly?: boolean;
-  onDeleteImage?: (imageUrl: string) => void; // Add ability to delete images
+  onDeleteImage?: (imageUrl: string) => void;
 }
 
 const RoomImagePreview: React.FC<RoomImagePreviewProps> = ({ 
   imageUrl, 
-  images = [], 
-  onClick, 
-  onAddMore,
-  readOnly = false,
+  images, 
+  onClick,
   onDeleteImage
 }) => {
-  // Combine legacy imageUrl with images array for backward compatibility
-  const allImages = imageUrl 
-    ? [imageUrl, ...images.filter(img => img !== imageUrl)] 
-    : images;
+  const hasImages = images && images.length > 0;
   
-  const hasImages = allImages.length > 0;
-
   return (
-    <div className={readOnly ? "" : "mb-4"}>
-      {!readOnly && (
-        <div className="flex justify-between items-center">
-          <FormLabel>Room Images</FormLabel>
-          <div className="flex gap-2">
-            {hasImages && (
-              <Button 
-                type="button" 
-                variant="outline" 
-                size="sm" 
-                onClick={onClick}
-                className="flex items-center gap-1"
-              >
-                Manage Images
-              </Button>
-            )}
-            {hasImages && onAddMore && (
-              <Button 
-                type="button" 
-                variant="outline" 
-                size="sm" 
-                onClick={onAddMore}
-                className="flex items-center gap-1"
-              >
-                <Plus className="h-4 w-4" />
-                Add More
-              </Button>
-            )}
-          </div>
-        </div>
-      )}
+    <div className="w-full">
+      <div className="flex items-center justify-between mb-2">
+        <span className="text-sm font-medium">Room Images</span>
+        <Button 
+          type="button" 
+          variant="outline" 
+          size="sm" 
+          onClick={onClick}
+        >
+          <Plus className="h-3.5 w-3.5 mr-1" /> Add Image{hasImages ? 's' : ''}
+        </Button>
+      </div>
       
       {hasImages ? (
-        <div className="space-y-2 w-full mt-2">
-          {allImages.length > 1 ? (
-            <RoomImagesCarousel 
-              images={allImages} 
-              onDeleteImage={!readOnly ? onDeleteImage : undefined} 
-            />
-          ) : (
-            <div className="relative">
-              <img 
-                src={allImages[0]} 
-                alt="Room preview" 
-                className="w-full h-48 object-cover rounded-md"
-              />
-              {!readOnly && onDeleteImage && (
-                <div className="absolute top-2 right-2">
-                  <Button 
-                    variant="destructive" 
-                    size="sm" 
-                    className="h-7 w-7 p-0 rounded-full" 
-                    onClick={() => onDeleteImage(allImages[0])}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
+        <RoomImagesCarousel 
+          images={images} 
+          onDeleteImage={onDeleteImage}
+        />
       ) : (
         <div 
-          className={`mt-2 ${!readOnly ? "border-2 border-dashed rounded-md p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800" : ""} flex flex-col items-center justify-center`}
-          onClick={readOnly ? undefined : onClick}
+          className="border border-dashed rounded-md p-4 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors"
+          onClick={onClick}
         >
-          <div className="flex flex-col items-center justify-center py-6">
-            <Image className="h-12 w-12 text-gray-400" />
-            <p className="mt-2 text-sm text-gray-500">
-              {readOnly ? "No images available" : "Click to select room images"}
-            </p>
+          <div className="w-full aspect-video flex items-center justify-center">
+            <div className="text-center">
+              <Plus className="h-8 w-8 mx-auto text-gray-400" />
+              <p className="text-sm text-gray-500 mt-2">Add room images</p>
+            </div>
           </div>
         </div>
       )}

@@ -3,7 +3,7 @@ import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
-import { Plus, Images, LucideIcon } from 'lucide-react';
+import { Plus, LucideIcon } from 'lucide-react';
 import { 
   FormItem,
   FormLabel,
@@ -22,7 +22,6 @@ interface AmenityItemProps {
   imageField?: string;
   form: UseFormReturn<FormValues>;
   onAddImage?: (amenityName: string) => void;
-  onAddMultipleImages?: (amenityName: string) => void;
   onRemoveImage?: (amenityKey: string, index: number) => void;
 }
 
@@ -34,7 +33,6 @@ const AmenityItem: React.FC<AmenityItemProps> = ({
   imageField,
   form,
   onAddImage,
-  onAddMultipleImages,
   onRemoveImage
 }) => {
   const isChecked = form.watch(name as any);
@@ -73,33 +71,17 @@ const AmenityItem: React.FC<AmenityItemProps> = ({
         <FormItem className={`mt-2 ${!images.length && !isChecked ? 'hidden' : ''}`}>
           <div className="flex items-center justify-between">
             <FormLabel className="text-xs">{label} Images</FormLabel>
-            <div className="flex space-x-2">
-              <Button 
-                type="button" 
-                variant="outline" 
-                size="sm" 
-                className="h-7"
-                onClick={() => onAddImage && onAddImage(name)}
-                disabled={!isChecked}
-              >
-                <Plus className="h-3 w-3 mr-1" />
-                Add Image
-              </Button>
-              
-              {onAddMultipleImages && (
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  size="sm" 
-                  className="h-7"
-                  onClick={() => onAddMultipleImages(name)}
-                  disabled={!isChecked}
-                >
-                  <Images className="h-3 w-3 mr-1" />
-                  Add Multiple
-                </Button>
-              )}
-            </div>
+            <Button 
+              type="button" 
+              variant="outline" 
+              size="sm" 
+              className="h-7"
+              onClick={() => onAddImage && onAddImage(name)}
+              disabled={!isChecked}
+            >
+              <Plus className="h-3 w-3 mr-1" />
+              Add Image
+            </Button>
           </div>
           <FormControl>
             {images.length > 0 ? (

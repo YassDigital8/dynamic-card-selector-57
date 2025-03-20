@@ -22,20 +22,12 @@ type AmenityWithImages = 'bar' | 'gym' | 'spa' | 'restaurant' | 'breakfast' | 's
 const AmenitiesSection: React.FC<AmenitiesSectionProps> = ({ form, hotelId }) => {
   const [selectedAmenity, setSelectedAmenity] = useState<AmenityWithImages | null>(null);
   const [isImageDialogOpen, setIsImageDialogOpen] = useState(false);
-  const [isMultiImageDialogOpen, setIsMultiImageDialogOpen] = useState(false);
   
   const openImageDialog = (amenityName: string) => {
     // Extract just the amenity key from the full path (e.g., "amenities.bar" -> "bar")
     const amenityKey = amenityName.split('.')[1] as AmenityWithImages;
     setSelectedAmenity(amenityKey);
     setIsImageDialogOpen(true);
-  };
-  
-  const openMultiImageDialog = (amenityName: string) => {
-    // Extract just the amenity key from the full path (e.g., "amenities.bar" -> "bar")
-    const amenityKey = amenityName.split('.')[1] as AmenityWithImages;
-    setSelectedAmenity(amenityKey);
-    setIsMultiImageDialogOpen(true);
   };
   
   const handleAddImage = (imageUrl: string, metadata?: FileMetadataValues) => {
@@ -77,7 +69,7 @@ const AmenitiesSection: React.FC<AmenitiesSectionProps> = ({ form, hotelId }) =>
     
     form.setValue(imageFieldName as any, [...currentImages, ...newImages], { shouldDirty: true });
     
-    setIsMultiImageDialogOpen(false);
+    setIsImageDialogOpen(false);
   };
   
   const handleRemoveImage = (amenityName: string, index: number) => {
@@ -91,7 +83,6 @@ const AmenitiesSection: React.FC<AmenitiesSectionProps> = ({ form, hotelId }) =>
   
   const handleCloseDialog = () => {
     setIsImageDialogOpen(false);
-    setIsMultiImageDialogOpen(false);
   };
 
   return (
@@ -114,29 +105,17 @@ const AmenitiesSection: React.FC<AmenitiesSectionProps> = ({ form, hotelId }) =>
             imageField={amenity.imageField}
             form={form}
             onAddImage={openImageDialog}
-            onAddMultipleImages={openMultiImageDialog}
             onRemoveImage={handleRemoveImage}
           />
         ))}
       </div>
       
-      {/* Single Image Upload Dialog */}
+      {/* Image Upload Dialog */}
       {selectedAmenity && (
         <AmenityImageUploadDialog
           isOpen={isImageDialogOpen}
           onClose={handleCloseDialog}
           onAddImage={handleAddImage}
-          amenityLabel={amenitiesWithImages[selectedAmenity]}
-          hotelId={hotelId}
-        />
-      )}
-      
-      {/* Multiple Images Upload Dialog */}
-      {selectedAmenity && (
-        <AmenityImageUploadDialog
-          isOpen={isMultiImageDialogOpen}
-          onClose={handleCloseDialog}
-          onAddImage={() => {}} // Not used in multi-select mode
           amenityLabel={amenitiesWithImages[selectedAmenity]}
           hotelId={hotelId}
           multiSelect={true}
