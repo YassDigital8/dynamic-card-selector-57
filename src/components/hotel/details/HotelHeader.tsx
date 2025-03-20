@@ -3,6 +3,8 @@ import React from 'react';
 import { ArrowLeft, Pencil, Globe, Save, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import StarRating from '../card/StarRating';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { getHotelAvatar } from '../card/HotelCardUtils';
 
 interface HotelHeaderProps {
   name: string;
@@ -27,10 +29,21 @@ const HotelHeader: React.FC<HotelHeaderProps> = ({
   onSave,
   onDelete
 }) => {
+  // Get a consistent avatar for this hotel
+  const avatarUrl = getHotelAvatar(name);
+  
+  // Generate initials for the fallback
+  const initials = name
+    .split(' ')
+    .map(word => word[0])
+    .slice(0, 2)
+    .join('')
+    .toUpperCase();
+
   return (
     <div className="flex flex-col space-y-3">
       <div className="flex justify-between items-start">
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-4">
           {onBack && (
             <Button
               onClick={onBack}
@@ -42,8 +55,35 @@ const HotelHeader: React.FC<HotelHeaderProps> = ({
               <span className="sr-only">Back</span>
             </Button>
           )}
-          <h1 className="text-2xl font-bold">{name}</h1>
+          
+          {/* Hotel Logo */}
+          <Avatar className="h-12 w-12 border border-indigo-100 dark:border-indigo-800 shadow-sm">
+            <AvatarImage src={avatarUrl} alt={name} />
+            <AvatarFallback className="bg-indigo-100 text-indigo-700 dark:bg-indigo-900 dark:text-indigo-300">
+              {initials}
+            </AvatarFallback>
+          </Avatar>
+          
+          <div>
+            <h1 className="text-2xl font-bold">{name}</h1>
+            
+            {/* Star Rating */}
+            {typeof rating === 'number' && rating > 0 && (
+              <div className="flex items-center">
+                <StarRating rating={rating} size="md" />
+                <span className="ml-2 text-sm text-gray-500">{rating.toFixed(1)} stars</span>
+              </div>
+            )}
+            
+            <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
+              <Globe className="mr-1 h-4 w-4 text-indigo-500" />
+              <span>
+                {posKey} · {country}, {governorate}
+              </span>
+            </div>
+          </div>
         </div>
+        
         <div className="flex space-x-2">
           {onSave && (
             <Button
@@ -77,21 +117,6 @@ const HotelHeader: React.FC<HotelHeaderProps> = ({
             Edit
           </Button>
         </div>
-      </div>
-
-      {/* Star Rating */}
-      {typeof rating === 'number' && rating > 0 && (
-        <div className="flex items-center">
-          <StarRating rating={rating} size="md" />
-          <span className="ml-2 text-sm text-gray-500">{rating.toFixed(1)} stars</span>
-        </div>
-      )}
-
-      <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
-        <Globe className="mr-1 h-4 w-4 text-indigo-500" />
-        <span>
-          {posKey} · {country}, {governorate}
-        </span>
       </div>
     </div>
   );

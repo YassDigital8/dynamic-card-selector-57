@@ -1,19 +1,28 @@
 
 // Function to get a consistent avatar image based on hotel name
 export const getHotelAvatar = (hotelName: string): string => {
-  // Use a modulo operation to cycle through 5 placeholder images
+  // Generate a unique but deterministic hash from the hotel name
   const nameHash = hotelName.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-  const imageIndex = nameHash % 5 + 1;
   
-  const placeholderImages = [
-    'photo-1460925895917-afdab827c52f',
-    'photo-1487958449943-2429e8be8625',
-    'photo-1449157291145-7efd050a4d0e',
-    'photo-1459767129954-1b1c1f9b9ace',
-    'photo-1496307653780-42ee777d4833'
+  // Collection of high-quality hotel logo placeholder images
+  const logoImages = [
+    'photo-1564501049412-61c2a3083791', // Elegant hotel building
+    'photo-1571896349842-33c89424de2d', // Resort with pool
+    'photo-1564501049412-61c2a3083791', // Modern hotel
+    'photo-1564564321837-a57b7070ac4f', // Beach hotel
+    'photo-1566073771259-6a8506099945', // Luxury hotel
+    'photo-1551882547-ff40c63fe5fa',    // Contemporary hotel
+    'photo-1519449556851-5720b33024e7', // Mountain resort
+    'photo-1542314831-068cd1dbfeeb',    // Tropical resort
+    'photo-1520250497591-112f2f40a3f4', // Hotel lobby
   ];
   
-  return `https://images.unsplash.com/${placeholderImages[imageIndex - 1]}?auto=format&fit=crop&w=300&h=150&q=80`;
+  // Use the name hash to select a consistent image
+  const imageIndex = nameHash % logoImages.length;
+  const selectedImage = logoImages[imageIndex];
+  
+  // Create a crop that focuses on the building (good for logos)
+  return `https://images.unsplash.com/${selectedImage}?auto=format&fit=crop&w=120&h=120&q=80`;
 };
 
 // Generate multiple hotel images with varied content
