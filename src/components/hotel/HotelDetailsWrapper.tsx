@@ -1,5 +1,5 @@
 
-import React, { memo } from 'react';
+import React, { memo, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import HotelDetails from './HotelDetails';
@@ -29,15 +29,15 @@ const HotelDetailsWrapper: React.FC<HotelDetailsWrapperProps> = memo(({
   const { width } = useScreenSize();
   
   // Smooth animation configuration with no jarring transitions
-  const springConfig = {
+  const springConfig = useMemo(() => ({
     type: "spring",
     stiffness: 280,
     damping: 25,
     mass: 0.9
-  };
+  }), []);
 
   // Staggered content animation
-  const containerVariants = {
+  const containerVariants = useMemo(() => ({
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -46,19 +46,19 @@ const HotelDetailsWrapper: React.FC<HotelDetailsWrapperProps> = memo(({
         delayChildren: 0.05
       }
     }
-  };
+  }), []);
 
-  const itemVariants = {
+  const itemVariants = useMemo(() => ({
     hidden: { opacity: 0, y: 20 },
     visible: { 
       opacity: 1, 
       y: 0,
       transition: springConfig
     }
-  };
+  }), [springConfig]);
 
   // Card animation - simpler with no harsh transitions
-  const cardVariants = {
+  const cardVariants = useMemo(() => ({
     hidden: { 
       opacity: 0.95,
       scale: 0.995,
@@ -73,7 +73,7 @@ const HotelDetailsWrapper: React.FC<HotelDetailsWrapperProps> = memo(({
         duration: 0.25
       }
     }
-  };
+  }), [springConfig]);
 
   return (
     <motion.div

@@ -1,11 +1,9 @@
 
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, memo } from 'react';
 import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import HotelList from '../HotelList';
 import { Hotel } from '@/models/HotelModel';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { motion } from 'framer-motion';
 
 interface HotelListPanelProps {
   filteredHotels: Hotel[];
@@ -63,4 +61,4 @@ const HotelListPanel: React.FC<HotelListPanelProps> = ({
   );
 };
 
-export default HotelListPanel;
+export default memo(HotelListPanel);

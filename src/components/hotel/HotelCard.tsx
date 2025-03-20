@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useMemo, memo } from 'react';
 import { motion } from 'framer-motion';
 import { Hotel } from '@/models/HotelModel';
 import { Card, CardContent } from '@/components/ui/card';
@@ -32,10 +32,7 @@ const HotelCard: React.FC<HotelCardProps> = ({
 }) => {
   const isMobile = useIsMobile();
   
-  // Debug logging to check hotel rating
-  console.log(`Hotel ${hotel.name} rating:`, hotel.rating, typeof hotel.rating);
-
-  const cardAnimation = {
+  const cardAnimation = useMemo(() => ({
     rest: { 
       scale: 1,
       boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
@@ -69,7 +66,7 @@ const HotelCard: React.FC<HotelCardProps> = ({
         damping: 25
       }
     }
-  };
+  }), [disabled]);
 
   const handleCardClick = () => {
     if (!disabled) {
@@ -121,4 +118,4 @@ const HotelCard: React.FC<HotelCardProps> = ({
   );
 };
 
-export default React.memo(HotelCard);
+export default memo(HotelCard);

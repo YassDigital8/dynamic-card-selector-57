@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Hotel, HotelFormData } from '@/models/HotelModel';
 
 export const useHotelSelection = (
@@ -12,48 +12,48 @@ export const useHotelSelection = (
   const [isExpanded, setIsExpanded] = useState(true);
   const [isSelectingNewHotel, setIsSelectingNewHotel] = useState(false);
 
-  const handleSelectHotel = (hotel: Hotel) => {
+  const handleSelectHotel = useCallback((hotel: Hotel) => {
     // Direct hotel selection without any clearing or transition flags
     setSelectedHotel(hotel);
     setIsEditing(false);
     setShowAddForm(false);
     setIsExpanded(true);
-  };
+  }, []);
 
-  const handleEditHotel = (hotel: Hotel) => {
+  const handleEditHotel = useCallback((hotel: Hotel) => {
     setSelectedHotel(hotel);
     setIsEditing(true);
     setShowAddForm(false);
     setIsExpanded(true);
-  };
+  }, []);
 
-  const handleStartEdit = () => {
+  const handleStartEdit = useCallback(() => {
     setIsEditing(true);
     setShowAddForm(false);
     setIsExpanded(true);
-  };
+  }, []);
 
-  const handleAddHotel = () => {
+  const handleAddHotel = useCallback(() => {
     setSelectedHotel(null);
     setIsEditing(false);
     setShowAddForm(true);
     setIsExpanded(true);
-  };
+  }, []);
 
-  const handleBackToList = () => {
+  const handleBackToList = useCallback(() => {
     setSelectedHotel(null);
     setShowAddForm(false);
     setIsEditing(false);
-  };
+  }, []);
 
-  const handleSubmitEdit = (data: HotelFormData) => {
+  const handleSubmitEdit = useCallback((data: HotelFormData) => {
     if (selectedHotel) {
       updateHotel(selectedHotel.id, data);
       setIsEditing(false);
     }
-  };
+  }, [selectedHotel, updateHotel]);
   
-  const handleCancelEdit = () => setIsEditing(false);
+  const handleCancelEdit = useCallback(() => setIsEditing(false), []);
 
   return {
     selectedHotel,
