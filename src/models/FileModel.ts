@@ -10,7 +10,7 @@ export interface FileMetadata {
   caption?: string;
   description?: string;
   dimensions?: ImageDimensions;
-  hotelId?: string; // Add hotelId to associate files with specific hotels
+  hotelId?: string; // Associate files with specific hotels
 }
 
 export interface FileInfo {

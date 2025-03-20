@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable';
 import HotelListPanel from './HotelListPanel';
 import HotelContentPanel from './HotelContentPanel';
@@ -52,6 +52,20 @@ const HotelResizablePanels: React.FC<HotelResizablePanelsProps> = ({
   onCancelEdit,
   onStartEdit
 }) => {
+  // Memoize the calculation for whether content is showing
+  const hasSelectedContent = useMemo(() => {
+    return Boolean(selectedHotel || showAddForm || isEditing);
+  }, [selectedHotel, showAddForm, isEditing]);
+
+  // Memoize panel sizes to prevent unnecessary calculations
+  const leftPanelDefaultSize = useMemo(() => {
+    return hasSelectedContent ? 35 : panelSize;
+  }, [hasSelectedContent, panelSize]);
+
+  const rightPanelDefaultSize = useMemo(() => {
+    return hasSelectedContent ? 65 : 100 - panelSize;
+  }, [hasSelectedContent, panelSize]);
+
   return (
     <ResizablePanelGroup
       direction="horizontal"
@@ -64,9 +78,9 @@ const HotelResizablePanels: React.FC<HotelResizablePanelsProps> = ({
       }}
     >
       <ResizablePanel 
-        defaultSize={panelSize}
-        minSize={35}
-        maxSize={65}
+        defaultSize={leftPanelDefaultSize}
+        minSize={25}
+        maxSize={hasSelectedContent ? 50 : 75}
         className="transition-all duration-300"
       >
         <HotelListPanel 
@@ -84,9 +98,9 @@ const HotelResizablePanels: React.FC<HotelResizablePanelsProps> = ({
       <ResizableHandle withHandle className="transition-colors bg-indigo-100 dark:bg-indigo-900 hover:bg-indigo-200 dark:hover:bg-indigo-800" />
       
       <ResizablePanel 
-        defaultSize={100 - panelSize}
-        minSize={35}
-        maxSize={65}
+        defaultSize={rightPanelDefaultSize}
+        minSize={50}
+        maxSize={75}
         className="transition-all duration-300"
       >
         <HotelContentPanel 
@@ -110,4 +124,4 @@ const HotelResizablePanels: React.FC<HotelResizablePanelsProps> = ({
   );
 };
 
-export default HotelResizablePanels;
+export default React.memo(HotelResizablePanels);
