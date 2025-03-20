@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable';
 import HotelListPanel from './HotelListPanel';
 import HotelContentPanel from './HotelContentPanel';
@@ -52,15 +52,6 @@ const HotelResizablePanels: React.FC<HotelResizablePanelsProps> = ({
   onCancelEdit,
   onStartEdit
 }) => {
-  // Force panel resize when selection changes
-  useEffect(() => {
-    const panelResizeEvent = new Event('panelresize');
-    window.dispatchEvent(panelResizeEvent);
-  }, [selectedHotel, showAddForm, isEditing]);
-
-  // Calculate whether content is being shown in the right panel
-  const isShowingContent = selectedHotel || showAddForm || isEditing;
-
   return (
     <ResizablePanelGroup
       direction="horizontal"
@@ -73,7 +64,7 @@ const HotelResizablePanels: React.FC<HotelResizablePanelsProps> = ({
       }}
     >
       <ResizablePanel 
-        defaultSize={isShowingContent ? 35 : 65}
+        defaultSize={panelSize}
         minSize={35}
         maxSize={65}
         className="transition-all duration-300"
@@ -93,7 +84,7 @@ const HotelResizablePanels: React.FC<HotelResizablePanelsProps> = ({
       <ResizableHandle withHandle className="transition-colors bg-indigo-100 dark:bg-indigo-900 hover:bg-indigo-200 dark:hover:bg-indigo-800" />
       
       <ResizablePanel 
-        defaultSize={isShowingContent ? 65 : 35}
+        defaultSize={100 - panelSize}
         minSize={35}
         maxSize={65}
         className="transition-all duration-300"

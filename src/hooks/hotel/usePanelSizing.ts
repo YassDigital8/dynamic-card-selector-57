@@ -14,26 +14,28 @@ export const usePanelSizing = ({ selectedHotel, showAddForm, isEditing }: UsePan
   
   // Calculate dynamic panel sizes based on whether there's a selected hotel
   const getInitialLeftPanelSize = () => {
-    // If there's a selected hotel, make the left panel smaller
+    // If no hotel is selected and not adding or editing, make the list panel wider
     const hasSelectedContent = selectedHotel || showAddForm || isEditing;
-    return hasSelectedContent ? 35 : 65; // If content is selected, minimize list panel
+    
+    if (!hasSelectedContent) {
+      // Make panel wider when nothing is selected
+      if (screenSize.width < 640) return 65; // Mobile
+      if (screenSize.width < 1024) return 60; // Tablet
+      return 55; // Desktop
+    } else {
+      // Normal size when something is selected
+      if (screenSize.width < 640) return 50; // Mobile
+      if (screenSize.width < 1024) return 45; // Tablet
+      return 40; // Desktop
+    }
   };
 
   const [panelSize, setPanelSize] = useState(getInitialLeftPanelSize());
 
-  // Effect to handle panel size when selection state changes
+  // Effect to handle panel size based on device type and selection state
   useEffect(() => {
-    // Determine if we have content selected that should display in the right panel
-    const hasSelectedContent = selectedHotel || showAddForm || isEditing;
-    
-    if (hasSelectedContent) {
-      // When content is selected, shrink the left panel
-      setPanelSize(35); // Minimum size for the list panel
-    } else {
-      // When nothing is selected, maximize the list panel
-      setPanelSize(65); // Maximum allowed size
-    }
-  }, [selectedHotel, showAddForm, isEditing]);
+    setPanelSize(getInitialLeftPanelSize());
+  }, [screenSize.width, selectedHotel, showAddForm, isEditing]);
 
   return {
     panelSize,

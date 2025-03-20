@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Hotel, HotelFormData } from '@/models/HotelModel';
 
 export const useHotelSelection = (
@@ -13,17 +13,11 @@ export const useHotelSelection = (
   const [isSelectingNewHotel, setIsSelectingNewHotel] = useState(false);
 
   const handleSelectHotel = (hotel: Hotel) => {
-    // Set flag to indicate we're selecting a new hotel
-    setIsSelectingNewHotel(true);
-    
-    // Use setTimeout to allow the UI to update before setting the selected hotel
-    setTimeout(() => {
-      setSelectedHotel(hotel);
-      setIsEditing(false);
-      setShowAddForm(false);
-      setIsExpanded(true);
-      setIsSelectingNewHotel(false);
-    }, 10);
+    // Direct hotel selection without any clearing or transition flags
+    setSelectedHotel(hotel);
+    setIsEditing(false);
+    setShowAddForm(false);
+    setIsExpanded(true);
   };
 
   const handleEditHotel = (hotel: Hotel) => {
