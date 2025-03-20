@@ -59,11 +59,11 @@ const HotelResizablePanels: React.FC<HotelResizablePanelsProps> = ({
 
   // Memoize panel sizes to prevent unnecessary calculations
   const leftPanelDefaultSize = useMemo(() => {
-    return hasSelectedContent ? 35 : panelSize;
+    return hasSelectedContent ? 30 : panelSize;
   }, [hasSelectedContent, panelSize]);
 
   const rightPanelDefaultSize = useMemo(() => {
-    return hasSelectedContent ? 65 : 100 - panelSize;
+    return hasSelectedContent ? 70 : 100 - panelSize;
   }, [hasSelectedContent, panelSize]);
 
   return (
@@ -80,7 +80,7 @@ const HotelResizablePanels: React.FC<HotelResizablePanelsProps> = ({
       <ResizablePanel 
         defaultSize={leftPanelDefaultSize}
         minSize={25}
-        maxSize={hasSelectedContent ? 50 : 75}
+        maxSize={40}
         className="transition-all duration-300"
       >
         <HotelListPanel 
@@ -99,7 +99,7 @@ const HotelResizablePanels: React.FC<HotelResizablePanelsProps> = ({
       
       <ResizablePanel 
         defaultSize={rightPanelDefaultSize}
-        minSize={50}
+        minSize={60}
         maxSize={75}
         className="transition-all duration-300"
       >

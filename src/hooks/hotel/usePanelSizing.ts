@@ -19,14 +19,14 @@ export const usePanelSizing = ({ selectedHotel, showAddForm, isEditing }: UsePan
     
     if (!hasSelectedContent) {
       // Make panel wider when nothing is selected
-      if (screenSize.width < 640) return 65; // Mobile
-      if (screenSize.width < 1024) return 60; // Tablet
-      return 55; // Desktop
+      if (screenSize.width < 640) return 60; // Mobile
+      if (screenSize.width < 1024) return 55; // Tablet
+      return 40; // Desktop - limit maximum width to 40% when expanded
     } else {
       // Normal size when something is selected
-      if (screenSize.width < 640) return 35; // Mobile - smaller panel
-      if (screenSize.width < 1024) return 35; // Tablet - smaller panel
-      return 35; // Desktop - smaller panel
+      if (screenSize.width < 640) return 30; // Mobile - smaller panel
+      if (screenSize.width < 1024) return 30; // Tablet - smaller panel
+      return 30; // Desktop - smaller panel
     }
   }, [selectedHotel, showAddForm, isEditing, screenSize.width]);
 
