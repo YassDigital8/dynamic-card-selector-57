@@ -6,4 +6,5 @@ export { default as RoomTypesCard } from './RoomTypesCard';
 export { default as HotelHeader } from './HotelHeader';
 // Export the header components
 export * from './header';
-
+// Export amenity components
+export * from './amenities';
