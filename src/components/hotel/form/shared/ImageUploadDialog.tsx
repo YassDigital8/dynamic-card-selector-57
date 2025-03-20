@@ -2,9 +2,9 @@
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
 import { UploadTab } from './upload-dialog/UploadTab';
 import { GalleryTab } from './upload-dialog/GalleryTab';
+import { UrlTab } from './upload-dialog/UrlTab';
 import { FileInfo } from '@/models/FileModel';
 import { FileMetadataValues } from '@/hooks/upload/useFileMetadata';
 
@@ -73,18 +73,28 @@ const ImageUploadDialog: React.FC<ImageUploadDialogProps> = ({
           <DialogDescription>
             {multiSelect 
               ? 'Select multiple images from your gallery or upload new ones'
-              : 'Upload a new image or select from your gallery'}
+              : 'Upload a new image, enter a URL, or select from your gallery'}
           </DialogDescription>
         </DialogHeader>
         
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid grid-cols-2 mb-4">
+          <TabsList className="grid grid-cols-3 mb-4">
             <TabsTrigger value="upload">Upload New</TabsTrigger>
+            <TabsTrigger value="url">From URL</TabsTrigger>
             <TabsTrigger value="gallery">From Gallery</TabsTrigger>
           </TabsList>
           
           <TabsContent value="upload" className="space-y-4">
             <UploadTab 
+              itemLabel={itemLabel}
+              onAddImage={onAddImage}
+              onClose={onClose}
+              onCancel={handleCancel}
+            />
+          </TabsContent>
+          
+          <TabsContent value="url" className="space-y-4">
+            <UrlTab
               itemLabel={itemLabel}
               onAddImage={onAddImage}
               onClose={onClose}
