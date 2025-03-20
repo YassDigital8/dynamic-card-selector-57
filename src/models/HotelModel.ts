@@ -1,3 +1,4 @@
+
 export interface RoomType {
   id: string;
   name: string;
@@ -56,6 +57,7 @@ export interface Hotel {
   rating: number; // Star rating (0-5) - Changed from optional to required
   createdAt: Date;
   updatedAt: Date;
+  logoUrl?: string; // New field for custom hotel logo
 }
 
 export type HotelFormData = Omit<Hotel, 'id' | 'createdAt' | 'updatedAt'>;

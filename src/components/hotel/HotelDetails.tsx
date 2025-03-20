@@ -1,5 +1,5 @@
 
-import React, { memo } from 'react';
+import React, { memo, useState } from 'react';
 import { Hotel } from '@/models/HotelModel';
 import { HotelHeader, LocationCard, AmenitiesCard, RoomTypesCard } from './details';
 
@@ -9,9 +9,26 @@ interface HotelDetailsProps {
   onSave?: () => void;
   onBack?: () => void;
   onDelete?: () => void;
+  onLogoChange?: (hotelId: string, logo: string | null) => void;
 }
 
-const HotelDetails: React.FC<HotelDetailsProps> = memo(({ hotel, onEdit, onSave, onBack, onDelete }) => {
+const HotelDetails: React.FC<HotelDetailsProps> = memo(({ 
+  hotel, 
+  onEdit, 
+  onSave, 
+  onBack, 
+  onDelete,
+  onLogoChange
+}) => {
+  const [customLogo, setCustomLogo] = useState<string | null>(hotel.logoUrl || null);
+  
+  const handleLogoChange = (logo: string | null) => {
+    setCustomLogo(logo);
+    if (onLogoChange) {
+      onLogoChange(hotel.id, logo);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <HotelHeader 
@@ -24,6 +41,8 @@ const HotelDetails: React.FC<HotelDetailsProps> = memo(({ hotel, onEdit, onSave,
         onBack={onBack}
         onSave={onSave}
         onDelete={onDelete}
+        customLogo={customLogo || undefined}
+        onLogoChange={handleLogoChange}
       />
 
       <LocationCard 

@@ -26,6 +26,7 @@ interface HotelContentPanelProps {
   onSubmitEdit: (data: HotelFormData) => void;
   onCancelEdit: () => void;
   onStartEdit: () => void;
+  onUpdateHotel?: (id: string, data: Partial<Hotel>) => void;
 }
 
 const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
@@ -42,7 +43,8 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
   onSubmitAdd,
   onSubmitEdit,
   onCancelEdit,
-  onStartEdit
+  onStartEdit,
+  onUpdateHotel
 }) => {
   // Determine if we should show content (either a selected hotel, add form, or edit form)
   const showContent = selectedHotel || showAddForm || isEditing;
@@ -124,6 +126,7 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
           hotel={selectedHotel} 
           onEdit={onStartEdit} 
           onBack={onBackToList}
+          onUpdateHotel={onUpdateHotel}
         />
       )}
 

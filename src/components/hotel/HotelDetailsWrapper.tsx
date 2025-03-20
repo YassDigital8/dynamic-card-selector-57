@@ -1,5 +1,5 @@
 
-import React, { memo, useMemo } from 'react';
+import React, { memo, useMemo, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import HotelDetails from './HotelDetails';
@@ -18,15 +18,24 @@ interface HotelDetailsWrapperProps {
   hotel: Hotel;
   onEdit: () => void;
   onBack?: () => void;
+  onUpdateHotel?: (id: string, data: Partial<Hotel>) => void;
 }
 
 const HotelDetailsWrapper: React.FC<HotelDetailsWrapperProps> = memo(({
   hotel,
   onEdit,
-  onBack
+  onBack,
+  onUpdateHotel
 }) => {
   const isMobile = useIsMobile();
   const { width } = useScreenSize();
+  
+  // Handle logo change
+  const handleLogoChange = useCallback((hotelId: string, logo: string | null) => {
+    if (onUpdateHotel) {
+      onUpdateHotel(hotelId, { logoUrl: logo || undefined });
+    }
+  }, [onUpdateHotel]);
   
   // Smooth animation configuration with no jarring transitions
   const springConfig = useMemo(() => ({
@@ -93,7 +102,12 @@ const HotelDetailsWrapper: React.FC<HotelDetailsWrapperProps> = memo(({
                 animate="visible"
                 className="px-0.5 sm:px-2"
               >
-                <HotelDetails hotel={hotel} onEdit={onEdit} onBack={onBack} />
+                <HotelDetails 
+                  hotel={hotel} 
+                  onEdit={onEdit} 
+                  onBack={onBack} 
+                  onLogoChange={handleLogoChange} 
+                />
               </motion.div>
             </CarouselItem>
             <CarouselItem>

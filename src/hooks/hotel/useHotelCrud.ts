@@ -44,7 +44,7 @@ export const useHotelCrud = () => {
   }, [toast]);
 
   // Function to update an existing hotel
-  const updateHotel = useCallback((id: string, hotelData: Partial<HotelFormData>) => {
+  const updateHotel = useCallback((id: string, hotelData: Partial<HotelFormData> | Partial<Hotel>) => {
     setIsLoading(true);
     try {
       let updatedHotel: Hotel | undefined;
