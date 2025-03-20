@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { FormValues } from './formSchema';
@@ -17,7 +16,6 @@ interface RoomTypesSectionProps {
 
 const RoomTypesSection: React.FC<RoomTypesSectionProps> = ({ form }) => {
   const [isImageDialogOpen, setIsImageDialogOpen] = useState(false);
-  const [isMultiImageDialogOpen, setIsMultiImageDialogOpen] = useState(false);
   const [currentRoomTypeIndex, setCurrentRoomTypeIndex] = useState(0);
   const { galleryFiles } = useGalleryFiles();
 
@@ -26,20 +24,7 @@ const RoomTypesSection: React.FC<RoomTypesSectionProps> = ({ form }) => {
     return name || `Room Type ${currentRoomTypeIndex + 1}`;
   };
 
-  const handleSelectSingleImage = (imageUrl: string, metadata?: FileMetadataValues) => {
-    if (imageUrl) {
-      form.setValue(`roomTypes.${currentRoomTypeIndex}.imageUrl`, imageUrl);
-      
-      // Make sure this image isn't duplicated in the additional images array
-      const existingImages = form.getValues(`roomTypes.${currentRoomTypeIndex}.images`) || [];
-      const filteredImages = existingImages.filter(img => img !== imageUrl);
-      form.setValue(`roomTypes.${currentRoomTypeIndex}.images`, filteredImages);
-      
-      setIsImageDialogOpen(false);
-    }
-  };
-
-  const handleSelectMultipleImages = (files: FileInfo[]) => {
+  const handleSelectImages = (files: FileInfo[]) => {
     if (files.length > 0) {
       const imageUrls = files.map(file => file.url);
       
@@ -50,22 +35,38 @@ const RoomTypesSection: React.FC<RoomTypesSectionProps> = ({ form }) => {
         const additionalImages = imageUrls.slice(1);
         form.setValue(`roomTypes.${currentRoomTypeIndex}.images`, additionalImages);
       } else {
-        const additionalImages = imageUrls.filter(url => url !== mainImageUrl);
-        form.setValue(`roomTypes.${currentRoomTypeIndex}.images`, additionalImages);
+        const currentImages = form.getValues(`roomTypes.${currentRoomTypeIndex}.images`) || [];
+        
+        const newImages = imageUrls.filter(url => !currentImages.includes(url) && url !== mainImageUrl);
+        
+        form.setValue(`roomTypes.${currentRoomTypeIndex}.images`, [...currentImages, ...newImages]);
       }
       
-      setIsMultiImageDialogOpen(false);
+      setIsImageDialogOpen(false);
+    }
+  };
+
+  const handleSelectSingleImage = (imageUrl: string, metadata?: FileMetadataValues) => {
+    if (imageUrl) {
+      const mainImageUrl = form.getValues(`roomTypes.${currentRoomTypeIndex}.imageUrl`);
+      
+      if (!mainImageUrl) {
+        form.setValue(`roomTypes.${currentRoomTypeIndex}.imageUrl`, imageUrl);
+      } else {
+        const currentImages = form.getValues(`roomTypes.${currentRoomTypeIndex}.images`) || [];
+        
+        if (!currentImages.includes(imageUrl) && imageUrl !== mainImageUrl) {
+          form.setValue(`roomTypes.${currentRoomTypeIndex}.images`, [...currentImages, imageUrl]);
+        }
+      }
+      
+      setIsImageDialogOpen(false);
     }
   };
 
   const openImageDialog = (index: number) => {
     setCurrentRoomTypeIndex(index);
     setIsImageDialogOpen(true);
-  };
-
-  const openMultiImageDialog = (index: number) => {
-    setCurrentRoomTypeIndex(index);
-    setIsMultiImageDialogOpen(true);
   };
 
   return (
@@ -97,23 +98,14 @@ const RoomTypesSection: React.FC<RoomTypesSectionProps> = ({ form }) => {
         Add Room Type
       </Button>
 
-      {/* Single Image Upload Dialog */}
+      {/* Universal Image Upload Dialog for Room Types */}
       <RoomTypeImageUploadDialog 
         isOpen={isImageDialogOpen}
         onClose={() => setIsImageDialogOpen(false)}
         onAddImage={handleSelectSingleImage}
         roomTypeName={getCurrentRoomName()}
-        multiSelect={false}
-      />
-
-      {/* Multiple Images Upload Dialog */}
-      <RoomTypeImageUploadDialog 
-        isOpen={isMultiImageDialogOpen}
-        onClose={() => setIsMultiImageDialogOpen(false)}
-        onAddImage={() => {}} // Not used in multi-select mode
-        roomTypeName={getCurrentRoomName()}
         multiSelect={true}
-        onSelectMultiple={handleSelectMultipleImages}
+        onSelectMultiple={handleSelectImages}
       />
     </div>
   );

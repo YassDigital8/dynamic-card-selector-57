@@ -65,7 +65,7 @@ const ImageUploadDialog: React.FC<ImageUploadDialogProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto bg-background dark:bg-background">
         <DialogHeader>
           <DialogTitle>
             {`Add ${itemLabel} Image${multiSelect ? '(s)' : ''}`}

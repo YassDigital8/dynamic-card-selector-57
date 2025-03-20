@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
@@ -28,7 +29,7 @@ const RoomImagePreview: React.FC<RoomImagePreviewProps> = ({
           size="sm" 
           onClick={onClick}
         >
-          <Plus className="h-3.5 w-3.5 mr-1" /> Add Image{hasImages ? 's' : ''}
+          <Plus className="h-3.5 w-3.5 mr-1" /> Add Images
         </Button>
       </div>
       

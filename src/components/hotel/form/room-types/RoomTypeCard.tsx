@@ -6,14 +6,13 @@ import { FormValues } from '../formSchema';
 import RoomTypeForm from './RoomTypeForm';
 import RoomImagePreview from './RoomImagePreview';
 import { toast } from '@/hooks/use-toast';
-import { Plus } from 'lucide-react';
 
 interface RoomTypeCardProps {
   index: number;
   form: UseFormReturn<FormValues>;
   onRemove: () => void;
   onOpenGallery: () => void;
-  onOpenMultiGallery?: () => void; // Add this optional prop
+  onOpenMultiGallery?: () => void; // This prop is now optional
 }
 
 const RoomTypeCard: React.FC<RoomTypeCardProps> = ({ 
