@@ -1,11 +1,13 @@
+
 import React, { useState, useEffect } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { FormValues } from './formSchema';
 import { FileInfo } from '@/models/FileModel';
+import { FileMetadataValues } from '@/hooks/upload/useFileMetadata';
 import { 
   RoomTypeCard, 
-  RoomGalleryDialog,
+  RoomTypeImageUploadDialog,
   useGalleryFiles
 } from './room-types';
 
@@ -14,24 +16,26 @@ interface RoomTypesSectionProps {
 }
 
 const RoomTypesSection: React.FC<RoomTypesSectionProps> = ({ form }) => {
-  const [isGalleryOpen, setIsGalleryOpen] = useState(false);
-  const [isMultiGalleryOpen, setIsMultiGalleryOpen] = useState(false);
+  const [isImageDialogOpen, setIsImageDialogOpen] = useState(false);
+  const [isMultiImageDialogOpen, setIsMultiImageDialogOpen] = useState(false);
   const [currentRoomTypeIndex, setCurrentRoomTypeIndex] = useState(0);
   const { galleryFiles } = useGalleryFiles();
 
-  const getCurrentRoomImages = () => {
-    const mainImage = form.getValues(`roomTypes.${currentRoomTypeIndex}.imageUrl`);
-    const additionalImages = form.getValues(`roomTypes.${currentRoomTypeIndex}.images`) || [];
-    return [mainImage, ...additionalImages].filter(Boolean);
+  const getCurrentRoomName = () => {
+    const name = form.getValues(`roomTypes.${currentRoomTypeIndex}.name`);
+    return name || `Room Type ${currentRoomTypeIndex + 1}`;
   };
 
-  const handleSelectSingleImage = (files: FileInfo[]) => {
-    if (files.length > 0) {
-      form.setValue(`roomTypes.${currentRoomTypeIndex}.imageUrl`, files[0].url);
+  const handleSelectSingleImage = (imageUrl: string, metadata?: FileMetadataValues) => {
+    if (imageUrl) {
+      form.setValue(`roomTypes.${currentRoomTypeIndex}.imageUrl`, imageUrl);
+      
+      // Make sure this image isn't duplicated in the additional images array
       const existingImages = form.getValues(`roomTypes.${currentRoomTypeIndex}.images`) || [];
-      const filteredImages = existingImages.filter(img => img !== files[0].url);
+      const filteredImages = existingImages.filter(img => img !== imageUrl);
       form.setValue(`roomTypes.${currentRoomTypeIndex}.images`, filteredImages);
-      setIsGalleryOpen(false);
+      
+      setIsImageDialogOpen(false);
     }
   };
 
@@ -50,18 +54,18 @@ const RoomTypesSection: React.FC<RoomTypesSectionProps> = ({ form }) => {
         form.setValue(`roomTypes.${currentRoomTypeIndex}.images`, additionalImages);
       }
       
-      setIsMultiGalleryOpen(false);
+      setIsMultiImageDialogOpen(false);
     }
   };
 
-  const openGallery = (index: number) => {
+  const openImageDialog = (index: number) => {
     setCurrentRoomTypeIndex(index);
-    setIsGalleryOpen(true);
+    setIsImageDialogOpen(true);
   };
 
-  const openMultiGallery = (index: number) => {
+  const openMultiImageDialog = (index: number) => {
     setCurrentRoomTypeIndex(index);
-    setIsMultiGalleryOpen(true);
+    setIsMultiImageDialogOpen(true);
   };
 
   return (
@@ -76,8 +80,8 @@ const RoomTypesSection: React.FC<RoomTypesSectionProps> = ({ form }) => {
             const currentRoomTypes = form.getValues('roomTypes');
             form.setValue('roomTypes', currentRoomTypes.filter((_, i) => i !== index));
           }}
-          onOpenGallery={() => openGallery(index)}
-          onOpenMultiGallery={() => openMultiGallery(index)}
+          onOpenGallery={() => openImageDialog(index)}
+          onOpenMultiGallery={() => openMultiImageDialog(index)}
         />
       ))}
       <Button
@@ -94,22 +98,23 @@ const RoomTypesSection: React.FC<RoomTypesSectionProps> = ({ form }) => {
         Add Room Type
       </Button>
 
-      <RoomGalleryDialog 
-        isOpen={isGalleryOpen}
-        onOpenChange={setIsGalleryOpen}
-        galleryFiles={galleryFiles}
-        onSelectImages={handleSelectSingleImage}
+      {/* Single Image Upload Dialog */}
+      <RoomTypeImageUploadDialog 
+        isOpen={isImageDialogOpen}
+        onClose={() => setIsImageDialogOpen(false)}
+        onAddImage={handleSelectSingleImage}
+        roomTypeName={getCurrentRoomName()}
         multiSelect={false}
-        currentSelectedImages={[form.getValues(`roomTypes.${currentRoomTypeIndex}.imageUrl`)].filter(Boolean)}
       />
 
-      <RoomGalleryDialog 
-        isOpen={isMultiGalleryOpen}
-        onOpenChange={setIsMultiGalleryOpen}
-        galleryFiles={galleryFiles}
-        onSelectImages={handleSelectMultipleImages}
+      {/* Multiple Images Upload Dialog */}
+      <RoomTypeImageUploadDialog 
+        isOpen={isMultiImageDialogOpen}
+        onClose={() => setIsMultiImageDialogOpen(false)}
+        onAddImage={() => {}} // Not used in multi-select mode
+        roomTypeName={getCurrentRoomName()}
         multiSelect={true}
-        currentSelectedImages={getCurrentRoomImages()}
+        onSelectMultiple={handleSelectMultipleImages}
       />
     </div>
   );
