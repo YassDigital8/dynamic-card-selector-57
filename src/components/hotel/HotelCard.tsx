@@ -19,6 +19,7 @@ interface HotelCardProps {
   onDelete: () => void;
   useGridView?: boolean;
   disabled?: boolean;
+  hideEditButton?: boolean;
 }
 
 const HotelCard: React.FC<HotelCardProps> = ({
@@ -28,7 +29,8 @@ const HotelCard: React.FC<HotelCardProps> = ({
   onEdit,
   onDelete,
   useGridView = false,
-  disabled = false
+  disabled = false,
+  hideEditButton = true // Setting this to true by default to disable edit button in cards
 }) => {
   const isMobile = useIsMobile();
   
@@ -111,6 +113,7 @@ const HotelCard: React.FC<HotelCardProps> = ({
             onEdit={onEdit} 
             onDelete={onDelete}
             disabled={disabled}
+            hideEditButton={hideEditButton}
           />
         </CardContent>
       </Card>

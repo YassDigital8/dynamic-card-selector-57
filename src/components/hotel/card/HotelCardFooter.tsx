@@ -10,9 +10,16 @@ interface HotelCardFooterProps {
   onEdit: () => void;
   onDelete: () => void;
   disabled?: boolean;
+  hideEditButton?: boolean;
 }
 
-export const HotelCardFooter = ({ hotel, onEdit, onDelete, disabled = false }: HotelCardFooterProps) => {
+export const HotelCardFooter = ({ 
+  hotel, 
+  onEdit, 
+  onDelete, 
+  disabled = false,
+  hideEditButton = false 
+}: HotelCardFooterProps) => {
   const isMobile = useIsMobile();
   
   const handleEdit = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -31,17 +38,19 @@ export const HotelCardFooter = ({ hotel, onEdit, onDelete, disabled = false }: H
 
   return (
     <div className="flex justify-end space-x-2 pt-1 mt-auto">
-      <Button 
-        variant="ghost" 
-        size="icon"
-        onClick={handleEdit}
-        type="button"
-        className={`h-8 w-8 p-0 ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
-        disabled={disabled}
-      >
-        <Pencil className={`${isMobile ? 'h-3.5 w-3.5' : 'h-4 w-4'} text-indigo-500`} />
-        <span className="sr-only">Edit</span>
-      </Button>
+      {!hideEditButton && (
+        <Button 
+          variant="ghost" 
+          size="icon"
+          onClick={handleEdit}
+          type="button"
+          className={`h-8 w-8 p-0 ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+          disabled={disabled}
+        >
+          <Pencil className={`${isMobile ? 'h-3.5 w-3.5' : 'h-4 w-4'} text-indigo-500`} />
+          <span className="sr-only">Edit</span>
+        </Button>
+      )}
       
       <Button 
         variant="ghost" 

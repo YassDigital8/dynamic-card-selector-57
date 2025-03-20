@@ -99,7 +99,6 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
         </motion.div>
       )}
       
-      {/* Direct component rendering without any exit animations or waiting */}
       {showAddForm && (
         <HotelAddForm
           key="add-form"

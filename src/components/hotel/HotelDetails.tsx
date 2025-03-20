@@ -29,6 +29,11 @@ const HotelDetails: React.FC<HotelDetailsProps> = memo(({
     }
   };
 
+  const handleEdit = () => {
+    // This is the only place that should trigger the edit mode
+    onEdit();
+  };
+
   return (
     <div className="space-y-6">
       <HotelHeader 
@@ -37,7 +42,7 @@ const HotelDetails: React.FC<HotelDetailsProps> = memo(({
         country={hotel.country}
         governorate={hotel.governorate}
         rating={hotel.rating}
-        onEdit={onEdit}
+        onEdit={handleEdit}
         onBack={onBack}
         onSave={onSave}
         onDelete={onDelete}

@@ -141,6 +141,7 @@ const HotelList: React.FC<HotelListProps> = ({
                 onDelete={() => handleDeleteClick(hotel)}
                 useGridView={false}
                 disabled={isEditing}
+                hideEditButton={true} // Hide edit button in cards
               />
             ))}
           </motion.div>
