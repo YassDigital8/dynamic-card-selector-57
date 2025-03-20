@@ -58,6 +58,9 @@ const HotelResizablePanels: React.FC<HotelResizablePanelsProps> = ({
     window.dispatchEvent(panelResizeEvent);
   }, [selectedHotel, showAddForm, isEditing]);
 
+  // Calculate whether content is being shown in the right panel
+  const isShowingContent = selectedHotel || showAddForm || isEditing;
+
   return (
     <ResizablePanelGroup
       direction="horizontal"
@@ -70,7 +73,7 @@ const HotelResizablePanels: React.FC<HotelResizablePanelsProps> = ({
       }}
     >
       <ResizablePanel 
-        defaultSize={panelSize}
+        defaultSize={isShowingContent ? 35 : 65}
         minSize={35}
         maxSize={65}
         className="transition-all duration-300"
@@ -90,7 +93,7 @@ const HotelResizablePanels: React.FC<HotelResizablePanelsProps> = ({
       <ResizableHandle withHandle className="transition-colors bg-indigo-100 dark:bg-indigo-900 hover:bg-indigo-200 dark:hover:bg-indigo-800" />
       
       <ResizablePanel 
-        defaultSize={100 - panelSize}
+        defaultSize={isShowingContent ? 65 : 35}
         minSize={35}
         maxSize={65}
         className="transition-all duration-300"

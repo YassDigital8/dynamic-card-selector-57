@@ -1,6 +1,5 @@
 
-
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Hotel, HotelFormData } from '@/models/HotelModel';
 
 export const useHotelSelection = (
@@ -83,4 +82,3 @@ export const useHotelSelection = (
 };
 
 export default useHotelSelection;
-
