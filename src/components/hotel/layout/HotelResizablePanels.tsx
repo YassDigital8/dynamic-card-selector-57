@@ -74,8 +74,6 @@ const HotelResizablePanels: React.FC<HotelResizablePanelsProps> = ({
         minSize={35}
         maxSize={65}
         className="transition-all duration-300"
-        // Force the panel to use the current panelSize value
-        size={panelSize}
       >
         <HotelListPanel 
           filteredHotels={filteredHotels}
@@ -96,8 +94,6 @@ const HotelResizablePanels: React.FC<HotelResizablePanelsProps> = ({
         minSize={35}
         maxSize={65}
         className="transition-all duration-300"
-        // Force the panel to use the complement of panelSize
-        size={100 - panelSize}
       >
         <HotelContentPanel 
           selectedHotel={isSelectingNewHotel ? null : selectedHotel}
