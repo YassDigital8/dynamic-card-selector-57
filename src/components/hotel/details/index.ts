@@ -8,3 +8,5 @@ export { default as HotelHeader } from './HotelHeader';
 export * from './header';
 // Export amenity components
 export * from './amenities';
+// Export gallery components
+export * from './gallery';
