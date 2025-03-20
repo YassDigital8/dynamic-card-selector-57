@@ -17,6 +17,8 @@ interface AmenityImageUploadDialogProps {
   onAddImage: (imageUrl: string, metadata?: FileMetadataValues) => void;
   amenityLabel: string;
   hotelId?: string;
+  multiSelect?: boolean;
+  onSelectMultiple?: (files: FileInfo[]) => void;
 }
 
 const AmenityImageUploadDialog: React.FC<AmenityImageUploadDialogProps> = ({
@@ -24,9 +26,12 @@ const AmenityImageUploadDialog: React.FC<AmenityImageUploadDialogProps> = ({
   onClose,
   onAddImage,
   amenityLabel,
-  hotelId
+  hotelId,
+  multiSelect = false,
+  onSelectMultiple
 }) => {
   const [activeTab, setActiveTab] = useState<string>("upload");
+  const [selectedGalleryFiles, setSelectedGalleryFiles] = useState<FileInfo[]>([]);
   const { files } = useGalleryViewModel();
   
   // Rather than filtering by hotelId in metadata (which doesn't exist in the type),
@@ -52,6 +57,7 @@ const AmenityImageUploadDialog: React.FC<AmenityImageUploadDialogProps> = ({
   const handleCancel = () => {
     resetFileSelection();
     resetMetadata();
+    setSelectedGalleryFiles([]);
     onClose();
   };
 
@@ -68,13 +74,37 @@ const AmenityImageUploadDialog: React.FC<AmenityImageUploadDialogProps> = ({
   };
 
   const handleSelectFromGallery = (file: FileInfo) => {
-    onAddImage(file.url, {
-      title: file.metadata?.title || file.name,
-      altText: file.metadata?.altText || `${amenityLabel} image`,
-      caption: file.metadata?.caption || '',
-      description: file.metadata?.description || ''
-    });
-    onClose();
+    if (multiSelect && onSelectMultiple) {
+      // For multi-select mode
+      const isSelected = selectedGalleryFiles.some(f => f.id === file.id);
+      
+      if (isSelected) {
+        setSelectedGalleryFiles(selectedGalleryFiles.filter(f => f.id !== file.id));
+      } else {
+        setSelectedGalleryFiles([...selectedGalleryFiles, file]);
+      }
+    } else {
+      // For single select mode
+      onAddImage(file.url, {
+        title: file.metadata?.title || file.name,
+        altText: file.metadata?.altText || `${amenityLabel} image`,
+        caption: file.metadata?.caption || '',
+        description: file.metadata?.description || ''
+      });
+      onClose();
+    }
+  };
+
+  const handleConfirmMultipleSelection = () => {
+    if (multiSelect && onSelectMultiple && selectedGalleryFiles.length > 0) {
+      onSelectMultiple(selectedGalleryFiles);
+      setSelectedGalleryFiles([]);
+      onClose();
+    }
+  };
+
+  const isFileSelected = (file: FileInfo): boolean => {
+    return selectedGalleryFiles.some(f => f.id === file.id);
   };
 
   return (
@@ -82,10 +112,12 @@ const AmenityImageUploadDialog: React.FC<AmenityImageUploadDialogProps> = ({
       <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
-            Add {amenityLabel} Image
+            {multiSelect ? `Select ${amenityLabel} Images` : `Add ${amenityLabel} Image`}
           </DialogTitle>
           <DialogDescription>
-            Upload a new image or select from your gallery
+            {multiSelect 
+              ? 'Select multiple images from your gallery or upload new ones'
+              : 'Upload a new image or select from your gallery'}
           </DialogDescription>
         </DialogHeader>
         
@@ -136,7 +168,11 @@ const AmenityImageUploadDialog: React.FC<AmenityImageUploadDialogProps> = ({
                 {hotelFiles.filter(file => file.type.startsWith('image/')).map((file) => (
                   <div 
                     key={file.id} 
-                    className="cursor-pointer border rounded-md overflow-hidden hover:border-primary transition-colors"
+                    className={`cursor-pointer border rounded-md overflow-hidden hover:border-primary transition-colors ${
+                      multiSelect && isFileSelected(file) 
+                        ? 'ring-2 ring-primary border-primary' 
+                        : ''
+                    }`}
                     onClick={() => handleSelectFromGallery(file)}
                   >
                     <div className="aspect-square bg-gray-100 flex items-center justify-center overflow-hidden">
@@ -163,6 +199,15 @@ const AmenityImageUploadDialog: React.FC<AmenityImageUploadDialogProps> = ({
               <Button type="button" variant="outline" onClick={handleCancel}>
                 Cancel
               </Button>
+              {multiSelect && (
+                <Button 
+                  type="button"
+                  onClick={handleConfirmMultipleSelection}
+                  disabled={selectedGalleryFiles.length === 0}
+                >
+                  Add {selectedGalleryFiles.length} Image{selectedGalleryFiles.length !== 1 ? 's' : ''}
+                </Button>
+              )}
             </div>
           </TabsContent>
         </Tabs>

@@ -10,6 +10,7 @@ import {
   amenitiesList 
 } from './amenities';
 import { FileMetadataValues } from '@/hooks/upload/useFileMetadata';
+import { FileInfo } from '@/models/FileModel';
 
 interface AmenitiesSectionProps {
   form: UseFormReturn<FormValues>;
@@ -21,12 +22,20 @@ type AmenityWithImages = 'bar' | 'gym' | 'spa' | 'restaurant' | 'breakfast' | 's
 const AmenitiesSection: React.FC<AmenitiesSectionProps> = ({ form, hotelId }) => {
   const [selectedAmenity, setSelectedAmenity] = useState<AmenityWithImages | null>(null);
   const [isImageDialogOpen, setIsImageDialogOpen] = useState(false);
+  const [isMultiImageDialogOpen, setIsMultiImageDialogOpen] = useState(false);
   
   const openImageDialog = (amenityName: string) => {
     // Extract just the amenity key from the full path (e.g., "amenities.bar" -> "bar")
     const amenityKey = amenityName.split('.')[1] as AmenityWithImages;
     setSelectedAmenity(amenityKey);
     setIsImageDialogOpen(true);
+  };
+  
+  const openMultiImageDialog = (amenityName: string) => {
+    // Extract just the amenity key from the full path (e.g., "amenities.bar" -> "bar")
+    const amenityKey = amenityName.split('.')[1] as AmenityWithImages;
+    setSelectedAmenity(amenityKey);
+    setIsMultiImageDialogOpen(true);
   };
   
   const handleAddImage = (imageUrl: string, metadata?: FileMetadataValues) => {
@@ -49,6 +58,27 @@ const AmenitiesSection: React.FC<AmenitiesSectionProps> = ({ form, hotelId }) =>
     
     setIsImageDialogOpen(false);
   };
+
+  const handleAddMultipleImages = (files: FileInfo[]) => {
+    if (!selectedAmenity || files.length === 0) {
+      return;
+    }
+    
+    const imageFieldName = `amenities.${selectedAmenity}Images` as const;
+    const currentImages = form.getValues(imageFieldName as any) || [];
+    
+    const newImages = files.map(file => ({
+      url: file.url,
+      description: file.metadata?.altText || `${amenitiesWithImages[selectedAmenity]} image`,
+      title: file.metadata?.title || file.name,
+      caption: file.metadata?.caption || '',
+      metadata: file.metadata
+    }));
+    
+    form.setValue(imageFieldName as any, [...currentImages, ...newImages], { shouldDirty: true });
+    
+    setIsMultiImageDialogOpen(false);
+  };
   
   const handleRemoveImage = (amenityName: string, index: number) => {
     const imageFieldName = `amenities.${amenityName}Images` as const;
@@ -61,6 +91,7 @@ const AmenitiesSection: React.FC<AmenitiesSectionProps> = ({ form, hotelId }) =>
   
   const handleCloseDialog = () => {
     setIsImageDialogOpen(false);
+    setIsMultiImageDialogOpen(false);
   };
 
   return (
@@ -83,12 +114,13 @@ const AmenitiesSection: React.FC<AmenitiesSectionProps> = ({ form, hotelId }) =>
             imageField={amenity.imageField}
             form={form}
             onAddImage={openImageDialog}
+            onAddMultipleImages={openMultiImageDialog}
             onRemoveImage={handleRemoveImage}
           />
         ))}
       </div>
       
-      {/* Image Upload Dialog */}
+      {/* Single Image Upload Dialog */}
       {selectedAmenity && (
         <AmenityImageUploadDialog
           isOpen={isImageDialogOpen}
@@ -96,6 +128,19 @@ const AmenitiesSection: React.FC<AmenitiesSectionProps> = ({ form, hotelId }) =>
           onAddImage={handleAddImage}
           amenityLabel={amenitiesWithImages[selectedAmenity]}
           hotelId={hotelId}
+        />
+      )}
+      
+      {/* Multiple Images Upload Dialog */}
+      {selectedAmenity && (
+        <AmenityImageUploadDialog
+          isOpen={isMultiImageDialogOpen}
+          onClose={handleCloseDialog}
+          onAddImage={() => {}} // Not used in multi-select mode
+          amenityLabel={amenitiesWithImages[selectedAmenity]}
+          hotelId={hotelId}
+          multiSelect={true}
+          onSelectMultiple={handleAddMultipleImages}
         />
       )}
     </div>
