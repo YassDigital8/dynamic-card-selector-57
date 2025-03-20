@@ -12,7 +12,6 @@ interface RoomTypeCardProps {
   form: UseFormReturn<FormValues>;
   onRemove: () => void;
   onOpenGallery: () => void;
-  onOpenMultiGallery?: () => void; // This prop is now optional
 }
 
 const RoomTypeCard: React.FC<RoomTypeCardProps> = ({ 
