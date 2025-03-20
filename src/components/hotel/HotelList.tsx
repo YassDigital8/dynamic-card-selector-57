@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Hotel } from '@/models/HotelModel';
@@ -60,7 +59,6 @@ const HotelList: React.FC<HotelListProps> = ({
     hotel.governorate.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Optimized animation settings for smoother transitions
   const springConfig = {
     type: "spring" as const,
     stiffness: 220,
@@ -69,11 +67,11 @@ const HotelList: React.FC<HotelListProps> = ({
   };
 
   const container = {
-    hidden: { opacity: 1 }, // Start with opacity 1 to prevent disappearing
+    hidden: { opacity: 1 },
     show: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.02, // Faster stagger for smoother appearance
+        staggerChildren: 0.02,
         delayChildren: 0,
         ...springConfig
       }
@@ -108,7 +106,7 @@ const HotelList: React.FC<HotelListProps> = ({
         </motion.div>
       )}
       
-      <AnimatePresence mode="popLayout"> {/* Changed to popLayout for better card handling */}
+      <AnimatePresence mode="popLayout">
         {hotels.length === 0 ? (
           <HotelListEmptyState key="empty-state" />
         ) : filteredHotels.length === 0 ? (
@@ -141,7 +139,7 @@ const HotelList: React.FC<HotelListProps> = ({
                 onDelete={() => handleDeleteClick(hotel)}
                 useGridView={false}
                 disabled={isEditing}
-                hideEditButton={true} // Hide edit button in cards
+                hideEditButton={false}
               />
             ))}
           </motion.div>
