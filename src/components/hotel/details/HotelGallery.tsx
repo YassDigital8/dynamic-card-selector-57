@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/carousel';
 import { Card, CardContent } from '@/components/ui/card';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { ImageIcon } from 'lucide-react';
 
 interface HotelGalleryProps {
   hotel: Hotel;
@@ -44,14 +45,46 @@ const HotelGallery: React.FC<HotelGalleryProps> = ({ hotel }) => {
   addImagesToMap('breakfast', 'Breakfast', hotel.amenities.breakfastImages);
   addImagesToMap('swimmingPool', 'Swimming Pool', hotel.amenities.swimmingPoolImages);
   
+  // Also add room type images
+  const roomTypeImages: AmenityImage[] = [];
+  hotel.roomTypes.forEach(roomType => {
+    if (roomType.imageUrl) {
+      roomTypeImages.push({
+        url: roomType.imageUrl,
+        title: roomType.name,
+        description: `Main image for ${roomType.name}`
+      });
+    }
+    
+    if (roomType.images && roomType.images.length > 0) {
+      roomType.images.forEach(imgUrl => {
+        roomTypeImages.push({
+          url: imgUrl,
+          title: roomType.name,
+          description: `Image for ${roomType.name}`
+        });
+      });
+    }
+  });
+  
+  if (roomTypeImages.length > 0) {
+    amenityImagesMap.set('Room Types', roomTypeImages);
+  }
+  
   // Convert amenity images map to array for rendering
   const amenityCategories = Array.from(amenityImagesMap.entries());
+  
+  // Debug output to help diagnose issues
+  console.log('Hotel amenities:', hotel.amenities);
+  console.log('Gallery image map:', amenityImagesMap);
+  console.log('Room types:', hotel.roomTypes);
   
   if (amenityCategories.length === 0) {
     return (
       <div className="text-center p-6">
         <h3 className="text-xl font-semibold text-indigo-600 dark:text-indigo-400 mb-3">Hotel Gallery</h3>
         <div className="bg-indigo-50 dark:bg-indigo-900/30 p-6 rounded-xl">
+          <ImageIcon className="h-12 w-12 mx-auto text-indigo-300 dark:text-indigo-600 mb-3" />
           <p className="text-muted-foreground">No images available for this hotel.</p>
           <p className="text-sm text-muted-foreground mt-2">Add images to amenities to see them here.</p>
         </div>
