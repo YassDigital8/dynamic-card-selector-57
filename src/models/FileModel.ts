@@ -1,4 +1,5 @@
 
+
 export interface ImageDimensions {
   width: number;
   height: number;
@@ -36,3 +37,4 @@ export interface Gallery {
   iconName?: string; // Name of the Lucide icon to use
   fileCount: number;
 }
+

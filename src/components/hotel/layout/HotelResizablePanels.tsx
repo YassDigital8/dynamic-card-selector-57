@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable';
 import HotelListPanel from './HotelListPanel';
 import HotelContentPanel from './HotelContentPanel';
@@ -52,6 +52,12 @@ const HotelResizablePanels: React.FC<HotelResizablePanelsProps> = ({
   onCancelEdit,
   onStartEdit
 }) => {
+  // Force panel resize when selection changes
+  useEffect(() => {
+    const panelResizeEvent = new Event('panelresize');
+    window.dispatchEvent(panelResizeEvent);
+  }, [selectedHotel, showAddForm, isEditing]);
+
   return (
     <ResizablePanelGroup
       direction="horizontal"
@@ -68,6 +74,8 @@ const HotelResizablePanels: React.FC<HotelResizablePanelsProps> = ({
         minSize={35}
         maxSize={65}
         className="transition-all duration-300"
+        // Force the panel to use the current panelSize value
+        size={panelSize}
       >
         <HotelListPanel 
           filteredHotels={filteredHotels}
@@ -88,6 +96,8 @@ const HotelResizablePanels: React.FC<HotelResizablePanelsProps> = ({
         minSize={35}
         maxSize={65}
         className="transition-all duration-300"
+        // Force the panel to use the complement of panelSize
+        size={100 - panelSize}
       >
         <HotelContentPanel 
           selectedHotel={isSelectingNewHotel ? null : selectedHotel}

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useScreenSize } from '@/hooks/use-mobile';
 import { Hotel } from '@/models/HotelModel';
@@ -26,10 +27,10 @@ export const usePanelSizing = ({ selectedHotel, showAddForm, isEditing }: UsePan
     const hasSelectedContent = selectedHotel || showAddForm || isEditing;
     
     if (hasSelectedContent) {
-      // When content is selected, resize to a smaller value to show content
-      if (screenSize.width < 640) setPanelSize(45); // Mobile
-      else if (screenSize.width < 1024) setPanelSize(45); // Tablet
-      else setPanelSize(40); // Desktop
+      // When content is selected, shrink the left panel significantly to match the second image
+      if (screenSize.width < 640) setPanelSize(35); // Mobile - minimum size
+      else if (screenSize.width < 1024) setPanelSize(35); // Tablet - minimum size
+      else setPanelSize(35); // Desktop - minimum size (matches the second image)
     } else {
       // When nothing is selected, maximize the list panel
       setPanelSize(65); // Maximum allowed size
