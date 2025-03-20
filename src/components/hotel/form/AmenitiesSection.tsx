@@ -32,6 +32,15 @@ const AmenitiesSection: React.FC<AmenitiesSectionProps> = ({ form, hotelId }) =>
     if (amenities.spa) {
       console.log('Spa is enabled, images:', amenities.spaImages || 'No spa images yet');
     }
+    
+    // For critical debugging, monitor changes
+    const subscription = form.watch((value, { name, type }) => {
+      if (name?.startsWith('amenities.') && name.includes('Images')) {
+        console.log(`Form field changed: ${name}`, value);
+      }
+    });
+    
+    return () => subscription.unsubscribe();
   }, [form]);
   
   const openImageDialog = (amenityName: string) => {
@@ -62,11 +71,26 @@ const AmenitiesSection: React.FC<AmenitiesSectionProps> = ({ form, hotelId }) =>
     console.log(`Adding image to ${selectedAmenity}:`, newImage);
     console.log('Current images before adding:', currentImages);
     
-    form.setValue(imageFieldName as any, [...currentImages, newImage], { shouldDirty: true });
+    // First, ensure the amenity is enabled
+    if (!form.getValues(`amenities.${selectedAmenity}`)) {
+      console.log(`Enabling ${selectedAmenity} since an image is being added`);
+      form.setValue(`amenities.${selectedAmenity}`, true, { shouldDirty: true });
+    }
+    
+    // Set the images array with proper dirty flag to mark the form as changed
+    form.setValue(imageFieldName as any, [...currentImages, newImage], { 
+      shouldDirty: true,
+      shouldTouch: true,
+      shouldValidate: true
+    });
+    
+    // Force form change to ensure the form recognizes changes
+    form.trigger();
     
     // Get updated images to verify
     const updatedImages = form.getValues(imageFieldName as any);
     console.log('Updated images after adding:', updatedImages);
+    console.log('Form is dirty:', form.formState.isDirty);
     
     setIsImageDialogOpen(false);
   };
@@ -83,6 +107,12 @@ const AmenitiesSection: React.FC<AmenitiesSectionProps> = ({ form, hotelId }) =>
     console.log(`Adding ${files.length} images to ${selectedAmenity}`);
     console.log('Files to add:', files);
     
+    // First, ensure the amenity is enabled
+    if (!form.getValues(`amenities.${selectedAmenity}`)) {
+      console.log(`Enabling ${selectedAmenity} since images are being added`);
+      form.setValue(`amenities.${selectedAmenity}`, true, { shouldDirty: true });
+    }
+    
     const newImages = files.map(file => ({
       url: file.url,
       description: file.metadata?.altText || `${amenitiesWithImages[selectedAmenity]} image`,
@@ -91,11 +121,20 @@ const AmenitiesSection: React.FC<AmenitiesSectionProps> = ({ form, hotelId }) =>
       metadata: file.metadata
     }));
     
-    form.setValue(imageFieldName as any, [...currentImages, ...newImages], { shouldDirty: true });
+    // Set the images array with proper dirty flag to mark the form as changed
+    form.setValue(imageFieldName as any, [...currentImages, ...newImages], {
+      shouldDirty: true,
+      shouldTouch: true,
+      shouldValidate: true
+    });
+    
+    // Force form change to ensure the form recognizes changes
+    form.trigger();
     
     // Verify updated images
     const updatedImages = form.getValues(imageFieldName as any);
     console.log('Updated images after adding multiple:', updatedImages);
+    console.log('Form is dirty:', form.formState.isDirty);
     
     setIsImageDialogOpen(false);
   };
@@ -109,11 +148,19 @@ const AmenitiesSection: React.FC<AmenitiesSectionProps> = ({ form, hotelId }) =>
     
     const updatedImages = currentImages.filter((_, i) => i !== index);
     
-    form.setValue(imageFieldName as any, updatedImages, { shouldDirty: true });
+    form.setValue(imageFieldName as any, updatedImages, { 
+      shouldDirty: true,
+      shouldTouch: true,
+      shouldValidate: true 
+    });
+    
+    // Force form change to ensure the form recognizes changes
+    form.trigger();
     
     // Verify updated images
     const imagesAfterRemoval = form.getValues(imageFieldName as any);
     console.log('Images after removal:', imagesAfterRemoval);
+    console.log('Form is dirty:', form.formState.isDirty);
   };
   
   const handleCloseDialog = () => {

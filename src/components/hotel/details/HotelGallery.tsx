@@ -30,9 +30,33 @@ const HotelGallery: React.FC<HotelGalleryProps> = ({ hotel }) => {
   // Extract all amenity images
   const amenityImagesMap = new Map<string, AmenityImage[]>();
   
-  // Function to add images to our map if they exist
+  // Debug hotel amenities object
+  useEffect(() => {
+    console.log('Hotel Gallery - Full hotel object:', hotel);
+    console.log('Hotel Gallery - Amenities object:', hotel.amenities);
+    console.log('Hotel Gallery - Spa images specifically:', hotel.amenities.spaImages);
+    
+    // Check all possible image arrays
+    const imageArrays = [
+      { name: 'Spa', arr: hotel.amenities.spaImages },
+      { name: 'Bar', arr: hotel.amenities.barImages },
+      { name: 'Gym', arr: hotel.amenities.gymImages },
+      { name: 'Restaurant', arr: hotel.amenities.restaurantImages },
+      { name: 'Breakfast', arr: hotel.amenities.breakfastImages },
+      { name: 'Swimming Pool', arr: hotel.amenities.swimmingPoolImages }
+    ];
+    
+    imageArrays.forEach(({ name, arr }) => {
+      console.log(`${name} images:`, arr);
+      if (arr && arr.length > 0) {
+        console.log(`${name} has ${arr.length} images. First image:`, arr[0]);
+      }
+    });
+  }, [hotel]);
+  
+  // Function to safely add images to our map
   const addImagesToMap = (key: string, displayName: string, images?: AmenityImage[]) => {
-    if (images && images.length > 0) {
+    if (images && Array.isArray(images) && images.length > 0) {
       console.log(`Adding ${images.length} images for ${displayName}:`, images);
       amenityImagesMap.set(displayName, images);
     } else {
@@ -40,24 +64,26 @@ const HotelGallery: React.FC<HotelGalleryProps> = ({ hotel }) => {
     }
   };
   
-  // Collect images from all amenities
-  useEffect(() => {
-    console.log('Hotel amenities complete object:', hotel.amenities);
-    
-    // Check if the amenities object is properly structured
-    if (!hotel.amenities) {
-      console.error('Hotel amenities object is missing or undefined');
-      return;
+  // Check if amenity is enabled before adding images
+  const addEnabledAmenityImages = (key: AmenityKey, displayName: string) => {
+    if (hotel.amenities[key]) {
+      const imagesKey = `${key}Images` as const;
+      addImagesToMap(key, displayName, hotel.amenities[imagesKey]);
+    } else {
+      console.log(`Amenity ${key} is disabled, not showing images`);
     }
-  }, [hotel.amenities]);
+  };
   
-  // Collect images from all amenities
-  addImagesToMap('bar', 'Bar', hotel.amenities.barImages);
-  addImagesToMap('gym', 'Gym', hotel.amenities.gymImages);
-  addImagesToMap('spa', 'Spa', hotel.amenities.spaImages);
-  addImagesToMap('restaurant', 'Restaurant', hotel.amenities.restaurantImages);
-  addImagesToMap('breakfast', 'Breakfast', hotel.amenities.breakfastImages);
-  addImagesToMap('swimmingPool', 'Swimming Pool', hotel.amenities.swimmingPoolImages);
+  // Define amenity keys type
+  type AmenityKey = 'bar' | 'gym' | 'spa' | 'restaurant' | 'breakfast' | 'swimmingPool';
+  
+  // Add enabled amenity images
+  addEnabledAmenityImages('bar', 'Bar');
+  addEnabledAmenityImages('gym', 'Gym');
+  addEnabledAmenityImages('spa', 'Spa');
+  addEnabledAmenityImages('restaurant', 'Restaurant');
+  addEnabledAmenityImages('breakfast', 'Breakfast');
+  addEnabledAmenityImages('swimmingPool', 'Swimming Pool');
   
   // Also add room type images
   const roomTypeImages: AmenityImage[] = [];
@@ -89,10 +115,7 @@ const HotelGallery: React.FC<HotelGalleryProps> = ({ hotel }) => {
   const amenityCategories = Array.from(amenityImagesMap.entries());
   
   // Debug output to help diagnose issues
-  console.log('Hotel amenities:', hotel.amenities);
-  console.log('Gallery image map:', amenityImagesMap);
-  console.log('Room types:', hotel.roomTypes);
-  console.log('Spa images specifically:', hotel.amenities.spaImages);
+  console.log('Gallery categories:', amenityCategories);
   console.log('Total categories with images:', amenityCategories.length);
   
   if (amenityCategories.length === 0) {
@@ -102,7 +125,7 @@ const HotelGallery: React.FC<HotelGalleryProps> = ({ hotel }) => {
         <div className="bg-indigo-50 dark:bg-indigo-900/30 p-6 rounded-xl">
           <ImageIcon className="h-12 w-12 mx-auto text-indigo-300 dark:text-indigo-600 mb-3" />
           <p className="text-muted-foreground">No images available for this hotel.</p>
-          <p className="text-sm text-muted-foreground mt-2">Add images to amenities to see them here.</p>
+          <p className="text-sm text-muted-foreground mt-2">Add images to amenities or room types to see them here.</p>
         </div>
       </div>
     );

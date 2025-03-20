@@ -45,9 +45,27 @@ const amenityImageMapping: Record<string, keyof HotelAmenities> = {
 
 const AmenityDisplay: React.FC<AmenityDisplayProps> = ({ amenities }) => {
   useEffect(() => {
-    // Add debug logging for spa images
+    // Debug logging for spa images
+    console.log('AmenityDisplay - Full amenities object:', amenities);
     console.log('Spa amenity enabled:', amenities.spa);
     console.log('Spa images available:', amenities.spaImages);
+    
+    // Check all possible image arrays
+    const imageArrays = [
+      { name: 'Spa', arr: amenities.spaImages },
+      { name: 'Bar', arr: amenities.barImages },
+      { name: 'Gym', arr: amenities.gymImages },
+      { name: 'Restaurant', arr: amenities.restaurantImages },
+      { name: 'Breakfast', arr: amenities.breakfastImages },
+      { name: 'Swimming Pool', arr: amenities.swimmingPoolImages }
+    ];
+    
+    imageArrays.forEach(({ name, arr }) => {
+      console.log(`AmenityDisplay - ${name} images:`, arr);
+      if (arr && arr.length > 0) {
+        console.log(`${name} has ${arr.length} images. First image:`, arr[0]);
+      }
+    });
   }, [amenities]);
 
   // Extract amenity entries, filtering out the image arrays
@@ -156,6 +174,10 @@ const AmenityDisplay: React.FC<AmenityDisplayProps> = ({ amenities }) => {
                         alt={image.description || `${selectedAmenity} image ${index + 1}`}
                         className="max-h-full max-w-full object-contain rounded-md"
                       />
+                    </div>
+                    <div className="text-center mt-2">
+                      <p className="text-sm font-medium">{image.title || `${amenityDisplayNames[selectedAmenity as keyof HotelAmenities]} Image ${index + 1}`}</p>
+                      {image.description && <p className="text-xs text-muted-foreground">{image.description}</p>}
                     </div>
                   </CarouselItem>
                 ))}
