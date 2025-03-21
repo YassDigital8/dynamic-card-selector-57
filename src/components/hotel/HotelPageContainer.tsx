@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { HotelFormData } from '@/models/HotelModel';
 import HotelPageHeader from './HotelPageHeader';
@@ -26,10 +25,8 @@ const HotelPageContainer: React.FC = () => {
     deleteHotel
   } = useHotelNetwork(selectedPOS);
   
-  // Setup filter state through the custom hook
   const { filters, setFilters, filteredHotels } = useHotelFilters(hotels);
   
-  // Use the hotel selection hook to manage selection state
   const {
     selectedHotel,
     isEditing,
@@ -45,7 +42,6 @@ const HotelPageContainer: React.FC = () => {
     handleCancelEdit
   } = useHotelSelection(updateHotel, deleteHotel);
   
-  // Use the panel sizing hook
   const { panelSize, setPanelSize } = usePanelSizing({
     selectedHotel,
     showAddForm,
@@ -57,8 +53,16 @@ const HotelPageContainer: React.FC = () => {
       ...data,
       posKey: selectedPOS === 'all' ? '' : selectedPOS
     };
-    addHotel(hotelWithPOS);
-    handleBackToList();
+    const result = addHotel(hotelWithPOS);
+    if (result && result.success && result.hotel) {
+      handleSelectHotel(result.hotel);
+    } else {
+      handleBackToList();
+    }
+  };
+
+  const handleSubmitUpdate = (data: HotelFormData) => {
+    handleSubmitEdit(data);
   };
 
   const getSelectedPOSName = () => {
@@ -100,7 +104,7 @@ const HotelPageContainer: React.FC = () => {
         onAddHotel={handleAddHotel}
         onBackToList={handleBackToList}
         onSubmitAdd={handleSubmitAdd}
-        onSubmitEdit={handleSubmitEdit}
+        onSubmitEdit={handleSubmitUpdate}
         onCancelEdit={handleCancelEdit}
         onStartEdit={handleStartEdit}
       />

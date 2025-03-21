@@ -1,9 +1,9 @@
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Hotel, HotelFormData } from '@/models/HotelModel';
 
 export const useHotelSelection = (
-  updateHotel: (id: string, data: HotelFormData) => void,
+  updateHotel: (id: string, data: HotelFormData) => { success: boolean; hotel?: Hotel },
   deleteHotel: (id: string) => void
 ) => {
   const [selectedHotel, setSelectedHotel] = useState<Hotel | null>(null);
@@ -48,8 +48,13 @@ export const useHotelSelection = (
 
   const handleSubmitEdit = useCallback((data: HotelFormData) => {
     if (selectedHotel) {
-      updateHotel(selectedHotel.id, data);
+      const result = updateHotel(selectedHotel.id, data);
       setIsEditing(false);
+      
+      // Update the selectedHotel with the updated data if successful
+      if (result.success && result.hotel) {
+        setSelectedHotel(result.hotel);
+      }
     }
   }, [selectedHotel, updateHotel]);
   

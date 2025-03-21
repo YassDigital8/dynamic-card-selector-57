@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
@@ -40,12 +39,10 @@ const HotelEditForm: React.FC<HotelEditFormProps> = ({
     onSubmit
   });
 
-  // Debug - log selected hotel's amenities for troubleshooting
   useEffect(() => {
     console.log('HotelEditForm - Initial hotel data for hotel ID:', selectedHotel.id);
     console.log('HotelEditForm - Amenities:', JSON.stringify(selectedHotel.amenities, null, 2));
     
-    // Check for image arrays in the amenities
     Object.entries(selectedHotel.amenities).forEach(([key, value]) => {
       if (key.includes('Images')) {
         console.log(`HotelEditForm - ${key}:`, JSON.stringify(value, null, 2));
@@ -56,7 +53,6 @@ const HotelEditForm: React.FC<HotelEditFormProps> = ({
     });
   }, [selectedHotel]);
 
-  // Generate initials for the fallback
   const initials = selectedHotel.name
     .split(' ')
     .map(word => word[0])
@@ -94,7 +90,6 @@ const HotelEditForm: React.FC<HotelEditFormProps> = ({
           showButtons={false}
         />
         
-        {/* Bottom buttons */}
         <div className="mt-6 flex justify-end">
           <EditFormButtons
             isLoading={isLoading}
@@ -103,7 +98,6 @@ const HotelEditForm: React.FC<HotelEditFormProps> = ({
           />
         </div>
 
-        {/* Logo Dialog */}
         <LogoDialog 
           isOpen={isLogoDialogOpen}
           onOpenChange={setIsLogoDialogOpen}
