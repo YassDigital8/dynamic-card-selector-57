@@ -35,13 +35,22 @@ const AmenityItem: React.FC<AmenityItemProps> = ({
   onAddImage,
   onRemoveImage
 }) => {
+  // Get actual field path from name (amenities.bar -> bar)
+  const amenityKey = name.split('.')[1];
   const isChecked = form.watch(name as any);
-  const images = imageField ? form.watch(imageField as any) || [] : [];
+  let images: AmenityImage[] = [];
+  
+  if (imageField) {
+    images = form.watch(imageField as any) || [];
+    // Force array type
+    if (!Array.isArray(images)) {
+      images = [];
+    }
+  }
   
   const handleDeleteImage = (imageUrl: string) => {
     if (!imageField || !onRemoveImage) return;
     
-    const amenityKey = name.split('.')[1];
     const imageIndex = images.findIndex((img: AmenityImage) => img.url === imageUrl);
     
     if (imageIndex !== -1) {
@@ -52,16 +61,15 @@ const AmenityItem: React.FC<AmenityItemProps> = ({
   // Log for debugging this specific amenity
   React.useEffect(() => {
     if (hasImages && imageField) {
-      const amenityKey = name.split('.')[1];
       console.log(`AmenityItem - ${label} (${amenityKey}) - enabled:`, isChecked);
-      console.log(`AmenityItem - ${label} (${amenityKey}) - images array:`, images);
+      console.log(`AmenityItem - ${label} (${amenityKey}) - images array:`, JSON.stringify(images, null, 2));
       
       if (Array.isArray(images) && images.length > 0) {
         console.log(`${label} has ${images.length} images in form state`);
-        console.log(`First image:`, images[0]);
+        console.log(`First image:`, JSON.stringify(images[0], null, 2));
       }
     }
-  }, [hasImages, imageField, images, isChecked, name, label]);
+  }, [hasImages, imageField, images, isChecked, name, label, amenityKey]);
 
   return (
     <div className="space-y-2">
@@ -112,7 +120,7 @@ const AmenityItem: React.FC<AmenityItemProps> = ({
               ) : (
                 <div className="grid grid-cols-3 gap-2 mt-1">
                   {images.map((image: AmenityImage, index: number) => (
-                    <div key={`${image.url}-${index}`} className="relative group">
+                    <div key={`${image.id || index}`} className="relative group">
                       <img 
                         src={image.url} 
                         alt={image.description || label}
@@ -123,7 +131,7 @@ const AmenityItem: React.FC<AmenityItemProps> = ({
                         variant="destructive"
                         size="sm"
                         className="absolute top-1 right-1 h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                        onClick={() => onRemoveImage && onRemoveImage(name.split('.')[1], index)}
+                        onClick={() => onRemoveImage && onRemoveImage(amenityKey, index)}
                       >
                         ×
                       </Button>

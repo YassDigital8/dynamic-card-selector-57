@@ -30,15 +30,15 @@ const HotelEditForm: React.FC<HotelEditFormProps> = ({
 
   // Debug - log selected hotel's amenities for troubleshooting
   useEffect(() => {
-    console.log('HotelEditForm - Initial hotel data:', selectedHotel.id);
+    console.log('HotelEditForm - Initial hotel data for hotel ID:', selectedHotel.id);
     console.log('HotelEditForm - Amenities:', JSON.stringify(selectedHotel.amenities, null, 2));
     
     // Check for image arrays in the amenities
     Object.entries(selectedHotel.amenities).forEach(([key, value]) => {
       if (key.includes('Images')) {
-        console.log(`HotelEditForm - ${key}:`, value);
+        console.log(`HotelEditForm - ${key}:`, JSON.stringify(value, null, 2));
         if (Array.isArray(value) && value.length > 0) {
-          console.log(`First image in ${key}:`, value[0]);
+          console.log(`First image in ${key}:`, JSON.stringify(value[0], null, 2));
         }
       }
     });
@@ -92,17 +92,43 @@ const HotelEditForm: React.FC<HotelEditFormProps> = ({
     // Debug - log the form data before submission
     console.log('HotelEditForm - Form data before submission:', JSON.stringify(data, null, 2));
     
-    // Check all image arrays before submission
+    // Validate image arrays before submission
     if (data.amenities) {
       Object.entries(data.amenities).forEach(([key, value]) => {
         if (key.includes('Images')) {
-          console.log(`HotelEditForm - Submitting ${key}:`, value);
+          console.log(`HotelEditForm - Submitting ${key}:`, JSON.stringify(value, null, 2));
           if (Array.isArray(value) && value.length > 0) {
-            console.log(`First image in ${key}:`, value[0]);
+            console.log(`First image in ${key}:`, JSON.stringify(value[0], null, 2));
           }
         }
       });
     }
+    
+    // Ensure amenity images data is correctly structured
+    const amenityKeysWithImages = ['bar', 'gym', 'spa', 'restaurant', 'breakfast', 'swimmingPool'];
+    amenityKeysWithImages.forEach(amenityKey => {
+      const imagesKey = `${amenityKey}Images` as keyof typeof data.amenities;
+      const images = data.amenities[imagesKey];
+      
+      // Validate each image has the required fields
+      if (Array.isArray(images) && images.length > 0) {
+        console.log(`HotelEditForm - Validating ${images.length} images for ${amenityKey}`);
+        data.amenities[imagesKey] = images.map((img: any, index: number) => {
+          if (typeof img !== 'object' || !img) {
+            return {
+              url: typeof img === 'string' ? img : '',
+              id: `${amenityKey}-${index}-${Date.now()}`
+            };
+          }
+          
+          return {
+            ...img,
+            url: img.url || '',
+            id: img.id || `${amenityKey}-${index}-${Date.now()}`
+          };
+        }).filter((img: any) => img.url);
+      }
+    });
     
     // Include the logo URL in the form data
     const formDataWithLogo = {

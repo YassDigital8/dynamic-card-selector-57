@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import {
   Form,
 } from '@/components/ui/form';
-import { Hotel, HotelFormData } from '@/models/HotelModel';
+import { Hotel, HotelFormData, AmenityImage } from '@/models/HotelModel';
 import { 
   BasicInformation, 
   AmenitiesSection, 
@@ -42,9 +42,9 @@ const HotelForm = memo(({ initialData, onSubmit, isLoading, showButtons = true }
       // Check all image fields
       Object.entries(amenities).forEach(([key, value]) => {
         if (key.includes('Images')) {
-          console.log(`HotelForm - Initial ${key}:`, value);
+          console.log(`HotelForm - Initial ${key}:`, JSON.stringify(value, null, 2));
           if (Array.isArray(value) && value.length > 0) {
-            console.log(`First image in ${key}:`, value[0]);
+            console.log(`First image in ${key}:`, JSON.stringify(value[0], null, 2));
           }
         }
       });
@@ -53,7 +53,7 @@ const HotelForm = memo(({ initialData, onSubmit, isLoading, showButtons = true }
     // Subscribe to form state changes
     const subscription = form.watch((value, { name, type }) => {
       if (name?.startsWith('amenities.') && name.includes('Images')) {
-        console.log(`HotelForm - Form field changed: ${name}`, value);
+        console.log(`HotelForm - Form field changed: ${name}`, JSON.stringify(value, null, 2));
         console.log('HotelForm - Form is dirty:', form.formState.isDirty);
       }
     });
@@ -86,7 +86,7 @@ const HotelForm = memo(({ initialData, onSubmit, isLoading, showButtons = true }
           const images = processedValues.amenities[imagesKey];
           
           // Process each image to ensure it has required properties
-          processedValues.amenities[imagesKey] = images.map((img, index) => {
+          processedValues.amenities[imagesKey] = images.map((img: any, index: number) => {
             if (typeof img !== 'object' || img === null) {
               // Convert strings or invalid values to proper image objects
               return {
@@ -101,9 +101,10 @@ const HotelForm = memo(({ initialData, onSubmit, isLoading, showButtons = true }
               url: img.url || '',
               id: img.id || `${amenityKey}-${index}-${Date.now()}`
             };
-          }).filter(img => img.url); // Remove any images without URLs
+          }).filter((img: any) => img.url); // Remove any images without URLs
           
-          console.log(`HotelForm - Processed ${imagesKey} - ${processedValues.amenities[imagesKey].length} images`);
+          console.log(`HotelForm - Processed ${imagesKey} - ${processedValues.amenities[imagesKey].length} images:`, 
+            JSON.stringify(processedValues.amenities[imagesKey], null, 2));
         }
       });
     }

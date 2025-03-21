@@ -1,6 +1,6 @@
 
 import { useState, useCallback } from 'react';
-import { Hotel, HotelFormData } from '@/models/HotelModel';
+import { Hotel, HotelFormData, AmenityImage } from '@/models/HotelModel';
 import { useToast } from '@/hooks/use-toast';
 import { defaultHotels } from './hotelMockData';
 
@@ -13,6 +13,16 @@ export const useHotelCrud = () => {
   const addHotel = useCallback((hotelData: HotelFormData) => {
     setIsLoading(true);
     try {
+      // Log amenity images to ensure they're being saved correctly
+      if (hotelData.amenities) {
+        console.log('Adding hotel with amenities:', JSON.stringify(hotelData.amenities, null, 2));
+        Object.entries(hotelData.amenities).forEach(([key, value]) => {
+          if (key.includes('Images') && Array.isArray(value) && value.length > 0) {
+            console.log(`Found ${value.length} images for ${key}:`, JSON.stringify(value, null, 2));
+          }
+        });
+      }
+      
       const newHotel: Hotel = {
         ...hotelData,
         id: Date.now().toString(),
@@ -24,7 +34,7 @@ export const useHotelCrud = () => {
       toast({
         title: "Hotel Added Successfully",
         description: `${newHotel.name} has been added to your hotel network`,
-        variant: "default", // Changed from "success" to "default"
+        variant: "default",
       });
       
       return { success: true, hotel: newHotel };
@@ -49,14 +59,57 @@ export const useHotelCrud = () => {
     try {
       let updatedHotel: Hotel | undefined;
       
+      // Log the update data for debugging
+      console.log(`Updating hotel ${id} with data:`, JSON.stringify(hotelData, null, 2));
+      
+      // Check for amenity images in the update data
+      if (hotelData.amenities) {
+        Object.entries(hotelData.amenities).forEach(([key, value]) => {
+          if (key.includes('Images')) {
+            console.log(`Updating ${key}:`, JSON.stringify(value, null, 2));
+            if (Array.isArray(value) && value.length > 0) {
+              console.log(`Found ${value.length} images for ${key}. Sample:`, JSON.stringify(value[0], null, 2));
+            }
+          }
+        });
+      }
+      
       setHotels(prevHotels => {
         const updated = prevHotels.map(hotel => {
           if (hotel.id === id) {
+            // Carefully merge amenities to preserve image arrays
+            const mergedAmenities = { ...hotel.amenities };
+            
+            if (hotelData.amenities) {
+              // For each amenity in the update data
+              Object.entries(hotelData.amenities).forEach(([key, value]) => {
+                if (key.includes('Images')) {
+                  // Ensure image arrays are properly preserved
+                  mergedAmenities[key as keyof typeof mergedAmenities] = 
+                    Array.isArray(value) && value.length > 0 
+                      ? value as any
+                      : mergedAmenities[key as keyof typeof mergedAmenities];
+                } else {
+                  // For boolean amenity flags, just use the updated value
+                  mergedAmenities[key as keyof typeof mergedAmenities] = value as any;
+                }
+              });
+            }
+            
             updatedHotel = {
               ...hotel,
               ...hotelData,
+              amenities: mergedAmenities,
               updatedAt: new Date()
             };
+            
+            // Final check on amenity images before saving
+            Object.entries(updatedHotel.amenities).forEach(([key, value]) => {
+              if (key.includes('Images') && Array.isArray(value)) {
+                console.log(`Final ${key} in updated hotel:`, JSON.stringify(value, null, 2));
+              }
+            });
+            
             return updatedHotel;
           }
           return hotel;
@@ -67,7 +120,7 @@ export const useHotelCrud = () => {
       toast({
         title: "Hotel Updated Successfully",
         description: `${updatedHotel?.name || 'Hotel'} information has been updated`,
-        variant: "default", // Changed from "success" to "default"
+        variant: "default",
       });
       
       return { success: true, hotel: updatedHotel };
@@ -101,7 +154,7 @@ export const useHotelCrud = () => {
       toast({
         title: "Hotel Deleted Successfully",
         description: `${hotelToDelete.name} has been removed from your hotel network`,
-        variant: "default", // Changed from "success" to "default"
+        variant: "default",
       });
       
       return { success: true, hotelName: hotelToDelete.name };
