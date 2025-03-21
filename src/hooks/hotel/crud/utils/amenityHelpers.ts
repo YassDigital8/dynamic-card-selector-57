@@ -2,30 +2,27 @@
 import { Hotel } from '@/models/HotelModel';
 
 /**
- * Validates amenity images in a hotel and ensures they are arrays
- * @param hotel The hotel object to validate
+ * Validates and ensures all amenity image arrays are properly formatted
+ * to prevent runtime errors when the hotel is loaded or edited.
  */
-export const validateAmenityImages = (hotel: Hotel | undefined): void => {
-  if (!hotel) return;
+export const validateAmenityImages = (hotel: Hotel | undefined) => {
+  if (!hotel || !hotel.amenities) return hotel;
   
-  // Final validation of amenity images before saving
+  // Check each property that ends with 'Images' and ensure it's an array
   Object.entries(hotel.amenities).forEach(([key, value]) => {
     if (key.includes('Images')) {
-      if (Array.isArray(value)) {
-        console.log(`Final ${key} in updated hotel: ${value.length} images`);
-        if (value.length > 0) {
-          console.log(`Sample image:`, JSON.stringify(value[0], null, 2));
-        }
+      if (!Array.isArray(value)) {
+        console.error(`Fixing invalid ${key}: not an array`, value);
+        // Type-safe way to assign an empty array
+        const amenities = hotel.amenities;
+        const typedKey = key as keyof typeof amenities;
+        amenities[typedKey] = [] as any;
       } else {
-        console.error(`ERROR: ${key} is not an array in final updated hotel:`, value);
-        // Ensure it's an array to prevent runtime errors
-        const stringKey = String(key);
-        
-        if (hotel) {
-          const amenitiesRef = hotel.amenities;
-          amenitiesRef[stringKey as keyof typeof amenitiesRef] = [] as any;
-        }
+        // Log successful validation
+        console.log(`Validated ${key}: ${Array.isArray(value) ? value.length : 0} images`);
       }
     }
   });
+  
+  return hotel;
 };
