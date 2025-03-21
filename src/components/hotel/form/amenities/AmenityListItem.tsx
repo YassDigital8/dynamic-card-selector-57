@@ -2,7 +2,7 @@
 import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { FormValues } from '../formSchema';
-import { AmenityItem } from './AmenityItem';
+import AmenityItem from './AmenityItem';
 import { AmenityListItemType } from './types';
 
 interface AmenityListItemProps {
