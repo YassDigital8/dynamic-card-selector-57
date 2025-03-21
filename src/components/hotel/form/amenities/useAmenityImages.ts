@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { AmenityImage } from '@/models/HotelModel';
 import { FileMetadataValues } from '@/hooks/upload/useFileMetadata';
@@ -23,7 +23,7 @@ export const useAmenityImages = ({ form, hotelId }: UseAmenityImagesProps) => {
   // Debug current amenity values
   useEffect(() => {
     const amenities = form.getValues('amenities');
-    console.log('Current form amenities:', amenities);
+    console.log('useAmenityImages - Current form amenities:', amenities);
     
     // Check all image fields systematically
     Object.keys(amenitiesWithImages).forEach(key => {
@@ -50,15 +50,15 @@ export const useAmenityImages = ({ form, hotelId }: UseAmenityImagesProps) => {
     return () => subscription.unsubscribe();
   }, [form]);
   
-  const openImageDialog = (amenityName: string) => {
+  const openImageDialog = useCallback((amenityName: string) => {
     // Extract just the amenity key from the full path (e.g., "amenities.bar" -> "bar")
     const amenityKey = amenityName.split('.')[1] as AmenityWithImages;
     console.log('Opening image dialog for:', amenityKey);
     setSelectedAmenity(amenityKey);
     setIsImageDialogOpen(true);
-  };
+  }, []);
   
-  const handleAddImage = (imageUrl: string, metadata?: FileMetadataValues) => {
+  const handleAddImage = useCallback((imageUrl: string, metadata?: FileMetadataValues) => {
     if (!selectedAmenity || !imageUrl) {
       console.log('Missing selectedAmenity or imageUrl:', { selectedAmenity, imageUrl });
       return;
@@ -73,6 +73,7 @@ export const useAmenityImages = ({ form, hotelId }: UseAmenityImagesProps) => {
       description: metadata?.altText || `${amenitiesWithImages[selectedAmenity]} image`,
       title: metadata?.title || '',
       caption: metadata?.caption || '',
+      id: `${selectedAmenity}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       metadata: metadata
     };
     
@@ -90,7 +91,10 @@ export const useAmenityImages = ({ form, hotelId }: UseAmenityImagesProps) => {
     }
     
     // Create a new array with the existing images plus the new one
-    const updatedImages = [...currentImages, newImage];
+    // Make sure to handle the case where currentImages might not be an array
+    const updatedImages = Array.isArray(currentImages) 
+      ? [...currentImages, newImage] 
+      : [newImage];
     
     // Set the images array with proper dirty flag to mark the form as changed
     form.setValue(imageFieldName as any, updatedImages, { 
@@ -118,9 +122,9 @@ export const useAmenityImages = ({ form, hotelId }: UseAmenityImagesProps) => {
     });
     
     setIsImageDialogOpen(false);
-  };
+  }, [form, selectedAmenity, toast]);
 
-  const handleAddMultipleImages = (files: FileInfo[]) => {
+  const handleAddMultipleImages = useCallback((files: FileInfo[]) => {
     if (!selectedAmenity || files.length === 0) {
       console.log('Missing selectedAmenity or files:', { selectedAmenity, fileCount: files.length });
       return;
@@ -148,11 +152,15 @@ export const useAmenityImages = ({ form, hotelId }: UseAmenityImagesProps) => {
       description: file.metadata?.altText || `${amenitiesWithImages[selectedAmenity]} image ${index + 1}`,
       title: file.metadata?.title || file.name,
       caption: file.metadata?.caption || '',
+      id: `${selectedAmenity}-${Date.now()}-${index}-${Math.random().toString(36).substr(2, 9)}`,
       metadata: file.metadata
     }));
     
     // Create a new array with the existing images plus the new ones
-    const updatedImages = [...currentImages, ...newImages];
+    // Make sure to handle the case where currentImages might not be an array
+    const updatedImages = Array.isArray(currentImages) 
+      ? [...currentImages, ...newImages] 
+      : [...newImages];
     
     // Set the images array with proper dirty flag to mark the form as changed
     form.setValue(imageFieldName as any, updatedImages, {
@@ -180,14 +188,19 @@ export const useAmenityImages = ({ form, hotelId }: UseAmenityImagesProps) => {
     });
     
     setIsImageDialogOpen(false);
-  };
+  }, [form, selectedAmenity, toast]);
   
-  const handleRemoveImage = (amenityName: string, index: number) => {
+  const handleRemoveImage = useCallback((amenityName: string, index: number) => {
     const imageFieldName = `amenities.${amenityName}Images` as const;
     const currentImages = form.getValues(imageFieldName as any) || [];
     
     console.log(`Removing image at index ${index} from ${amenityName}`);
     console.log('Current images before removal:', currentImages);
+    
+    if (!Array.isArray(currentImages)) {
+      console.error('Images field is not an array:', currentImages);
+      return;
+    }
     
     if (index < 0 || index >= currentImages.length) {
       console.error('Invalid image index:', index);
@@ -220,11 +233,11 @@ export const useAmenityImages = ({ form, hotelId }: UseAmenityImagesProps) => {
       description: `Image was removed from ${amenitiesWithImages[amenityName]}. Don't forget to save your changes.`,
       variant: "default",
     });
-  };
+  }, [form, toast]);
   
-  const handleCloseDialog = () => {
+  const handleCloseDialog = useCallback(() => {
     setIsImageDialogOpen(false);
-  };
+  }, []);
 
   return {
     selectedAmenity,

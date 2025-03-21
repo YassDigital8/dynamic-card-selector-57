@@ -65,30 +65,48 @@ const HotelForm = memo(({ initialData, onSubmit, isLoading, showButtons = true }
     console.log('HotelForm - Submitting form with values:', JSON.stringify(values, null, 2));
     console.log('HotelForm - Form is dirty before submission:', form.formState.isDirty);
     
-    // Ensure all image arrays are properly structured
-    const processedValues = { ...values };
+    // Create a deep copy to avoid mutating the original values
+    const processedValues = JSON.parse(JSON.stringify(values));
     
-    // Validate all image arrays before submission
-    Object.entries(processedValues.amenities).forEach(([key, value]) => {
-      if (key.includes('Images') && Array.isArray(value)) {
-        console.log(`HotelForm - Processing ${key} for submission - ${value.length} images`);
+    // Ensure all image arrays are properly structured and exist
+    if (processedValues.amenities) {
+      // Process each amenity that can have images
+      const amenityKeysWithImages = ['bar', 'gym', 'spa', 'restaurant', 'breakfast', 'swimmingPool'];
+      
+      amenityKeysWithImages.forEach(amenityKey => {
+        const imagesKey = `${amenityKey}Images`;
         
-        // Add unique identifiers to ensure proper tracking
-        const processedImages = value.map((img, index) => ({
-          ...img,
-          // Generate an id if missing using index and timestamp
-          id: `${key}-${index}-${Date.now()}`
-        }));
-        
-        // @ts-ignore - TypeScript might complain about this assignment
-        processedValues.amenities[key] = processedImages;
-        
-        console.log(`HotelForm - Processed ${key} - ${processedImages.length} images`);
-        if (processedImages.length > 0) {
-          console.log('First processed image:', processedImages[0]);
+        // Initialize empty array if it doesn't exist
+        if (!processedValues.amenities[imagesKey]) {
+          processedValues.amenities[imagesKey] = [];
         }
-      }
-    });
+        
+        // Ensure images array is valid
+        if (Array.isArray(processedValues.amenities[imagesKey])) {
+          const images = processedValues.amenities[imagesKey];
+          
+          // Process each image to ensure it has required properties
+          processedValues.amenities[imagesKey] = images.map((img, index) => {
+            if (typeof img !== 'object' || img === null) {
+              // Convert strings or invalid values to proper image objects
+              return {
+                url: typeof img === 'string' ? img : '',
+                id: `${amenityKey}-${index}-${Date.now()}`
+              };
+            }
+            
+            // Ensure required properties
+            return {
+              ...img,
+              url: img.url || '',
+              id: img.id || `${amenityKey}-${index}-${Date.now()}`
+            };
+          }).filter(img => img.url); // Remove any images without URLs
+          
+          console.log(`HotelForm - Processed ${imagesKey} - ${processedValues.amenities[imagesKey].length} images`);
+        }
+      });
+    }
     
     // Pass the processed form values to the parent component
     onSubmit(processedValues as HotelFormData);

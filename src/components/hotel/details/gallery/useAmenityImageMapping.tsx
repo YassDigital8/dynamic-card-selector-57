@@ -35,7 +35,8 @@ const useAmenityImageMapping = (hotel: Hotel) => {
           return {
             url: img,
             title: `${displayName} image ${index + 1}`,
-            description: `Image for ${displayName}`
+            description: `Image for ${displayName}`,
+            id: `${key}-${index}-${Date.now()}`
           };
         } else if (typeof img === 'object' && img !== null) {
           // Ensure url property exists
@@ -48,6 +49,7 @@ const useAmenityImageMapping = (hotel: Hotel) => {
             title: img.title || `${displayName} image ${index + 1}`,
             description: img.description || `Image for ${displayName}`,
             caption: img.caption,
+            id: img.id || `${key}-${index}-${Date.now()}`,
             metadata: img.metadata
           };
         }
@@ -95,16 +97,18 @@ const useAmenityImageMapping = (hotel: Hotel) => {
       roomTypeImages.push({
         url: roomType.imageUrl,
         title: roomType.name,
-        description: `Main image for ${roomType.name}`
+        description: `Main image for ${roomType.name}`,
+        id: `room-${roomType.id}-main-${Date.now()}`
       });
     }
     
     if (roomType.images && roomType.images.length > 0) {
-      roomType.images.forEach(imgUrl => {
+      roomType.images.forEach((imgUrl, idx) => {
         roomTypeImages.push({
           url: imgUrl,
           title: roomType.name,
-          description: `Image for ${roomType.name}`
+          description: `Image for ${roomType.name}`,
+          id: `room-${roomType.id}-${idx}-${Date.now()}`
         });
       });
     }

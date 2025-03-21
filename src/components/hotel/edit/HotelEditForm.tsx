@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import HotelForm from '../HotelForm';
@@ -27,6 +27,22 @@ const HotelEditForm: React.FC<HotelEditFormProps> = ({
   const [customLogo, setCustomLogo] = useState<string | undefined>(selectedHotel.logoUrl);
   const [isLogoDialogOpen, setIsLogoDialogOpen] = useState(false);
   const { toast } = useToast();
+
+  // Debug - log selected hotel's amenities for troubleshooting
+  useEffect(() => {
+    console.log('HotelEditForm - Initial hotel data:', selectedHotel.id);
+    console.log('HotelEditForm - Amenities:', JSON.stringify(selectedHotel.amenities, null, 2));
+    
+    // Check for image arrays in the amenities
+    Object.entries(selectedHotel.amenities).forEach(([key, value]) => {
+      if (key.includes('Images')) {
+        console.log(`HotelEditForm - ${key}:`, value);
+        if (Array.isArray(value) && value.length > 0) {
+          console.log(`First image in ${key}:`, value[0]);
+        }
+      }
+    });
+  }, [selectedHotel]);
 
   // Generate initials for the fallback
   const initials = selectedHotel.name
@@ -73,11 +89,29 @@ const HotelEditForm: React.FC<HotelEditFormProps> = ({
   };
 
   const handleSubmit = (data: HotelFormData) => {
+    // Debug - log the form data before submission
+    console.log('HotelEditForm - Form data before submission:', JSON.stringify(data, null, 2));
+    
+    // Check all image arrays before submission
+    if (data.amenities) {
+      Object.entries(data.amenities).forEach(([key, value]) => {
+        if (key.includes('Images')) {
+          console.log(`HotelEditForm - Submitting ${key}:`, value);
+          if (Array.isArray(value) && value.length > 0) {
+            console.log(`First image in ${key}:`, value[0]);
+          }
+        }
+      });
+    }
+    
     // Include the logo URL in the form data
-    onSubmit({
+    const formDataWithLogo = {
       ...data,
       logoUrl: customLogo
-    });
+    };
+    
+    // Submit the form data to the parent component
+    onSubmit(formDataWithLogo);
   };
 
   const handleLogoClick = () => {
