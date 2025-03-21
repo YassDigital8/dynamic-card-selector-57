@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import HotelForm from '../HotelForm';
-import { Hotel, HotelFormData } from '@/models/HotelModel';
+import { Hotel, HotelFormData, AmenityImage } from '@/models/HotelModel';
 import { LogoDialog } from '../details/header';
 import { useToast } from '@/hooks/use-toast';
 import { EditFormHeader } from './';
@@ -111,8 +111,9 @@ const HotelEditForm: React.FC<HotelEditFormProps> = ({
       const images = data.amenities[imagesKey];
       
       // Validate each image has the required fields
-      if (Array.isArray(images) && images.length > 0) {
+      if (Array.isArray(images)) {
         console.log(`HotelEditForm - Validating ${images.length} images for ${amenityKey}`);
+        // Fixed here: Cast the result to AmenityImage[] explicitly
         data.amenities[imagesKey] = images.map((img: any, index: number) => {
           if (typeof img !== 'object' || !img) {
             return {
@@ -126,7 +127,7 @@ const HotelEditForm: React.FC<HotelEditFormProps> = ({
             url: img.url || '',
             id: img.id || `${amenityKey}-${index}-${Date.now()}`
           };
-        }).filter((img: any) => img.url);
+        }).filter((img: any) => img.url) as any;
       }
     });
     
