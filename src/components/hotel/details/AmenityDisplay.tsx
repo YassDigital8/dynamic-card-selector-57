@@ -15,10 +15,9 @@ interface AmenityDisplayProps {
 
 const AmenityDisplay: React.FC<AmenityDisplayProps> = ({ amenities }) => {
   useEffect(() => {
-    // Debug logging to help diagnose the issue
     console.log('AmenityDisplay - Rendering with updated amenities');
     
-    // Check all possible image arrays with more detail
+    // Check all image arrays with more detail
     Object.entries(amenityImageMapping).forEach(([amenityKey, imagesKey]) => {
       const hasAmenity = amenities[amenityKey as keyof HotelAmenities];
       const images = amenities[imagesKey as keyof HotelAmenities];
@@ -59,6 +58,7 @@ const AmenityDisplay: React.FC<AmenityDisplayProps> = ({ amenities }) => {
       {/* Image Gallery Dialog */}
       {selectedAmenity && (
         <AmenityImageGallery
+          key={`gallery-${selectedAmenity}-${JSON.stringify(getAmenityImages(amenities, selectedAmenity))}`}
           isOpen={isGalleryOpen}
           onOpenChange={setIsGalleryOpen}
           selectedAmenity={selectedAmenity}

@@ -36,6 +36,13 @@ const HotelDetailsWrapper: React.FC<HotelDetailsWrapperProps> = memo(({
   useEffect(() => {
     console.log('HotelDetailsWrapper received updated hotel data:', hotel.id);
     console.log('Hotel amenities:', Object.keys(hotel.amenities).filter(k => k.includes('Images')));
+    
+    // Log image counts for better debugging
+    Object.entries(hotel.amenities).forEach(([key, value]) => {
+      if (key.includes('Images') && Array.isArray(value)) {
+        console.log(`${key} has ${value.length} images`);
+      }
+    });
   }, [hotel]);
   
   const handleLogoChange = useCallback((hotelId: string, logo: string | null) => {
@@ -88,9 +95,12 @@ const HotelDetailsWrapper: React.FC<HotelDetailsWrapperProps> = memo(({
     }
   }), [springConfig]);
 
+  // Generate a unique key for the motion div to force re-render on hotel updates
+  const detailsKey = `hotel-card-container-${hotel.id}-${hotel.updatedAt.getTime()}`;
+
   return (
     <motion.div
-      key={`hotel-card-container-${hotel.id}-${hotel.updatedAt.toString()}`}
+      key={detailsKey}
       initial="hidden"
       animate="visible"
       variants={cardVariants}
@@ -121,7 +131,10 @@ const HotelDetailsWrapper: React.FC<HotelDetailsWrapperProps> = memo(({
                   variants={itemVariants}
                   className="space-y-4 w-full"
                 >
-                  <HotelGallery hotel={hotel} />
+                  <HotelGallery 
+                    key={`gallery-${hotel.id}-${hotel.updatedAt.getTime()}`} 
+                    hotel={hotel} 
+                  />
                 </motion.div>
               </div>
             </CarouselItem>

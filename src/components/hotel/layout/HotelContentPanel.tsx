@@ -94,6 +94,11 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
     }
   };
 
+  // Generate a unique ID for the hotel details to force a refresh when data changes
+  const hotelDetailsKey = selectedHotel 
+    ? `hotel-details-${selectedHotel.id}-${selectedHotel.updatedAt.getTime()}`
+    : 'no-hotel';
+
   return (
     <motion.div 
       className="h-full w-full p-2 sm:p-4 overflow-hidden relative flex flex-col"
@@ -133,7 +138,7 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
 
       {isEditing && selectedHotel && (
         <HotelEditForm
-          key={`edit-form-${selectedHotel.id}`}
+          key={`edit-form-${selectedHotel.id}-${selectedHotel.updatedAt.getTime()}`}
           selectedHotel={selectedHotel}
           isLoading={isLoading}
           onSubmit={handleEditSubmit}
@@ -143,7 +148,7 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
 
       {!showAddForm && !isEditing && selectedHotel && (
         <HotelDetailsWrapper 
-          key={`hotel-details-${selectedHotel.id}-${selectedHotel.updatedAt.toString()}`}
+          key={hotelDetailsKey}
           hotel={selectedHotel} 
           onEdit={onStartEdit} 
           onBack={onBackToList}

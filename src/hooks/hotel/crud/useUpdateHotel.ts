@@ -27,7 +27,7 @@ export const useUpdateHotel = ({ setHotels, setIsLoading }: UseUpdateHotelProps)
         
         Object.entries(hotelData.amenities).forEach(([key, value]) => {
           if (key.includes('Images')) {
-            console.log(`Updating ${key}:`, JSON.stringify(value, null, 2));
+            console.log(`Updating ${key}:`, Array.isArray(value) ? value.length : 'not an array', value);
           }
         });
       }
