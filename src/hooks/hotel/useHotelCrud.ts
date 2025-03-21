@@ -64,11 +64,17 @@ export const useHotelCrud = () => {
       
       // Check for amenity images in the update data
       if (hotelData.amenities) {
+        console.log('Amenities in update data:', JSON.stringify(hotelData.amenities, null, 2));
+        
         Object.entries(hotelData.amenities).forEach(([key, value]) => {
           if (key.includes('Images')) {
             console.log(`Updating ${key}:`, JSON.stringify(value, null, 2));
             if (Array.isArray(value) && value.length > 0) {
               console.log(`Found ${value.length} images for ${key}. Sample:`, JSON.stringify(value[0], null, 2));
+            } else if (Array.isArray(value)) {
+              console.log(`Empty array for ${key}`);
+            } else {
+              console.error(`Invalid value for ${key}: not an array`, value);
             }
           }
         });
@@ -77,36 +83,46 @@ export const useHotelCrud = () => {
       setHotels(prevHotels => {
         const updated = prevHotels.map(hotel => {
           if (hotel.id === id) {
-            // Carefully merge amenities to preserve image arrays
-            const mergedAmenities = { ...hotel.amenities };
+            // Create a deep copy of the existing hotel
+            const existingHotel = JSON.parse(JSON.stringify(hotel));
+            
+            // For amenities, we need special handling to ensure image arrays are preserved
+            const mergedAmenities = { ...existingHotel.amenities };
             
             if (hotelData.amenities) {
-              // For each amenity in the update data
+              // Copy all amenity properties from update data, including image arrays
               Object.entries(hotelData.amenities).forEach(([key, value]) => {
-                if (key.includes('Images')) {
-                  // Ensure image arrays are properly preserved
-                  mergedAmenities[key as keyof typeof mergedAmenities] = 
-                    Array.isArray(value) && value.length > 0 
-                      ? value as any
-                      : mergedAmenities[key as keyof typeof mergedAmenities];
+                if (key.includes('Images') && Array.isArray(value)) {
+                  console.log(`Merging ${key} with ${value.length} images`);
+                  mergedAmenities[key as keyof typeof mergedAmenities] = value as any;
                 } else {
-                  // For boolean amenity flags, just use the updated value
+                  // Boolean flags or other properties
                   mergedAmenities[key as keyof typeof mergedAmenities] = value as any;
                 }
               });
             }
             
+            // Create the updated hotel with merged amenities
             updatedHotel = {
-              ...hotel,
+              ...existingHotel,
               ...hotelData,
               amenities: mergedAmenities,
               updatedAt: new Date()
             };
             
-            // Final check on amenity images before saving
+            // Final validation of amenity images before saving
             Object.entries(updatedHotel.amenities).forEach(([key, value]) => {
-              if (key.includes('Images') && Array.isArray(value)) {
-                console.log(`Final ${key} in updated hotel:`, JSON.stringify(value, null, 2));
+              if (key.includes('Images')) {
+                if (Array.isArray(value)) {
+                  console.log(`Final ${key} in updated hotel: ${value.length} images`);
+                  if (value.length > 0) {
+                    console.log(`Sample image:`, JSON.stringify(value[0], null, 2));
+                  }
+                } else {
+                  console.error(`ERROR: ${key} is not an array in final updated hotel:`, value);
+                  // Ensure it's an array to prevent runtime errors
+                  updatedHotel!.amenities[key as keyof typeof updatedHotel.amenities] = [] as any;
+                }
               }
             });
             

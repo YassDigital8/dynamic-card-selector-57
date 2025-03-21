@@ -97,48 +97,62 @@ const HotelEditForm: React.FC<HotelEditFormProps> = ({
       Object.entries(data.amenities).forEach(([key, value]) => {
         if (key.includes('Images')) {
           console.log(`HotelEditForm - Submitting ${key}:`, JSON.stringify(value, null, 2));
-          if (Array.isArray(value) && value.length > 0) {
-            console.log(`First image in ${key}:`, JSON.stringify(value[0], null, 2));
+          if (Array.isArray(value)) {
+            console.log(`Found ${value.length} images in ${key}:`, value.length > 0 ? JSON.stringify(value[0], null, 2) : 'empty array');
+          } else {
+            console.error(`WARNING: ${key} is not an array:`, value);
           }
         }
       });
     }
     
+    // Create a deep copy to ensure we don't mutate the original data
+    const processedData = JSON.parse(JSON.stringify(data));
+    
     // Ensure amenity images data is correctly structured
     const amenityKeysWithImages = ['bar', 'gym', 'spa', 'restaurant', 'breakfast', 'swimmingPool'];
     amenityKeysWithImages.forEach(amenityKey => {
-      const imagesKey = `${amenityKey}Images` as keyof typeof data.amenities;
-      const images = data.amenities[imagesKey];
+      const imagesKey = `${amenityKey}Images` as keyof typeof processedData.amenities;
+      const images = processedData.amenities[imagesKey];
       
-      // Validate each image has the required fields
-      if (Array.isArray(images)) {
-        console.log(`HotelEditForm - Validating ${images.length} images for ${amenityKey}`);
-        // Fixed here: Cast the result to AmenityImage[] explicitly
-        data.amenities[imagesKey] = images.map((img: any, index: number) => {
-          if (typeof img !== 'object' || !img) {
-            return {
-              url: typeof img === 'string' ? img : '',
-              id: `${amenityKey}-${index}-${Date.now()}`
-            };
-          }
-          
-          return {
-            ...img,
-            url: img.url || '',
-            id: img.id || `${amenityKey}-${index}-${Date.now()}`
-          };
-        }).filter((img: any) => img.url) as any;
+      // Ensure images is always an array
+      if (!Array.isArray(images)) {
+        console.log(`Initializing empty array for ${imagesKey} (was ${typeof images})`);
+        processedData.amenities[imagesKey] = [] as AmenityImage[];
+        return;
       }
+      
+      console.log(`Processing ${images.length} images for ${amenityKey}`);
+      
+      // Process each image in the array to ensure valid structure
+      const validatedImages = images.map((img: any, index: number) => {
+        if (typeof img !== 'object' || !img) {
+          return {
+            url: typeof img === 'string' ? img : '',
+            id: `${amenityKey}-${index}-${Date.now()}`
+          };
+        }
+        
+        return {
+          ...img,
+          url: img.url || '',
+          id: img.id || `${amenityKey}-${index}-${Date.now()}`
+        };
+      }).filter((img: any) => img.url);
+      
+      // Assign the validated images back to the processed data
+      processedData.amenities[imagesKey] = validatedImages;
+      
+      console.log(`Validated ${validatedImages.length} images for ${amenityKey}`);
     });
     
     // Include the logo URL in the form data
-    const formDataWithLogo = {
-      ...data,
-      logoUrl: customLogo
-    };
+    processedData.logoUrl = customLogo;
     
-    // Submit the form data to the parent component
-    onSubmit(formDataWithLogo);
+    console.log('Final processed data:', JSON.stringify(processedData, null, 2));
+    
+    // Submit the processed form data to the parent component
+    onSubmit(processedData);
   };
 
   const handleLogoClick = () => {
