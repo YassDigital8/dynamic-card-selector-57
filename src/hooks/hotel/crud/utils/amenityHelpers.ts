@@ -8,6 +8,8 @@ import { Hotel } from '@/models/HotelModel';
 export const validateAmenityImages = (hotel: Hotel | undefined) => {
   if (!hotel || !hotel.amenities) return hotel;
   
+  console.log(`Validating amenity images for hotel: ${hotel.id}`);
+  
   // Check each property that ends with 'Images' and ensure it's an array
   Object.entries(hotel.amenities).forEach(([key, value]) => {
     if (key.includes('Images')) {
@@ -25,4 +27,24 @@ export const validateAmenityImages = (hotel: Hotel | undefined) => {
   });
   
   return hotel;
+};
+
+/**
+ * Deep clones amenity images to prevent reference issues
+ */
+export const cloneAmenityImages = (hotel: Hotel): Hotel => {
+  if (!hotel || !hotel.amenities) return hotel;
+  
+  const clonedHotel = { ...hotel };
+  clonedHotel.amenities = { ...hotel.amenities };
+  
+  // Deep clone all image arrays to break references
+  Object.entries(hotel.amenities).forEach(([key, value]) => {
+    if (key.includes('Images') && Array.isArray(value)) {
+      const typedKey = key as keyof typeof clonedHotel.amenities;
+      clonedHotel.amenities[typedKey] = JSON.parse(JSON.stringify(value));
+    }
+  });
+  
+  return clonedHotel;
 };

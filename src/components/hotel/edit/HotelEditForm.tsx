@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
@@ -41,16 +42,21 @@ const HotelEditForm: React.FC<HotelEditFormProps> = ({
 
   useEffect(() => {
     console.log('HotelEditForm - Initial hotel data for hotel ID:', selectedHotel.id);
-    console.log('HotelEditForm - Amenities:', JSON.stringify(selectedHotel.amenities, null, 2));
     
-    Object.entries(selectedHotel.amenities).forEach(([key, value]) => {
-      if (key.includes('Images')) {
-        console.log(`HotelEditForm - ${key}:`, JSON.stringify(value, null, 2));
-        if (Array.isArray(value) && value.length > 0) {
-          console.log(`First image in ${key}:`, JSON.stringify(value[0], null, 2));
+    // Debug amenity image arrays specifically
+    if (selectedHotel.amenities) {
+      const imageKeys = Object.keys(selectedHotel.amenities).filter(k => k.includes('Images'));
+      console.log('Available image arrays:', imageKeys);
+      
+      imageKeys.forEach(key => {
+        const images = selectedHotel.amenities[key as keyof typeof selectedHotel.amenities];
+        if (Array.isArray(images)) {
+          console.log(`${key} has ${images.length} images`);
+        } else {
+          console.warn(`${key} is not a valid array:`, images);
         }
-      }
-    });
+      });
+    }
   }, [selectedHotel]);
 
   const initials = selectedHotel.name
@@ -62,7 +68,7 @@ const HotelEditForm: React.FC<HotelEditFormProps> = ({
 
   return (
     <motion.div
-      key="edit-form"
+      key={`edit-form-${selectedHotel.id}`}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}

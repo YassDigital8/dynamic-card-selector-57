@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
@@ -10,6 +10,7 @@ import HotelEmptyState from '../HotelEmptyState';
 import NoHotelSelected from '../NoHotelSelected';
 import { Hotel, HotelFormData } from '@/models/HotelModel';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useToast } from '@/hooks/use-toast';
 
 interface HotelContentPanelProps {
   selectedHotel: Hotel | null;
@@ -46,9 +47,30 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
   onStartEdit,
   onUpdateHotel
 }) => {
+  const { toast } = useToast();
+  
   // Determine if we should show content (either a selected hotel, add form, or edit form)
   const showContent = selectedHotel || showAddForm || isEditing;
   const isMobile = useIsMobile();
+
+  // Log when hotel data changes for debugging
+  useEffect(() => {
+    if (selectedHotel) {
+      console.log('HotelContentPanel received updated hotel:', selectedHotel.id);
+    }
+  }, [selectedHotel]);
+  
+  // Function to handle successful edits
+  const handleEditSubmit = (data: HotelFormData) => {
+    onSubmitEdit(data);
+    
+    // Show success toast to indicate changes are saved
+    toast({
+      title: "Hotel Updated",
+      description: "Your changes have been saved successfully.",
+      variant: "default",
+    });
+  };
 
   // Refined animation variants for smoother content transitions
   const contentVariants = {
@@ -111,17 +133,17 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
 
       {isEditing && selectedHotel && (
         <HotelEditForm
-          key="edit-form"
+          key={`edit-form-${selectedHotel.id}`}
           selectedHotel={selectedHotel}
           isLoading={isLoading}
-          onSubmit={onSubmitEdit}
+          onSubmit={handleEditSubmit}
           onCancel={onCancelEdit}
         />
       )}
 
       {!showAddForm && !isEditing && selectedHotel && (
         <HotelDetailsWrapper 
-          key={`hotel-details-${selectedHotel.id}`}
+          key={`hotel-details-${selectedHotel.id}-${selectedHotel.updatedAt.toString()}`}
           hotel={selectedHotel} 
           onEdit={onStartEdit} 
           onBack={onBackToList}

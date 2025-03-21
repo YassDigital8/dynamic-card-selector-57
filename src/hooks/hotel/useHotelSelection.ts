@@ -11,8 +11,10 @@ export const useHotelSelection = (
   const [showAddForm, setShowAddForm] = useState(false);
   const [isExpanded, setIsExpanded] = useState(true);
   const [isSelectingNewHotel, setIsSelectingNewHotel] = useState(false);
+  const [forceRefresh, setForceRefresh] = useState(0); // Counter to force refresh
 
   const handleSelectHotel = useCallback((hotel: Hotel) => {
+    console.log('Selecting hotel:', hotel.id);
     // Direct hotel selection without any clearing or transition flags
     setSelectedHotel(hotel);
     setIsEditing(false);
@@ -21,6 +23,7 @@ export const useHotelSelection = (
   }, []);
 
   const handleEditHotel = useCallback((hotel: Hotel) => {
+    console.log('Editing hotel:', hotel.id);
     setSelectedHotel(hotel);
     setIsEditing(true);
     setShowAddForm(false);
@@ -48,17 +51,29 @@ export const useHotelSelection = (
 
   const handleSubmitEdit = useCallback((data: HotelFormData) => {
     if (selectedHotel) {
+      console.log('Submitting edit for hotel:', selectedHotel.id);
       const result = updateHotel(selectedHotel.id, data);
       setIsEditing(false);
       
       // Update the selectedHotel with the updated data if successful
       if (result.success && result.hotel) {
+        console.log('Hotel updated successfully, refreshing with new data');
+        // Force immediate refresh with the updated hotel data
         setSelectedHotel(result.hotel);
+        // Increment force refresh counter to trigger re-renders
+        setForceRefresh(prev => prev + 1);
       }
     }
   }, [selectedHotel, updateHotel]);
   
   const handleCancelEdit = useCallback(() => setIsEditing(false), []);
+
+  // Log when selected hotel changes for debugging
+  useEffect(() => {
+    if (selectedHotel) {
+      console.log('Selected hotel updated:', selectedHotel.id, 'Refresh count:', forceRefresh);
+    }
+  }, [selectedHotel, forceRefresh]);
 
   return {
     selectedHotel,
@@ -66,6 +81,7 @@ export const useHotelSelection = (
     showAddForm,
     isExpanded,
     isSelectingNewHotel,
+    forceRefresh,
     setSelectedHotel,
     setIsEditing,
     setShowAddForm,

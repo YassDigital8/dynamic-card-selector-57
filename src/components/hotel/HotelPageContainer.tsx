@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { HotelFormData } from '@/models/HotelModel';
 import HotelPageHeader from './HotelPageHeader';
 import HotelResizablePanels from './layout/HotelResizablePanels';
@@ -34,6 +34,7 @@ const HotelPageContainer: React.FC = () => {
     showAddForm,
     isExpanded,
     isSelectingNewHotel,
+    forceRefresh,
     handleSelectHotel,
     handleEditHotel,
     handleStartEdit,
@@ -48,6 +49,13 @@ const HotelPageContainer: React.FC = () => {
     showAddForm,
     isEditing
   });
+
+  // Log selected hotel changes for debugging
+  useEffect(() => {
+    if (selectedHotel) {
+      console.log('HotelPageContainer - Selected hotel updated:', selectedHotel.id, forceRefresh);
+    }
+  }, [selectedHotel, forceRefresh]);
 
   const handleSubmitAdd = (data: HotelFormData) => {
     const hotelWithPOS = {

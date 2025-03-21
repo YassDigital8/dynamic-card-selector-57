@@ -2,7 +2,7 @@
 import { useCallback } from 'react';
 import { Hotel, HotelFormData } from '@/models/HotelModel';
 import { useToast } from '@/hooks/use-toast';
-import { validateAmenityImages } from './utils/amenityHelpers';
+import { validateAmenityImages, cloneAmenityImages } from './utils/amenityHelpers';
 
 interface UseUpdateHotelProps {
   hotels: Hotel[];
@@ -28,13 +28,6 @@ export const useUpdateHotel = ({ setHotels, setIsLoading }: UseUpdateHotelProps)
         Object.entries(hotelData.amenities).forEach(([key, value]) => {
           if (key.includes('Images')) {
             console.log(`Updating ${key}:`, JSON.stringify(value, null, 2));
-            if (Array.isArray(value) && value.length > 0) {
-              console.log(`Found ${value.length} images for ${key}. Sample:`, JSON.stringify(value[0], null, 2));
-            } else if (Array.isArray(value)) {
-              console.log(`Empty array for ${key}`);
-            } else {
-              console.error(`Invalid value for ${key}: not an array`, value);
-            }
           }
         });
       }
@@ -55,7 +48,9 @@ export const useUpdateHotel = ({ setHotels, setIsLoading }: UseUpdateHotelProps)
                   console.log(`Merging ${key} with ${value.length} images`);
                   // Explicitly convert key to string here
                   const stringKey = String(key);
-                  mergedAmenities[stringKey as keyof typeof mergedAmenities] = value as any;
+                  // Create a deep copy of the array to avoid reference issues
+                  mergedAmenities[stringKey as keyof typeof mergedAmenities] = 
+                    JSON.parse(JSON.stringify(value)) as any;
                 } else {
                   // Boolean flags or other properties
                   const stringKey = String(key);
@@ -73,9 +68,10 @@ export const useUpdateHotel = ({ setHotels, setIsLoading }: UseUpdateHotelProps)
             };
             
             // Final validation of amenity images before saving
-            validateAmenityImages(updatedHotel);
+            updatedHotel = validateAmenityImages(updatedHotel);
             
-            return updatedHotel;
+            // Break references by deep cloning
+            return cloneAmenityImages(updatedHotel!);
           }
           return hotel;
         });

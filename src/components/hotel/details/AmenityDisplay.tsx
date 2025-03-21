@@ -16,19 +16,17 @@ interface AmenityDisplayProps {
 const AmenityDisplay: React.FC<AmenityDisplayProps> = ({ amenities }) => {
   useEffect(() => {
     // Debug logging to help diagnose the issue
-    console.log('AmenityDisplay - Full amenities object:', JSON.stringify(amenities, null, 2));
+    console.log('AmenityDisplay - Rendering with updated amenities');
     
     // Check all possible image arrays with more detail
     Object.entries(amenityImageMapping).forEach(([amenityKey, imagesKey]) => {
       const hasAmenity = amenities[amenityKey as keyof HotelAmenities];
       const images = amenities[imagesKey as keyof HotelAmenities];
-      console.log(`AmenityDisplay - ${amenityKey} enabled:`, hasAmenity);
-      console.log(`AmenityDisplay - ${amenityKey} images:`, images);
       
       if (Array.isArray(images) && images.length > 0) {
-        console.log(`${amenityKey} has ${images.length} images. First image:`, JSON.stringify(images[0]));
+        console.log(`${amenityKey} has ${images.length} images`);
       } else if (hasAmenity) {
-        console.log(`WARNING: ${amenityKey} is enabled but has no images or images array is invalid`);
+        console.log(`${amenityKey} is enabled but has no images or images array is invalid`);
       }
     });
   }, [amenities]);

@@ -1,5 +1,5 @@
 
-import React, { memo, useMemo, useCallback } from 'react';
+import React, { memo, useMemo, useCallback, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import HotelDetails from './HotelDetails';
@@ -31,6 +31,12 @@ const HotelDetailsWrapper: React.FC<HotelDetailsWrapperProps> = memo(({
 }) => {
   const isMobile = useIsMobile();
   const { width } = useScreenSize();
+  
+  // Log when hotel data updates for debugging
+  useEffect(() => {
+    console.log('HotelDetailsWrapper received updated hotel data:', hotel.id);
+    console.log('Hotel amenities:', Object.keys(hotel.amenities).filter(k => k.includes('Images')));
+  }, [hotel]);
   
   const handleLogoChange = useCallback((hotelId: string, logo: string | null) => {
     if (onUpdateHotel) {
@@ -84,7 +90,7 @@ const HotelDetailsWrapper: React.FC<HotelDetailsWrapperProps> = memo(({
 
   return (
     <motion.div
-      key={`hotel-card-container-${hotel.id}`}
+      key={`hotel-card-container-${hotel.id}-${hotel.updatedAt.toString()}`}
       initial="hidden"
       animate="visible"
       variants={cardVariants}
