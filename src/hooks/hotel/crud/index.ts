@@ -1,0 +1,2 @@
+
+export { useHotelCrud } from './useHotelCrud';
