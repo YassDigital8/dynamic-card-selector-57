@@ -2,8 +2,8 @@
 import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { FormValues } from '../formSchema';
-import { AmenityItem } from './';
 import { amenitiesList } from './constants';
+import { AmenityListItem } from './AmenityListItem';
 
 interface AmenityListProps {
   form: UseFormReturn<FormValues>;
@@ -19,13 +19,9 @@ const AmenityList: React.FC<AmenityListProps> = ({
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
       {amenitiesList.map((amenity) => (
-        <AmenityItem
+        <AmenityListItem
           key={amenity.name}
-          name={amenity.name}
-          label={amenity.label}
-          icon={amenity.icon}
-          hasImages={amenity.hasImages}
-          imageField={amenity.imageField}
+          amenity={amenity}
           form={form}
           onAddImage={onAddImage}
           onRemoveImage={onRemoveImage}
