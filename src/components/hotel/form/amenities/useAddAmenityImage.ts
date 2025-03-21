@@ -3,7 +3,6 @@ import { useCallback } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { AmenityImage } from '@/models/HotelModel';
 import { FileMetadataValues } from '@/hooks/upload/useFileMetadata';
-import { FileInfo } from '@/models/FileModel';
 import { useToast } from '@/hooks/use-toast';
 import { amenitiesWithImages } from './constants';
 import { FormValues } from '../formSchema';
