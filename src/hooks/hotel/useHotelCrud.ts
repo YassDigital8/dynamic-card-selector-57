@@ -125,7 +125,9 @@ export const useHotelCrud = () => {
                   console.error(`ERROR: ${key} is not an array in final updated hotel:`, value);
                   // Ensure it's an array to prevent runtime errors
                   const stringKey = String(key);
-                  updatedHotel!.amenities[stringKey as keyof typeof updatedHotel!.amenities] = [] as any;
+                  // Fix the TypeScript syntax error by placing the non-null assertion correctly
+                  const hotelRef = updatedHotel!;
+                  hotelRef.amenities[stringKey as keyof typeof hotelRef.amenities] = [] as any;
                 }
               }
             });
