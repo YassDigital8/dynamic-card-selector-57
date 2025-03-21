@@ -54,7 +54,7 @@ const AmenityItem: React.FC<AmenityItemProps> = ({
     if (hasImages && imageField) {
       const amenityKey = name.split('.')[1];
       console.log(`AmenityItem - ${label} (${amenityKey}) - enabled:`, isChecked);
-      console.log(`AmenityItem - ${label} (${amenityKey}) - images:`, images);
+      console.log(`AmenityItem - ${label} (${amenityKey}) - images array:`, images);
       
       if (Array.isArray(images) && images.length > 0) {
         console.log(`${label} has ${images.length} images in form state`);
@@ -111,7 +111,7 @@ const AmenityItem: React.FC<AmenityItemProps> = ({
               ) : (
                 <div className="grid grid-cols-3 gap-2 mt-1">
                   {images.map((image: AmenityImage, index: number) => (
-                    <div key={index} className="relative group">
+                    <div key={`${image.url}-${index}`} className="relative group">
                       <img 
                         src={image.url} 
                         alt={image.description || label}

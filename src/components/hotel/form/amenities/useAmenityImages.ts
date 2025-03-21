@@ -25,15 +25,19 @@ export const useAmenityImages = ({ form, hotelId }: UseAmenityImagesProps) => {
     const amenities = form.getValues('amenities');
     console.log('Current form amenities:', amenities);
     
-    // Check if spa is enabled and has images
-    if (amenities.spa) {
-      console.log('Spa is enabled, images:', amenities.spaImages || 'No spa images yet');
-    }
-    
-    // Check if gym is enabled and has images
-    if (amenities.gym) {
-      console.log('Gym is enabled, images:', amenities.gymImages || 'No gym images yet');
-    }
+    // Check all image fields systematically
+    Object.keys(amenitiesWithImages).forEach(key => {
+      const amenityKey = key as AmenityWithImages;
+      const enabled = amenities[amenityKey];
+      const imagesKey = `${amenityKey}Images` as keyof typeof amenities;
+      const images = amenities[imagesKey];
+      
+      console.log(`${amenitiesWithImages[amenityKey]} (${amenityKey}): enabled=${enabled}, images=${Array.isArray(images) ? images.length : 'none'}`);
+      
+      if (enabled && Array.isArray(images) && images.length > 0) {
+        console.log(`First image for ${amenityKey}:`, images[0]);
+      }
+    });
     
     // For critical debugging, monitor changes
     const subscription = form.watch((value, { name, type }) => {
@@ -61,6 +65,7 @@ export const useAmenityImages = ({ form, hotelId }: UseAmenityImagesProps) => {
     }
     
     const imageFieldName = `amenities.${selectedAmenity}Images` as const;
+    // Ensure we get the current state of the images array
     const currentImages = form.getValues(imageFieldName as any) || [];
     
     const newImage: AmenityImage = {
@@ -84,8 +89,11 @@ export const useAmenityImages = ({ form, hotelId }: UseAmenityImagesProps) => {
       });
     }
     
+    // Create a new array with the existing images plus the new one
+    const updatedImages = [...currentImages, newImage];
+    
     // Set the images array with proper dirty flag to mark the form as changed
-    form.setValue(imageFieldName as any, [...currentImages, newImage], { 
+    form.setValue(imageFieldName as any, updatedImages, { 
       shouldDirty: true,
       shouldTouch: true,
       shouldValidate: true
@@ -95,8 +103,8 @@ export const useAmenityImages = ({ form, hotelId }: UseAmenityImagesProps) => {
     form.trigger();
     
     // Get updated images to verify
-    const updatedImages = form.getValues(imageFieldName as any);
-    console.log('Updated images after adding:', updatedImages);
+    const verifiedImages = form.getValues(imageFieldName as any);
+    console.log('Updated images after adding:', verifiedImages);
     console.log('Form is dirty:', form.formState.isDirty);
     
     // Notify user
@@ -116,6 +124,7 @@ export const useAmenityImages = ({ form, hotelId }: UseAmenityImagesProps) => {
     }
     
     const imageFieldName = `amenities.${selectedAmenity}Images` as const;
+    // Ensure we get the current state of the images array
     const currentImages = form.getValues(imageFieldName as any) || [];
     
     console.log(`Adding ${files.length} images to ${selectedAmenity}`);
@@ -139,8 +148,11 @@ export const useAmenityImages = ({ form, hotelId }: UseAmenityImagesProps) => {
       metadata: file.metadata
     }));
     
+    // Create a new array with the existing images plus the new ones
+    const updatedImages = [...currentImages, ...newImages];
+    
     // Set the images array with proper dirty flag to mark the form as changed
-    form.setValue(imageFieldName as any, [...currentImages, ...newImages], {
+    form.setValue(imageFieldName as any, updatedImages, {
       shouldDirty: true,
       shouldTouch: true,
       shouldValidate: true
@@ -150,8 +162,8 @@ export const useAmenityImages = ({ form, hotelId }: UseAmenityImagesProps) => {
     form.trigger();
     
     // Verify updated images
-    const updatedImages = form.getValues(imageFieldName as any);
-    console.log('Updated images after adding multiple:', updatedImages);
+    const verifiedImages = form.getValues(imageFieldName as any);
+    console.log('Updated images after adding multiple:', verifiedImages);
     console.log('Form is dirty:', form.formState.isDirty);
     
     // Notify user
@@ -171,6 +183,12 @@ export const useAmenityImages = ({ form, hotelId }: UseAmenityImagesProps) => {
     console.log(`Removing image at index ${index} from ${amenityName}`);
     console.log('Current images before removal:', currentImages);
     
+    if (index < 0 || index >= currentImages.length) {
+      console.error('Invalid image index:', index);
+      return;
+    }
+    
+    // Create a new array without the image at the specified index
     const updatedImages = currentImages.filter((_, i) => i !== index);
     
     form.setValue(imageFieldName as any, updatedImages, { 

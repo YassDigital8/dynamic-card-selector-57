@@ -10,26 +10,13 @@ const useAmenityImageMapping = (hotel: Hotel) => {
   useEffect(() => {
     console.log('Hotel Gallery - Hotel ID:', hotel.id);
     console.log('Hotel Gallery - Hotel Name:', hotel.name);
-    console.log('Hotel Gallery - Amenities object:', JSON.stringify(hotel.amenities, null, 2));
+    console.log('Hotel Gallery - Full Amenities object:', JSON.stringify(hotel.amenities, null, 2));
     
-    // Check all possible image arrays with explicit property access
-    const imageArraysConfig = [
-      { key: 'spa', name: 'Spa', enabled: hotel.amenities.spa, arr: hotel.amenities.spaImages },
-      { key: 'bar', name: 'Bar', enabled: hotel.amenities.bar, arr: hotel.amenities.barImages },
-      { key: 'gym', name: 'Gym', enabled: hotel.amenities.gym, arr: hotel.amenities.gymImages },
-      { key: 'restaurant', name: 'Restaurant', enabled: hotel.amenities.restaurant, arr: hotel.amenities.restaurantImages },
-      { key: 'breakfast', name: 'Breakfast', enabled: hotel.amenities.breakfast, arr: hotel.amenities.breakfastImages },
-      { key: 'swimmingPool', name: 'Swimming Pool', enabled: hotel.amenities.swimmingPool, arr: hotel.amenities.swimmingPoolImages }
-    ];
-    
-    imageArraysConfig.forEach(({ key, name, enabled, arr }) => {
-      console.log(`HotelGallery - ${name} enabled:`, enabled);
-      console.log(`HotelGallery - ${name} images:`, arr);
-      
-      if (enabled && Array.isArray(arr) && arr.length > 0) {
-        console.log(`SUCCESS: ${name} has ${arr.length} images. First image:`, arr[0]);
-      } else if (enabled && (!arr || !Array.isArray(arr) || arr.length === 0)) {
-        console.log(`WARNING: ${name} is enabled but has no images or invalid array`);
+    // Detailed check for all image arrays
+    Object.entries(hotel.amenities).forEach(([key, value]) => {
+      if (key.includes('Images') && Array.isArray(value) && value.length > 0) {
+        console.log(`Hotel Gallery - Found ${value.length} images for ${key}`);
+        console.log(`First image:`, value[0]);
       }
     });
   }, [hotel]);
@@ -39,34 +26,29 @@ const useAmenityImageMapping = (hotel: Hotel) => {
     if (images && Array.isArray(images) && images.length > 0) {
       console.log(`Adding ${images.length} images for ${displayName}:`, images);
       amenityImagesMap.set(displayName, images);
-    } else {
-      console.log(`No images found for ${displayName} or invalid array`);
     }
   };
   
-  // Define amenity keys type
-  type AmenityKey = 'bar' | 'gym' | 'spa' | 'restaurant' | 'breakfast' | 'swimmingPool';
+  // Map of amenity keys to their display names
+  const amenityDisplayMap: Record<string, string> = {
+    bar: 'Bar',
+    gym: 'Gym',
+    spa: 'Spa',
+    restaurant: 'Restaurant',
+    breakfast: 'Breakfast',
+    swimmingPool: 'Swimming Pool'
+  };
   
-  // Check if amenity is enabled before adding images - simplified logic with direct property access
-  const addAmenityIfEnabled = (key: AmenityKey, displayName: string) => {
-    const amenityEnabled = hotel.amenities[key];
-    const imagesKey = `${key}Images` as const;
+  // Process all potential image arrays systematically
+  Object.entries(amenityDisplayMap).forEach(([key, displayName]) => {
+    const amenityEnabled = hotel.amenities[key as keyof typeof hotel.amenities];
+    const imagesKey = `${key}Images` as keyof typeof hotel.amenities;
     const images = hotel.amenities[imagesKey];
     
     if (amenityEnabled && Array.isArray(images) && images.length > 0) {
       addImagesToMap(key, displayName, images);
-    } else if (amenityEnabled) {
-      console.log(`HotelGallery - ${displayName} (${key}) is enabled but has no valid images`);
     }
-  };
-  
-  // Add each amenity directly using the simplified function
-  addAmenityIfEnabled('bar', 'Bar');
-  addAmenityIfEnabled('gym', 'Gym');
-  addAmenityIfEnabled('spa', 'Spa');
-  addAmenityIfEnabled('restaurant', 'Restaurant');
-  addAmenityIfEnabled('breakfast', 'Breakfast');
-  addAmenityIfEnabled('swimmingPool', 'Swimming Pool');
+  });
   
   // Add room type images
   const roomTypeImages: AmenityImage[] = [];
@@ -98,8 +80,10 @@ const useAmenityImageMapping = (hotel: Hotel) => {
   const amenityCategories = Array.from(amenityImagesMap.entries());
   
   // Debug output to help diagnose issues
-  console.log('Gallery categories built:', amenityCategories);
-  console.log('Total categories with images:', amenityCategories.length);
+  console.log('Gallery categories built:', amenityCategories.length);
+  amenityCategories.forEach(([category, images]) => {
+    console.log(`Category: ${category}, Images: ${images.length}`);
+  });
 
   return { amenityCategories };
 };
