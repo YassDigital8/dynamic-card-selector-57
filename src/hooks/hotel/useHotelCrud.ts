@@ -94,10 +94,13 @@ export const useHotelCrud = () => {
               Object.entries(hotelData.amenities).forEach(([key, value]) => {
                 if (key.includes('Images') && Array.isArray(value)) {
                   console.log(`Merging ${key} with ${value.length} images`);
-                  mergedAmenities[key as keyof typeof mergedAmenities] = value as any;
+                  // Explicitly convert key to string here
+                  const stringKey = String(key);
+                  mergedAmenities[stringKey as keyof typeof mergedAmenities] = value as any;
                 } else {
                   // Boolean flags or other properties
-                  mergedAmenities[key as keyof typeof mergedAmenities] = value as any;
+                  const stringKey = String(key);
+                  mergedAmenities[stringKey as keyof typeof mergedAmenities] = value as any;
                 }
               });
             }
@@ -121,7 +124,8 @@ export const useHotelCrud = () => {
                 } else {
                   console.error(`ERROR: ${key} is not an array in final updated hotel:`, value);
                   // Ensure it's an array to prevent runtime errors
-                  updatedHotel!.amenities[key as keyof typeof updatedHotel.amenities] = [] as any;
+                  const stringKey = String(key);
+                  updatedHotel!.amenities[stringKey as keyof typeof updatedHotel!.amenities] = [] as any;
                 }
               }
             });
