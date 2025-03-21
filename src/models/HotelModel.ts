@@ -15,6 +15,7 @@ export interface AmenityImage {
   description?: string;
   title?: string;
   caption?: string;
+  id?: string; // Add id property for tracking images
   metadata?: {
     title?: string;
     altText?: string;

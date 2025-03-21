@@ -79,7 +79,12 @@ const useAmenityImageMapping = (hotel: Hotel) => {
     
     if (amenityEnabled) {
       console.log(`Processing ${key}: enabled=${amenityEnabled}, images available=${!!images}`);
-      addImagesToMap(key, displayName, images);
+      // Make sure we're only passing arrays to addImagesToMap
+      if (Array.isArray(images)) {
+        addImagesToMap(key, displayName, images);
+      } else {
+        console.log(`No valid images array found for ${key}`);
+      }
     }
   });
   

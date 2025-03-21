@@ -76,8 +76,8 @@ const HotelForm = memo(({ initialData, onSubmit, isLoading, showButtons = true }
         // Add unique identifiers to ensure proper tracking
         const processedImages = value.map((img, index) => ({
           ...img,
-          // Add an id if missing
-          id: img.id || `${key}-${index}-${Date.now()}`,
+          // Generate an id if missing using index and timestamp
+          id: `${key}-${index}-${Date.now()}`
         }));
         
         // @ts-ignore - TypeScript might complain about this assignment
