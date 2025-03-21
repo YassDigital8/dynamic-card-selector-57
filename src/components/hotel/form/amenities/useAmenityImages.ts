@@ -107,6 +107,9 @@ export const useAmenityImages = ({ form, hotelId }: UseAmenityImagesProps) => {
     console.log('Updated images after adding:', verifiedImages);
     console.log('Form is dirty:', form.formState.isDirty);
     
+    // Log the entire form state for debugging
+    console.log('Complete form state after image add:', form.getValues());
+    
     // Notify user
     toast({
       title: "Image added",
@@ -140,9 +143,9 @@ export const useAmenityImages = ({ form, hotelId }: UseAmenityImagesProps) => {
       });
     }
     
-    const newImages = files.map(file => ({
+    const newImages = files.map((file, index) => ({
       url: file.url,
-      description: file.metadata?.altText || `${amenitiesWithImages[selectedAmenity]} image`,
+      description: file.metadata?.altText || `${amenitiesWithImages[selectedAmenity]} image ${index + 1}`,
       title: file.metadata?.title || file.name,
       caption: file.metadata?.caption || '',
       metadata: file.metadata
@@ -165,6 +168,9 @@ export const useAmenityImages = ({ form, hotelId }: UseAmenityImagesProps) => {
     const verifiedImages = form.getValues(imageFieldName as any);
     console.log('Updated images after adding multiple:', verifiedImages);
     console.log('Form is dirty:', form.formState.isDirty);
+    
+    // Log the entire form state for debugging
+    console.log('Complete form state after multiple images add:', form.getValues());
     
     // Notify user
     toast({
@@ -204,6 +210,9 @@ export const useAmenityImages = ({ form, hotelId }: UseAmenityImagesProps) => {
     const imagesAfterRemoval = form.getValues(imageFieldName as any);
     console.log('Images after removal:', imagesAfterRemoval);
     console.log('Form is dirty:', form.formState.isDirty);
+    
+    // Log the entire form state for debugging
+    console.log('Complete form state after image removal:', form.getValues());
     
     // Notify user
     toast({

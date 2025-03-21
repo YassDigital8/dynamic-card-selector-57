@@ -49,7 +49,7 @@ const AmenityItem: React.FC<AmenityItemProps> = ({
     }
   };
 
-  // Debug for this specific amenity
+  // Log for debugging this specific amenity
   React.useEffect(() => {
     if (hasImages && imageField) {
       const amenityKey = name.split('.')[1];
@@ -58,6 +58,7 @@ const AmenityItem: React.FC<AmenityItemProps> = ({
       
       if (Array.isArray(images) && images.length > 0) {
         console.log(`${label} has ${images.length} images in form state`);
+        console.log(`First image:`, images[0]);
       }
     }
   }, [hasImages, imageField, images, isChecked, name, label]);

@@ -27,6 +27,7 @@ const HotelForm = memo(({ initialData, onSubmit, isLoading, showButtons = true }
   const form = useForm<typeof formSchema._type>({
     resolver: zodResolver(formSchema),
     defaultValues: initialData || defaultValues,
+    mode: 'onChange',
   });
   
   // Debug form state to verify values are being captured correctly
@@ -37,10 +38,16 @@ const HotelForm = memo(({ initialData, onSubmit, isLoading, showButtons = true }
     if (initialData?.amenities) {
       const { amenities } = initialData;
       console.log('HotelForm - Initial amenities state:', JSON.stringify(amenities, null, 2));
-      console.log('HotelForm - Initial spa enabled:', amenities.spa);
-      console.log('HotelForm - Initial spa images:', amenities.spaImages);
-      console.log('HotelForm - Initial gym enabled:', amenities.gym);
-      console.log('HotelForm - Initial gym images:', amenities.gymImages);
+      
+      // Check all image fields
+      Object.entries(amenities).forEach(([key, value]) => {
+        if (key.includes('Images')) {
+          console.log(`HotelForm - Initial ${key}:`, value);
+          if (Array.isArray(value) && value.length > 0) {
+            console.log(`First image in ${key}:`, value[0]);
+          }
+        }
+      });
     }
     
     // Subscribe to form state changes
@@ -58,14 +65,33 @@ const HotelForm = memo(({ initialData, onSubmit, isLoading, showButtons = true }
     console.log('HotelForm - Submitting form with values:', JSON.stringify(values, null, 2));
     console.log('HotelForm - Form is dirty before submission:', form.formState.isDirty);
     
-    // Log specific amenity data before submission
-    console.log('HotelForm - Spa enabled on submit:', values.amenities.spa);
-    console.log('HotelForm - Spa images on submit:', values.amenities.spaImages);
-    console.log('HotelForm - Gym enabled on submit:', values.amenities.gym);
-    console.log('HotelForm - Gym images on submit:', values.amenities.gymImages);
+    // Ensure all image arrays are properly structured
+    const processedValues = { ...values };
     
-    // Pass the form values to the parent component
-    onSubmit(values as HotelFormData);
+    // Validate all image arrays before submission
+    Object.entries(processedValues.amenities).forEach(([key, value]) => {
+      if (key.includes('Images') && Array.isArray(value)) {
+        console.log(`HotelForm - Processing ${key} for submission - ${value.length} images`);
+        
+        // Add unique identifiers to ensure proper tracking
+        const processedImages = value.map((img, index) => ({
+          ...img,
+          // Add an id if missing
+          id: img.id || `${key}-${index}-${Date.now()}`,
+        }));
+        
+        // @ts-ignore - TypeScript might complain about this assignment
+        processedValues.amenities[key] = processedImages;
+        
+        console.log(`HotelForm - Processed ${key} - ${processedImages.length} images`);
+        if (processedImages.length > 0) {
+          console.log('First processed image:', processedImages[0]);
+        }
+      }
+    });
+    
+    // Pass the processed form values to the parent component
+    onSubmit(processedValues as HotelFormData);
   }, [onSubmit, form]);
 
   return (
