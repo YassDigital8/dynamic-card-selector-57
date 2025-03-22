@@ -18,24 +18,26 @@ const validatePhone = (phone: string) => {
   return /^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/.test(phone);
 };
 
+// Type-safe access to parent in refinement
+type ContactType = 'phone' | 'email' | 'address' | 'fax' | 'other';
+
 const contactDetailSchema = z.object({
   id: z.string().optional(),
   type: z.enum(['phone', 'email', 'address', 'fax', 'other']),
   value: z.string()
     .min(1, { message: "Contact value is required" })
     .superRefine((val, ctx) => {
-      // Get the parent object to access the 'type' field
-      const parentPath = ctx.path.slice(0, -1);
-      const parent = ctx.parent as { type: string };
+      // Get the parent object via ctx.path
+      const parentType = (ctx as any).data?.type as ContactType | undefined;
       
-      if (parent.type === 'email' && !validateEmail(val)) {
+      if (parentType === 'email' && !validateEmail(val)) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Invalid email format",
         });
       } 
       
-      if (parent.type === 'phone' && !validatePhone(val)) {
+      if (parentType === 'phone' && !validatePhone(val)) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Invalid phone number format",
