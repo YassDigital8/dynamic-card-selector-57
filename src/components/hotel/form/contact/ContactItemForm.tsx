@@ -46,13 +46,13 @@ const ContactItemForm: React.FC<ContactItemFormProps> = ({
   }, [contactType, form, index]);
   
   return (
-    <div className="grid grid-cols-12 gap-1 md:gap-2 items-center border-b pb-2 border-gray-100 dark:border-gray-800">
+    <div className="grid grid-cols-12 gap-2 md:gap-3 items-center p-2 rounded-md border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-950 shadow-sm">
       {/* Contact Type */}
       <FormField
         control={form.control}
         name={`contactDetails.${index}.type`}
         render={({ field }) => (
-          <FormItem className="col-span-3 sm:col-span-2">
+          <FormItem className="col-span-12 sm:col-span-2">
             <Select 
               onValueChange={(value) => {
                 field.onChange(value);
@@ -82,7 +82,7 @@ const ContactItemForm: React.FC<ContactItemFormProps> = ({
         control={form.control}
         name={`contactDetails.${index}.value`}
         render={({ field }) => (
-          <FormItem className="col-span-9 sm:col-span-4">
+          <FormItem className="col-span-12 sm:col-span-4">
             <FormControl>
               <div className="flex items-center space-x-1">
                 <span className="text-muted-foreground hidden sm:inline-flex">
@@ -119,7 +119,7 @@ const ContactItemForm: React.FC<ContactItemFormProps> = ({
         control={form.control}
         name={`contactDetails.${index}.personName`}
         render={({ field }) => (
-          <FormItem className="col-span-7 sm:col-span-4">
+          <FormItem className="col-span-12 sm:col-span-4">
             <FormControl>
               <Input 
                 {...field} 
@@ -132,36 +132,38 @@ const ContactItemForm: React.FC<ContactItemFormProps> = ({
         )}
       />
       
-      {/* Primary Switch */}
-      <FormField
-        control={form.control}
-        name={`contactDetails.${index}.isPrimary`}
-        render={({ field }) => (
-          <FormItem className="col-span-3 flex flex-row items-center justify-center space-x-1">
-            <FormControl>
-              <div className="flex flex-col items-center sm:flex-row sm:space-x-1">
-                <Switch
-                  checked={field.value}
-                  onCheckedChange={onSetPrimary}
-                  className="scale-75 sm:scale-90 md:scale-100"
-                />
-                {field.value && <Badge variant="outline" className="text-[10px] hidden sm:inline-flex">Primary</Badge>}
-              </div>
-            </FormControl>
-          </FormItem>
-        )}
-      />
+      <div className="col-span-9 sm:col-span-1 flex justify-center">
+        {/* Primary Switch */}
+        <FormField
+          control={form.control}
+          name={`contactDetails.${index}.isPrimary`}
+          render={({ field }) => (
+            <FormItem className="flex flex-row items-center justify-center space-x-2">
+              <FormControl>
+                <div className="flex items-center gap-1.5">
+                  <Switch
+                    checked={field.value}
+                    onCheckedChange={onSetPrimary}
+                    className="data-[state=checked]:bg-blue-600"
+                  />
+                  {field.value && <Badge variant="outline" className="text-[10px]">Primary</Badge>}
+                </div>
+              </FormControl>
+            </FormItem>
+          )}
+        />
+      </div>
       
-      {/* Delete Button - adjusted to prevent overlap */}
-      <div className="col-span-2 flex justify-end pl-2">
+      {/* Delete Button */}
+      <div className="col-span-3 sm:col-span-1 flex justify-end">
         <Button
           type="button"
           variant="ghost"
-          size="icon"
+          size="sm"
           onClick={onRemove}
-          className="h-6 w-6 sm:h-8 sm:w-8 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
+          className="h-7 w-7 rounded-full text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
         >
-          <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
+          <Trash2 className="h-4 w-4" />
         </Button>
       </div>
     </div>

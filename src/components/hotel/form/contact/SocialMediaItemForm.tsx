@@ -19,7 +19,7 @@ const SocialMediaItemForm: React.FC<SocialMediaItemFormProps> = ({
   onRemove 
 }) => {
   const form = useFormContext();
-  const platform = form.watch(`socialMedia.${index}.platform`);
+  const platformType = form.watch(`socialMedia.${index}.platform`);
   
   // Get validation status for this field
   const fieldError = form.formState.errors?.socialMedia?.[index]?.url;
@@ -28,42 +28,40 @@ const SocialMediaItemForm: React.FC<SocialMediaItemFormProps> = ({
   const getPlaceholder = (platform: string) => {
     switch(platform) {
       case 'website': return 'https://www.example.com';
-      case 'facebook': return 'https://www.facebook.com/example';
-      case 'instagram': return 'https://www.instagram.com/example';
-      case 'twitter': return 'https://twitter.com/example';
-      case 'linkedin': return 'https://www.linkedin.com/company/example';
-      default: return 'https://...';
+      case 'facebook': return 'https://facebook.com/page-name';
+      case 'instagram': return 'https://instagram.com/username';
+      case 'twitter': return 'https://twitter.com/username';
+      case 'linkedin': return 'https://linkedin.com/company/name';
+      default: return 'https://www.example.com';
     }
   };
   
   return (
-    <div className="grid grid-cols-12 gap-1 md:gap-2 items-center border-b pb-2 border-gray-100 dark:border-gray-800">
+    <div className="grid grid-cols-12 gap-2 md:gap-3 items-center p-2 rounded-md border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-950 shadow-sm">
       {/* Platform Type */}
       <FormField
         control={form.control}
         name={`socialMedia.${index}.platform`}
         render={({ field }) => (
-          <FormItem className="col-span-3">
+          <FormItem className="col-span-12 sm:col-span-3">
             <Select 
-              onValueChange={(value) => {
-                field.onChange(value);
-                // Trigger validation after platform change
-                setTimeout(() => form.trigger(`socialMedia.${index}.url`), 0);
-              }} 
+              onValueChange={field.onChange} 
               defaultValue={field.value}
             >
               <FormControl>
                 <SelectTrigger className="h-8 text-xs md:text-sm">
-                  <SelectValue placeholder="Platform" />
+                  <div className="flex items-center">
+                    <span className="mr-1">{getSocialIcon(field.value)}</span>
+                    <SelectValue placeholder="Platform" />
+                  </div>
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
                 <SelectItem value="website">Website</SelectItem>
                 <SelectItem value="facebook">Facebook</SelectItem>
                 <SelectItem value="instagram">Instagram</SelectItem>
-                <SelectItem value="twitter">Twitter</SelectItem>
+                <SelectItem value="twitter">Twitter/X</SelectItem>
                 <SelectItem value="linkedin">LinkedIn</SelectItem>
-                <SelectItem value="other">Other</SelectItem>
               </SelectContent>
             </Select>
             <FormMessage className="text-xs" />
@@ -76,16 +74,14 @@ const SocialMediaItemForm: React.FC<SocialMediaItemFormProps> = ({
         control={form.control}
         name={`socialMedia.${index}.url`}
         render={({ field }) => (
-          <FormItem className="col-span-5 sm:col-span-6">
+          <FormItem className="col-span-12 sm:col-span-5">
             <FormControl>
               <div className="flex items-center space-x-1">
-                <span className="text-muted-foreground hidden sm:inline-flex">
-                  {getSocialIcon(platform)}
-                </span>
                 <Input 
                   {...field} 
-                  placeholder={getPlaceholder(platform)} 
+                  placeholder={getPlaceholder(platformType)} 
                   className={`${fieldError ? "border-red-500 focus-visible:ring-red-500" : ""} h-8 text-xs md:text-sm`}
+                  type="url"
                 />
                 {fieldError && (
                   <TooltipProvider>
@@ -111,9 +107,13 @@ const SocialMediaItemForm: React.FC<SocialMediaItemFormProps> = ({
         control={form.control}
         name={`socialMedia.${index}.label`}
         render={({ field }) => (
-          <FormItem className="col-span-3 sm:col-span-2">
+          <FormItem className="col-span-10 sm:col-span-3">
             <FormControl>
-              <Input {...field} placeholder="Label (optional)" className="h-8 text-xs md:text-sm" />
+              <Input 
+                {...field} 
+                placeholder="Display label (optional)" 
+                className="h-8 text-xs md:text-sm"
+              />
             </FormControl>
             <FormMessage className="text-xs" />
           </FormItem>
@@ -121,15 +121,17 @@ const SocialMediaItemForm: React.FC<SocialMediaItemFormProps> = ({
       />
       
       {/* Delete Button */}
-      <Button
-        type="button"
-        variant="ghost"
-        size="icon"
-        onClick={onRemove}
-        className="col-span-1 h-6 w-6 sm:h-8 sm:w-8 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
-      >
-        <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
-      </Button>
+      <div className="col-span-2 sm:col-span-1 flex justify-end">
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={onRemove}
+          className="h-7 w-7 rounded-full text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
+        >
+          <Trash2 className="h-4 w-4" />
+        </Button>
+      </div>
     </div>
   );
 };
