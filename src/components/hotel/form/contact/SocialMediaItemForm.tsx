@@ -43,13 +43,13 @@ const SocialMediaItemForm: React.FC<SocialMediaItemFormProps> = ({
         control={form.control}
         name={`socialMedia.${index}.platform`}
         render={({ field }) => (
-          <FormItem className="col-span-12 sm:col-span-3">
+          <FormItem className="col-span-12 sm:col-span-2">
             <Select 
               onValueChange={field.onChange} 
               defaultValue={field.value}
             >
               <FormControl>
-                <SelectTrigger className="h-9 text-xs md:text-sm">
+                <SelectTrigger className="h-9 text-xs md:text-sm w-full sm:w-28">
                   <div className="flex items-center">
                     <span className="mr-1">{getSocialIcon(field.value)}</span>
                     <SelectValue placeholder="Platform" />
@@ -74,7 +74,7 @@ const SocialMediaItemForm: React.FC<SocialMediaItemFormProps> = ({
         control={form.control}
         name={`socialMedia.${index}.url`}
         render={({ field }) => (
-          <FormItem className="col-span-12 sm:col-span-5">
+          <FormItem className="col-span-12 sm:col-span-6">
             <FormControl>
               <div className="flex items-center space-x-1">
                 <Input 
