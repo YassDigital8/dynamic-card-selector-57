@@ -9,22 +9,36 @@ import useHotelFilters from '@/hooks/hotel/useHotelFilters';
 import useHotelSelection from '@/hooks/hotel/useHotelSelection';
 import usePanelSizing from '@/hooks/hotel/usePanelSizing';
 import { motion } from 'framer-motion';
+import HotelLoadingIndicator from './HotelLoadingIndicator';
 
 const HotelPageContainer: React.FC = () => {
   const { posOptions } = usePageSelectionViewModel();
   const [selectedPOS, setSelectedPOS] = useState<string>('');
+  const [dataLoaded, setDataLoaded] = useState(false);
   
   const {
     hotels,
     selectedHotel: networkSelectedHotel,
     isLoading,
     isEditing: networkIsEditing,
+    isInitialized,
     setSelectedHotel: networkSetSelectedHotel,
     setIsEditing: networkSetIsEditing,
     addHotel,
     updateHotel,
     deleteHotel
   } = useHotelNetwork(selectedPOS);
+  
+  // Mark data as loaded once hotels are initialized and not loading
+  useEffect(() => {
+    if (isInitialized && !isLoading) {
+      const timer = setTimeout(() => {
+        setDataLoaded(true);
+      }, 300); // Short delay to ensure smooth transition
+      
+      return () => clearTimeout(timer);
+    }
+  }, [isInitialized, isLoading]);
   
   const { filters, setFilters, filteredHotels } = useHotelFilters(hotels);
   
@@ -78,6 +92,15 @@ const HotelPageContainer: React.FC = () => {
     if (!selectedPOS || selectedPOS === 'all') return undefined;
     return posOptions.find(p => p.key.toLowerCase() === selectedPOS.toLowerCase())?.englishName;
   };
+
+  // If data is not yet loaded, show the loading indicator
+  if (!dataLoaded) {
+    return (
+      <div className="container mx-auto py-3 sm:py-4 md:py-6 h-full">
+        <HotelLoadingIndicator />
+      </div>
+    );
+  }
 
   return (
     <motion.div 

@@ -11,6 +11,7 @@ import NoHotelSelected from '../NoHotelSelected';
 import { Hotel, HotelFormData } from '@/models/HotelModel';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useToast } from '@/hooks/use-toast';
+import HotelLoadingIndicator from '../HotelLoadingIndicator';
 
 interface HotelContentPanelProps {
   selectedHotel: Hotel | null;
@@ -99,6 +100,15 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
     ? `hotel-details-${selectedHotel.id}-${selectedHotel.updatedAt.getTime()}`
     : 'no-hotel';
 
+  // If loading, show the loading indicator
+  if (isLoading && selectedHotel) {
+    return (
+      <div className="h-full w-full flex items-center justify-center">
+        <HotelLoadingIndicator message="Loading hotel details..." />
+      </div>
+    );
+  }
+
   return (
     <motion.div 
       className="h-full w-full p-2 sm:p-4 overflow-hidden relative flex flex-col"
@@ -126,58 +136,96 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
         </motion.div>
       )}
       
-      {showAddForm && (
-        <HotelAddForm
-          key="add-form"
-          isLoading={isLoading}
-          onSubmit={onSubmitAdd}
-          selectedPOS={selectedPOS}
-          posName={posName}
-        />
-      )}
+      <AnimatePresence mode="wait">
+        {showAddForm && (
+          <motion.div
+            key="add-form"
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            variants={contentVariants}
+            className="flex-1"
+          >
+            <HotelAddForm
+              isLoading={isLoading}
+              onSubmit={onSubmitAdd}
+              selectedPOS={selectedPOS}
+              posName={posName}
+            />
+          </motion.div>
+        )}
 
-      {isEditing && selectedHotel && (
-        <HotelEditForm
-          key={`edit-form-${selectedHotel.id}-${selectedHotel.updatedAt.getTime()}`}
-          selectedHotel={selectedHotel}
-          isLoading={isLoading}
-          onSubmit={handleEditSubmit}
-          onCancel={onCancelEdit}
-        />
-      )}
+        {isEditing && selectedHotel && (
+          <motion.div
+            key={`edit-form-${selectedHotel.id}-${selectedHotel.updatedAt.getTime()}`}
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            variants={contentVariants}
+            className="flex-1"
+          >
+            <HotelEditForm
+              selectedHotel={selectedHotel}
+              isLoading={isLoading}
+              onSubmit={handleEditSubmit}
+              onCancel={onCancelEdit}
+            />
+          </motion.div>
+        )}
 
-      {!showAddForm && !isEditing && selectedHotel && (
-        <HotelDetailsWrapper 
-          key={hotelDetailsKey}
-          hotel={selectedHotel} 
-          onEdit={onStartEdit} 
-          onBack={onBackToList}
-          onUpdateHotel={onUpdateHotel}
-          isEditing={isEditing}
-        />
-      )}
+        {!showAddForm && !isEditing && selectedHotel && (
+          <motion.div
+            key={hotelDetailsKey}
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            variants={contentVariants}
+            className="flex-1"
+          >
+            <HotelDetailsWrapper 
+              hotel={selectedHotel} 
+              onEdit={onStartEdit} 
+              onBack={onBackToList}
+              onUpdateHotel={onUpdateHotel}
+              isEditing={isEditing}
+            />
+          </motion.div>
+        )}
 
-      {!showContent && isExpanded && hasHotels && (
-        <div className="flex-1 relative h-full">
-          <NoHotelSelected
+        {!showContent && isExpanded && hasHotels && (
+          <motion.div
             key="no-hotel-selected"
-            hasHotels={hasHotels}
-            onAddHotel={onAddHotel}
-          />
-        </div>
-      )}
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            variants={contentVariants}
+            className="flex-1 relative h-full"
+          >
+            <NoHotelSelected
+              hasHotels={hasHotels}
+              onAddHotel={onAddHotel}
+            />
+          </motion.div>
+        )}
 
-      {!showContent && isExpanded && !hasHotels && (
-        <div className="flex-1 relative h-full">
-          <HotelEmptyState
+        {!showContent && isExpanded && !hasHotels && (
+          <motion.div
             key="empty-state"
-            selectedPOS={selectedPOS}
-            posName={posName}
-            hasHotels={hasHotels}
-            onAddHotel={onAddHotel}
-          />
-        </div>
-      )}
+            initial="hidden"
+            animate="visible" 
+            exit="hidden"
+            variants={contentVariants}
+            className="flex-1 relative h-full"
+          >
+            <HotelEmptyState
+              selectedPOS={selectedPOS}
+              posName={posName}
+              hasHotels={hasHotels}
+              onAddHotel={onAddHotel}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 };
