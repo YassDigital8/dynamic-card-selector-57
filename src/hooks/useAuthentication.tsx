@@ -95,16 +95,10 @@ export const useAuthentication = () => {
         demoModeState.activateDemoMode();
       }
       
-      // Get the primary role if available
-      const primaryRole = authData.roles && authData.roles.length > 0 
-        ? authData.roles[0] 
-        : 'User';
-      
       // Store the token and user info
       const userInfoToStore = {
         firstName: authData.firstName,
-        email: authData.email,
-        role: primaryRole
+        email: authData.email
       };
       
       // Update auth state
