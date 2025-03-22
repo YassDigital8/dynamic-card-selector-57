@@ -52,7 +52,7 @@ const ContactItemForm: React.FC<ContactItemFormProps> = ({
         control={form.control}
         name={`contactDetails.${index}.type`}
         render={({ field }) => (
-          <FormItem className="col-span-2 sm:col-span-2">
+          <FormItem className="col-span-3 sm:col-span-2">
             <Select 
               onValueChange={(value) => {
                 field.onChange(value);
@@ -82,7 +82,7 @@ const ContactItemForm: React.FC<ContactItemFormProps> = ({
         control={form.control}
         name={`contactDetails.${index}.value`}
         render={({ field }) => (
-          <FormItem className="col-span-4 sm:col-span-4">
+          <FormItem className="col-span-9 sm:col-span-4">
             <FormControl>
               <div className="flex items-center space-x-1">
                 <span className="text-muted-foreground hidden sm:inline-flex">
@@ -119,7 +119,7 @@ const ContactItemForm: React.FC<ContactItemFormProps> = ({
         control={form.control}
         name={`contactDetails.${index}.personName`}
         render={({ field }) => (
-          <FormItem className="col-span-4 sm:col-span-4">
+          <FormItem className="col-span-7 sm:col-span-4">
             <FormControl>
               <Input 
                 {...field} 
@@ -137,7 +137,7 @@ const ContactItemForm: React.FC<ContactItemFormProps> = ({
         control={form.control}
         name={`contactDetails.${index}.isPrimary`}
         render={({ field }) => (
-          <FormItem className="col-span-1 flex flex-row items-center justify-center space-x-1">
+          <FormItem className="col-span-3 flex flex-row items-center justify-center space-x-1">
             <FormControl>
               <div className="flex flex-col items-center sm:flex-row sm:space-x-1">
                 <Switch
@@ -153,7 +153,7 @@ const ContactItemForm: React.FC<ContactItemFormProps> = ({
       />
       
       {/* Delete Button - adjusted to prevent overlap */}
-      <div className="col-span-1 flex justify-end pl-2">
+      <div className="col-span-2 flex justify-end pl-2">
         <Button
           type="button"
           variant="ghost"

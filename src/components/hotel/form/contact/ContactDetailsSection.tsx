@@ -58,7 +58,7 @@ const ContactDetailsSection = () => {
       <CardContent className="space-y-4 sm:space-y-6 pt-0">
         {/* Contact Details */}
         <div className="space-y-3 sm:space-y-4">
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center mb-2">
             <h3 className="text-sm sm:text-md font-medium">Contact Details</h3>
             <Button 
               type="button" 
@@ -79,7 +79,7 @@ const ContactDetailsSection = () => {
             </div>
           )}
           
-          <div className="space-y-1 sm:space-y-2">
+          <div className="space-y-2 sm:space-y-3 border rounded-md p-2 bg-gray-50 dark:bg-gray-900">
             {contactDetails.fields.map((field, index) => (
               <ContactItemForm 
                 key={field.id} 
@@ -93,7 +93,7 @@ const ContactDetailsSection = () => {
 
         {/* Social Media */}
         <div className="space-y-3 sm:space-y-4 pt-1 sm:pt-2">
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center mb-2">
             <h3 className="text-sm sm:text-md font-medium">Social Media &amp; Website</h3>
             <Button 
               type="button" 
@@ -113,7 +113,7 @@ const ContactDetailsSection = () => {
             </div>
           )}
           
-          <div className="space-y-1 sm:space-y-2">
+          <div className="space-y-2 sm:space-y-3 border rounded-md p-2 bg-gray-50 dark:bg-gray-900">
             {socialMedia.fields.map((field, index) => (
               <SocialMediaItemForm 
                 key={field.id} 
