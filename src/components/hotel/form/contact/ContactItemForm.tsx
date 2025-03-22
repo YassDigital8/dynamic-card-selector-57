@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Switch } from '@/components/ui/switch';
 import { Trash2, AlertCircle, CheckCircle } from 'lucide-react';
 import { useFormContext } from 'react-hook-form';
 import { getContactIcon } from './ContactIcons';
@@ -53,7 +52,7 @@ const ContactItemForm: React.FC<ContactItemFormProps> = ({
         control={form.control}
         name={`contactDetails.${index}.type`}
         render={({ field }) => (
-          <FormItem className="col-span-12 sm:col-span-3">
+          <FormItem className="col-span-12 sm:col-span-2">
             <Select 
               onValueChange={(value) => {
                 field.onChange(value);
@@ -63,7 +62,7 @@ const ContactItemForm: React.FC<ContactItemFormProps> = ({
               defaultValue={field.value}
             >
               <FormControl>
-                <SelectTrigger className="h-9 text-xs md:text-sm">
+                <SelectTrigger className="h-9 text-xs md:text-sm w-full sm:w-auto">
                   <SelectValue placeholder="Type" />
                 </SelectTrigger>
               </FormControl>
@@ -83,7 +82,7 @@ const ContactItemForm: React.FC<ContactItemFormProps> = ({
         control={form.control}
         name={`contactDetails.${index}.value`}
         render={({ field }) => (
-          <FormItem className="col-span-12 sm:col-span-4">
+          <FormItem className="col-span-12 sm:col-span-3">
             <FormControl>
               <div className="flex items-center space-x-1">
                 <span className="text-muted-foreground hidden sm:inline-flex">
@@ -120,11 +119,29 @@ const ContactItemForm: React.FC<ContactItemFormProps> = ({
         control={form.control}
         name={`contactDetails.${index}.personName`}
         render={({ field }) => (
-          <FormItem className="col-span-12 sm:col-span-3">
+          <FormItem className="col-span-12 sm:col-span-2">
             <FormControl>
               <Input 
                 {...field} 
                 placeholder="Contact person name" 
+                className="h-9 text-xs md:text-sm"
+              />
+            </FormControl>
+            <FormMessage className="text-xs" />
+          </FormItem>
+        )}
+      />
+      
+      {/* Person Role - New field */}
+      <FormField
+        control={form.control}
+        name={`contactDetails.${index}.personRole`}
+        render={({ field }) => (
+          <FormItem className="col-span-12 sm:col-span-3">
+            <FormControl>
+              <Input 
+                {...field} 
+                placeholder="Role (e.g. Manager, Receptionist)" 
                 className="h-9 text-xs md:text-sm"
               />
             </FormControl>

@@ -1,4 +1,3 @@
-
 import * as z from 'zod';
 
 const amenityImageSchema = z.object({
@@ -52,6 +51,7 @@ const contactDetailSchema = z.object({
       }
     }),
   personName: z.string().optional(),
+  personRole: z.string().optional(),
   isPrimary: z.boolean().optional(),
 });
 

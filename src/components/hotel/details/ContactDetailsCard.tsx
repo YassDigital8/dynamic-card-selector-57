@@ -126,9 +126,17 @@ const ContactDetailsCard: React.FC<ContactDetailsCardProps> = ({
                     )}
                   </div>
                   <div className="text-sm mt-0.5">{renderContactValue(contact)}</div>
-                  {contact.personName && (
+                  {(contact.personName || contact.personRole) && (
                     <div className="text-xs text-muted-foreground mt-0.5">
-                      Contact: {contact.personName}
+                      {contact.personName && (
+                        <span>Contact: {contact.personName}</span>
+                      )}
+                      {contact.personRole && contact.personName && (
+                        <span> - </span>
+                      )}
+                      {contact.personRole && (
+                        <span className="font-medium">{contact.personRole}</span>
+                      )}
                     </div>
                   )}
                 </div>

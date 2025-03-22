@@ -27,6 +27,7 @@ const ContactDetailsSection = () => {
         type: 'phone',
         value: '',
         personName: '',
+        personRole: '', // Initialize the new personRole field
         isPrimary: contactDetails.fields.length === 0, // First one is primary by default
       });
     }

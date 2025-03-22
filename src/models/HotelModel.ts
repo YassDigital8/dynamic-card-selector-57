@@ -51,6 +51,7 @@ export interface ContactDetail {
   type: 'phone' | 'fax' | 'whatsapp';
   value: string;
   personName?: string;
+  personRole?: string; // New field for person's role in the hotel
   isPrimary?: boolean;
 }
 
