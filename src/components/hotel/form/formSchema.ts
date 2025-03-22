@@ -12,7 +12,37 @@ const amenityImageSchema = z.object({
 const contactDetailSchema = z.object({
   id: z.string().optional(),
   type: z.enum(['phone', 'email', 'address', 'fax', 'other']),
-  value: z.string().min(1, { message: "Contact value is required" }),
+  value: z.string()
+    .min(1, { message: "Contact value is required" })
+    .refine((val, ctx) => {
+      if (ctx.path.includes('contactDetails') && Array.isArray(ctx.data)) {
+        // Get the current item's index from the path (e.g., "contactDetails.0.value" -> 0)
+        const pathParts = ctx.path.split('.');
+        const index = parseInt(pathParts[1], 10);
+        
+        if (!isNaN(index) && ctx.data[index]) {
+          const type = ctx.data[index].type;
+          
+          // Apply type-specific validation
+          if (type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: "Invalid email format",
+            });
+            return false;
+          } 
+          
+          if (type === 'phone' && !/^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/.test(val)) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: "Invalid phone number format",
+            });
+            return false;
+          }
+        }
+      }
+      return true;
+    }),
   label: z.string().optional(),
   isPrimary: z.boolean().optional(),
 });
@@ -20,7 +50,20 @@ const contactDetailSchema = z.object({
 const socialMediaSchema = z.object({
   id: z.string().optional(),
   platform: z.enum(['website', 'facebook', 'instagram', 'twitter', 'linkedin', 'other']),
-  url: z.string().min(1, { message: "URL is required" }),
+  url: z.string()
+    .min(1, { message: "URL is required" })
+    .refine((val) => {
+      try {
+        // Basic URL validation
+        if (!val.startsWith('http://') && !val.startsWith('https://')) {
+          return false;
+        }
+        new URL(val);
+        return true;
+      } catch {
+        return false;
+      }
+    }, { message: "Invalid URL format. Must start with http:// or https://" }),
   label: z.string().optional(),
 });
 

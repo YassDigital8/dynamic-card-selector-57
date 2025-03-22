@@ -4,9 +4,10 @@ import { FormField, FormItem, FormControl, FormMessage } from '@/components/ui/f
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Trash2 } from 'lucide-react';
+import { Trash2, AlertCircle } from 'lucide-react';
 import { useFormContext } from 'react-hook-form';
 import { getSocialIcon } from './ContactIcons';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface SocialMediaItemFormProps {
   index: number;
@@ -18,6 +19,22 @@ const SocialMediaItemForm: React.FC<SocialMediaItemFormProps> = ({
   onRemove 
 }) => {
   const form = useFormContext();
+  const platform = form.watch(`socialMedia.${index}.platform`);
+  
+  // Get validation status for this field
+  const fieldError = form.formState.errors?.socialMedia?.[index]?.url;
+  
+  // Generate placeholder based on platform
+  const getPlaceholder = (platform: string) => {
+    switch(platform) {
+      case 'website': return 'https://www.example.com';
+      case 'facebook': return 'https://www.facebook.com/example';
+      case 'instagram': return 'https://www.instagram.com/example';
+      case 'twitter': return 'https://twitter.com/example';
+      case 'linkedin': return 'https://www.linkedin.com/company/example';
+      default: return 'https://...';
+    }
+  };
   
   return (
     <div className="grid grid-cols-12 gap-2 items-center border-b pb-2 border-gray-100 dark:border-gray-800">
@@ -28,7 +45,11 @@ const SocialMediaItemForm: React.FC<SocialMediaItemFormProps> = ({
         render={({ field }) => (
           <FormItem className="col-span-3">
             <Select 
-              onValueChange={field.onChange} 
+              onValueChange={(value) => {
+                field.onChange(value);
+                // Trigger validation after platform change
+                setTimeout(() => form.trigger(`socialMedia.${index}.url`), 0);
+              }} 
               defaultValue={field.value}
             >
               <FormControl>
@@ -59,9 +80,25 @@ const SocialMediaItemForm: React.FC<SocialMediaItemFormProps> = ({
             <FormControl>
               <div className="flex items-center space-x-1">
                 <span className="text-muted-foreground">
-                  {getSocialIcon(form.watch(`socialMedia.${index}.platform`))}
+                  {getSocialIcon(platform)}
                 </span>
-                <Input {...field} placeholder="URL (https://...)" />
+                <Input 
+                  {...field} 
+                  placeholder={getPlaceholder(platform)} 
+                  className={fieldError ? "border-red-500 focus-visible:ring-red-500" : ""}
+                />
+                {fieldError && (
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <AlertCircle className="h-4 w-4 text-red-500" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{fieldError.message?.toString()}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                )}
               </div>
             </FormControl>
             <FormMessage />

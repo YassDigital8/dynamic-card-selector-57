@@ -1,14 +1,15 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { FormField, FormItem, FormControl, FormMessage } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
-import { Trash2 } from 'lucide-react';
+import { Trash2, AlertCircle } from 'lucide-react';
 import { useFormContext } from 'react-hook-form';
 import { getContactIcon } from './ContactIcons';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface ContactItemFormProps {
   index: number;
@@ -22,6 +23,28 @@ const ContactItemForm: React.FC<ContactItemFormProps> = ({
   onSetPrimary
 }) => {
   const form = useFormContext();
+  const contactType = form.watch(`contactDetails.${index}.type`);
+  
+  // Get validation status for this field
+  const fieldError = form.formState.errors?.contactDetails?.[index]?.value;
+  
+  // Generate placeholder based on type
+  const getPlaceholder = (type: string) => {
+    switch(type) {
+      case 'phone': return '+1 (555) 123-4567';
+      case 'email': return 'contact@example.com';
+      case 'address': return 'Full address';
+      case 'fax': return '+1 (555) 987-6543';
+      default: return 'Contact information';
+    }
+  };
+  
+  // Revalidate when contact type changes
+  useEffect(() => {
+    if (form.getValues(`contactDetails.${index}.value`)) {
+      form.trigger(`contactDetails.${index}.value`);
+    }
+  }, [contactType, form, index]);
   
   return (
     <div className="grid grid-cols-12 gap-2 items-center border-b pb-2 border-gray-100 dark:border-gray-800">
@@ -32,7 +55,11 @@ const ContactItemForm: React.FC<ContactItemFormProps> = ({
         render={({ field }) => (
           <FormItem className="col-span-3">
             <Select 
-              onValueChange={field.onChange} 
+              onValueChange={(value) => {
+                field.onChange(value);
+                // Clear value when changing type to prevent validation errors carrying over
+                form.setValue(`contactDetails.${index}.value`, '', { shouldValidate: true });
+              }} 
               defaultValue={field.value}
             >
               <FormControl>
@@ -62,9 +89,27 @@ const ContactItemForm: React.FC<ContactItemFormProps> = ({
             <FormControl>
               <div className="flex items-center space-x-1">
                 <span className="text-muted-foreground">
-                  {getContactIcon(form.watch(`contactDetails.${index}.type`))}
+                  {getContactIcon(contactType)}
                 </span>
-                <Input {...field} placeholder="Contact information" />
+                <Input 
+                  {...field} 
+                  placeholder={getPlaceholder(contactType)} 
+                  className={fieldError ? "border-red-500 focus-visible:ring-red-500" : ""}
+                  type={contactType === 'email' ? 'email' : 'text'}
+                  inputMode={contactType === 'phone' || contactType === 'fax' ? 'tel' : undefined}
+                />
+                {fieldError && (
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <AlertCircle className="h-4 w-4 text-red-500" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{fieldError.message?.toString()}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                )}
               </div>
             </FormControl>
             <FormMessage />
