@@ -1,5 +1,5 @@
 
-import { AmenityImage, HotelAmenities } from '@/models/HotelModel';
+import { AmenityImage, HotelAmenities, Hotel } from '@/models/HotelModel';
 
 /**
  * Creates a default amenities object with all fields set to false
@@ -19,12 +19,12 @@ export const createDefaultAmenities = (): HotelAmenities => {
     petsAllowed: false,
     extraBed: false,
     // Initialize empty image arrays for amenities that support images
-    barImages: [] as AmenityImage[],
-    gymImages: [] as AmenityImage[],
-    spaImages: [] as AmenityImage[],
-    restaurantImages: [] as AmenityImage[],
-    breakfastImages: [] as AmenityImage[],
-    swimmingPoolImages: [] as AmenityImage[]
+    barImages: [] as unknown as AmenityImage[],
+    gymImages: [] as unknown as AmenityImage[],
+    spaImages: [] as unknown as AmenityImage[],
+    restaurantImages: [] as unknown as AmenityImage[],
+    breakfastImages: [] as unknown as AmenityImage[],
+    swimmingPoolImages: [] as unknown as AmenityImage[]
   };
 };
 
@@ -35,12 +35,12 @@ export const ensureAmenityImageArrays = (amenities: HotelAmenities): HotelAmenit
   const updated = { ...amenities };
   
   // For each amenity that can have images, ensure the array exists
-  if (!updated.barImages) updated.barImages = [] as AmenityImage[];
-  if (!updated.gymImages) updated.gymImages = [] as AmenityImage[];
-  if (!updated.spaImages) updated.spaImages = [] as AmenityImage[];
-  if (!updated.restaurantImages) updated.restaurantImages = [] as AmenityImage[];
-  if (!updated.breakfastImages) updated.breakfastImages = [] as AmenityImage[];
-  if (!updated.swimmingPoolImages) updated.swimmingPoolImages = [] as AmenityImage[];
+  if (!updated.barImages) updated.barImages = [] as unknown as AmenityImage[];
+  if (!updated.gymImages) updated.gymImages = [] as unknown as AmenityImage[];
+  if (!updated.spaImages) updated.spaImages = [] as unknown as AmenityImage[];
+  if (!updated.restaurantImages) updated.restaurantImages = [] as unknown as AmenityImage[];
+  if (!updated.breakfastImages) updated.breakfastImages = [] as unknown as AmenityImage[];
+  if (!updated.swimmingPoolImages) updated.swimmingPoolImages = [] as unknown as AmenityImage[];
   
   return updated;
 };
@@ -77,4 +77,50 @@ export const processAmenityImages = (amenities: HotelAmenities): HotelAmenities 
 export const amenityHasImages = (amenities: HotelAmenities, amenityImageKey: string): boolean => {
   const images = amenities[amenityImageKey as keyof HotelAmenities] as AmenityImage[] | undefined;
   return Array.isArray(images) && images.length > 0;
+};
+
+/**
+ * Validates and ensures contact info arrays are properly initialized
+ */
+export const validateContactInfo = (hotel: Hotel): Hotel => {
+  const validatedHotel = { ...hotel };
+  
+  // Ensure contactDetails is always an array
+  if (!Array.isArray(validatedHotel.contactDetails)) {
+    validatedHotel.contactDetails = [];
+  }
+  
+  // Ensure socialMedia is always an array
+  if (!Array.isArray(validatedHotel.socialMedia)) {
+    validatedHotel.socialMedia = [];
+  }
+  
+  return validatedHotel;
+};
+
+/**
+ * Validates amenity images to ensure proper structure
+ */
+export const validateAmenityImages = (hotel: Hotel): Hotel => {
+  if (!hotel.amenities) return hotel;
+  
+  const amenities = ensureAmenityImageArrays(hotel.amenities);
+  hotel.amenities = processAmenityImages(amenities);
+  
+  return hotel;
+};
+
+/**
+ * Creates a deep clone of hotel with amenity images to avoid reference issues
+ */
+export const cloneAmenityImages = (hotel: Hotel): Hotel => {
+  // Create a deep clone of the hotel object
+  const clonedHotel = JSON.parse(JSON.stringify(hotel));
+  
+  // Ensure image arrays have proper types after cloning
+  if (clonedHotel.amenities) {
+    clonedHotel.amenities = ensureAmenityImageArrays(clonedHotel.amenities);
+  }
+  
+  return clonedHotel;
 };
