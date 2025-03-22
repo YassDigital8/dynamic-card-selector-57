@@ -4,6 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { FileText, Settings, PlusCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable';
+import HotelLoadingIndicator from '@/components/hotel/HotelLoadingIndicator';
 
 // Custom hooks
 import usePageNavigation from '@/hooks/usePageNavigation';
@@ -11,7 +12,6 @@ import usePageAddition from '@/hooks/usePageAddition';
 import useAuthentication from '@/hooks/useAuthentication';
 
 // Components
-import LoadingScreen from '@/components/pages/index/LoadingScreen';
 import PageSelectors from '@/components/pages/index/PageSelectors';
 import PathSelectors from '@/components/pages/index/PathSelectors';
 import PageData from '@/components/pages/index/PageData';
@@ -53,7 +53,7 @@ const Index = () => {
   };
 
   if (initialLoading) {
-    return <LoadingScreen />;
+    return <HotelLoadingIndicator message="Loading page navigator..." />;
   }
 
   return (

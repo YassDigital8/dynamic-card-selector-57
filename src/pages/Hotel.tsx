@@ -52,7 +52,7 @@ const Hotel = () => {
 
   return (
     <PageContainer>
-      <Suspense fallback={<HotelPageSkeleton />}>
+      <Suspense fallback={<HotelLoadingIndicator message="Loading hotel page..." />}>
         <HotelPage />
       </Suspense>
     </PageContainer>
