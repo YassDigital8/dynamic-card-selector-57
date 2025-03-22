@@ -91,7 +91,10 @@ const ProfileForm = () => {
                   name="firstName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel required>First Name</FormLabel>
+                      <FormLabel>
+                        First Name
+                        <span className="text-destructive ml-1" aria-hidden="true">*</span>
+                      </FormLabel>
                       <FormControl>
                         <Input placeholder="Your first name" {...field} />
                       </FormControl>
@@ -119,7 +122,10 @@ const ProfileForm = () => {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel required>Email</FormLabel>
+                    <FormLabel>
+                      Email
+                      <span className="text-destructive ml-1" aria-hidden="true">*</span>
+                    </FormLabel>
                     <FormControl>
                       <Input placeholder="Your email address" {...field} />
                     </FormControl>

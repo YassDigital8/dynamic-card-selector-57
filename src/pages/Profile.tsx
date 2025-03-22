@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { PageContainer } from '@/components/pages/index/page-container';
+import { PageContainer } from '@/components/pages/index/PageContainer';
 import ProfileForm from '@/components/profile/ProfileForm';
 import useAuthentication from '@/hooks/useAuthentication';
 import { Navigate } from 'react-router-dom';

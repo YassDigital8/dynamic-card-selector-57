@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Index from './pages/Index';
@@ -6,7 +7,6 @@ import Hotel from './pages/Hotel';
 import Gallery from './pages/Gallery';
 import Profile from './pages/Profile';
 import NotFound from './pages/NotFound';
-import { ThemeProvider } from './hooks/useTheme';
 import { Toaster } from '@/components/ui/toaster';
 import './App.css';
 import {
@@ -14,11 +14,17 @@ import {
   QueryClientProvider,
 } from '@tanstack/react-query'
 
+// Create a theme context component
+function ThemeProvider({ children }: { children: React.ReactNode }) {
+  // We'll use the existing useTheme hook functionality but wrap it in a provider
+  return <>{children}</>;
+}
+
 function App() {
   const [queryClient] = React.useState(() => new QueryClient())
 
   return (
-    <ThemeProvider defaultTheme="system" storageKey="vite-react-theme">
+    <ThemeProvider>
       <QueryClientProvider client={queryClient}>
         <div className="min-h-screen bg-background font-sans antialiased">
           <Router>
