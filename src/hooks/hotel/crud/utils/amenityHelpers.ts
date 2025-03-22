@@ -1,5 +1,5 @@
 
-import { Hotel } from '@/models/HotelModel';
+import { Hotel, HotelAmenities, AmenityImage } from '@/models/HotelModel';
 
 // Function to validate and ensure all amenity image arrays exist
 export const validateAmenityImages = (hotel: Hotel): Hotel => {
@@ -15,13 +15,15 @@ export const validateAmenityImages = (hotel: Hotel): Hotel => {
     
     // Initialize empty array if it doesn't exist
     if (!updatedAmenities[imagesKey]) {
-      updatedAmenities[imagesKey] = [];
+      // Use type assertion to assign the empty array with the correct type
+      updatedAmenities[imagesKey] = [] as unknown as typeof updatedAmenities[typeof imagesKey];
     }
     
     // Ensure the value is an array
     if (!Array.isArray(updatedAmenities[imagesKey])) {
       console.warn(`${imagesKey} is not an array, initializing to empty array`);
-      updatedAmenities[imagesKey] = [];
+      // Use type assertion to assign the empty array with the correct type
+      updatedAmenities[imagesKey] = [] as unknown as typeof updatedAmenities[typeof imagesKey];
     }
   });
   
