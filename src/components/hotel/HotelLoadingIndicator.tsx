@@ -28,7 +28,7 @@ const HotelLoadingIndicator: React.FC<HotelLoadingIndicatorProps> = ({
         <Loader2 className="h-12 w-12 text-indigo-500 dark:text-indigo-400" />
       </motion.div>
       <p className="mt-4 text-muted-foreground text-lg">{message}</p>
-      <p className="mt-2 text-muted-foreground text-sm">This may take a moment after login</p>
+      <p className="mt-2 text-muted-foreground text-sm">Please wait while we prepare your hotel information</p>
     </motion.div>
   );
 };

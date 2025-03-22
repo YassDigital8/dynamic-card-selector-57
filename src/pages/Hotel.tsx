@@ -34,15 +34,18 @@ const Hotel = () => {
   const [isMounted, setIsMounted] = useState(false);
   
   useEffect(() => {
+    console.log('Hotel page mounting');
     // Set mounted state after a short delay to ensure all hooks have initialized
     const timer = setTimeout(() => {
+      console.log('Hotel page now marked as mounted');
       setIsMounted(true);
-    }, 100);
+    }, 200);
     
     return () => clearTimeout(timer);
   }, []);
   
   if (!isMounted) {
+    console.log('Showing loading indicator while mounting');
     return (
       <PageContainer>
         <HotelLoadingIndicator message="Initializing hotel module..." />
@@ -50,6 +53,7 @@ const Hotel = () => {
     );
   }
 
+  console.log('Rendering full hotel page component');
   return (
     <PageContainer>
       <Suspense fallback={<HotelPageSkeleton />}>
