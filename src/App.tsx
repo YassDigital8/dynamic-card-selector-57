@@ -1,5 +1,5 @@
 
-import React, { useEffect, memo, useMemo } from "react";
+import React, { memo, useMemo } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -69,11 +69,10 @@ const ProtectedRoute = memo(({ children }: { children: React.ReactNode }) => {
 
 ProtectedRoute.displayName = 'ProtectedRoute';
 
-const App = () => {
-  useEffect(() => {
-    initializeTheme();
-  }, []);
+// Initialize theme immediately upon script load
+initializeTheme();
 
+const App = () => {
   // Use memoized routes to prevent unnecessary re-renders
   const routes = useMemo(() => (
     <Routes>
