@@ -146,6 +146,7 @@ export const formSchema = z.object({
   contactDetails: z.array(contactDetailSchema).optional().default([]),
   socialMedia: z.array(socialMediaSchema).optional().default([]),
   contractDocuments: z.array(contractDocumentSchema).optional().default([]),
+  newContractDescription: z.string().optional(),
 });
 
 export type FormValues = z.infer<typeof formSchema>;

@@ -31,6 +31,5 @@ export const defaultValues: Partial<FormValues> = {
   roomTypes: [],
   contactDetails: [],
   socialMedia: [],
-  contractDocuments: [],
-  newContractDescription: '',
+  contractDocuments: []
 };

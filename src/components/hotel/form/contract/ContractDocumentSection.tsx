@@ -3,7 +3,7 @@ import React, { useRef, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { FileUp, Trash2, FilePdf, Plus } from 'lucide-react';
+import { FileUp, Trash2, FileText, Plus } from 'lucide-react';
 import { FormField, FormItem, FormControl, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -115,7 +115,7 @@ const ContractDocumentSection = () => {
           {selectedFile && (
             <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-md">
               <div className="flex items-center gap-3">
-                <FilePdf className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                <FileText className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                 <div className="flex-1">
                   <p className="font-medium">{selectedFile.name}</p>
                   <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -160,9 +160,9 @@ const ContractDocumentSection = () => {
               <h3 className="font-medium">Uploaded Contract Documents</h3>
               <ScrollArea className="h-[200px] border rounded-md p-2">
                 <div className="space-y-2">
-                  {fields.map((document, index) => (
+                  {fields.map((document: any, index) => (
                     <div key={document.id} className="flex items-center gap-3 p-2 border rounded-md">
-                      <FilePdf className="h-5 w-5 text-red-500 flex-shrink-0" />
+                      <FileText className="h-5 w-5 text-red-500 flex-shrink-0" />
                       <div className="flex-1 min-w-0">
                         <p className="font-medium truncate">{document.fileName}</p>
                         {document.description && (
