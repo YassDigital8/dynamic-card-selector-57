@@ -8,11 +8,13 @@ export interface AuthResponse {
   token: string;
   expiresOn?: string;
   success?: boolean;
+  roles?: string[];
 }
 
 export interface UserInfo {
   firstName: string;
   email: string;
+  role?: string;
 }
 
 export interface LoginCredentials {
