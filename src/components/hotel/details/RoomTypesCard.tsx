@@ -9,7 +9,7 @@ import RoomImagesCarousel from '../form/room-types/RoomImagesCarousel';
 
 interface RoomTypesCardProps {
   roomTypes: RoomType[];
-  updatedAt: Date;
+  updatedAt: Date | string;
 }
 
 const RoomTypesCard: React.FC<RoomTypesCardProps> = ({ roomTypes, updatedAt }) => {
@@ -140,7 +140,7 @@ const RoomTypesCard: React.FC<RoomTypesCardProps> = ({ roomTypes, updatedAt }) =
                 variants={item}
                 className="text-xs text-right text-gray-500 dark:text-gray-400 mt-2"
               >
-                Last updated: {format(new Date(updatedAt), 'PPP')}
+                Last updated: {formatUpdatedAt(updatedAt)}
               </motion.div>
             </motion.div>
           )}
@@ -149,6 +149,21 @@ const RoomTypesCard: React.FC<RoomTypesCardProps> = ({ roomTypes, updatedAt }) =
     </motion.div>
   );
 };
+
+// Helper function to format updatedAt date safely
+function formatUpdatedAt(updatedAt: Date | string): string {
+  try {
+    if (updatedAt instanceof Date) {
+      return format(updatedAt, 'PPP');
+    } else if (typeof updatedAt === 'string') {
+      return format(new Date(updatedAt), 'PPP');
+    }
+    return 'Unknown date';
+  } catch (error) {
+    console.error('Error formatting date:', error);
+    return 'Unknown date';
+  }
+}
 
 // Helper functions to handle image fields
 function hasImages(roomType: RoomType): boolean {

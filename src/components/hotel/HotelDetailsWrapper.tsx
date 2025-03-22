@@ -98,8 +98,10 @@ const HotelDetailsWrapper: React.FC<HotelDetailsWrapperProps> = memo(({
     }
   }), [springConfig]);
 
-  // Generate a unique key for the motion div to force re-render on hotel updates
-  const detailsKey = `hotel-card-container-${hotel.id}-${hotel.updatedAt.getTime()}`;
+  // Generate a unique key for the motion div that safely handles different updatedAt types
+  const detailsKey = `hotel-card-container-${hotel.id}-${typeof hotel.updatedAt === 'object' && hotel.updatedAt instanceof Date 
+    ? hotel.updatedAt.getTime() 
+    : String(hotel.updatedAt)}`;
 
   // Check if contract documents exist
   const hasContractDocuments = hotel.contractDocuments && hotel.contractDocuments.length > 0;
@@ -138,7 +140,9 @@ const HotelDetailsWrapper: React.FC<HotelDetailsWrapperProps> = memo(({
                   className="space-y-4 w-full"
                 >
                   <HotelGallery 
-                    key={`gallery-${hotel.id}-${hotel.updatedAt.getTime()}`} 
+                    key={`gallery-${hotel.id}-${typeof hotel.updatedAt === 'object' && hotel.updatedAt instanceof Date 
+                      ? hotel.updatedAt.getTime() 
+                      : String(hotel.updatedAt)}`} 
                     hotel={hotel} 
                   />
                 </motion.div>

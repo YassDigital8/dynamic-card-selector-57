@@ -21,8 +21,10 @@ const DetailsContent: React.FC<DetailsContentProps> = ({
   isEditing,
   contentVariants
 }) => {
-  // Generate a unique ID for the hotel details to force a refresh when data changes
-  const hotelDetailsKey = `hotel-details-${hotel.id}-${hotel.updatedAt.getTime()}`;
+  // Generate a unique key that doesn't rely on getTime()
+  const hotelDetailsKey = `hotel-details-${hotel.id}-${typeof hotel.updatedAt === 'object' && hotel.updatedAt instanceof Date 
+    ? hotel.updatedAt.getTime() 
+    : String(hotel.updatedAt)}`;
   
   return (
     <motion.div
