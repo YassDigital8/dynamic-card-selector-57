@@ -7,12 +7,14 @@ interface ApiStatusIndicatorProps {
   isLive: boolean | null;
   userRole?: string;
   className?: string;
+  showRoleInfo?: boolean;
 }
 
 export const ApiStatusIndicator: React.FC<ApiStatusIndicatorProps> = ({ 
   isLive, 
   userRole,
-  className 
+  className,
+  showRoleInfo = false
 }) => {
   if (isLive === null) {
     return (
