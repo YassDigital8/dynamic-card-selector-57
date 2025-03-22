@@ -14,7 +14,7 @@ interface HotelDetailsProps {
   isEditing?: boolean;
 }
 
-const HotelDetails: React.FC<HotelDetailsProps> = memo(({ 
+const HotelDetails = memo(({ 
   hotel, 
   onEdit, 
   onSave, 
@@ -22,7 +22,7 @@ const HotelDetails: React.FC<HotelDetailsProps> = memo(({
   onDelete,
   onLogoChange,
   isEditing = false
-}) => {
+}: HotelDetailsProps) => {
   const [customLogo, setCustomLogo] = useState<string | null>(hotel.logoUrl || null);
   
   const handleLogoChange = (logo: string | null) => {
@@ -71,7 +71,7 @@ const HotelDetails: React.FC<HotelDetailsProps> = memo(({
       <RoomTypesCard roomTypes={hotel.roomTypes} updatedAt={hotel.updatedAt} />
     </div>
   );
-};
+});
 
 HotelDetails.displayName = 'HotelDetails';
 

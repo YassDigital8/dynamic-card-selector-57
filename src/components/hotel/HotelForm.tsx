@@ -24,7 +24,12 @@ interface HotelFormProps {
   showButtons?: boolean;
 }
 
-const HotelForm = memo(({ initialData, onSubmit, isLoading, showButtons = true }: HotelFormProps) => {
+const HotelForm = memo(({ 
+  initialData, 
+  onSubmit, 
+  isLoading, 
+  showButtons = true 
+}: HotelFormProps) => {
   const form = useForm<typeof formSchema._type>({
     resolver: zodResolver(formSchema),
     defaultValues: initialData || defaultValues,
@@ -151,7 +156,7 @@ const HotelForm = memo(({ initialData, onSubmit, isLoading, showButtons = true }
       </form>
     </Form>
   );
-};
+});
 
 HotelForm.displayName = 'HotelForm';
 
