@@ -57,12 +57,26 @@ const contactDetailSchema = z.object({
 
 const socialMediaSchema = z.object({
   id: z.string().optional(),
-  platform: z.enum(['website', 'facebook', 'instagram', 'twitter', 'linkedin', 'other']),
+  platform: z.enum(['website', 'facebook', 'instagram', 'twitter', 'linkedin', 'email', 'other']),
   url: z.string()
     .min(1, { message: "URL is required" })
     .superRefine((val, ctx) => {
+      // Get the parent platform type
+      const platform = (ctx as any).data?.platform;
+      
+      if (platform === 'email') {
+        // For email platform, validate as email instead of URL
+        if (!validateEmail(val)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Invalid email format",
+          });
+        }
+        return; // Skip URL validation for email
+      }
+      
       try {
-        // Basic URL validation
+        // Basic URL validation for non-email platforms
         if (!val.startsWith('http://') && !val.startsWith('https://')) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,

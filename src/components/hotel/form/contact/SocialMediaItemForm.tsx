@@ -32,8 +32,14 @@ const SocialMediaItemForm: React.FC<SocialMediaItemFormProps> = ({
       case 'instagram': return 'https://instagram.com/username';
       case 'twitter': return 'https://twitter.com/username';
       case 'linkedin': return 'https://linkedin.com/company/name';
+      case 'email': return 'contact@example.com';
       default: return 'https://www.example.com';
     }
+  };
+
+  // Determine input type based on platform
+  const getInputType = (platform: string) => {
+    return platform === 'email' ? 'email' : 'url';
   };
   
   return (
@@ -62,6 +68,8 @@ const SocialMediaItemForm: React.FC<SocialMediaItemFormProps> = ({
                 <SelectItem value="instagram">Instagram</SelectItem>
                 <SelectItem value="twitter">Twitter/X</SelectItem>
                 <SelectItem value="linkedin">LinkedIn</SelectItem>
+                <SelectItem value="email">Email</SelectItem>
+                <SelectItem value="other">Other</SelectItem>
               </SelectContent>
             </Select>
             <FormMessage className="text-xs" />
@@ -69,7 +77,7 @@ const SocialMediaItemForm: React.FC<SocialMediaItemFormProps> = ({
         )}
       />
       
-      {/* URL */}
+      {/* URL or Email */}
       <FormField
         control={form.control}
         name={`socialMedia.${index}.url`}
@@ -81,7 +89,7 @@ const SocialMediaItemForm: React.FC<SocialMediaItemFormProps> = ({
                   {...field} 
                   placeholder={getPlaceholder(platformType)} 
                   className={`${fieldError ? "border-red-500 focus-visible:ring-red-500" : ""} h-9 text-xs md:text-sm`}
-                  type="url"
+                  type={getInputType(platformType)}
                 />
                 {fieldError && (
                   <TooltipProvider>
@@ -111,7 +119,7 @@ const SocialMediaItemForm: React.FC<SocialMediaItemFormProps> = ({
             <FormControl>
               <Input 
                 {...field} 
-                placeholder="Display label (optional)" 
+                placeholder={platformType === 'email' ? "Contact person name" : "Display label (optional)"} 
                 className="h-9 text-xs md:text-sm"
               />
             </FormControl>

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Phone, MessageCircle, Globe, Facebook, Instagram, Twitter, Linkedin, Hash } from 'lucide-react';
+import { Phone, MessageCircle, Globe, Facebook, Instagram, Twitter, Linkedin, Hash, Mail } from 'lucide-react';
 
 export const getContactIcon = (type: string) => {
   switch(type) {
@@ -22,6 +22,7 @@ export const getSocialIcon = (platform: string) => {
     case 'instagram': return <Instagram className="h-4 w-4" />;
     case 'twitter': return <Twitter className="h-4 w-4" />;
     case 'linkedin': return <Linkedin className="h-4 w-4" />;
+    case 'email': return <Mail className="h-4 w-4" />;
     default: return <Hash className="h-4 w-4" />;
   }
 };

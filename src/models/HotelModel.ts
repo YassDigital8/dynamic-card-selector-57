@@ -1,4 +1,3 @@
-
 export interface RoomType {
   id: string;
   name: string;
@@ -57,7 +56,7 @@ export interface ContactDetail {
 
 export interface SocialMedia {
   id: string;
-  platform: 'website' | 'facebook' | 'instagram' | 'twitter' | 'linkedin' | 'other';
+  platform: 'website' | 'facebook' | 'instagram' | 'twitter' | 'linkedin' | 'email' | 'other';
   url: string;
   label?: string;
 }
