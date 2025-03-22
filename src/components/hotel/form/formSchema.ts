@@ -9,39 +9,38 @@ const amenityImageSchema = z.object({
   metadata: z.record(z.any()).optional(),
 });
 
+// Custom validation functions
+const validateEmail = (email: string) => {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+};
+
+const validatePhone = (phone: string) => {
+  return /^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/.test(phone);
+};
+
 const contactDetailSchema = z.object({
   id: z.string().optional(),
   type: z.enum(['phone', 'email', 'address', 'fax', 'other']),
   value: z.string()
     .min(1, { message: "Contact value is required" })
-    .refine((val, ctx) => {
-      if (ctx.path.includes('contactDetails') && Array.isArray(ctx.data)) {
-        // Get the current item's index from the path (e.g., "contactDetails.0.value" -> 0)
-        const pathParts = ctx.path.split('.');
-        const index = parseInt(pathParts[1], 10);
-        
-        if (!isNaN(index) && ctx.data[index]) {
-          const type = ctx.data[index].type;
-          
-          // Apply type-specific validation
-          if (type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
-            ctx.addIssue({
-              code: z.ZodIssueCode.custom,
-              message: "Invalid email format",
-            });
-            return false;
-          } 
-          
-          if (type === 'phone' && !/^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/.test(val)) {
-            ctx.addIssue({
-              code: z.ZodIssueCode.custom,
-              message: "Invalid phone number format",
-            });
-            return false;
-          }
-        }
+    .superRefine((val, ctx) => {
+      // Get the parent object to access the 'type' field
+      const parentPath = ctx.path.slice(0, -1);
+      const parent = ctx.parent as { type: string };
+      
+      if (parent.type === 'email' && !validateEmail(val)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Invalid email format",
+        });
+      } 
+      
+      if (parent.type === 'phone' && !validatePhone(val)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Invalid phone number format",
+        });
       }
-      return true;
     }),
   label: z.string().optional(),
   isPrimary: z.boolean().optional(),
@@ -52,18 +51,24 @@ const socialMediaSchema = z.object({
   platform: z.enum(['website', 'facebook', 'instagram', 'twitter', 'linkedin', 'other']),
   url: z.string()
     .min(1, { message: "URL is required" })
-    .refine((val) => {
+    .superRefine((val, ctx) => {
       try {
         // Basic URL validation
         if (!val.startsWith('http://') && !val.startsWith('https://')) {
-          return false;
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "URL must start with http:// or https://",
+          });
+          return;
         }
         new URL(val);
-        return true;
       } catch {
-        return false;
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Invalid URL format",
+        });
       }
-    }, { message: "Invalid URL format. Must start with http:// or https://" }),
+    }),
   label: z.string().optional(),
 });
 
