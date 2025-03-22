@@ -16,7 +16,7 @@ import PageSelectors from '@/components/pages/index/PageSelectors';
 import PathSelectors from '@/components/pages/index/PathSelectors';
 import PageData from '@/components/pages/index/PageData';
 import AddPageDialog from '@/components/pages/index/addPageDialog';
-import PageContainer from '@/components/pages/index/page-container';
+import PageContainer from '@/components/pages/index/PageContainer';
 import PagesTour from '@/components/pages/index/PagesTour';
 import AuthenticatedContent from '@/components/pages/index/AuthenticatedContent';
 
