@@ -37,7 +37,7 @@ const SocialMediaItemForm: React.FC<SocialMediaItemFormProps> = ({
   };
   
   return (
-    <div className="grid grid-cols-12 gap-2 md:gap-3 items-center p-2 rounded-md border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-950 shadow-sm">
+    <div className="grid grid-cols-12 gap-3 items-center p-3 rounded-md border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-950 shadow-sm">
       {/* Platform Type */}
       <FormField
         control={form.control}
@@ -49,7 +49,7 @@ const SocialMediaItemForm: React.FC<SocialMediaItemFormProps> = ({
               defaultValue={field.value}
             >
               <FormControl>
-                <SelectTrigger className="h-8 text-xs md:text-sm">
+                <SelectTrigger className="h-9 text-xs md:text-sm">
                   <div className="flex items-center">
                     <span className="mr-1">{getSocialIcon(field.value)}</span>
                     <SelectValue placeholder="Platform" />
@@ -80,7 +80,7 @@ const SocialMediaItemForm: React.FC<SocialMediaItemFormProps> = ({
                 <Input 
                   {...field} 
                   placeholder={getPlaceholder(platformType)} 
-                  className={`${fieldError ? "border-red-500 focus-visible:ring-red-500" : ""} h-8 text-xs md:text-sm`}
+                  className={`${fieldError ? "border-red-500 focus-visible:ring-red-500" : ""} h-9 text-xs md:text-sm`}
                   type="url"
                 />
                 {fieldError && (
@@ -112,7 +112,7 @@ const SocialMediaItemForm: React.FC<SocialMediaItemFormProps> = ({
               <Input 
                 {...field} 
                 placeholder="Display label (optional)" 
-                className="h-8 text-xs md:text-sm"
+                className="h-9 text-xs md:text-sm"
               />
             </FormControl>
             <FormMessage className="text-xs" />
@@ -127,7 +127,7 @@ const SocialMediaItemForm: React.FC<SocialMediaItemFormProps> = ({
           variant="ghost"
           size="sm"
           onClick={onRemove}
-          className="h-7 w-7 rounded-full text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
+          className="h-8 w-8 rounded-full text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
         >
           <Trash2 className="h-4 w-4" />
         </Button>

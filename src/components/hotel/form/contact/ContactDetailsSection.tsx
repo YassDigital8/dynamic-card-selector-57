@@ -58,7 +58,7 @@ const ContactDetailsSection = () => {
       <CardContent className="space-y-6 sm:space-y-8 pt-4">
         {/* Contact Details */}
         <div className="space-y-4">
-          <div className="flex justify-between items-center mb-3">
+          <div className="flex justify-between items-center mb-4">
             <h3 className="text-sm sm:text-md font-medium border-l-4 border-blue-600 pl-2">Contact Details</h3>
             <Button 
               type="button" 
@@ -66,9 +66,9 @@ const ContactDetailsSection = () => {
               size="sm" 
               onClick={handleAddContact}
               disabled={contactDetails.fields.length >= 10}
-              className="border-blue-200 dark:border-blue-800 text-xs h-7 sm:h-8 px-2 bg-white dark:bg-gray-900"
+              className="border-blue-200 dark:border-blue-800 text-xs h-8 px-2 bg-white dark:bg-gray-900"
             >
-              <Plus className="h-3 w-3 sm:h-3.5 sm:w-3.5 mr-1" />
+              <Plus className="h-3 w-3 mr-1" />
               Add Contact
             </Button>
           </div>
@@ -92,17 +92,17 @@ const ContactDetailsSection = () => {
         </div>
 
         {/* Social Media */}
-        <div className="space-y-4 pt-2 border-t dark:border-gray-800">
-          <div className="flex justify-between items-center mb-3 mt-4">
+        <div className="space-y-4 pt-4 border-t dark:border-gray-800">
+          <div className="flex justify-between items-center mb-4 mt-4">
             <h3 className="text-sm sm:text-md font-medium border-l-4 border-blue-600 pl-2">Social Media &amp; Website</h3>
             <Button 
               type="button" 
               variant="outline" 
               size="sm" 
               onClick={handleAddSocial}
-              className="border-blue-200 dark:border-blue-800 text-xs h-7 sm:h-8 px-2 bg-white dark:bg-gray-900"
+              className="border-blue-200 dark:border-blue-800 text-xs h-8 px-2 bg-white dark:bg-gray-900"
             >
-              <Plus className="h-3 w-3 sm:h-3.5 sm:w-3.5 mr-1" />
+              <Plus className="h-3 w-3 mr-1" />
               Add Link
             </Button>
           </div>

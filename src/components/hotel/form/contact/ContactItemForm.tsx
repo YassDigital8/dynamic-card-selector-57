@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
-import { Trash2, AlertCircle } from 'lucide-react';
+import { Trash2, AlertCircle, CheckCircle } from 'lucide-react';
 import { useFormContext } from 'react-hook-form';
 import { getContactIcon } from './ContactIcons';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -24,6 +24,7 @@ const ContactItemForm: React.FC<ContactItemFormProps> = ({
 }) => {
   const form = useFormContext();
   const contactType = form.watch(`contactDetails.${index}.type`);
+  const isPrimary = form.watch(`contactDetails.${index}.isPrimary`);
   
   // Get validation status for this field
   const fieldError = form.formState.errors?.contactDetails?.[index]?.value;
@@ -46,13 +47,13 @@ const ContactItemForm: React.FC<ContactItemFormProps> = ({
   }, [contactType, form, index]);
   
   return (
-    <div className="grid grid-cols-12 gap-2 md:gap-3 items-center p-2 rounded-md border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-950 shadow-sm">
+    <div className="grid grid-cols-12 gap-3 items-center p-3 rounded-md border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-950 shadow-sm">
       {/* Contact Type */}
       <FormField
         control={form.control}
         name={`contactDetails.${index}.type`}
         render={({ field }) => (
-          <FormItem className="col-span-12 sm:col-span-2">
+          <FormItem className="col-span-12 sm:col-span-3">
             <Select 
               onValueChange={(value) => {
                 field.onChange(value);
@@ -62,7 +63,7 @@ const ContactItemForm: React.FC<ContactItemFormProps> = ({
               defaultValue={field.value}
             >
               <FormControl>
-                <SelectTrigger className="h-8 text-xs md:text-sm">
+                <SelectTrigger className="h-9 text-xs md:text-sm">
                   <SelectValue placeholder="Type" />
                 </SelectTrigger>
               </FormControl>
@@ -91,7 +92,7 @@ const ContactItemForm: React.FC<ContactItemFormProps> = ({
                 <Input 
                   {...field} 
                   placeholder={getPlaceholder(contactType)} 
-                  className={`${fieldError ? "border-red-500 focus-visible:ring-red-500" : ""} h-8 text-xs md:text-sm`}
+                  className={`${fieldError ? "border-red-500 focus-visible:ring-red-500" : ""} h-9 text-xs md:text-sm`}
                   type="text"
                   inputMode={contactType === 'phone' || contactType === 'fax' || contactType === 'whatsapp' ? 'tel' : undefined}
                 />
@@ -119,12 +120,12 @@ const ContactItemForm: React.FC<ContactItemFormProps> = ({
         control={form.control}
         name={`contactDetails.${index}.personName`}
         render={({ field }) => (
-          <FormItem className="col-span-12 sm:col-span-4">
+          <FormItem className="col-span-12 sm:col-span-3">
             <FormControl>
               <Input 
                 {...field} 
                 placeholder="Contact person name" 
-                className="h-8 text-xs md:text-sm"
+                className="h-9 text-xs md:text-sm"
               />
             </FormControl>
             <FormMessage className="text-xs" />
@@ -132,27 +133,31 @@ const ContactItemForm: React.FC<ContactItemFormProps> = ({
         )}
       />
       
-      <div className="col-span-9 sm:col-span-1 flex justify-center">
-        {/* Primary Switch */}
-        <FormField
-          control={form.control}
-          name={`contactDetails.${index}.isPrimary`}
-          render={({ field }) => (
-            <FormItem className="flex flex-row items-center justify-center space-x-2">
-              <FormControl>
-                <div className="flex items-center gap-1.5">
-                  <Switch
-                    checked={field.value}
-                    onCheckedChange={onSetPrimary}
-                    className="data-[state=checked]:bg-blue-600"
-                  />
-                  {field.value && <Badge variant="outline" className="text-[10px]">Primary</Badge>}
-                </div>
-              </FormControl>
-            </FormItem>
-          )}
-        />
-      </div>
+      {/* Primary Toggle */}
+      <FormField
+        control={form.control}
+        name={`contactDetails.${index}.isPrimary`}
+        render={({ field }) => (
+          <div className="col-span-9 sm:col-span-1 flex items-center justify-center">
+            <Button
+              type="button"
+              variant={isPrimary ? "success" : "outline"}
+              size="sm"
+              className={`h-8 w-8 rounded-full p-0 ${isPrimary ? 'bg-blue-100 text-blue-600 hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-300 dark:hover:bg-blue-800' : 'text-gray-400'}`}
+              onClick={onSetPrimary}
+              disabled={isPrimary}
+              title={isPrimary ? "Primary contact" : "Set as primary contact"}
+            >
+              <CheckCircle className={`h-4 w-4 ${isPrimary ? "" : "opacity-50"}`} />
+            </Button>
+            {isPrimary && (
+              <span className="ml-1 text-xs text-blue-600 dark:text-blue-400 hidden sm:block">
+                Primary
+              </span>
+            )}
+          </div>
+        )}
+      />
       
       {/* Delete Button */}
       <div className="col-span-3 sm:col-span-1 flex justify-end">
@@ -161,7 +166,7 @@ const ContactItemForm: React.FC<ContactItemFormProps> = ({
           variant="ghost"
           size="sm"
           onClick={onRemove}
-          className="h-7 w-7 rounded-full text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
+          className="h-8 w-8 rounded-full text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
         >
           <Trash2 className="h-4 w-4" />
         </Button>
