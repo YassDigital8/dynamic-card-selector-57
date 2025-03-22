@@ -137,7 +137,7 @@ const ContactItemForm: React.FC<ContactItemFormProps> = ({
         control={form.control}
         name={`contactDetails.${index}.isPrimary`}
         render={({ field }) => (
-          <FormItem className="flex flex-row items-center justify-center space-x-1 col-span-1">
+          <FormItem className="col-span-1 flex flex-row items-center justify-center space-x-1">
             <FormControl>
               <div className="flex flex-col items-center sm:flex-row sm:space-x-1">
                 <Switch
@@ -152,8 +152,8 @@ const ContactItemForm: React.FC<ContactItemFormProps> = ({
         )}
       />
       
-      {/* Delete Button */}
-      <div className="col-span-1 flex justify-end">
+      {/* Delete Button - adjusted to prevent overlap */}
+      <div className="col-span-1 flex justify-end pl-2">
         <Button
           type="button"
           variant="ghost"
@@ -169,4 +169,3 @@ const ContactItemForm: React.FC<ContactItemFormProps> = ({
 };
 
 export default ContactItemForm;
-
