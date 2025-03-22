@@ -85,7 +85,7 @@ const ContactItemForm: React.FC<ContactItemFormProps> = ({
         control={form.control}
         name={`contactDetails.${index}.value`}
         render={({ field }) => (
-          <FormItem className="col-span-5">
+          <FormItem className="col-span-7">
             <FormControl>
               <div className="flex items-center space-x-1">
                 <span className="text-muted-foreground">
@@ -111,20 +111,6 @@ const ContactItemForm: React.FC<ContactItemFormProps> = ({
                   </TooltipProvider>
                 )}
               </div>
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-      
-      {/* Contact Label */}
-      <FormField
-        control={form.control}
-        name={`contactDetails.${index}.label`}
-        render={({ field }) => (
-          <FormItem className="col-span-2">
-            <FormControl>
-              <Input {...field} placeholder="Label (optional)" />
             </FormControl>
             <FormMessage />
           </FormItem>

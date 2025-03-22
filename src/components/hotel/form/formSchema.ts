@@ -44,7 +44,6 @@ const contactDetailSchema = z.object({
         });
       }
     }),
-  label: z.string().optional(),
   isPrimary: z.boolean().optional(),
 });
 
