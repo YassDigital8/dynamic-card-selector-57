@@ -1,7 +1,13 @@
 
 import React, { memo, useState } from 'react';
 import { Hotel } from '@/models/HotelModel';
-import { HotelHeader, LocationCard, AmenitiesCard, RoomTypesCard } from './details';
+import { 
+  HotelHeader, 
+  LocationCard, 
+  AmenitiesCard, 
+  RoomTypesCard,
+  ContractDocumentsCard 
+} from './details';
 import ContactDetailsCard from './details/ContactDetailsCard';
 
 interface HotelDetailsProps {
@@ -66,6 +72,11 @@ const HotelDetails = memo(({
       <ContactDetailsCard 
         contactDetails={hotel.contactDetails} 
         socialMedia={hotel.socialMedia} 
+      />
+
+      {/* Add the new ContractDocumentsCard component */}
+      <ContractDocumentsCard 
+        contractDocuments={hotel.contractDocuments} 
       />
 
       <RoomTypesCard roomTypes={hotel.roomTypes} updatedAt={hotel.updatedAt} />
