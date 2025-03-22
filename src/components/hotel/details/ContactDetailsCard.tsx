@@ -19,8 +19,8 @@ const ContactDetailsCard: React.FC<ContactDetailsCardProps> = ({
   const getContactIcon = (type: string) => {
     switch (type) {
       case 'phone': return <Phone className="h-4 w-4" />;
-      case 'email': return <Mail className="h-4 w-4" />;
-      case 'address': return <MapPin className="h-4 w-4" />;
+      case 'fax': return <Phone className="h-4 w-4" />;
+      case 'whatsapp': return <Phone className="h-4 w-4" />;
       default: return <Hash className="h-4 w-4" />;
     }
   };
@@ -50,9 +50,8 @@ const ContactDetailsCard: React.FC<ContactDetailsCardProps> = ({
   const getTypeLabel = (type: string) => {
     switch (type) {
       case 'phone': return 'Phone';
-      case 'email': return 'Email';
-      case 'address': return 'Address';
       case 'fax': return 'Fax';
+      case 'whatsapp': return 'WhatsApp';
       default: return 'Other';
     }
   };
@@ -68,18 +67,9 @@ const ContactDetailsCard: React.FC<ContactDetailsCardProps> = ({
     }
   };
 
-  // Format contact value for rendering (e.g., make emails and phones clickable)
+  // Format contact value for rendering (e.g., make phones clickable)
   const renderContactValue = (contact: ContactDetail) => {
-    if (contact.type === 'email') {
-      return (
-        <a 
-          href={`mailto:${contact.value}`}
-          className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
-        >
-          {contact.value}
-        </a>
-      );
-    } else if (contact.type === 'phone') {
+    if (contact.type === 'phone' || contact.type === 'whatsapp') {
       return (
         <a 
           href={`tel:${contact.value.replace(/\s+/g, '')}`}
@@ -129,13 +119,18 @@ const ContactDetailsCard: React.FC<ContactDetailsCardProps> = ({
                 <div className="flex-1">
                   <div className="flex items-center">
                     <div className="font-medium text-sm">
-                      {contact.label || getTypeLabel(contact.type)}
+                      {getTypeLabel(contact.type)}
                     </div>
                     {contact.isPrimary && (
                       <Badge variant="secondary" className="ml-2 text-xs">Primary</Badge>
                     )}
                   </div>
                   <div className="text-sm mt-0.5">{renderContactValue(contact)}</div>
+                  {contact.personName && (
+                    <div className="text-xs text-muted-foreground mt-0.5">
+                      Contact: {contact.personName}
+                    </div>
+                  )}
                 </div>
               </div>
             ))}

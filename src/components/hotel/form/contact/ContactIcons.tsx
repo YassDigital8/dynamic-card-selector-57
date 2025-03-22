@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Phone, MessageCircle } from 'lucide-react';
+import { Phone, MessageCircle, Globe, Facebook, Instagram, Twitter, Linkedin, Hash } from 'lucide-react';
 
 export const getContactIcon = (type: string) => {
   switch(type) {
