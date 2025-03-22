@@ -32,10 +32,9 @@ const HotelPageContainer: React.FC = () => {
   // Mark data as loaded once hotels are initialized and not loading
   useEffect(() => {
     if (isInitialized && !isLoading) {
-      // Add a small delay to ensure the hotels data is fully processed
       const timer = setTimeout(() => {
         setDataLoaded(true);
-      }, 500); // Slightly longer delay to ensure smooth transition
+      }, 300); // Short delay to ensure smooth transition
       
       return () => clearTimeout(timer);
     }
@@ -71,13 +70,6 @@ const HotelPageContainer: React.FC = () => {
       console.log('HotelPageContainer - Selected hotel updated:', selectedHotel.id, forceRefresh);
     }
   }, [selectedHotel, forceRefresh]);
-
-  // Reset loading state when component unmounts
-  useEffect(() => {
-    return () => {
-      setDataLoaded(false);
-    };
-  }, []);
 
   const handleSubmitAdd = (data: HotelFormData) => {
     const hotelWithPOS = {

@@ -12,7 +12,7 @@ const HotelLoadingIndicator: React.FC<HotelLoadingIndicatorProps> = ({
 }) => {
   return (
     <motion.div 
-      className="w-full h-full flex flex-col items-center justify-center p-8 min-h-[50vh]"
+      className="w-full h-full flex flex-col items-center justify-center p-8"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
@@ -25,10 +25,9 @@ const HotelLoadingIndicator: React.FC<HotelLoadingIndicatorProps> = ({
           ease: "linear"
         }}
       >
-        <Loader2 className="h-12 w-12 text-indigo-500 dark:text-indigo-400" />
+        <Loader2 className="h-10 w-10 text-indigo-500 dark:text-indigo-400" />
       </motion.div>
-      <p className="mt-4 text-muted-foreground text-lg">{message}</p>
-      <p className="mt-2 text-muted-foreground text-sm">This may take a moment after login</p>
+      <p className="mt-4 text-muted-foreground">{message}</p>
     </motion.div>
   );
 };

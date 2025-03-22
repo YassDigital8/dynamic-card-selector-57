@@ -16,16 +16,6 @@ export const useHotelNetwork = (selectedPOS: string = '') => {
   // Filter hotels by POS
   useEffect(() => {
     try {
-      // Ensure we have hotels data before filtering
-      if (!hotels || hotels.length === 0) {
-        // If there are no hotels, we're still initialized but with empty data
-        if (!isInitialized && !isLoading) {
-          setIsInitialized(true);
-        }
-        setFilteredHotels([]);
-        return;
-      }
-      
       if (selectedPOS && selectedPOS !== 'all') {
         const filtered = hotels.filter(hotel => 
           hotel.posKey.toLowerCase() === selectedPOS.toLowerCase()
@@ -43,7 +33,6 @@ export const useHotelNetwork = (selectedPOS: string = '') => {
       
       // Mark as initialized once we've processed the hotels
       if (!isInitialized) {
-        console.log('Hotel network initialized with', hotels.length, 'hotels');
         setIsInitialized(true);
       }
     } catch (error) {
@@ -55,7 +44,7 @@ export const useHotelNetwork = (selectedPOS: string = '') => {
       // Fallback to empty array on error
       setFilteredHotels([]);
     }
-  }, [selectedPOS, hotels, selectedHotel, isInitialized, isLoading]);
+  }, [selectedPOS, hotels, selectedHotel, isInitialized]);
 
   // Handle hotel operations with updates to selected hotel
   const handleAddHotel = useCallback((hotelData: HotelFormData) => {
