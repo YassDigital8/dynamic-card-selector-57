@@ -1,5 +1,5 @@
 
-import React, { memo, useMemo } from "react";
+import React, { memo } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -73,60 +73,56 @@ ProtectedRoute.displayName = 'ProtectedRoute';
 initializeTheme();
 
 const App = () => {
-  // Use memoized routes to prevent unnecessary re-renders
-  const routes = useMemo(() => (
-    <Routes>
-      {/* Public routes */}
-      <Route path="/login" element={<Login />} />
-      
-      {/* Protected routes */}
-      <Route path="/" element={
-        <ProtectedRoute>
-          <Index />
-        </ProtectedRoute>
-      } />
-      <Route path="/pages" element={
-        <ProtectedRoute>
-          <Index />
-        </ProtectedRoute>
-      } />
-      <Route path="/users" element={
-        <ProtectedRoute>
-          <Index />
-        </ProtectedRoute>
-      } />
-      <Route path="/settings" element={
-        <ProtectedRoute>
-          <Index />
-        </ProtectedRoute>
-      } />
-      <Route path="/gallery" element={
-        <ProtectedRoute>
-          <Gallery />
-        </ProtectedRoute>
-      } />
-      <Route path="/hotel" element={
-        <ProtectedRoute>
-          <Hotel />
-        </ProtectedRoute>
-      } />
-      
-      {/* Catch-all route - also protected */}
-      <Route path="*" element={
-        <ProtectedRoute>
-          <NotFound />
-        </ProtectedRoute>
-      } />
-    </Routes>
-  ), []);
-
+  // Define routes directly without useMemo to avoid potential issues
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          {routes}
+          <Routes>
+            {/* Public routes */}
+            <Route path="/login" element={<Login />} />
+            
+            {/* Protected routes */}
+            <Route path="/" element={
+              <ProtectedRoute>
+                <Index />
+              </ProtectedRoute>
+            } />
+            <Route path="/pages" element={
+              <ProtectedRoute>
+                <Index />
+              </ProtectedRoute>
+            } />
+            <Route path="/users" element={
+              <ProtectedRoute>
+                <Index />
+              </ProtectedRoute>
+            } />
+            <Route path="/settings" element={
+              <ProtectedRoute>
+                <Index />
+              </ProtectedRoute>
+            } />
+            <Route path="/gallery" element={
+              <ProtectedRoute>
+                <Gallery />
+              </ProtectedRoute>
+            } />
+            <Route path="/hotel" element={
+              <ProtectedRoute>
+                <Hotel />
+              </ProtectedRoute>
+            } />
+            
+            {/* Catch-all route - also protected */}
+            <Route path="*" element={
+              <ProtectedRoute>
+                <NotFound />
+              </ProtectedRoute>
+            } />
+          </Routes>
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
