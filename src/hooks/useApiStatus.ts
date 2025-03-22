@@ -56,7 +56,7 @@ export const useApiStatus = () => {
   }, [toast]);
 
   useEffect(() => {
-    // Initial check
+    // Immediate check when component mounts
     checkApiStatus();
     
     // Check API status every 2 minutes

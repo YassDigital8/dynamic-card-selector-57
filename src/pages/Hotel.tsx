@@ -1,8 +1,8 @@
 
-import React, { Suspense } from 'react';
+import React, { Suspense, useState, useEffect } from 'react';
 import PageContainer from '@/components/pages/index/PageContainer';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Avatar } from '@/components/ui/avatar';
+import HotelLoadingIndicator from '@/components/hotel/HotelLoadingIndicator';
 
 // Lazy load the HotelPage component
 const HotelPage = React.lazy(() => import('@/components/hotel/HotelPage'));
@@ -30,6 +30,26 @@ const HotelPageSkeleton = () => (
 );
 
 const Hotel = () => {
+  // Track if the component has mounted
+  const [isMounted, setIsMounted] = useState(false);
+  
+  useEffect(() => {
+    // Set mounted state after a short delay to ensure all hooks have initialized
+    const timer = setTimeout(() => {
+      setIsMounted(true);
+    }, 100);
+    
+    return () => clearTimeout(timer);
+  }, []);
+  
+  if (!isMounted) {
+    return (
+      <PageContainer>
+        <HotelLoadingIndicator message="Initializing hotel module..." />
+      </PageContainer>
+    );
+  }
+
   return (
     <PageContainer>
       <Suspense fallback={<HotelPageSkeleton />}>
