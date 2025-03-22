@@ -1,45 +1,31 @@
 
 import React, { useState, useEffect } from 'react';
 import { HotelFormData } from '@/models/HotelModel';
-import HotelPageHeader from './HotelPageHeader';
 import HotelResizablePanels from './layout/HotelResizablePanels';
 import { usePageSelectionViewModel } from '@/viewmodels/PageSelectionViewModel';
-import useHotelNetwork from '@/hooks/hotel';
-import useHotelFilters from '@/hooks/hotel/useHotelFilters';
-import useHotelSelection from '@/hooks/hotel/useHotelSelection';
-import usePanelSizing from '@/hooks/hotel/usePanelSizing';
-import { motion } from 'framer-motion';
+import { useHotelNetwork, useHotelFilters, useHotelSelection, usePanelSizing } from '@/hooks/hotel';
+import { useHotelLoadingState } from '@/hooks/hotel/useHotelLoadingState';
 import HotelLoadingIndicator from './HotelLoadingIndicator';
+import PageContentWrapper from './layout/PageContentWrapper';
 
 const HotelPageContainer: React.FC = () => {
   const { posOptions } = usePageSelectionViewModel();
   const [selectedPOS, setSelectedPOS] = useState<string>('');
-  const [dataLoaded, setDataLoaded] = useState(false);
   
   const {
     hotels,
-    selectedHotel: networkSelectedHotel,
     isLoading,
-    isEditing: networkIsEditing,
     isInitialized,
-    setSelectedHotel: networkSetSelectedHotel,
-    setIsEditing: networkSetIsEditing,
     addHotel,
     updateHotel,
     deleteHotel
   } = useHotelNetwork(selectedPOS);
   
-  // Mark data as loaded once hotels are initialized and not loading
-  useEffect(() => {
-    if (isInitialized && !isLoading) {
-      // Add a small delay to ensure the hotels data is fully processed
-      const timer = setTimeout(() => {
-        setDataLoaded(true);
-      }, 500); // Slightly longer delay to ensure smooth transition
-      
-      return () => clearTimeout(timer);
-    }
-  }, [isInitialized, isLoading]);
+  // Use the extracted loading state hook
+  const { dataLoaded } = useHotelLoadingState({
+    isInitialized,
+    isLoading
+  });
   
   const { filters, setFilters, filteredHotels } = useHotelFilters(hotels);
   
@@ -71,13 +57,6 @@ const HotelPageContainer: React.FC = () => {
       console.log('HotelPageContainer - Selected hotel updated:', selectedHotel.id, forceRefresh);
     }
   }, [selectedHotel, forceRefresh]);
-
-  // Reset loading state when component unmounts
-  useEffect(() => {
-    return () => {
-      setDataLoaded(false);
-    };
-  }, []);
 
   const handleSubmitAdd = (data: HotelFormData) => {
     const hotelWithPOS = {
@@ -111,20 +90,13 @@ const HotelPageContainer: React.FC = () => {
   }
 
   return (
-    <motion.div 
-      className="container mx-auto py-3 sm:py-4 md:py-6 space-y-4 sm:space-y-6 md:space-y-8 px-2 sm:px-4"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.3 }}
+    <PageContentWrapper
+      selectedPOS={selectedPOS}
+      onSelectPOS={setSelectedPOS}
+      onAddHotel={handleAddHotel}
+      filters={filters}
+      onFilterChange={setFilters}
     >
-      <HotelPageHeader 
-        selectedPOS={selectedPOS}
-        onSelectPOS={setSelectedPOS}
-        onAddHotel={handleAddHotel}
-        filters={filters}
-        onFilterChange={setFilters}
-      />
-
       <HotelResizablePanels
         panelSize={panelSize}
         setPanelSize={setPanelSize}
@@ -148,7 +120,7 @@ const HotelPageContainer: React.FC = () => {
         onCancelEdit={handleCancelEdit}
         onStartEdit={handleStartEdit}
       />
-    </motion.div>
+    </PageContentWrapper>
   );
 };
 
