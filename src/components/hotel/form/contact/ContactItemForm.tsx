@@ -32,9 +32,8 @@ const ContactItemForm: React.FC<ContactItemFormProps> = ({
   const getPlaceholder = (type: string) => {
     switch(type) {
       case 'phone': return '+1 (555) 123-4567';
-      case 'email': return 'contact@example.com';
-      case 'address': return 'Full address';
       case 'fax': return '+1 (555) 987-6543';
+      case 'whatsapp': return '+1 (555) 123-4567';
       default: return 'Contact information';
     }
   };
@@ -53,7 +52,7 @@ const ContactItemForm: React.FC<ContactItemFormProps> = ({
         control={form.control}
         name={`contactDetails.${index}.type`}
         render={({ field }) => (
-          <FormItem className="col-span-3 sm:col-span-3">
+          <FormItem className="col-span-2 sm:col-span-2">
             <Select 
               onValueChange={(value) => {
                 field.onChange(value);
@@ -69,10 +68,8 @@ const ContactItemForm: React.FC<ContactItemFormProps> = ({
               </FormControl>
               <SelectContent>
                 <SelectItem value="phone">Phone</SelectItem>
-                <SelectItem value="email">Email</SelectItem>
-                <SelectItem value="address">Address</SelectItem>
                 <SelectItem value="fax">Fax</SelectItem>
-                <SelectItem value="other">Other</SelectItem>
+                <SelectItem value="whatsapp">WhatsApp</SelectItem>
               </SelectContent>
             </Select>
             <FormMessage className="text-xs" />
@@ -85,7 +82,7 @@ const ContactItemForm: React.FC<ContactItemFormProps> = ({
         control={form.control}
         name={`contactDetails.${index}.value`}
         render={({ field }) => (
-          <FormItem className="col-span-6 sm:col-span-7">
+          <FormItem className="col-span-4 sm:col-span-4">
             <FormControl>
               <div className="flex items-center space-x-1">
                 <span className="text-muted-foreground hidden sm:inline-flex">
@@ -95,8 +92,8 @@ const ContactItemForm: React.FC<ContactItemFormProps> = ({
                   {...field} 
                   placeholder={getPlaceholder(contactType)} 
                   className={`${fieldError ? "border-red-500 focus-visible:ring-red-500" : ""} h-8 text-xs md:text-sm`}
-                  type={contactType === 'email' ? 'email' : 'text'}
-                  inputMode={contactType === 'phone' || contactType === 'fax' ? 'tel' : undefined}
+                  type="text"
+                  inputMode={contactType === 'phone' || contactType === 'fax' || contactType === 'whatsapp' ? 'tel' : undefined}
                 />
                 {fieldError && (
                   <TooltipProvider>
@@ -117,12 +114,30 @@ const ContactItemForm: React.FC<ContactItemFormProps> = ({
         )}
       />
       
+      {/* Person Name */}
+      <FormField
+        control={form.control}
+        name={`contactDetails.${index}.personName`}
+        render={({ field }) => (
+          <FormItem className="col-span-4 sm:col-span-4">
+            <FormControl>
+              <Input 
+                {...field} 
+                placeholder="Contact person name" 
+                className="h-8 text-xs md:text-sm"
+              />
+            </FormControl>
+            <FormMessage className="text-xs" />
+          </FormItem>
+        )}
+      />
+      
       {/* Primary Switch */}
       <FormField
         control={form.control}
         name={`contactDetails.${index}.isPrimary`}
         render={({ field }) => (
-          <FormItem className="flex flex-row items-center justify-center space-x-1 col-span-2 md:col-span-1">
+          <FormItem className="flex flex-row items-center justify-center space-x-1 col-span-1">
             <FormControl>
               <div className="flex flex-col items-center sm:flex-row sm:space-x-1">
                 <Switch

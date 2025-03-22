@@ -1,13 +1,17 @@
 
 import React from 'react';
-import { Phone, Mail, MapPin, Hash, Globe, Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
+import { Phone, MessageCircle } from 'lucide-react';
 
 export const getContactIcon = (type: string) => {
-  switch (type) {
-    case 'phone': return <Phone className="h-4 w-4" />;
-    case 'email': return <Mail className="h-4 w-4" />;
-    case 'address': return <MapPin className="h-4 w-4" />;
-    default: return <Hash className="h-4 w-4" />;
+  switch(type) {
+    case 'phone':
+      return <Phone className="h-3.5 w-3.5 mr-1" />;
+    case 'fax':
+      return <Phone className="h-3.5 w-3.5 mr-1" />;
+    case 'whatsapp':
+      return <MessageCircle className="h-3.5 w-3.5 mr-1" />;
+    default:
+      return <Phone className="h-3.5 w-3.5 mr-1" />;
   }
 };
 

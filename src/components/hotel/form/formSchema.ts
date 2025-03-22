@@ -19,23 +19,16 @@ const validatePhone = (phone: string) => {
 };
 
 // Type-safe access to parent in refinement
-type ContactType = 'phone' | 'email' | 'address' | 'fax' | 'other';
+type ContactType = 'phone' | 'fax' | 'whatsapp';
 
 const contactDetailSchema = z.object({
   id: z.string().optional(),
-  type: z.enum(['phone', 'email', 'address', 'fax', 'other']),
+  type: z.enum(['phone', 'fax', 'whatsapp']),
   value: z.string()
     .min(1, { message: "Contact value is required" })
     .superRefine((val, ctx) => {
       // Get the parent object via ctx.path
       const parentType = (ctx as any).data?.type as ContactType | undefined;
-      
-      if (parentType === 'email' && !validateEmail(val)) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Invalid email format",
-        });
-      } 
       
       if (parentType === 'phone' && !validatePhone(val)) {
         ctx.addIssue({
@@ -43,7 +36,22 @@ const contactDetailSchema = z.object({
           message: "Invalid phone number format",
         });
       }
+      
+      if (parentType === 'fax' && !validatePhone(val)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Invalid fax number format",
+        });
+      }
+      
+      if (parentType === 'whatsapp' && !validatePhone(val)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Invalid WhatsApp number format",
+        });
+      }
     }),
+  personName: z.string().optional(),
   isPrimary: z.boolean().optional(),
 });
 

@@ -26,6 +26,7 @@ const ContactDetailsSection = () => {
         id: Date.now().toString(),
         type: 'phone',
         value: '',
+        personName: '',
         isPrimary: contactDetails.fields.length === 0, // First one is primary by default
       });
     }

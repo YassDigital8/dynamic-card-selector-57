@@ -48,9 +48,9 @@ export interface HotelAmenities {
 
 export interface ContactDetail {
   id: string;
-  type: 'phone' | 'email' | 'address' | 'fax' | 'other';
+  type: 'phone' | 'fax' | 'whatsapp';
   value: string;
-  label?: string;
+  personName?: string;
   isPrimary?: boolean;
 }
 
