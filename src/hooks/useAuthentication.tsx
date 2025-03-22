@@ -95,10 +95,11 @@ export const useAuthentication = () => {
         demoModeState.activateDemoMode();
       }
       
-      // Store the token and user info
+      // Store the token and user info (including role if available)
       const userInfoToStore = {
         firstName: authData.firstName,
-        email: authData.email
+        email: authData.email,
+        role: authData.role // Include role in user info
       };
       
       // Update auth state

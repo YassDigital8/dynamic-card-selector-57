@@ -9,6 +9,7 @@ interface AuthenticatedContentProps {
   userInfo: {
     firstName: string;
     email: string;
+    role?: string;
   } | null;
 }
 
@@ -32,7 +33,10 @@ const AuthenticatedContent = ({ userInfo }: AuthenticatedContentProps) => {
         <div className="flex justify-between items-center w-full">
           <div>
             <div className="flex items-center gap-2">
-              <AlertTitle className="text-blue-800 dark:text-blue-300">Welcome, {userInfo.firstName || userInfo.email}</AlertTitle>
+              <AlertTitle className="text-blue-800 dark:text-blue-300">
+                Welcome, {userInfo.firstName || userInfo.email}
+                {userInfo.role && <span className="ml-2 text-xs bg-blue-100 dark:bg-blue-800 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded-full">{userInfo.role}</span>}
+              </AlertTitle>
               <SessionTimer />
             </div>
             <AlertDescription className="text-blue-600 dark:text-blue-400">

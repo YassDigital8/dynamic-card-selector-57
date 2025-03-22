@@ -44,13 +44,25 @@ const LogoutButton = ({
           className={cn("flex items-center gap-2", className)}
           title="User options"
         >
-          {showText && (userInfo?.firstName || userInfo?.email || 'User')}
+          {showText && (
+            <div className="flex items-center gap-1">
+              <span>{userInfo?.firstName || userInfo?.email || 'User'}</span>
+              {userInfo?.role && (
+                <span className="text-xs opacity-80">({userInfo.role})</span>
+              )}
+            </div>
+          )}
           <ChevronDown className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-48 bg-white">
-        <div className="px-2 py-2 text-sm font-medium text-gray-700">
-          {userInfo?.firstName ? `${userInfo.firstName}` : userInfo?.email}
+        <div className="px-2 py-2">
+          <div className="text-sm font-medium text-gray-700">
+            {userInfo?.firstName ? `${userInfo.firstName}` : userInfo?.email}
+          </div>
+          {userInfo?.role && (
+            <div className="text-xs text-gray-500">{userInfo.role}</div>
+          )}
         </div>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleSettingsClick} className="cursor-pointer">

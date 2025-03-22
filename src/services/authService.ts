@@ -51,6 +51,7 @@ export const loginUser = async (credentials: LoginCredentials): Promise<AuthResp
         token: 'demo-mode-token',
         email: credentials.email || 'demo@example.com',
         firstName: 'Demo User',
+        role: 'Demo Admin', // Add a demo role
         success: true,
         message: 'Demo mode activated due to SSL certificate issues'
       };
