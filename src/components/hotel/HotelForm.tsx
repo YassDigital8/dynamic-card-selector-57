@@ -14,7 +14,7 @@ import {
   formSchema,
   defaultValues
 } from './form';
-import ContactDetailsSection from './form/ContactDetailsSection';
+import { ContactDetailsSection } from './form/contact';
 import { Save } from 'lucide-react';
 
 interface HotelFormProps {
