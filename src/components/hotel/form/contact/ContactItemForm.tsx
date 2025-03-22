@@ -153,17 +153,20 @@ const ContactItemForm: React.FC<ContactItemFormProps> = ({
       />
       
       {/* Delete Button */}
-      <Button
-        type="button"
-        variant="ghost"
-        size="icon"
-        onClick={onRemove}
-        className="col-span-1 h-6 w-6 sm:h-8 sm:w-8 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
-      >
-        <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
-      </Button>
+      <div className="col-span-1 flex justify-end">
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          onClick={onRemove}
+          className="h-6 w-6 sm:h-8 sm:w-8 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
+        >
+          <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
+        </Button>
+      </div>
     </div>
   );
 };
 
 export default ContactItemForm;
+
