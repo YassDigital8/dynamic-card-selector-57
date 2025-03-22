@@ -2,10 +2,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
 import LogoutButton from '@/components/auth/LogoutButton';
 import SessionTimer from '@/components/auth/SessionTimer';
-import ApiStatusIndicator from '@/components/ui/api-status-indicator';
-import { useDemoMode } from '@/hooks/useDemoMode';
 
 interface AuthenticatedContentProps {
   userInfo: {
@@ -16,8 +15,6 @@ interface AuthenticatedContentProps {
 }
 
 const AuthenticatedContent = ({ userInfo }: AuthenticatedContentProps) => {
-  const { demoMode } = useDemoMode();
-  
   if (!userInfo) return null;
   
   return (
@@ -38,11 +35,11 @@ const AuthenticatedContent = ({ userInfo }: AuthenticatedContentProps) => {
           <div>
             <div className="flex items-center gap-2">
               <AlertTitle className="text-blue-800 dark:text-blue-300">Welcome, {userInfo.firstName || userInfo.email}</AlertTitle>
-              <ApiStatusIndicator 
-                isLive={!demoMode} 
-                userRole={userInfo.role} 
-                className="ml-2"
-              />
+              {userInfo.role && (
+                <Badge variant="info" className="ml-2">
+                  {userInfo.role}
+                </Badge>
+              )}
               <SessionTimer />
             </div>
             <AlertDescription className="text-blue-600 dark:text-blue-400">

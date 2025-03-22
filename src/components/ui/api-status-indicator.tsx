@@ -5,13 +5,11 @@ import { cn } from '@/lib/utils';
 
 interface ApiStatusIndicatorProps {
   isLive: boolean | null;
-  userRole?: string;
   className?: string;
 }
 
 export const ApiStatusIndicator: React.FC<ApiStatusIndicatorProps> = ({ 
   isLive, 
-  userRole,
   className 
 }) => {
   if (isLive === null) {
@@ -37,10 +35,7 @@ export const ApiStatusIndicator: React.FC<ApiStatusIndicatorProps> = ({
           isLive ? "text-green-500" : "text-red-500"
         )} 
       />
-      <span>
-        {isLive ? "Live Mode" : "Demo Mode"}
-        {userRole && ` • ${userRole}`}
-      </span>
+      <span>{isLive ? "Live Mode" : "Demo Mode"}</span>
     </div>
   );
 };
