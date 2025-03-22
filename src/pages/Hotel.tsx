@@ -1,6 +1,6 @@
 
 import React, { Suspense } from 'react';
-import PageContainer from '@/components/pages/index/PageContainer';
+import PageContainer from '@/components/pages/index/page-container';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Avatar } from '@/components/ui/avatar';
 

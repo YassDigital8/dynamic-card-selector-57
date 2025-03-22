@@ -6,9 +6,6 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import useApiStatus from '@/hooks/useApiStatus';
 import { useLocation } from 'react-router-dom';
 import { BreadcrumbNav } from '@/components/ui/breadcrumb-nav';
-import LogoutButton from '@/components/auth/LogoutButton';
-import SessionTimer from '@/components/auth/SessionTimer';
-import { ApiStatusIndicator } from '@/components/ui/api-status-indicator';
 import SidebarLayout from './SidebarLayout';
 import HeaderSection from './HeaderSection';
 
