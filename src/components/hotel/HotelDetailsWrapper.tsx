@@ -10,9 +10,12 @@ import {
   CarouselContent, 
   CarouselItem, 
   CarouselNext, 
-  CarouselPrevious 
+  CarouselPrevious,
+  CarouselIndicators 
 } from '@/components/ui/carousel';
 import HotelGallery from './details/HotelGallery';
+import CommercialDealsView from './details/commercial/CommercialDealsView';
+import { FileText, Calendar, Users } from 'lucide-react';
 
 interface HotelDetailsWrapperProps {
   hotel: Hotel;
@@ -98,6 +101,9 @@ const HotelDetailsWrapper: React.FC<HotelDetailsWrapperProps> = memo(({
   // Generate a unique key for the motion div to force re-render on hotel updates
   const detailsKey = `hotel-card-container-${hotel.id}-${hotel.updatedAt.getTime()}`;
 
+  // Check if contract documents exist
+  const hasContractDocuments = hotel.contractDocuments && hotel.contractDocuments.length > 0;
+
   return (
     <motion.div
       key={detailsKey}
@@ -138,6 +144,21 @@ const HotelDetailsWrapper: React.FC<HotelDetailsWrapperProps> = memo(({
                 </motion.div>
               </div>
             </CarouselItem>
+            
+            {/* Commercial Deals View (Contract Documents) */}
+            <CarouselItem>
+              <div className="h-full flex items-center justify-center p-3 sm:p-6">
+                <motion.div
+                  variants={itemVariants}
+                  className="space-y-4 w-full"
+                >
+                  <CommercialDealsView 
+                    contractDocuments={hotel.contractDocuments} 
+                  />
+                </motion.div>
+              </div>
+            </CarouselItem>
+            
             <CarouselItem>
               <div className="h-full flex items-center justify-center p-3 sm:p-6">
                 <motion.div
@@ -157,6 +178,11 @@ const HotelDetailsWrapper: React.FC<HotelDetailsWrapperProps> = memo(({
               </div>
             </CarouselItem>
           </CarouselContent>
+          
+          <div className="absolute -bottom-10 w-full flex justify-center">
+            <CarouselIndicators className="gap-2" />
+          </div>
+          
           <CarouselPrevious className="transition-all hover:bg-indigo-100 dark:hover:bg-indigo-900/50" />
           <CarouselNext className="transition-all hover:bg-indigo-100 dark:hover:bg-indigo-900/50" />
         </Carousel>
