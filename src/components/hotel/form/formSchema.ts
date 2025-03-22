@@ -1,4 +1,3 @@
-
 import * as z from 'zod';
 
 const amenityImageSchema = z.object({
@@ -102,6 +101,8 @@ const contractDocumentSchema = z.object({
   fileName: z.string().min(1, { message: "File name is required" }),
   uploadedAt: z.string().optional(),
   description: z.string().optional(),
+  startDate: z.string().optional(),
+  endDate: z.string().optional(),
 });
 
 export const formSchema = z.object({
@@ -123,7 +124,6 @@ export const formSchema = z.object({
     swimmingPool: z.boolean().default(false),
     petsAllowed: z.boolean().default(false),
     extraBed: z.boolean().default(false),
-    // Add image arrays for amenities that can have images
     barImages: z.array(amenityImageSchema).optional(),
     gymImages: z.array(amenityImageSchema).optional(),
     spaImages: z.array(amenityImageSchema).optional(),
@@ -147,6 +147,8 @@ export const formSchema = z.object({
   socialMedia: z.array(socialMediaSchema).optional().default([]),
   contractDocuments: z.array(contractDocumentSchema).optional().default([]),
   newContractDescription: z.string().optional(),
+  newContractStartDate: z.string().optional(),
+  newContractEndDate: z.string().optional(),
 });
 
 export type FormValues = z.infer<typeof formSchema>;

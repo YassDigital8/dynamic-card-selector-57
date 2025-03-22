@@ -3,13 +3,18 @@ import React, { useRef, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { FileUp, Trash2, FileText, Plus } from 'lucide-react';
+import { FileUp, Trash2, FileText, Plus, Calendar as CalendarIcon } from 'lucide-react';
 import { FormField, FormItem, FormControl, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { useFieldArray } from 'react-hook-form';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { format } from 'date-fns';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { cn } from '@/lib/utils';
+import { formatDate } from '@/lib/date-utils';
 
 const ContractDocumentSection = () => {
   const form = useFormContext();
@@ -53,6 +58,10 @@ const ContractDocumentSection = () => {
       return;
     }
     
+    // Get start and end dates from form
+    const startDate = form.getValues("newContractStartDate") || '';
+    const endDate = form.getValues("newContractEndDate") || '';
+    
     // In a real application, you would upload the file to storage here
     // For now, we'll simulate a successful upload by creating a URL
     const simulatedUrl = `https://example.com/storage/${Date.now()}-${selectedFile.name}`;
@@ -62,13 +71,20 @@ const ContractDocumentSection = () => {
       url: simulatedUrl,
       fileName: selectedFile.name,
       uploadedAt: new Date().toISOString(),
-      description: description
+      description: description,
+      startDate: startDate,
+      endDate: endDate
     });
     
     // Reset file input and selected file
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
+    
+    // Reset the form fields
+    form.setValue("newContractDescription", "");
+    form.setValue("newContractStartDate", "");
+    form.setValue("newContractEndDate", "");
     
     setSelectedFile(null);
     
@@ -131,6 +147,7 @@ const ContractDocumentSection = () => {
                   name="newContractDescription"
                   render={({ field }) => (
                     <FormItem>
+                      <FormLabel>Description</FormLabel>
                       <FormControl>
                         <Textarea
                           placeholder="Add a description for this contract document (optional)"
@@ -138,6 +155,88 @@ const ContractDocumentSection = () => {
                           {...field}
                         />
                       </FormControl>
+                    </FormItem>
+                  )}
+                />
+                
+                {/* Contract start date */}
+                <FormField
+                  control={form.control}
+                  name="newContractStartDate"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                      <FormLabel>Start Date</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant={"outline"}
+                              className={cn(
+                                "pl-3 text-left font-normal",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              {field.value ? (
+                                format(new Date(field.value), "PPP")
+                              ) : (
+                                <span>Select start date</span>
+                              )}
+                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={field.value ? new Date(field.value) : undefined}
+                            onSelect={(date) => field.onChange(date ? date.toISOString() : "")}
+                            initialFocus
+                            className={cn("p-3 pointer-events-auto")}
+                          />
+                        </PopoverContent>
+                      </Popover>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                {/* Contract end date */}
+                <FormField
+                  control={form.control}
+                  name="newContractEndDate"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                      <FormLabel>End Date</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant={"outline"}
+                              className={cn(
+                                "pl-3 text-left font-normal",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              {field.value ? (
+                                format(new Date(field.value), "PPP")
+                              ) : (
+                                <span>Select end date</span>
+                              )}
+                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={field.value ? new Date(field.value) : undefined}
+                            onSelect={(date) => field.onChange(date ? date.toISOString() : "")}
+                            initialFocus
+                            className={cn("p-3 pointer-events-auto")}
+                          />
+                        </PopoverContent>
+                      </Popover>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
@@ -170,6 +269,14 @@ const ContractDocumentSection = () => {
                             {document.description}
                           </p>
                         )}
+                        <div className="flex flex-wrap gap-x-3 mt-1 text-xs text-gray-500">
+                          {document.startDate && (
+                            <span>Start: {format(new Date(document.startDate), "PPP")}</span>
+                          )}
+                          {document.endDate && (
+                            <span>End: {format(new Date(document.endDate), "PPP")}</span>
+                          )}
+                        </div>
                       </div>
                       <Button
                         variant="ghost" 

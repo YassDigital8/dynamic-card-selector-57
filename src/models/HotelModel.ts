@@ -1,4 +1,3 @@
-
 export interface RoomType {
   id: string;
   name: string;
@@ -68,6 +67,8 @@ export interface ContractDocument {
   fileName: string;
   uploadedAt: string;
   description?: string;
+  startDate?: string; // New field for contract start date
+  endDate?: string;   // New field for contract end date
 }
 
 export interface Hotel {

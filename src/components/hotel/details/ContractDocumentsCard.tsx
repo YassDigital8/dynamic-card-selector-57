@@ -2,10 +2,11 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { FileText, ExternalLink } from 'lucide-react';
+import { FileText, ExternalLink, Calendar } from 'lucide-react';
 import { ContractDocument } from '@/models/HotelModel';
 import { Button } from '@/components/ui/button';
 import { formatDistanceToNow } from 'date-fns';
+import { formatDate } from '@/lib/date-utils';
 
 interface ContractDocumentsCardProps {
   contractDocuments?: ContractDocument[];
@@ -41,11 +42,23 @@ const ContractDocumentsCard: React.FC<ContractDocumentsCardProps> = ({ contractD
                       {document.description}
                     </p>
                   )}
-                  {document.uploadedAt && (
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Uploaded {formatDistanceToNow(new Date(document.uploadedAt), { addSuffix: true })}
-                    </p>
-                  )}
+                  <div className="flex flex-wrap gap-x-4 mt-1 text-xs text-muted-foreground">
+                    {document.uploadedAt && (
+                      <p>
+                        Uploaded {formatDistanceToNow(new Date(document.uploadedAt), { addSuffix: true })}
+                      </p>
+                    )}
+                    {document.startDate && (
+                      <p>
+                        From: {formatDate(document.startDate)}
+                      </p>
+                    )}
+                    {document.endDate && (
+                      <p>
+                        To: {formatDate(document.endDate)}
+                      </p>
+                    )}
+                  </div>
                 </div>
                 <Button 
                   variant="ghost" 
