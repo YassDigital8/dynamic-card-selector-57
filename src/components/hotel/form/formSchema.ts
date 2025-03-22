@@ -9,6 +9,21 @@ const amenityImageSchema = z.object({
   metadata: z.record(z.any()).optional(),
 });
 
+const contactDetailSchema = z.object({
+  id: z.string().optional(),
+  type: z.enum(['phone', 'email', 'address', 'fax', 'other']),
+  value: z.string().min(1, { message: "Contact value is required" }),
+  label: z.string().optional(),
+  isPrimary: z.boolean().optional(),
+});
+
+const socialMediaSchema = z.object({
+  id: z.string().optional(),
+  platform: z.enum(['website', 'facebook', 'instagram', 'twitter', 'linkedin', 'other']),
+  url: z.string().min(1, { message: "URL is required" }),
+  label: z.string().optional(),
+});
+
 export const formSchema = z.object({
   name: z.string().min(2, { message: "Hotel name must be at least 2 characters." }),
   country: z.string().min(2, { message: "Country must be at least 2 characters." }),
@@ -48,6 +63,8 @@ export const formSchema = z.object({
       images: z.array(z.string()).optional().default([]),
     })
   ).default([]),
+  contactDetails: z.array(contactDetailSchema).optional().default([]),
+  socialMedia: z.array(socialMediaSchema).optional().default([]),
 });
 
 export type FormValues = z.infer<typeof formSchema>;

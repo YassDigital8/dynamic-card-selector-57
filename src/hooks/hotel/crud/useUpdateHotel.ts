@@ -2,7 +2,7 @@
 import { useCallback } from 'react';
 import { Hotel, HotelFormData } from '@/models/HotelModel';
 import { useToast } from '@/hooks/use-toast';
-import { validateAmenityImages, cloneAmenityImages } from './utils/amenityHelpers';
+import { validateAmenityImages, cloneAmenityImages, validateContactInfo } from './utils/amenityHelpers';
 
 interface UseUpdateHotelProps {
   hotels: Hotel[];
@@ -69,6 +69,9 @@ export const useUpdateHotel = ({ setHotels, setIsLoading }: UseUpdateHotelProps)
             
             // Final validation of amenity images before saving
             updatedHotel = validateAmenityImages(updatedHotel);
+            
+            // Validate contact info
+            updatedHotel = validateContactInfo(updatedHotel);
             
             // Break references by deep cloning
             return cloneAmenityImages(updatedHotel!);

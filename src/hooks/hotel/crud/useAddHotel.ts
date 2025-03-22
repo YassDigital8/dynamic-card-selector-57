@@ -2,6 +2,7 @@
 import { useCallback } from 'react';
 import { Hotel, HotelFormData } from '@/models/HotelModel';
 import { useToast } from '@/hooks/use-toast';
+import { validateContactInfo } from './utils/amenityHelpers';
 
 interface UseAddHotelProps {
   hotels: Hotel[];
@@ -25,21 +26,34 @@ export const useAddHotel = ({ setHotels, setIsLoading }: UseAddHotelProps) => {
         });
       }
       
+      // Log contact details and social media
+      if (hotelData.contactDetails && hotelData.contactDetails.length > 0) {
+        console.log('Adding hotel with contact details:', JSON.stringify(hotelData.contactDetails, null, 2));
+      }
+      
+      if (hotelData.socialMedia && hotelData.socialMedia.length > 0) {
+        console.log('Adding hotel with social media:', JSON.stringify(hotelData.socialMedia, null, 2));
+      }
+      
       const newHotel: Hotel = {
         ...hotelData,
         id: Date.now().toString(),
         createdAt: new Date(),
         updatedAt: new Date()
       };
-      setHotels(prevHotels => [...prevHotels, newHotel]);
+      
+      // Validate and ensure contact info arrays
+      const validatedHotel = validateContactInfo(newHotel);
+      
+      setHotels(prevHotels => [...prevHotels, validatedHotel]);
       
       toast({
         title: "Hotel Added Successfully",
-        description: `${newHotel.name} has been added to your hotel network`,
+        description: `${validatedHotel.name} has been added to your hotel network`,
         variant: "default",
       });
       
-      return { success: true, hotel: newHotel };
+      return { success: true, hotel: validatedHotel };
     } catch (error) {
       console.error('Error adding hotel:', error);
       

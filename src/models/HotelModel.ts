@@ -46,6 +46,21 @@ export interface HotelAmenities {
   swimmingPoolImages?: AmenityImage[];
 }
 
+export interface ContactDetail {
+  id: string;
+  type: 'phone' | 'email' | 'address' | 'fax' | 'other';
+  value: string;
+  label?: string;
+  isPrimary?: boolean;
+}
+
+export interface SocialMedia {
+  id: string;
+  platform: 'website' | 'facebook' | 'instagram' | 'twitter' | 'linkedin' | 'other';
+  url: string;
+  label?: string;
+}
+
 export interface Hotel {
   id: string;
   name: string;
@@ -59,6 +74,8 @@ export interface Hotel {
   createdAt: Date;
   updatedAt: Date;
   logoUrl?: string; // New field for custom hotel logo
+  contactDetails?: ContactDetail[]; // New field for contact information
+  socialMedia?: SocialMedia[]; // New field for social media links
 }
 
 export type HotelFormData = Omit<Hotel, 'id' | 'createdAt' | 'updatedAt'>;

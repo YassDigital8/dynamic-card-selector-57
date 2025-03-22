@@ -1,50 +1,54 @@
 
 import { Hotel } from '@/models/HotelModel';
 
-/**
- * Validates and ensures all amenity image arrays are properly formatted
- * to prevent runtime errors when the hotel is loaded or edited.
- */
-export const validateAmenityImages = (hotel: Hotel | undefined) => {
-  if (!hotel || !hotel.amenities) return hotel;
+// Function to validate and ensure all amenity image arrays exist
+export const validateAmenityImages = (hotel: Hotel): Hotel => {
+  if (!hotel.amenities) {
+    return hotel;
+  }
   
-  console.log(`Validating amenity images for hotel: ${hotel.id}`);
+  const amenityKeysWithImages = ['bar', 'gym', 'spa', 'restaurant', 'breakfast', 'swimmingPool'];
+  const updatedAmenities = { ...hotel.amenities };
   
-  // Check each property that ends with 'Images' and ensure it's an array
-  Object.entries(hotel.amenities).forEach(([key, value]) => {
-    if (key.includes('Images')) {
-      if (!Array.isArray(value)) {
-        console.error(`Fixing invalid ${key}: not an array`, value);
-        // Type-safe way to assign an empty array
-        const amenities = hotel.amenities;
-        const typedKey = key as keyof typeof amenities;
-        amenities[typedKey] = [] as any;
-      } else {
-        // Log successful validation
-        console.log(`Validated ${key}: ${Array.isArray(value) ? value.length : 0} images`);
-      }
+  amenityKeysWithImages.forEach(amenityKey => {
+    const imagesKey = `${amenityKey}Images` as keyof typeof updatedAmenities;
+    
+    // Initialize empty array if it doesn't exist
+    if (!updatedAmenities[imagesKey]) {
+      updatedAmenities[imagesKey] = [];
+    }
+    
+    // Ensure the value is an array
+    if (!Array.isArray(updatedAmenities[imagesKey])) {
+      console.warn(`${imagesKey} is not an array, initializing to empty array`);
+      updatedAmenities[imagesKey] = [];
     }
   });
   
-  return hotel;
+  return {
+    ...hotel,
+    amenities: updatedAmenities
+  };
 };
 
-/**
- * Deep clones amenity images to prevent reference issues
- */
+// Function to deep clone hotel with amenity images to avoid reference issues
 export const cloneAmenityImages = (hotel: Hotel): Hotel => {
-  if (!hotel || !hotel.amenities) return hotel;
+  return JSON.parse(JSON.stringify(hotel));
+};
+
+// Function to ensure contact details and social media arrays exist
+export const validateContactInfo = (hotel: Hotel): Hotel => {
+  const updatedHotel = { ...hotel };
   
-  const clonedHotel = { ...hotel };
-  clonedHotel.amenities = { ...hotel.amenities };
+  // Initialize contactDetails if it doesn't exist or isn't an array
+  if (!updatedHotel.contactDetails || !Array.isArray(updatedHotel.contactDetails)) {
+    updatedHotel.contactDetails = [];
+  }
   
-  // Deep clone all image arrays to break references
-  Object.entries(hotel.amenities).forEach(([key, value]) => {
-    if (key.includes('Images') && Array.isArray(value)) {
-      const typedKey = key as keyof typeof clonedHotel.amenities;
-      clonedHotel.amenities[typedKey] = JSON.parse(JSON.stringify(value));
-    }
-  });
+  // Initialize socialMedia if it doesn't exist or isn't an array
+  if (!updatedHotel.socialMedia || !Array.isArray(updatedHotel.socialMedia)) {
+    updatedHotel.socialMedia = [];
+  }
   
-  return clonedHotel;
+  return updatedHotel;
 };

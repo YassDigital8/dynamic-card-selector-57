@@ -14,6 +14,7 @@ import {
   formSchema,
   defaultValues
 } from './form';
+import ContactDetailsSection from './form/ContactDetailsSection';
 import { Save } from 'lucide-react';
 
 interface HotelFormProps {
@@ -109,6 +110,22 @@ const HotelForm = memo(({ initialData, onSubmit, isLoading, showButtons = true }
       });
     }
     
+    // Process contact details to ensure they have IDs
+    if (processedValues.contactDetails && Array.isArray(processedValues.contactDetails)) {
+      processedValues.contactDetails = processedValues.contactDetails.map((contact: any, index: number) => ({
+        ...contact,
+        id: contact.id || `contact-${index}-${Date.now()}`
+      }));
+    }
+    
+    // Process social media links to ensure they have IDs
+    if (processedValues.socialMedia && Array.isArray(processedValues.socialMedia)) {
+      processedValues.socialMedia = processedValues.socialMedia.map((social: any, index: number) => ({
+        ...social,
+        id: social.id || `social-${index}-${Date.now()}`
+      }));
+    }
+    
     // Pass the processed form values to the parent component
     onSubmit(processedValues as HotelFormData);
   }, [onSubmit, form]);
@@ -120,6 +137,7 @@ const HotelForm = memo(({ initialData, onSubmit, isLoading, showButtons = true }
           <BasicInformation form={form} />
           <AmenitiesSection form={form} hotelId={initialData?.id} />
           <RoomTypesSection form={form} />
+          <ContactDetailsSection />
         </div>
 
         {showButtons && (
@@ -133,7 +151,7 @@ const HotelForm = memo(({ initialData, onSubmit, isLoading, showButtons = true }
       </form>
     </Form>
   );
-});
+};
 
 HotelForm.displayName = 'HotelForm';
 

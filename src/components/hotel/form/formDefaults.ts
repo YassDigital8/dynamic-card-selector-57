@@ -27,4 +27,6 @@ export const defaultValues: HotelFormData = {
     maxAdults: 1,
     maxChildren: 0,
   }],
+  contactDetails: [],
+  socialMedia: [],
 };

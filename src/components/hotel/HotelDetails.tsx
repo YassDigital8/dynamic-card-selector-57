@@ -2,6 +2,7 @@
 import React, { memo, useState } from 'react';
 import { Hotel } from '@/models/HotelModel';
 import { HotelHeader, LocationCard, AmenitiesCard, RoomTypesCard } from './details';
+import ContactDetailsCard from './details/ContactDetailsCard';
 
 interface HotelDetailsProps {
   hotel: Hotel;
@@ -62,10 +63,15 @@ const HotelDetails: React.FC<HotelDetailsProps> = memo(({
 
       <AmenitiesCard amenities={hotel.amenities} />
 
+      <ContactDetailsCard 
+        contactDetails={hotel.contactDetails} 
+        socialMedia={hotel.socialMedia} 
+      />
+
       <RoomTypesCard roomTypes={hotel.roomTypes} updatedAt={hotel.updatedAt} />
     </div>
   );
-});
+};
 
 HotelDetails.displayName = 'HotelDetails';
 
