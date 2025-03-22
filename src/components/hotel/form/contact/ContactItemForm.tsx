@@ -53,7 +53,7 @@ const ContactItemForm: React.FC<ContactItemFormProps> = ({
         control={form.control}
         name={`contactDetails.${index}.type`}
         render={({ field }) => (
-          <FormItem className="col-span-12 sm:col-span-2">
+          <FormItem className="col-span-12 sm:col-span-3">
             <Select 
               onValueChange={(value) => {
                 field.onChange(value);
@@ -63,7 +63,7 @@ const ContactItemForm: React.FC<ContactItemFormProps> = ({
               defaultValue={field.value}
             >
               <FormControl>
-                <SelectTrigger className="h-9 text-xs md:text-sm w-full sm:w-24">
+                <SelectTrigger className="h-9 text-xs md:text-sm">
                   <SelectValue placeholder="Type" />
                 </SelectTrigger>
               </FormControl>
@@ -83,7 +83,7 @@ const ContactItemForm: React.FC<ContactItemFormProps> = ({
         control={form.control}
         name={`contactDetails.${index}.value`}
         render={({ field }) => (
-          <FormItem className="col-span-12 sm:col-span-5">
+          <FormItem className="col-span-12 sm:col-span-4">
             <FormControl>
               <div className="flex items-center space-x-1">
                 <span className="text-muted-foreground hidden sm:inline-flex">
