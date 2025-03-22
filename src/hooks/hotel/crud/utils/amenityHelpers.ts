@@ -15,15 +15,15 @@ export const validateAmenityImages = (hotel: Hotel): Hotel => {
     
     // Initialize empty array if it doesn't exist
     if (!updatedAmenities[imagesKey]) {
-      // Use type assertion to assign the empty array with the correct type
-      updatedAmenities[imagesKey] = [] as unknown as typeof updatedAmenities[typeof imagesKey];
+      // Use AmenityImage[] type assertion to fix type error
+      updatedAmenities[imagesKey] = [] as AmenityImage[];
     }
     
     // Ensure the value is an array
     if (!Array.isArray(updatedAmenities[imagesKey])) {
       console.warn(`${imagesKey} is not an array, initializing to empty array`);
-      // Use type assertion to assign the empty array with the correct type
-      updatedAmenities[imagesKey] = [] as unknown as typeof updatedAmenities[typeof imagesKey];
+      // Use AmenityImage[] type assertion to fix type error
+      updatedAmenities[imagesKey] = [] as AmenityImage[];
     }
   });
   
