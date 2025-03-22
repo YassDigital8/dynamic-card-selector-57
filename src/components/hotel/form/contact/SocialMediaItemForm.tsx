@@ -37,7 +37,7 @@ const SocialMediaItemForm: React.FC<SocialMediaItemFormProps> = ({
   };
   
   return (
-    <div className="grid grid-cols-12 gap-2 items-center border-b pb-2 border-gray-100 dark:border-gray-800">
+    <div className="grid grid-cols-12 gap-1 md:gap-2 items-center border-b pb-2 border-gray-100 dark:border-gray-800">
       {/* Platform Type */}
       <FormField
         control={form.control}
@@ -53,7 +53,7 @@ const SocialMediaItemForm: React.FC<SocialMediaItemFormProps> = ({
               defaultValue={field.value}
             >
               <FormControl>
-                <SelectTrigger>
+                <SelectTrigger className="h-8 text-xs md:text-sm">
                   <SelectValue placeholder="Platform" />
                 </SelectTrigger>
               </FormControl>
@@ -66,7 +66,7 @@ const SocialMediaItemForm: React.FC<SocialMediaItemFormProps> = ({
                 <SelectItem value="other">Other</SelectItem>
               </SelectContent>
             </Select>
-            <FormMessage />
+            <FormMessage className="text-xs" />
           </FormItem>
         )}
       />
@@ -76,32 +76,32 @@ const SocialMediaItemForm: React.FC<SocialMediaItemFormProps> = ({
         control={form.control}
         name={`socialMedia.${index}.url`}
         render={({ field }) => (
-          <FormItem className="col-span-6">
+          <FormItem className="col-span-5 sm:col-span-6">
             <FormControl>
               <div className="flex items-center space-x-1">
-                <span className="text-muted-foreground">
+                <span className="text-muted-foreground hidden sm:inline-flex">
                   {getSocialIcon(platform)}
                 </span>
                 <Input 
                   {...field} 
                   placeholder={getPlaceholder(platform)} 
-                  className={fieldError ? "border-red-500 focus-visible:ring-red-500" : ""}
+                  className={`${fieldError ? "border-red-500 focus-visible:ring-red-500" : ""} h-8 text-xs md:text-sm`}
                 />
                 {fieldError && (
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <AlertCircle className="h-4 w-4 text-red-500" />
+                        <AlertCircle className="h-4 w-4 text-red-500 flex-shrink-0" />
                       </TooltipTrigger>
                       <TooltipContent>
-                        <p>{fieldError.message?.toString()}</p>
+                        <p className="text-xs">{fieldError.message?.toString()}</p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
                 )}
               </div>
             </FormControl>
-            <FormMessage />
+            <FormMessage className="text-xs" />
           </FormItem>
         )}
       />
@@ -111,11 +111,11 @@ const SocialMediaItemForm: React.FC<SocialMediaItemFormProps> = ({
         control={form.control}
         name={`socialMedia.${index}.label`}
         render={({ field }) => (
-          <FormItem className="col-span-2">
+          <FormItem className="col-span-3 sm:col-span-2">
             <FormControl>
-              <Input {...field} placeholder="Label (optional)" />
+              <Input {...field} placeholder="Label (optional)" className="h-8 text-xs md:text-sm" />
             </FormControl>
-            <FormMessage />
+            <FormMessage className="text-xs" />
           </FormItem>
         )}
       />
@@ -126,9 +126,9 @@ const SocialMediaItemForm: React.FC<SocialMediaItemFormProps> = ({
         variant="ghost"
         size="icon"
         onClick={onRemove}
-        className="col-span-1 h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
+        className="col-span-1 h-6 w-6 sm:h-8 sm:w-8 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
       >
-        <Trash2 className="h-4 w-4" />
+        <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
       </Button>
     </div>
   );

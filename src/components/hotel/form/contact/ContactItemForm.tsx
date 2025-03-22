@@ -47,13 +47,13 @@ const ContactItemForm: React.FC<ContactItemFormProps> = ({
   }, [contactType, form, index]);
   
   return (
-    <div className="grid grid-cols-12 gap-2 items-center border-b pb-2 border-gray-100 dark:border-gray-800">
+    <div className="grid grid-cols-12 gap-1 md:gap-2 items-center border-b pb-2 border-gray-100 dark:border-gray-800">
       {/* Contact Type */}
       <FormField
         control={form.control}
         name={`contactDetails.${index}.type`}
         render={({ field }) => (
-          <FormItem className="col-span-3">
+          <FormItem className="col-span-3 sm:col-span-3">
             <Select 
               onValueChange={(value) => {
                 field.onChange(value);
@@ -63,7 +63,7 @@ const ContactItemForm: React.FC<ContactItemFormProps> = ({
               defaultValue={field.value}
             >
               <FormControl>
-                <SelectTrigger>
+                <SelectTrigger className="h-8 text-xs md:text-sm">
                   <SelectValue placeholder="Type" />
                 </SelectTrigger>
               </FormControl>
@@ -75,7 +75,7 @@ const ContactItemForm: React.FC<ContactItemFormProps> = ({
                 <SelectItem value="other">Other</SelectItem>
               </SelectContent>
             </Select>
-            <FormMessage />
+            <FormMessage className="text-xs" />
           </FormItem>
         )}
       />
@@ -85,16 +85,16 @@ const ContactItemForm: React.FC<ContactItemFormProps> = ({
         control={form.control}
         name={`contactDetails.${index}.value`}
         render={({ field }) => (
-          <FormItem className="col-span-7">
+          <FormItem className="col-span-6 sm:col-span-7">
             <FormControl>
               <div className="flex items-center space-x-1">
-                <span className="text-muted-foreground">
+                <span className="text-muted-foreground hidden sm:inline-flex">
                   {getContactIcon(contactType)}
                 </span>
                 <Input 
                   {...field} 
                   placeholder={getPlaceholder(contactType)} 
-                  className={fieldError ? "border-red-500 focus-visible:ring-red-500" : ""}
+                  className={`${fieldError ? "border-red-500 focus-visible:ring-red-500" : ""} h-8 text-xs md:text-sm`}
                   type={contactType === 'email' ? 'email' : 'text'}
                   inputMode={contactType === 'phone' || contactType === 'fax' ? 'tel' : undefined}
                 />
@@ -102,17 +102,17 @@ const ContactItemForm: React.FC<ContactItemFormProps> = ({
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <AlertCircle className="h-4 w-4 text-red-500" />
+                        <AlertCircle className="h-4 w-4 text-red-500 flex-shrink-0" />
                       </TooltipTrigger>
                       <TooltipContent>
-                        <p>{fieldError.message?.toString()}</p>
+                        <p className="text-xs">{fieldError.message?.toString()}</p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
                 )}
               </div>
             </FormControl>
-            <FormMessage />
+            <FormMessage className="text-xs" />
           </FormItem>
         )}
       />
@@ -122,14 +122,17 @@ const ContactItemForm: React.FC<ContactItemFormProps> = ({
         control={form.control}
         name={`contactDetails.${index}.isPrimary`}
         render={({ field }) => (
-          <FormItem className="flex flex-row items-center justify-center space-x-1 col-span-1">
+          <FormItem className="flex flex-row items-center justify-center space-x-1 col-span-2 md:col-span-1">
             <FormControl>
-              <Switch
-                checked={field.value}
-                onCheckedChange={onSetPrimary}
-              />
+              <div className="flex flex-col items-center sm:flex-row sm:space-x-1">
+                <Switch
+                  checked={field.value}
+                  onCheckedChange={onSetPrimary}
+                  className="scale-75 sm:scale-90 md:scale-100"
+                />
+                {field.value && <Badge variant="outline" className="text-[10px] hidden sm:inline-flex">Primary</Badge>}
+              </div>
             </FormControl>
-            {field.value && <Badge variant="outline" className="text-xs">Primary</Badge>}
           </FormItem>
         )}
       />
@@ -140,9 +143,9 @@ const ContactItemForm: React.FC<ContactItemFormProps> = ({
         variant="ghost"
         size="icon"
         onClick={onRemove}
-        className="col-span-1 h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
+        className="col-span-1 h-6 w-6 sm:h-8 sm:w-8 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
       >
-        <Trash2 className="h-4 w-4" />
+        <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
       </Button>
     </div>
   );
