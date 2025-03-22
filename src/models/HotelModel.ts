@@ -48,7 +48,7 @@ export interface HotelAmenities {
 
 export interface ContactDetail {
   id: string;
-  type: 'phone' | 'fax' | 'whatsapp';
+  type: 'phone' | 'fax' | 'whatsapp' | 'pr';
   value: string;
   personName?: string;
   personRole?: string; // New field for person's role in the hotel

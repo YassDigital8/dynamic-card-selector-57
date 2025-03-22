@@ -1,3 +1,4 @@
+
 import * as z from 'zod';
 
 const amenityImageSchema = z.object({
@@ -18,11 +19,11 @@ const validatePhone = (phone: string) => {
 };
 
 // Type-safe access to parent in refinement
-type ContactType = 'phone' | 'fax' | 'whatsapp';
+type ContactType = 'phone' | 'fax' | 'whatsapp' | 'pr';
 
 const contactDetailSchema = z.object({
   id: z.string().optional(),
-  type: z.enum(['phone', 'fax', 'whatsapp']),
+  type: z.enum(['phone', 'fax', 'whatsapp', 'pr']),
   value: z.string()
     .min(1, { message: "Contact value is required" })
     .superRefine((val, ctx) => {
@@ -47,6 +48,13 @@ const contactDetailSchema = z.object({
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Invalid WhatsApp number format",
+        });
+      }
+      
+      if (parentType === 'pr' && !validatePhone(val)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Invalid PR contact number format",
         });
       }
     }),

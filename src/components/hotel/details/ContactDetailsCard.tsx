@@ -1,10 +1,9 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { ContactDetail, SocialMedia } from '@/models/HotelModel';
-import { Phone, Mail, MapPin, Hash, Globe, Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
+import { Phone, Mail, MapPin, Hash, Globe, Facebook, Twitter, Instagram, Linkedin, Megaphone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface ContactDetailsCardProps {
@@ -21,6 +20,7 @@ const ContactDetailsCard: React.FC<ContactDetailsCardProps> = ({
       case 'phone': return <Phone className="h-4 w-4" />;
       case 'fax': return <Phone className="h-4 w-4" />;
       case 'whatsapp': return <Phone className="h-4 w-4" />;
+      case 'pr': return <Megaphone className="h-4 w-4" />;
       default: return <Hash className="h-4 w-4" />;
     }
   };
@@ -52,6 +52,7 @@ const ContactDetailsCard: React.FC<ContactDetailsCardProps> = ({
       case 'phone': return 'Phone';
       case 'fax': return 'Fax';
       case 'whatsapp': return 'WhatsApp';
+      case 'pr': return 'PR Contact';
       default: return 'Other';
     }
   };
@@ -67,7 +68,6 @@ const ContactDetailsCard: React.FC<ContactDetailsCardProps> = ({
     }
   };
 
-  // Format contact value for rendering (e.g., make phones clickable)
   const renderContactValue = (contact: ContactDetail) => {
     if (contact.type === 'phone' || contact.type === 'whatsapp') {
       return (
@@ -84,7 +84,6 @@ const ContactDetailsCard: React.FC<ContactDetailsCardProps> = ({
   };
 
   const renderSocialLink = (social: SocialMedia) => {
-    // Add https:// if it's not there
     const url = social.url.startsWith('http') ? social.url : `https://${social.url}`;
     
     return (
@@ -100,6 +99,9 @@ const ContactDetailsCard: React.FC<ContactDetailsCardProps> = ({
     );
   };
 
+  const regularContacts = contactDetails.filter(contact => contact.type !== 'pr');
+  const prContacts = contactDetails.filter(contact => contact.type === 'pr');
+
   return (
     <Card className="shadow-sm border-blue-100 dark:border-blue-900 mt-6 w-full">
       <CardHeader className="pb-2">
@@ -108,10 +110,9 @@ const ContactDetailsCard: React.FC<ContactDetailsCardProps> = ({
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {/* Contact Details */}
-        {contactDetails.length > 0 ? (
+        {regularContacts.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {contactDetails.map((contact) => (
+            {regularContacts.map((contact) => (
               <div key={contact.id} className="flex items-start p-2 rounded-md hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors">
                 <div className="mt-0.5 mr-2 flex-shrink-0">
                   {getContactIcon(contact.type)}
@@ -149,7 +150,45 @@ const ContactDetailsCard: React.FC<ContactDetailsCardProps> = ({
           </div>
         )}
 
-        {/* Social Media */}
+        {prContacts.length > 0 && (
+          <>
+            <Separator className="my-3" />
+            <div className="space-y-2">
+              <h3 className="text-sm font-medium border-l-4 border-amber-500 pl-2">Public Relations</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
+                {prContacts.map((contact) => (
+                  <div key={contact.id} className="flex items-start p-2 rounded-md bg-amber-50 dark:bg-amber-950/20 hover:bg-amber-100 dark:hover:bg-amber-950/30 transition-colors">
+                    <div className="mt-0.5 mr-2 flex-shrink-0 text-amber-700 dark:text-amber-500">
+                      {getContactIcon(contact.type)}
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center">
+                        <div className="font-medium text-sm text-amber-700 dark:text-amber-500">
+                          PR Contact
+                        </div>
+                      </div>
+                      <div className="text-sm mt-0.5">{renderContactValue(contact)}</div>
+                      {(contact.personName || contact.personRole) && (
+                        <div className="text-xs text-amber-700/70 dark:text-amber-500/70 mt-0.5">
+                          {contact.personName && (
+                            <span>{contact.personName}</span>
+                          )}
+                          {contact.personRole && contact.personName && (
+                            <span> - </span>
+                          )}
+                          {contact.personRole && (
+                            <span className="font-medium">{contact.personRole}</span>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+
         {socialMedia.length > 0 && (
           <>
             <Separator className="my-3" />
