@@ -34,7 +34,6 @@ const ContactItemForm: React.FC<ContactItemFormProps> = ({
       case 'phone': return '+1 (555) 123-4567';
       case 'fax': return '+1 (555) 987-6543';
       case 'whatsapp': return '+1 (555) 123-4567';
-      case 'pr': return '+1 (555) 789-0123';
       default: return 'Contact information';
     }
   };
@@ -71,7 +70,6 @@ const ContactItemForm: React.FC<ContactItemFormProps> = ({
                 <SelectItem value="phone">Phone</SelectItem>
                 <SelectItem value="fax">Fax</SelectItem>
                 <SelectItem value="whatsapp">WhatsApp</SelectItem>
-                <SelectItem value="pr">PR Contact</SelectItem>
               </SelectContent>
             </Select>
             <FormMessage className="text-xs" />

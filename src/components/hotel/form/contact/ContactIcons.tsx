@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Phone, MessageCircle, Globe, Facebook, Instagram, Twitter, Linkedin, Hash, Megaphone } from 'lucide-react';
+import { Phone, MessageCircle, Globe, Facebook, Instagram, Twitter, Linkedin, Hash } from 'lucide-react';
 
 export const getContactIcon = (type: string) => {
   switch(type) {
@@ -10,8 +10,6 @@ export const getContactIcon = (type: string) => {
       return <Phone className="h-3.5 w-3.5 mr-1" />;
     case 'whatsapp':
       return <MessageCircle className="h-3.5 w-3.5 mr-1" />;
-    case 'pr':
-      return <Megaphone className="h-3.5 w-3.5 mr-1" />;
     default:
       return <Phone className="h-3.5 w-3.5 mr-1" />;
   }
