@@ -54,14 +54,20 @@ const ContactDetailsSection = () => {
     });
   };
 
-  // Filter contacts by type
-  const regularContacts = contactDetails.fields.filter(field => 
-    field.type !== 'pr'
-  );
+  // Filter contacts by type - using form.watch to get the current values
+  const contactValues = form.watch("contactDetails") || [];
   
-  const prContacts = contactDetails.fields.filter(field => 
-    field.type === 'pr'
-  );
+  // Filter regular contacts (non-PR)
+  const regularContacts = contactDetails.fields.filter((field, index) => {
+    const contactType = contactValues[index]?.type;
+    return contactType !== 'pr';
+  });
+  
+  // Filter PR contacts
+  const prContacts = contactDetails.fields.filter((field, index) => {
+    const contactType = contactValues[index]?.type;
+    return contactType === 'pr';
+  });
 
   return (
     <Card className="border-blue-100 dark:border-blue-900 col-span-1 md:col-span-2 shadow-md">
