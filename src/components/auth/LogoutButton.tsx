@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { LogOut, Settings, ChevronDown } from 'lucide-react';
+import { LogOut, Settings, ChevronDown, User } from 'lucide-react';
 import useAuthentication from '@/hooks/useAuthentication';
 import {
   DropdownMenu,
@@ -34,6 +34,10 @@ const LogoutButton = ({
   const handleSettingsClick = () => {
     navigate('/settings');
   };
+  
+  const handleProfileClick = () => {
+    navigate('/profile');
+  };
 
   return (
     <DropdownMenu>
@@ -65,6 +69,10 @@ const LogoutButton = ({
           )}
         </div>
         <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={handleProfileClick} className="cursor-pointer">
+          <User className="mr-2 h-4 w-4" />
+          <span>Profile</span>
+        </DropdownMenuItem>
         <DropdownMenuItem onClick={handleSettingsClick} className="cursor-pointer">
           <Settings className="mr-2 h-4 w-4" />
           <span>Settings</span>
