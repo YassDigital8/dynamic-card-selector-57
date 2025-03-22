@@ -1,3 +1,4 @@
+
 import * as z from 'zod';
 
 const amenityImageSchema = z.object({
@@ -95,6 +96,14 @@ const socialMediaSchema = z.object({
   label: z.string().optional(),
 });
 
+const contractDocumentSchema = z.object({
+  id: z.string().optional(),
+  url: z.string().min(1, { message: "Document URL is required" }),
+  fileName: z.string().min(1, { message: "File name is required" }),
+  uploadedAt: z.string().optional(),
+  description: z.string().optional(),
+});
+
 export const formSchema = z.object({
   name: z.string().min(2, { message: "Hotel name must be at least 2 characters." }),
   country: z.string().min(2, { message: "Country must be at least 2 characters." }),
@@ -136,6 +145,7 @@ export const formSchema = z.object({
   ).default([]),
   contactDetails: z.array(contactDetailSchema).optional().default([]),
   socialMedia: z.array(socialMediaSchema).optional().default([]),
+  contractDocuments: z.array(contractDocumentSchema).optional().default([]),
 });
 
 export type FormValues = z.infer<typeof formSchema>;

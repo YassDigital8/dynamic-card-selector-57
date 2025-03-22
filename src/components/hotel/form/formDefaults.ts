@@ -1,13 +1,14 @@
 
-import { HotelFormData } from '@/models/HotelModel';
+// Original file content with our additions
+import { FormValues } from './formSchema';
 
-export const defaultValues: HotelFormData = {
+export const defaultValues: Partial<FormValues> = {
   name: '',
   country: '',
   governorate: '',
   streetAddress: '',
   posKey: '',
-  rating: 3, // Default to 3 stars instead of 0
+  rating: 3,
   amenities: {
     airConditioning: false,
     bar: false,
@@ -20,13 +21,16 @@ export const defaultValues: HotelFormData = {
     swimmingPool: false,
     petsAllowed: false,
     extraBed: false,
+    barImages: [],
+    gymImages: [],
+    spaImages: [],
+    restaurantImages: [],
+    breakfastImages: [],
+    swimmingPoolImages: [],
   },
-  roomTypes: [{
-    id: Date.now().toString(),
-    name: '',
-    maxAdults: 1,
-    maxChildren: 0,
-  }],
+  roomTypes: [],
   contactDetails: [],
   socialMedia: [],
+  contractDocuments: [],
+  newContractDescription: '',
 };

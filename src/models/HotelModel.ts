@@ -1,3 +1,4 @@
+
 export interface RoomType {
   id: string;
   name: string;
@@ -61,6 +62,14 @@ export interface SocialMedia {
   label?: string;
 }
 
+export interface ContractDocument {
+  id: string;
+  url: string;
+  fileName: string;
+  uploadedAt: string;
+  description?: string;
+}
+
 export interface Hotel {
   id: string;
   name: string;
@@ -76,6 +85,7 @@ export interface Hotel {
   logoUrl?: string; // New field for custom hotel logo
   contactDetails?: ContactDetail[]; // New field for contact information
   socialMedia?: SocialMedia[]; // New field for social media links
+  contractDocuments?: ContractDocument[]; // New field for contract documents
 }
 
 export type HotelFormData = Omit<Hotel, 'id' | 'createdAt' | 'updatedAt'>;

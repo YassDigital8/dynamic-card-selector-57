@@ -15,6 +15,7 @@ import {
   defaultValues
 } from './form';
 import { ContactDetailsSection } from './form/contact';
+import { ContractDocumentSection } from './form/contract';
 import { Save } from 'lucide-react';
 
 interface HotelFormProps {
@@ -131,6 +132,14 @@ const HotelForm = memo(({
       }));
     }
     
+    // Process contract documents to ensure they have IDs
+    if (processedValues.contractDocuments && Array.isArray(processedValues.contractDocuments)) {
+      processedValues.contractDocuments = processedValues.contractDocuments.map((doc: any, index: number) => ({
+        ...doc,
+        id: doc.id || `contract-${index}-${Date.now()}`
+      }));
+    }
+    
     // Pass the processed form values to the parent component
     onSubmit(processedValues as HotelFormData);
   }, [onSubmit, form]);
@@ -143,6 +152,7 @@ const HotelForm = memo(({
           <AmenitiesSection form={form} hotelId={initialData?.id} />
           <RoomTypesSection form={form} />
           <ContactDetailsSection />
+          <ContractDocumentSection />
         </div>
 
         {showButtons && (
