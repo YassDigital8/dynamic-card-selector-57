@@ -1,3 +1,4 @@
+
 import React, { useEffect, memo, useMemo } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -10,7 +11,6 @@ import Login from "./pages/Login";
 import Gallery from "./pages/Gallery";
 import Hotel from "./pages/Hotel";
 import useAuthentication from "./hooks/useAuthentication";
-import HotelLoadingIndicator from "./components/hotel/HotelLoadingIndicator";
 
 // Initialize theme from localStorage or default to light
 const initializeTheme = () => {
@@ -56,7 +56,7 @@ const ProtectedRoute = memo(({ children }: { children: React.ReactNode }) => {
   
   if (authLoading) {
     return <div className="flex h-screen w-screen items-center justify-center">
-      <HotelLoadingIndicator message="Authenticating..." />
+      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
     </div>;
   }
   
