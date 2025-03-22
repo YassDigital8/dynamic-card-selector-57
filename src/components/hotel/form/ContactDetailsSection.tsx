@@ -73,7 +73,7 @@ const ContactDetailsSection = () => {
   };
 
   return (
-    <Card className="border-blue-100 dark:border-blue-900">
+    <Card className="border-blue-100 dark:border-blue-900 col-span-1 md:col-span-2">
       <CardHeader>
         <CardTitle className="text-xl text-blue-700 dark:text-blue-300">
           Contact Information &amp; Social Media

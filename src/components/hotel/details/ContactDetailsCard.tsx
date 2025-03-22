@@ -111,7 +111,7 @@ const ContactDetailsCard: React.FC<ContactDetailsCardProps> = ({
   };
 
   return (
-    <Card className="shadow-sm border-blue-100 dark:border-blue-900 mt-6">
+    <Card className="shadow-sm border-blue-100 dark:border-blue-900 mt-6 w-full">
       <CardHeader className="pb-2">
         <CardTitle className="text-xl text-blue-700 dark:text-blue-300">
           Contact Information
