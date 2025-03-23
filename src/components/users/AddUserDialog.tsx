@@ -84,7 +84,11 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel required>Name</FormLabel>
+                  <FormLabel>
+                    Name
+                    <span className="text-destructive ml-1" aria-hidden="true">*</span>
+                    <span className="sr-only">(required)</span>
+                  </FormLabel>
                   <FormControl>
                     <Input placeholder="Enter full name" {...field} />
                   </FormControl>
@@ -98,7 +102,11 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel required>Email</FormLabel>
+                  <FormLabel>
+                    Email
+                    <span className="text-destructive ml-1" aria-hidden="true">*</span>
+                    <span className="sr-only">(required)</span>
+                  </FormLabel>
                   <FormControl>
                     <Input type="email" placeholder="Enter email address" {...field} />
                   </FormControl>
@@ -112,7 +120,11 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({
               name="role"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel required>Role</FormLabel>
+                  <FormLabel>
+                    Role
+                    <span className="text-destructive ml-1" aria-hidden="true">*</span>
+                    <span className="sr-only">(required)</span>
+                  </FormLabel>
                   <Select 
                     onValueChange={field.onChange} 
                     defaultValue={field.value}
