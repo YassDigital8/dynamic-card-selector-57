@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -15,8 +15,8 @@ const HotelAddPage: React.FC = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { posOptions } = usePageSelectionViewModel();
-  const [selectedPOS, setSelectedPOS] = useState<string>('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedPOS, setSelectedPOS] = React.useState<string>('');
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
   
   const { addHotel, isLoading } = useHotelNetwork(selectedPOS);
 

@@ -1,9 +1,9 @@
 
 import React from 'react';
 import { Hotel, Building } from 'lucide-react';
-import { HotelAddPage } from '@/components/hotel/add';
 import AdminLayout from '@/components/layout/AdminLayout';
 import { BreadcrumbNav } from '@/components/ui/breadcrumb-nav';
+import { HotelAddPage } from '@/components/hotel/add';
 
 const HotelAdd = () => {
   return (

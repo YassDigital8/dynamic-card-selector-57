@@ -1,11 +1,11 @@
 
 import React from 'react';
 import { Building, Hotel, PencilLine } from 'lucide-react';
-import { HotelEditPage } from '@/components/hotel/edit';
 import AdminLayout from '@/components/layout/AdminLayout';
 import { BreadcrumbNav } from '@/components/ui/breadcrumb-nav';
 import { useParams } from 'react-router-dom';
 import { useHotelNetwork } from '@/hooks/hotel/useHotelNetwork';
+import HotelEditPage from '@/components/hotel/edit/HotelEditPage';
 
 const HotelEdit = () => {
   const { hotelId } = useParams<{ hotelId: string }>();
@@ -22,7 +22,7 @@ const HotelEdit = () => {
           { label: hotelName, href: `/hotel/view/${hotelId}`, icon: Hotel },
           { label: 'Edit', icon: PencilLine }
         ]} />
-        <HotelEditPage />
+        {hotelId && <HotelEditPage hotelId={hotelId} />}
       </div>
     </AdminLayout>
   );
