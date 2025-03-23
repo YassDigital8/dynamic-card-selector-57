@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -7,7 +6,6 @@ import { ArrowLeft, Edit } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import AdminLayout from '@/components/layout/AdminLayout';
-import { useHotelNetwork } from '@/hooks/hotel/useHotelNetwork';
 import HotelLoadingIndicator from '@/components/hotel/HotelLoadingIndicator';
 import { useToast } from '@/hooks/use-toast';
 import { 
@@ -21,6 +19,8 @@ import { FilePreview } from '@/components/gallery/FilePreview';
 import { AmenityListItemType } from '@/components/hotel/form/amenities/types';
 import { amenitiesList } from '@/components/hotel/form/amenities/constants';
 import { cn } from '@/lib/utils';
+import { FileInfo } from '@/models/FileModel';
+import { useHotelNetwork } from '@/hooks/hotel/useHotelNetwork';
 
 const HotelView = () => {
   const { hotelId } = useParams<{ hotelId: string }>();
@@ -28,7 +28,6 @@ const HotelView = () => {
   const { toast } = useToast();
   const { allHotels } = useHotelNetwork();
   
-  // Create a query that finds the hotel by ID from allHotels
   const { data: hotel, isLoading } = useQuery({
     queryKey: ['hotel', hotelId, allHotels],
     queryFn: () => {
@@ -85,7 +84,6 @@ const HotelView = () => {
     );
   }
 
-  // Render amenity images
   const renderAmenityImages = (amenityKey: string) => {
     const imagesKey = `${amenityKey}Images` as keyof typeof hotel.amenities;
     const images = hotel.amenities[imagesKey] as any[] || [];
@@ -115,7 +113,6 @@ const HotelView = () => {
     );
   };
 
-  // Render contract documents
   const renderContractDocuments = () => {
     if (!hotel.contractDocuments || hotel.contractDocuments.length === 0) {
       return <p className="text-gray-500 dark:text-gray-400">No contract documents available.</p>;
@@ -128,7 +125,19 @@ const HotelView = () => {
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
                 <div className="h-10 w-10 flex-shrink-0">
-                  <FilePreview file={{ url: doc.url, type: 'application/pdf', name: doc.fileName }} size="sm" />
+                  <FilePreview file={{
+                    id: doc.id,
+                    name: doc.fileName,
+                    type: 'application/pdf',
+                    size: 0,
+                    url: doc.url,
+                    uploadedBy: 'system',
+                    uploadedOn: doc.createdAt || new Date().toISOString(),
+                    galleryId: 'contractDocuments',
+                    metadata: {
+                      description: doc.description
+                    }
+                  }} size="sm" />
                 </div>
                 <div>
                   <h4 className="font-medium text-sm">{doc.fileName}</h4>
