@@ -16,6 +16,9 @@ const StepContent: React.FC<StepContentProps> = ({
 }) => {
   const { contentVariants } = useContentAnimations();
 
+  // Determine if this step is in the hotel details section (second half of steps)
+  const isHotelDetailsSection = currentStepIndex >= 3; // Typically steps 4+ are hotel details
+
   return (
     <AnimatePresence mode="wait">
       <motion.div
@@ -27,9 +30,9 @@ const StepContent: React.FC<StepContentProps> = ({
         transition={{ duration: 0.3 }}
         className="mt-6"
       >
-        <div className="rounded-lg border p-6 bg-card shadow-sm">
-          <h2 className="text-xl font-semibold mb-6 text-blue-600 dark:text-blue-400 flex items-center">
-            <span className="bg-blue-600 dark:bg-blue-500 text-white w-8 h-8 rounded-full inline-flex items-center justify-center mr-4 text-sm shadow-sm">
+        <div className={`rounded-lg border p-6 bg-card shadow-sm ${isHotelDetailsSection ? 'border-blue-100 dark:border-blue-900' : ''}`}>
+          <h2 className={`text-xl font-semibold mb-6 flex items-center ${isHotelDetailsSection ? 'text-indigo-600 dark:text-indigo-400' : 'text-blue-600 dark:text-blue-400'}`}>
+            <span className={`w-8 h-8 rounded-full inline-flex items-center justify-center mr-4 text-sm shadow-sm text-white ${isHotelDetailsSection ? 'bg-indigo-600 dark:bg-indigo-500' : 'bg-blue-600 dark:bg-blue-500'}`}>
               {currentStepIndex + 1}
             </span>
             {stepLabel}
