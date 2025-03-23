@@ -1,3 +1,4 @@
+
 export interface RoomType {
   id: string;
   name: string;
@@ -7,6 +8,13 @@ export interface RoomType {
   price?: number;
   imageUrl?: string; // Keep for backward compatibility
   images?: string[]; // Add this new field for multiple room images
+  seasonalPrices?: {
+    id: string;
+    seasonName: string;
+    startDate: string;
+    endDate: string;
+    price: number;
+  }[];
 }
 
 export interface AmenityImage {
@@ -71,6 +79,26 @@ export interface ContractDocument {
   endDate?: string;   // New field for contract end date
 }
 
+export interface GeoLocation {
+  lat: number;
+  lng: number;
+  address?: string;
+  formattedAddress?: string;
+}
+
+export interface PaymentMethod {
+  id: string;
+  name: string;
+  enabled: boolean;
+}
+
+export interface ExtraBedPolicy {
+  pricePerNight: number;
+  availableForRoomTypes: string[]; // IDs of room types
+  maxExtraBedsPerRoom: number;
+  notes?: string;
+}
+
 export interface Hotel {
   id: string;
   name: string;
@@ -87,6 +115,9 @@ export interface Hotel {
   contactDetails?: ContactDetail[]; // New field for contact information
   socialMedia?: SocialMedia[]; // New field for social media links
   contractDocuments?: ContractDocument[]; // New field for contract documents
+  geolocation?: GeoLocation; // New field for precise location data
+  paymentMethods?: PaymentMethod[]; // New field for payment methods
+  extraBedPolicy?: ExtraBedPolicy; // New field for extra bed pricing and policy
 }
 
 export type HotelFormData = Omit<Hotel, 'id' | 'createdAt' | 'updatedAt'>;

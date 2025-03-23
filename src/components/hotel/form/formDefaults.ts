@@ -31,5 +31,13 @@ export const defaultValues: Partial<FormValues> = {
   roomTypes: [],
   contactDetails: [],
   socialMedia: [],
-  contractDocuments: []
+  contractDocuments: [],
+  geolocation: undefined,
+  paymentMethods: [],
+  extraBedPolicy: {
+    pricePerNight: 0,
+    availableForRoomTypes: [],
+    maxExtraBedsPerRoom: 1,
+    notes: ''
+  }
 };

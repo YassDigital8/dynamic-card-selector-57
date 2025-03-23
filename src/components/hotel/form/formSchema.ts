@@ -1,3 +1,4 @@
+
 import * as z from 'zod';
 
 const amenityImageSchema = z.object({
@@ -105,6 +106,34 @@ const contractDocumentSchema = z.object({
   endDate: z.string().optional(),
 });
 
+const geolocationSchema = z.object({
+  lat: z.number(),
+  lng: z.number(),
+  address: z.string().optional(),
+  formattedAddress: z.string().optional(),
+});
+
+const paymentMethodSchema = z.object({
+  id: z.string().optional(),
+  name: z.string().min(1, { message: "Payment method name is required" }),
+  enabled: z.boolean().default(false),
+});
+
+const seasonalPriceSchema = z.object({
+  id: z.string().optional(),
+  seasonName: z.string().min(1, { message: "Season name is required" }),
+  startDate: z.string().min(1, { message: "Start date is required" }),
+  endDate: z.string().min(1, { message: "End date is required" }),
+  price: z.number().min(0, { message: "Price must be a positive number" }),
+});
+
+const extraBedPolicySchema = z.object({
+  pricePerNight: z.number().min(0, { message: "Price must be a positive number" }),
+  availableForRoomTypes: z.array(z.string()).default([]),
+  maxExtraBedsPerRoom: z.number().min(0).max(5, { message: "Maximum 5 extra beds allowed" }),
+  notes: z.string().optional(),
+});
+
 export const formSchema = z.object({
   name: z.string().min(2, { message: "Hotel name must be at least 2 characters." }),
   country: z.string().min(2, { message: "Country must be at least 2 characters." }),
@@ -141,6 +170,7 @@ export const formSchema = z.object({
       price: z.number().optional(),
       imageUrl: z.string().optional(),
       images: z.array(z.string()).optional().default([]),
+      seasonalPrices: z.array(seasonalPriceSchema).optional().default([]),
     })
   ).default([]),
   contactDetails: z.array(contactDetailSchema).optional().default([]),
@@ -149,6 +179,9 @@ export const formSchema = z.object({
   newContractDescription: z.string().optional(),
   newContractStartDate: z.string().optional(),
   newContractEndDate: z.string().optional(),
+  geolocation: geolocationSchema.optional(),
+  paymentMethods: z.array(paymentMethodSchema).optional().default([]),
+  extraBedPolicy: extraBedPolicySchema.optional(),
 });
 
 export type FormValues = z.infer<typeof formSchema>;

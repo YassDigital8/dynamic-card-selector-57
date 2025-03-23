@@ -16,6 +16,7 @@ import {
 } from './form';
 import { ContactDetailsSection } from './form/contact';
 import { ContractDocumentSection } from './form/contract';
+import ExtendedFeaturesSection from './form/ExtendedFeaturesSection';
 import { Save } from 'lucide-react';
 
 interface HotelFormProps {
@@ -140,6 +141,37 @@ const HotelForm = memo(({
       }));
     }
     
+    // Process payment methods to ensure they have IDs
+    if (processedValues.paymentMethods && Array.isArray(processedValues.paymentMethods)) {
+      processedValues.paymentMethods = processedValues.paymentMethods.map((method: any, index: number) => ({
+        ...method,
+        id: method.id || `payment-${index}-${Date.now()}`
+      }));
+    }
+    
+    // Process seasonal pricing for room types
+    if (processedValues.roomTypes && Array.isArray(processedValues.roomTypes)) {
+      processedValues.roomTypes = processedValues.roomTypes.map((roomType: any, rtIndex: number) => {
+        // Ensure room type has ID
+        const roomTypeWithId = {
+          ...roomType,
+          id: roomType.id || `room-${rtIndex}-${Date.now()}`
+        };
+        
+        // Process seasonal prices if they exist
+        if (roomType.seasonalPrices && Array.isArray(roomType.seasonalPrices)) {
+          roomTypeWithId.seasonalPrices = roomType.seasonalPrices.map((season: any, sIndex: number) => ({
+            ...season,
+            id: season.id || `season-${rtIndex}-${sIndex}-${Date.now()}`
+          }));
+        } else {
+          roomTypeWithId.seasonalPrices = [];
+        }
+        
+        return roomTypeWithId;
+      });
+    }
+    
     // Pass the processed form values to the parent component
     onSubmit(processedValues as HotelFormData);
   }, [onSubmit, form]);
@@ -153,6 +185,7 @@ const HotelForm = memo(({
           <RoomTypesSection form={form} />
           <ContactDetailsSection />
           <ContractDocumentSection />
+          <ExtendedFeaturesSection />
         </div>
 
         {showButtons && (

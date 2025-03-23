@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { 
@@ -105,3 +104,40 @@ const RoomTypeForm: React.FC<RoomTypeFormProps> = ({ form, index }) => {
 };
 
 export default RoomTypeForm;
+
+export const useSeasonalPricing = (roomTypeId: string | undefined, formValues: any, updateFormValues: (values: any) => void) => {
+  const [isSeasonalPricingOpen, setIsSeasonalPricingOpen] = useState(false);
+
+  const handleOpenSeasonalPricing = () => {
+    setIsSeasonalPricingOpen(true);
+  };
+
+  const handleCloseSeasonalPricing = () => {
+    setIsSeasonalPricingOpen(false);
+  };
+
+  const handleSaveSeasonalPricing = (prices: any[]) => {
+    if (!roomTypeId) return;
+    
+    const roomTypeIndex = formValues.roomTypes.findIndex((rt: any) => rt.id === roomTypeId);
+    if (roomTypeIndex === -1) return;
+    
+    const updatedRoomTypes = [...formValues.roomTypes];
+    updatedRoomTypes[roomTypeIndex] = {
+      ...updatedRoomTypes[roomTypeIndex],
+      seasonalPrices: prices
+    };
+    
+    updateFormValues({
+      ...formValues,
+      roomTypes: updatedRoomTypes
+    });
+  };
+
+  return {
+    isSeasonalPricingOpen,
+    handleOpenSeasonalPricing,
+    handleCloseSeasonalPricing,
+    handleSaveSeasonalPricing
+  };
+};
