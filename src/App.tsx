@@ -10,6 +10,7 @@ import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import Gallery from "./pages/Gallery";
 import Hotel from "./pages/Hotel";
+import Users from "./pages/Users";
 import useAuthentication from "./hooks/useAuthentication";
 
 // Initialize theme from localStorage or default to light
@@ -97,7 +98,7 @@ const App = () => {
             } />
             <Route path="/users" element={
               <ProtectedRoute>
-                <Index />
+                <Users />
               </ProtectedRoute>
             } />
             <Route path="/settings" element={
