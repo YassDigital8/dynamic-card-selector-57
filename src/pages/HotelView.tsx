@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -132,7 +133,7 @@ const HotelView = () => {
                     size: 0,
                     url: doc.url,
                     uploadedBy: 'system',
-                    uploadedOn: doc.createdAt || new Date().toISOString(),
+                    uploadedOn: doc.uploadedAt || new Date().toISOString(), // Changed from createdAt to uploadedAt
                     galleryId: 'contractDocuments',
                     metadata: {
                       description: doc.description
