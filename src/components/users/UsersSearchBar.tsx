@@ -4,7 +4,6 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Search, X } from 'lucide-react';
-import { motion } from 'framer-motion';
 
 interface UsersSearchBarProps {
   nameFilter: string;
@@ -25,49 +24,40 @@ const UsersSearchBar: React.FC<UsersSearchBarProps> = ({
   onUpdateFilter,
   onResetFilters
 }) => {
-  const hasFilters = nameFilter || emailFilter || departmentFilter !== 'all' || statusFilter !== 'all';
+  const hasFilters = nameFilter || emailFilter || departmentFilter || statusFilter;
 
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: -10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-      className="border rounded-lg p-5 mb-6 bg-card shadow-sm"
-    >
-      <div className="flex flex-col md:flex-row gap-4 mb-4">
+    <div className="border rounded-md p-4 mb-6 bg-card">
+      <div className="flex flex-col md:flex-row gap-3 mb-4">
         <div className="flex-1">
-          <div className="text-sm font-medium mb-1.5 text-muted-foreground">Name</div>
+          <div className="text-sm font-medium mb-1">Name</div>
           <div className="relative">
-            <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search by name"
               value={nameFilter}
               onChange={(e) => onUpdateFilter('name', e.target.value)}
-              className="pl-9 h-10 transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+              className="pl-8"
             />
           </div>
         </div>
         
         <div className="flex-1">
-          <div className="text-sm font-medium mb-1.5 text-muted-foreground">Email</div>
-          <div className="relative">
-            <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search by email"
-              value={emailFilter}
-              onChange={(e) => onUpdateFilter('email', e.target.value)}
-              className="pl-9 h-10 transition-all duration-200 focus:ring-2 focus:ring-primary/20"
-            />
-          </div>
+          <div className="text-sm font-medium mb-1">Email</div>
+          <Input
+            placeholder="Search by email"
+            value={emailFilter}
+            onChange={(e) => onUpdateFilter('email', e.target.value)}
+          />
         </div>
         
         <div className="w-full md:w-[180px]">
-          <div className="text-sm font-medium mb-1.5 text-muted-foreground">Department</div>
+          <div className="text-sm font-medium mb-1">Department</div>
           <Select 
             value={departmentFilter}
             onValueChange={(value) => onUpdateFilter('department', value)}
           >
-            <SelectTrigger className="h-10 transition-all duration-200 focus:ring-2 focus:ring-primary/20">
+            <SelectTrigger>
               <SelectValue placeholder="All departments" />
             </SelectTrigger>
             <SelectContent>
@@ -80,12 +70,12 @@ const UsersSearchBar: React.FC<UsersSearchBarProps> = ({
         </div>
         
         <div className="w-full md:w-[180px]">
-          <div className="text-sm font-medium mb-1.5 text-muted-foreground">Status</div>
+          <div className="text-sm font-medium mb-1">Status</div>
           <Select
             value={statusFilter}
             onValueChange={(value) => onUpdateFilter('status', value)}
           >
-            <SelectTrigger className="h-10 transition-all duration-200 focus:ring-2 focus:ring-primary/20">
+            <SelectTrigger>
               <SelectValue placeholder="All statuses" />
             </SelectTrigger>
             <SelectContent>
@@ -98,23 +88,19 @@ const UsersSearchBar: React.FC<UsersSearchBarProps> = ({
       </div>
       
       {hasFilters && (
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="flex justify-end"
-        >
+        <div className="flex justify-end">
           <Button
             variant="outline"
             size="sm"
             onClick={onResetFilters}
-            className="text-xs group"
+            className="text-xs"
           >
-            <X className="h-3.5 w-3.5 mr-1.5 group-hover:rotate-90 transition-transform duration-200" />
+            <X className="h-3 w-3 mr-1" />
             Clear filters
           </Button>
-        </motion.div>
+        </div>
       )}
-    </motion.div>
+    </div>
   );
 };
 

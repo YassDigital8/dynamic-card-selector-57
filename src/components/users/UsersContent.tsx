@@ -9,7 +9,6 @@ import {
 } from '@/components/ui/card';
 import UsersTable from './UsersTable';
 import { User, UserPrivilege } from '@/types/user.types';
-import { motion } from 'framer-motion';
 
 interface UsersContentProps {
   users: User[];
@@ -31,35 +30,27 @@ const UsersContent: React.FC<UsersContentProps> = ({
   onDeleteUser
 }) => {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, delay: 0.1 }}
-    >
-      <Card className="shadow-sm">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-2xl font-bold tracking-tight">Users</CardTitle>
-          <CardDescription className="text-muted-foreground">
-            {users.length === 0 
-              ? "No users found" 
-              : users.length === 1 
-                ? "1 user found" 
-                : `${users.length} users found`}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <UsersTable
-            users={users}
-            privileges={userPrivileges}
-            onSelectUser={onSelectUser}
-            onUpdateRole={onUpdateRole}
-            onToggleStatus={onToggleStatus}
-            onDeleteUser={onDeleteUser}
-            isLoading={isLoading}
-          />
-        </CardContent>
-      </Card>
-    </motion.div>
+    <Card>
+      <CardHeader>
+        <CardTitle>Users</CardTitle>
+        <CardDescription>
+          {users.length === 1 
+            ? "1 user found" 
+            : `${users.length} users found`}
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <UsersTable
+          users={users}
+          privileges={userPrivileges}
+          onSelectUser={onSelectUser}
+          onUpdateRole={onUpdateRole}
+          onToggleStatus={onToggleStatus}
+          onDeleteUser={onDeleteUser}
+          isLoading={isLoading}
+        />
+      </CardContent>
+    </Card>
   );
 };
 

@@ -2,7 +2,6 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { UserPlus, RefreshCw } from 'lucide-react';
-import { motion } from 'framer-motion';
 
 interface UsersHeaderProps {
   onRefresh: () => void;
@@ -12,40 +11,31 @@ interface UsersHeaderProps {
 
 const UsersHeader: React.FC<UsersHeaderProps> = ({ onRefresh, onAddUser, isLoading }) => {
   return (
-    <motion.div 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.3 }}
-      className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8"
-    >
+    <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-          User Management
-        </h1>
-        <p className="text-muted-foreground mt-1">
+        <h1 className="text-3xl font-bold tracking-tight">User Management</h1>
+        <p className="text-muted-foreground">
           Manage system users and their module-specific privileges
         </p>
       </div>
-      <div className="flex space-x-3 mt-4 md:mt-0">
+      <div className="flex space-x-2 mt-4 md:mt-0">
         <Button 
           onClick={onRefresh} 
           variant="outline"
           disabled={isLoading}
-          className="shadow-sm transition-all hover:shadow hover:bg-accent"
         >
-          <RefreshCw className={`mr-2 h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+          <RefreshCw className="mr-2 h-4 w-4" />
           Refresh
         </Button>
         <Button 
           onClick={onAddUser}
           disabled={isLoading}
-          className="shadow-sm transition-all hover:shadow-md"
         >
           <UserPlus className="mr-2 h-4 w-4" />
           Add User
         </Button>
       </div>
-    </motion.div>
+    </div>
   );
 };
 
