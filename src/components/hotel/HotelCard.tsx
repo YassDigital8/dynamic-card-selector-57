@@ -110,8 +110,10 @@ const HotelCard: React.FC<HotelCardProps> = ({
           
           <HotelCardFooter 
             hotel={hotel} 
+            onSelect={onSelect} 
             onEdit={onEdit} 
             onDelete={onDelete}
+            isEditing={disabled}
             disabled={disabled}
             hideEditButton={hideEditButton}
           />
