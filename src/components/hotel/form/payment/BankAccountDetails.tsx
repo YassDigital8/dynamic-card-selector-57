@@ -19,9 +19,15 @@ interface BankAccountDetailsProps {
 
 const BankAccountDetails: React.FC<BankAccountDetailsProps> = ({ paymentMethodIndex }) => {
   const form = useFormContext<FormValues>();
+  
+  // Log when this component renders
+  React.useEffect(() => {
+    console.log(`BankAccountDetails rendering for payment method ${paymentMethodIndex}`);
+    console.log('Bank Account Details:', form.getValues(`paymentMethods.${paymentMethodIndex}.bankAccountDetails`));
+  }, [paymentMethodIndex, form]);
 
   return (
-    <div className="mt-2 ml-8 mr-2">
+    <div className="mt-2 ml-8 mr-2 border p-4 rounded-md bg-blue-50">
       <Accordion type="single" collapsible defaultValue="bank-details">
         <AccordionItem value="bank-details">
           <AccordionTrigger className="py-2">

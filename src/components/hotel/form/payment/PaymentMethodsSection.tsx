@@ -20,8 +20,10 @@ const PaymentMethodsSection: React.FC = () => {
   // Initialize payment methods if empty
   React.useEffect(() => {
     if (fields.length === 0) {
+      console.log("Initializing payment methods with defaults");
       DEFAULT_PAYMENT_METHODS.forEach(method => {
         if (method.id === 'bank-transfer') {
+          console.log("Adding bank transfer method with account details");
           append({
             ...method,
             bankAccountDetails: defaultBankAccountDetails
@@ -30,6 +32,8 @@ const PaymentMethodsSection: React.FC = () => {
           append(method);
         }
       });
+    } else {
+      console.log("Payment methods already initialized:", fields);
     }
   }, [fields.length, append]);
 

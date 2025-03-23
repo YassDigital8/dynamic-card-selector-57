@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   FormField,
   FormItem,
@@ -21,9 +21,22 @@ interface PaymentMethodItemProps {
 
 const PaymentMethodItem: React.FC<PaymentMethodItemProps> = ({ index, field, onRemove }) => {
   const form = useFormContext<FormValues>();
+  // Check if this payment method is bank transfer - ensure correct ID matching
   const isBankTransfer = field.id === 'bank-transfer';
+  // Use watch for reactivity - this will trigger re-render when the checkbox changes
   const isEnabled = form.watch(`paymentMethods.${index}.enabled`);
   const isCustomMethod = !['cash', 'credit-card', 'debit-card', 'bank-transfer'].includes(field.id);
+
+  // Debug logging to help understand state
+  useEffect(() => {
+    if (isBankTransfer) {
+      console.log(`Bank Transfer Payment Method (index: ${index}):`, { 
+        isEnabled, 
+        id: field.id,
+        bankDetails: form.getValues(`paymentMethods.${index}.bankAccountDetails`)
+      });
+    }
+  }, [isBankTransfer, isEnabled, field.id, index, form]);
 
   return (
     <div key={field.id}>
@@ -59,8 +72,10 @@ const PaymentMethodItem: React.FC<PaymentMethodItemProps> = ({ index, field, onR
         )}
       />
 
-      {/* Bank Transfer Details - Use watch instead of getValues for reactivity */}
-      {isBankTransfer && isEnabled && <BankAccountDetails paymentMethodIndex={index} />}
+      {/* Render bank details ONLY if this is a bank transfer AND it's enabled */}
+      {isBankTransfer && isEnabled && (
+        <BankAccountDetails paymentMethodIndex={index} />
+      )}
     </div>
   );
 };
