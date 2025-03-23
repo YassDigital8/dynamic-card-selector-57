@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -15,6 +14,7 @@ import { UseFormReturn } from 'react-hook-form';
 import { FormValues } from './formSchema';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CommercialDealsView } from '../details/commercial';
+import { ContractDocument } from '@/models/HotelModel';
 
 interface Step {
   id: string;
@@ -37,6 +37,8 @@ const StepBasedForm: React.FC<StepBasedFormProps> = ({
   isLoading
 }) => {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  
+  const contractDocuments = form.watch("contractDocuments") as ContractDocument[];
   
   const steps: Step[] = [
     {
@@ -70,8 +72,7 @@ const StepBasedForm: React.FC<StepBasedFormProps> = ({
       component: (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <ContractDocumentSection />
-          {/* Fix the CommercialDealsView by passing contractDocuments from form data */}
-          <CommercialDealsView contractDocuments={form.watch("contractDocuments")} />
+          <CommercialDealsView contractDocuments={contractDocuments} />
         </div>
       )
     },
@@ -98,7 +99,6 @@ const StepBasedForm: React.FC<StepBasedFormProps> = ({
 
   return (
     <div className="space-y-8">
-      {/* Step navigation */}
       <Tabs 
         value={steps[currentStepIndex].id} 
         className="w-full"
@@ -123,7 +123,6 @@ const StepBasedForm: React.FC<StepBasedFormProps> = ({
         </TabsList>
       </Tabs>
 
-      {/* Step content */}
       <AnimatePresence mode="wait">
         <motion.div
           key={currentStepIndex}
@@ -144,7 +143,6 @@ const StepBasedForm: React.FC<StepBasedFormProps> = ({
         </motion.div>
       </AnimatePresence>
 
-      {/* Navigation buttons */}
       <div className="flex justify-between pt-4">
         <Button
           type="button"
