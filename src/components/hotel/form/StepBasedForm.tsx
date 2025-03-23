@@ -1,8 +1,8 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, Save } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Save, ArrowLeft, ArrowRight } from 'lucide-react';
 import { 
   BasicInformation, 
   AmenitiesSection, 
@@ -16,6 +16,7 @@ import { FormValues } from './formSchema';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CommercialDealsView } from '../details/commercial';
 import { ContractDocument } from '@/models/HotelModel';
+import useContentAnimations from '../layout/content/useContentAnimations';
 
 interface Step {
   id: string;
@@ -38,6 +39,8 @@ const StepBasedForm: React.FC<StepBasedFormProps> = ({
   isLoading
 }) => {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const tabsListRef = useRef<HTMLDivElement>(null);
+  const { contentVariants } = useContentAnimations();
   
   // Add type assertion to ensure TypeScript treats the watched value as ContractDocument[]
   const contractDocuments = form.watch("contractDocuments") as ContractDocument[];
@@ -96,42 +99,90 @@ const StepBasedForm: React.FC<StepBasedFormProps> = ({
     setCurrentStepIndex(index);
   };
 
+  const scrollTabsLeft = () => {
+    if (tabsListRef.current) {
+      tabsListRef.current.scrollBy({ left: -200, behavior: 'smooth' });
+    }
+  };
+
+  const scrollTabsRight = () => {
+    if (tabsListRef.current) {
+      tabsListRef.current.scrollBy({ left: 200, behavior: 'smooth' });
+    }
+  };
+
+  // Ensure active tab is visible when changed
+  useEffect(() => {
+    if (tabsListRef.current) {
+      const activeTab = tabsListRef.current.querySelector('[data-state="active"]');
+      if (activeTab) {
+        activeTab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      }
+    }
+  }, [currentStepIndex]);
+
   const isLastStep = currentStepIndex === steps.length - 1;
   const isFirstStep = currentStepIndex === 0;
 
   return (
     <div className="space-y-8">
-      <Tabs 
-        value={steps[currentStepIndex].id} 
-        className="w-full"
-        onValueChange={(value) => {
-          const stepIndex = steps.findIndex(step => step.id === value);
-          if (stepIndex !== -1) {
-            goToStep(stepIndex);
-          }
-        }}
-      >
-        <TabsList className="w-full flex mb-6 h-12 overflow-x-auto scrollbar-none p-0 md:p-1">
-          {steps.map((step, index) => (
-            <TabsTrigger 
-              key={step.id} 
-              value={step.id}
-              className={`flex-1 min-w-[120px] h-10 px-3 text-xs sm:text-sm md:text-base whitespace-nowrap 
-                ${index === currentStepIndex ? 'bg-blue-50 dark:bg-blue-900/20 font-medium' : ''}`}
-            >
-              <span className="hidden sm:inline">{step.label}</span>
-              <span className="sm:hidden">{index + 1}. {step.label.split(' ')[0]}</span>
-            </TabsTrigger>
-          ))}
-        </TabsList>
-      </Tabs>
+      <div className="relative">
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 h-8 w-8 p-0 rounded-full bg-background/80 backdrop-blur-sm hidden sm:flex"
+          onClick={scrollTabsLeft}
+        >
+          <ArrowLeft size={16} />
+          <span className="sr-only">Scroll left</span>
+        </Button>
+        
+        <Tabs 
+          value={steps[currentStepIndex].id} 
+          className="w-full"
+          onValueChange={(value) => {
+            const stepIndex = steps.findIndex(step => step.id === value);
+            if (stepIndex !== -1) {
+              goToStep(stepIndex);
+            }
+          }}
+        >
+          <TabsList 
+            ref={tabsListRef}
+            className="w-full flex mb-6 h-12 overflow-x-auto scrollbar-none p-0 md:p-1 mx-auto px-8 sm:px-10"
+          >
+            {steps.map((step, index) => (
+              <TabsTrigger 
+                key={step.id} 
+                value={step.id}
+                className={`flex-1 min-w-[120px] h-10 px-3 text-xs sm:text-sm md:text-base whitespace-nowrap 
+                  ${index === currentStepIndex ? 'bg-blue-50 dark:bg-blue-900/20 font-medium' : ''}`}
+              >
+                <span className="hidden sm:inline">{step.label}</span>
+                <span className="sm:hidden">{index + 1}. {step.label.split(' ')[0]}</span>
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
+        
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 h-8 w-8 p-0 rounded-full bg-background/80 backdrop-blur-sm hidden sm:flex"
+          onClick={scrollTabsRight}
+        >
+          <ArrowRight size={16} />
+          <span className="sr-only">Scroll right</span>
+        </Button>
+      </div>
 
       <AnimatePresence mode="wait">
         <motion.div
           key={currentStepIndex}
-          initial={{ opacity: 0, x: 10 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -10 }}
+          initial="hidden"
+          animate="visible"
+          exit="hidden"
+          variants={contentVariants}
           transition={{ duration: 0.3 }}
         >
           <div className="rounded-lg border p-6 bg-card">
