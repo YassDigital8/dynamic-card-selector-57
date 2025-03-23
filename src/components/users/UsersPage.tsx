@@ -7,6 +7,7 @@ import UsersSearchBar from './UsersSearchBar';
 import useUsers from '@/hooks/useUsers';
 import useUserDialog from './useUserDialog';
 import useSearchFilters from './useSearchFilters';
+import { motion } from 'framer-motion';
 
 const UsersPage: React.FC = () => {
   const {
@@ -40,7 +41,20 @@ const UsersPage: React.FC = () => {
   }, [fetchUsers]);
 
   return (
-    <div className="space-y-6">
+    <motion.div 
+      initial="initial"
+      animate="animate"
+      className="space-y-6 max-w-7xl mx-auto px-1 sm:px-2 md:px-4"
+      variants={{
+        initial: { opacity: 0 },
+        animate: { 
+          opacity: 1,
+          transition: { 
+            staggerChildren: 0.1 
+          } 
+        }
+      }}
+    >
       <UsersHeader 
         onRefresh={fetchUsers}
         onAddUser={openAddDialog}
@@ -73,7 +87,7 @@ const UsersPage: React.FC = () => {
         onAddUser={handleAddUser}
         privileges={userPrivileges}
       />
-    </div>
+    </motion.div>
   );
 };
 
