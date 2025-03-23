@@ -19,7 +19,9 @@ const HotelPreviewCard: React.FC = () => {
   const governorate = useWatch({ control: form.control, name: 'governorate' });
   const amenities = useWatch({ control: form.control, name: 'amenities' });
   const roomTypes = useWatch({ control: form.control, name: 'roomTypes' });
-  const logoUrl = useWatch({ control: form.control, name: 'logoUrl' });
+  
+  // Note: We're not watching logoUrl since it's not in the form schema
+  // Instead we'll use a placeholder or first room image
   
   // Calculate total rooms and capacity
   const totalRooms = roomTypes?.length || 0;
@@ -68,11 +70,7 @@ const HotelPreviewCard: React.FC = () => {
         
         <div className="p-4 space-y-4">
           <div className="flex items-center space-x-3">
-            {logoUrl ? (
-              <div className="h-10 w-10 rounded-full overflow-hidden">
-                <img src={logoUrl} alt={name || 'Hotel logo'} className="h-full w-full object-cover" />
-              </div>
-            ) : initials ? (
+            {initials ? (
               <div className="h-10 w-10 rounded-full bg-blue-500 text-white flex items-center justify-center font-medium">
                 {initials}
               </div>
