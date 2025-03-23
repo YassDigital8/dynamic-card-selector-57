@@ -15,7 +15,7 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
-import { User as UserType, UserPrivilege, ModulePermission, ModuleRole } from '@/types/user.types';
+import { User as UserType, UserPrivilege, ModulePermission, ModuleRole, ModuleType } from '@/types/user.types';
 import { User, Shield, LockKeyhole, Folder, Settings, Image, FileText, Hotel } from 'lucide-react';
 
 interface ModulePermissionsProps {
