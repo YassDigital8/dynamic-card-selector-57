@@ -1,4 +1,3 @@
-
 export interface RoomType {
   id: string;
   name: string;
@@ -86,10 +85,21 @@ export interface GeoLocation {
   formattedAddress?: string;
 }
 
+export interface BankAccountDetails {
+  accountName: string;
+  accountNumber: string;
+  bankName: string;
+  branchName?: string;
+  swiftCode?: string;
+  iban?: string;
+  additionalInfo?: string;
+}
+
 export interface PaymentMethod {
   id: string;
   name: string;
   enabled: boolean;
+  bankAccountDetails?: BankAccountDetails; // Add bank account details for bank transfer
 }
 
 export interface ExtraBedPolicy {

@@ -41,3 +41,14 @@ export const defaultValues: Partial<FormValues> = {
     notes: ''
   }
 };
+
+// Default bank account details for new hotel forms
+export const defaultBankAccountDetails = {
+  accountName: '',
+  accountNumber: '',
+  bankName: '',
+  branchName: '',
+  swiftCode: '',
+  iban: '',
+  additionalInfo: ''
+};
