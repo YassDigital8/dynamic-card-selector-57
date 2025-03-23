@@ -1,5 +1,5 @@
 
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
@@ -21,6 +21,26 @@ const StepTabs: React.FC<StepTabsProps> = ({
   onStepChange 
 }) => {
   const tabsListRef = useRef<HTMLDivElement>(null);
+
+  // Calculate the visible range of tabs
+  const visibleRange = useMemo(() => {
+    const totalSteps = steps.length;
+    const currentStep = currentStepIndex;
+    
+    // For smaller screens, show fewer tabs
+    const isMobile = window.innerWidth < 768;
+    const visibleCount = isMobile ? 3 : 5;
+    
+    let start = Math.max(0, currentStep - Math.floor(visibleCount / 2));
+    const end = Math.min(totalSteps, start + visibleCount);
+    
+    // Adjust start if we're near the end
+    if (end === totalSteps) {
+      start = Math.max(0, totalSteps - visibleCount);
+    }
+    
+    return { start, end };
+  }, [steps.length, currentStepIndex]);
 
   const scrollTabsLeft = () => {
     if (tabsListRef.current) {
@@ -49,7 +69,7 @@ const StepTabs: React.FC<StepTabsProps> = ({
       <Button 
         variant="ghost" 
         size="sm" 
-        className="absolute left-0 top-1/2 -translate-y-1/2 z-10 h-8 w-8 p-0 rounded-full bg-background/80 backdrop-blur-sm hidden sm:flex"
+        className="absolute left-0 top-1/2 -translate-y-1/2 z-10 h-8 w-8 p-0 rounded-full bg-background/80 backdrop-blur-sm hidden sm:flex items-center justify-center shadow-sm border"
         onClick={scrollTabsLeft}
       >
         <ArrowLeft size={16} />
@@ -74,11 +94,23 @@ const StepTabs: React.FC<StepTabsProps> = ({
             <TabsTrigger 
               key={step.id} 
               value={step.id}
-              className={`flex-1 min-w-[150px] h-10 px-4 mx-1 text-xs sm:text-sm md:text-base whitespace-nowrap 
-                ${index === currentStepIndex ? 'bg-blue-50 dark:bg-blue-900/20 font-medium' : ''}`}
+              className={`
+                flex-1 min-w-[150px] h-10 px-4 mx-1 text-xs sm:text-sm md:text-base whitespace-nowrap transition-all duration-200
+                ${index === currentStepIndex ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-medium border-b-2 border-blue-500 shadow-sm' : 'hover:bg-gray-50 dark:hover:bg-gray-800/20'}
+                ${index < currentStepIndex ? 'text-gray-500 dark:text-gray-400' : ''}
+              `}
             >
-              <span className="hidden sm:inline">{step.label}</span>
-              <span className="sm:hidden">{index + 1}. &nbsp;{step.label.split(' ')[0]}</span>
+              <div className="flex items-center justify-center space-x-1.5">
+                <span className={`
+                  inline-flex items-center justify-center rounded-full w-5 h-5 text-xs
+                  ${index === currentStepIndex ? 'bg-blue-500 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}
+                  ${index < currentStepIndex ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400' : ''}
+                `}>
+                  {index + 1}
+                </span>
+                <span className="hidden sm:inline">{step.label}</span>
+                <span className="sm:hidden truncate max-w-[80px]">{step.label}</span>
+              </div>
             </TabsTrigger>
           ))}
         </TabsList>
@@ -87,7 +119,7 @@ const StepTabs: React.FC<StepTabsProps> = ({
       <Button 
         variant="ghost" 
         size="sm" 
-        className="absolute right-0 top-1/2 -translate-y-1/2 z-10 h-8 w-8 p-0 rounded-full bg-background/80 backdrop-blur-sm hidden sm:flex"
+        className="absolute right-0 top-1/2 -translate-y-1/2 z-10 h-8 w-8 p-0 rounded-full bg-background/80 backdrop-blur-sm hidden sm:flex items-center justify-center shadow-sm border"
         onClick={scrollTabsRight}
       >
         <ArrowRight size={16} />
