@@ -3,7 +3,6 @@ import React from 'react';
 import { BasicInformation, AmenitiesSection, RoomTypesSection } from './';
 import { ContactDetailsSection } from './contact';
 import { ContractDocumentSection } from './contract';
-import { PaymentMethodsSection } from './payment';
 import ExtendedFeaturesSection from './ExtendedFeaturesSection';
 import { UseFormReturn } from 'react-hook-form';
 import { FormValues } from './formSchema';

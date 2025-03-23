@@ -11,7 +11,6 @@ import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
 import { useFormContext } from 'react-hook-form';
 import { FormValues } from '../formSchema';
-import BankAccountDetails from './BankAccountDetails';
 
 interface PaymentMethodItemProps {
   index: number;
@@ -21,9 +20,6 @@ interface PaymentMethodItemProps {
 
 const PaymentMethodItem: React.FC<PaymentMethodItemProps> = ({ index, field, onRemove }) => {
   const form = useFormContext<FormValues>();
-  
-  // Exact ID comparison for bank transfer
-  const isBankTransfer = field.id === 'bank-transfer';
   
   // Use watch for reactivity - this will trigger re-render when the checkbox changes
   const isEnabled = form.watch(`paymentMethods.${index}.enabled`);
@@ -35,15 +31,9 @@ const PaymentMethodItem: React.FC<PaymentMethodItemProps> = ({ index, field, onR
       name: field.name,
       isEnabled, 
       id: field.id,
-      isBankTransfer
+      isBankTransfer: field.id === 'bank-transfer'
     });
-    
-    if (isBankTransfer) {
-      console.log(`Bank Transfer Payment Method Details:`, { 
-        bankDetails: form.getValues(`paymentMethods.${index}.bankAccountDetails`)
-      });
-    }
-  }, [isEnabled, field.id, field.name, index, form, isBankTransfer]);
+  }, [isEnabled, field.id, field.name, index]);
 
   return (
     <div className="space-y-2">
@@ -78,11 +68,6 @@ const PaymentMethodItem: React.FC<PaymentMethodItemProps> = ({ index, field, onR
           </FormItem>
         )}
       />
-
-      {/* Render bank details ONLY if this is a bank transfer AND it's enabled */}
-      {isBankTransfer && isEnabled && (
-        <BankAccountDetails paymentMethodIndex={index} />
-      )}
     </div>
   );
 };
