@@ -8,9 +8,9 @@ import {
   AmenitiesSection, 
   RoomTypesSection,
   ContactDetailsSection,
-  ContractDocumentSection
 } from './';
 import ExtendedFeaturesSection from './ExtendedFeaturesSection';
+import { ContractDocumentSection } from './contract';
 import { UseFormReturn } from 'react-hook-form';
 import { FormValues } from './formSchema';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -70,7 +70,8 @@ const StepBasedForm: React.FC<StepBasedFormProps> = ({
       component: (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <ContractDocumentSection />
-          <CommercialDealsView hotelId={hotelId || ""} />
+          {/* Fix the CommercialDealsView by passing contractDocuments from form data */}
+          <CommercialDealsView contractDocuments={form.watch("contractDocuments")} />
         </div>
       )
     },

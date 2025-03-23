@@ -12,6 +12,7 @@ import { formatDate } from '@/lib/date-utils';
 
 interface CommercialDealsViewProps {
   contractDocuments?: ContractDocument[];
+  hotelId?: string; // Added hotelId as an optional prop
 }
 
 const CommercialDealsView: React.FC<CommercialDealsViewProps> = ({ contractDocuments = [] }) => {
