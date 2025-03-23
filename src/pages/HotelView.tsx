@@ -7,19 +7,26 @@ import { ArrowLeft, Edit } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import AdminLayout from '@/components/layout/AdminLayout';
 import { useHotelNetwork } from '@/hooks/hotel/useHotelNetwork';
-import { HotelLoadingIndicator } from '@/components/hotel/HotelLoadingIndicator';
+import HotelLoadingIndicator from '@/components/hotel/HotelLoadingIndicator';
 import { useToast } from '@/hooks/use-toast';
 
 const HotelView = () => {
   const { hotelId } = useParams<{ hotelId: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { getHotelById } = useHotelNetwork();
+  const { allHotels } = useHotelNetwork();
   
-  const { data: hotel, isLoading, error } = useQuery({
-    queryKey: ['hotel', hotelId],
-    queryFn: () => getHotelById(hotelId || ''),
-    enabled: !!hotelId,
+  // Create a query that finds the hotel by ID from allHotels
+  const { data: hotel, isLoading } = useQuery({
+    queryKey: ['hotel', hotelId, allHotels],
+    queryFn: () => {
+      const foundHotel = allHotels.find(hotel => hotel.id === hotelId);
+      if (!foundHotel) {
+        throw new Error('Hotel not found');
+      }
+      return foundHotel;
+    },
+    enabled: !!hotelId && !!allHotels.length,
   });
   
   if (isLoading) {
@@ -32,7 +39,7 @@ const HotelView = () => {
     );
   }
   
-  if (error || !hotel) {
+  if (!hotel) {
     toast({
       title: "Error",
       description: "Failed to load hotel details. Please try again.",
