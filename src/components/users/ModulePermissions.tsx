@@ -9,17 +9,11 @@ import {
 } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import { UserPrivilege } from '@/types/user.types';
-import { User, Shield, LockKeyhole } from 'lucide-react';
-
-interface Module {
-  id: string;
-  name: string;
-  description: string;
-}
+import { UserPrivilege, ModulePermission } from '@/types/user.types';
+import { User, Shield, LockKeyhole, Folder, Settings, Image, FileText, Hotel } from 'lucide-react';
 
 interface ModulePermissionsProps {
-  modules: Module[];
+  modules: ModulePermission[];
   selectedRole: UserPrivilege;
 }
 
@@ -28,31 +22,25 @@ const ModulePermissions: React.FC<ModulePermissionsProps> = ({
   selectedRole,
 }) => {
   // Function to determine if a role has access to a module
-  const hasAccess = (moduleId: string, role: UserPrivilege): boolean => {
-    // Super Admin has access to everything
-    if (role === 'Super Admin') return true;
-    
-    // Admin has access to everything except user management
-    if (role === 'Admin') {
-      return moduleId !== 'users';
+  const hasAccess = (module: ModulePermission, role: UserPrivilege): boolean => {
+    return module.allowedRoles.includes(role);
+  };
+
+  const getModuleIcon = (moduleId: string) => {
+    switch (moduleId) {
+      case 'hotels':
+        return <Hotel className="h-5 w-5 text-blue-500" />;
+      case 'users':
+        return <User className="h-5 w-5 text-purple-500" />;
+      case 'gallery':
+        return <Image className="h-5 w-5 text-green-500" />;
+      case 'settings':
+        return <Settings className="h-5 w-5 text-orange-500" />;
+      case 'reports':
+        return <FileText className="h-5 w-5 text-indigo-500" />;
+      default:
+        return <Folder className="h-5 w-5 text-gray-500" />;
     }
-    
-    // Manager has access to most modules except users and settings
-    if (role === 'Manager') {
-      return !['users', 'settings'].includes(moduleId);
-    }
-    
-    // Supervisor has limited access
-    if (role === 'Supervisor') {
-      return ['hotels', 'gallery', 'reports'].includes(moduleId);
-    }
-    
-    // Officer has minimal access
-    if (role === 'Officer') {
-      return ['hotels', 'gallery'].includes(moduleId);
-    }
-    
-    return false;
   };
 
   const getRoleIcon = (role: UserPrivilege) => {
@@ -94,19 +82,22 @@ const ModulePermissions: React.FC<ModulePermissionsProps> = ({
             >
               <Checkbox
                 id={`module-${module.id}`}
-                checked={hasAccess(module.id, selectedRole)}
+                checked={hasAccess(module, selectedRole)}
                 disabled
               />
-              <div className="flex-1 space-y-1">
-                <Label
-                  htmlFor={`module-${module.id}`}
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                >
-                  {module.name}
-                </Label>
-                <p className="text-sm text-muted-foreground">
-                  {module.description}
-                </p>
+              <div className="flex-1 space-y-1 flex items-center">
+                {getModuleIcon(module.id)}
+                <div className="ml-3">
+                  <Label
+                    htmlFor={`module-${module.id}`}
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    {module.name}
+                  </Label>
+                  <p className="text-sm text-muted-foreground">
+                    {module.description}
+                  </p>
+                </div>
               </div>
             </div>
           ))}

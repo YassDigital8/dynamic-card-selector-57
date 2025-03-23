@@ -1,5 +1,5 @@
 
-import { User, UserPrivilege } from '@/types/user.types';
+import { User, UserPrivilege, ModulePermission } from '@/types/user.types';
 import { v4 as uuidv4 } from 'uuid';
 
 // Mock data
@@ -70,13 +70,38 @@ export const userPrivileges: UserPrivilege[] = [
   'Officer'
 ];
 
-// Module permissions for demonstration
-export const modulePermissions = [
-  { id: 'hotels', name: 'Hotels', description: 'Manage hotel listings and details' },
-  { id: 'users', name: 'Users', description: 'Manage system users and privileges' },
-  { id: 'gallery', name: 'Gallery', description: 'Manage image gallery and uploads' },
-  { id: 'settings', name: 'Settings', description: 'Configure system settings' },
-  { id: 'reports', name: 'Reports', description: 'Generate and view reports' },
+// Module permissions with detailed role access
+export const modulePermissions: ModulePermission[] = [
+  { 
+    id: 'hotels', 
+    name: 'Hotels', 
+    description: 'Manage hotel listings and details',
+    allowedRoles: ['Super Admin', 'Admin', 'Manager', 'Supervisor', 'Officer']
+  },
+  { 
+    id: 'users', 
+    name: 'Users', 
+    description: 'Manage system users and privileges',
+    allowedRoles: ['Super Admin']
+  },
+  { 
+    id: 'gallery', 
+    name: 'Gallery', 
+    description: 'Manage image gallery and uploads',
+    allowedRoles: ['Super Admin', 'Admin', 'Manager', 'Supervisor', 'Officer']
+  },
+  { 
+    id: 'settings', 
+    name: 'Settings', 
+    description: 'Configure system settings',
+    allowedRoles: ['Super Admin', 'Admin']
+  },
+  { 
+    id: 'reports', 
+    name: 'Reports', 
+    description: 'Generate and view reports',
+    allowedRoles: ['Super Admin', 'Admin', 'Manager', 'Supervisor']
+  },
 ];
 
 export const getUsersList = (): User[] => {
