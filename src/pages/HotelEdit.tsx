@@ -1,34 +1,30 @@
 
-import React, { Suspense } from 'react';
-import { useParams, Navigate } from 'react-router-dom';
-import PageContainer from '@/components/pages/index/PageContainer';
-import { Skeleton } from '@/components/ui/skeleton';
-import HotelLoadingIndicator from '@/components/hotel/HotelLoadingIndicator';
-
-// Lazy load the HotelEditPage component
-const HotelEditPage = React.lazy(() => import('@/components/hotel/edit/HotelEditPage'));
-
-const HotelEditSkeleton = () => (
-  <div className="w-full h-full p-4 space-y-6">
-    <Skeleton className="h-12 w-60 bg-indigo-100/50 dark:bg-indigo-900/20 rounded-lg" />
-    <Skeleton className="h-[calc(100vh-160px)] w-full bg-indigo-100/30 dark:bg-indigo-900/5 rounded-xl" />
-  </div>
-);
+import React from 'react';
+import { Building, Hotel, PencilLine } from 'lucide-react';
+import { HotelEditPage } from '@/components/hotel/edit';
+import AdminLayout from '@/components/layout/AdminLayout';
+import { BreadcrumbNav } from '@/components/ui/breadcrumb-nav';
+import { useParams } from 'react-router-dom';
+import { useHotelNetwork } from '@/hooks/hotel/useHotelNetwork';
 
 const HotelEdit = () => {
   const { hotelId } = useParams<{ hotelId: string }>();
+  const { allHotels } = useHotelNetwork();
   
-  // If no hotelId is provided, redirect to the hotel list
-  if (!hotelId) {
-    return <Navigate to="/hotel" replace />;
-  }
-
+  // Find the current hotel name if available
+  const hotelName = allHotels.find(h => h.id === hotelId)?.name || 'Edit Hotel';
+  
   return (
-    <PageContainer>
-      <Suspense fallback={<HotelEditSkeleton />}>
-        <HotelEditPage hotelId={hotelId} />
-      </Suspense>
-    </PageContainer>
+    <AdminLayout>
+      <div className="container mx-auto py-6">
+        <BreadcrumbNav items={[
+          { label: 'Hotel Network', href: '/hotel', icon: Building },
+          { label: hotelName, href: `/hotel/view/${hotelId}`, icon: Hotel },
+          { label: 'Edit', icon: PencilLine }
+        ]} />
+        <HotelEditPage />
+      </div>
+    </AdminLayout>
   );
 };
 
