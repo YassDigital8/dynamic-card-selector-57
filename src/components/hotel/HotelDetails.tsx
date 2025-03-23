@@ -9,7 +9,6 @@ import {
   ContractDocumentsCard 
 } from './details';
 import ContactDetailsCard from './details/ContactDetailsCard';
-import { motion } from 'framer-motion';
 
 interface HotelDetailsProps {
   hotel: Hotel;
@@ -44,86 +43,44 @@ const HotelDetails = memo(({
     onEdit();
   };
 
-  // Animation variants for staggered card reveal
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.05
-      }
-    }
-  };
-  
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: {
-        type: "spring",
-        stiffness: 260,
-        damping: 20
-      }
-    }
-  };
-
   return (
-    <motion.div 
-      className="space-y-6"
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-    >
-      <motion.div variants={itemVariants}>
-        <HotelHeader 
-          name={hotel.name}
-          posKey={hotel.posKey}
-          country={hotel.country}
-          governorate={hotel.governorate}
-          rating={hotel.rating}
-          onEdit={handleEdit}
-          onBack={onBack}
-          onSave={onSave}
-          onDelete={onDelete}
-          customLogo={customLogo || undefined}
-          onLogoChange={handleLogoChange}
-          isEditing={isEditing}
-        />
-      </motion.div>
+    <div className="space-y-6">
+      <HotelHeader 
+        name={hotel.name}
+        posKey={hotel.posKey}
+        country={hotel.country}
+        governorate={hotel.governorate}
+        rating={hotel.rating}
+        onEdit={handleEdit}
+        onBack={onBack}
+        onSave={onSave}
+        onDelete={onDelete}
+        customLogo={customLogo || undefined}
+        onLogoChange={handleLogoChange}
+        isEditing={isEditing}
+      />
 
-      <motion.div variants={itemVariants}>
-        <LocationCard 
-          country={hotel.country} 
-          governorate={hotel.governorate} 
-          streetAddress={hotel.streetAddress} 
-          posKey={hotel.posKey} 
-        />
-      </motion.div>
+      <LocationCard 
+        country={hotel.country} 
+        governorate={hotel.governorate} 
+        streetAddress={hotel.streetAddress} 
+        posKey={hotel.posKey} 
+      />
 
-      <motion.div variants={itemVariants}>
-        <AmenitiesCard amenities={hotel.amenities} />
-      </motion.div>
+      <AmenitiesCard amenities={hotel.amenities} />
 
-      <motion.div variants={itemVariants}>
-        <ContactDetailsCard 
-          contactDetails={hotel.contactDetails} 
-          socialMedia={hotel.socialMedia} 
-        />
-      </motion.div>
+      <ContactDetailsCard 
+        contactDetails={hotel.contactDetails} 
+        socialMedia={hotel.socialMedia} 
+      />
 
-      {/* Contract Documents Card */}
-      <motion.div variants={itemVariants}>
-        <ContractDocumentsCard 
-          contractDocuments={hotel.contractDocuments} 
-        />
-      </motion.div>
+      {/* Add the new ContractDocumentsCard component */}
+      <ContractDocumentsCard 
+        contractDocuments={hotel.contractDocuments} 
+      />
 
-      <motion.div variants={itemVariants}>
-        <RoomTypesCard roomTypes={hotel.roomTypes} updatedAt={hotel.updatedAt} />
-      </motion.div>
-    </motion.div>
+      <RoomTypesCard roomTypes={hotel.roomTypes} updatedAt={hotel.updatedAt} />
+    </div>
   );
 });
 

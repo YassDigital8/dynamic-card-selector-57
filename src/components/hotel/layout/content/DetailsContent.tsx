@@ -33,27 +33,15 @@ const DetailsContent: React.FC<DetailsContentProps> = ({
       animate="visible"
       exit="hidden"
       variants={contentVariants}
-      className="flex-1 w-full"
+      className="flex-1"
     >
-      <motion.div
-        initial={{ opacity: 0, scale: 0.98 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ 
-          duration: 0.5,
-          type: "spring",
-          stiffness: 100,
-          damping: 15
-        }}
-        className="w-full h-full"
-      >
-        <HotelDetailsWrapper 
-          hotel={hotel} 
-          onEdit={onStartEdit} 
-          onBack={onBackToList}
-          onUpdateHotel={onUpdateHotel}
-          isEditing={isEditing}
-        />
-      </motion.div>
+      <HotelDetailsWrapper 
+        hotel={hotel} 
+        onEdit={onStartEdit} 
+        onBack={onBackToList}
+        onUpdateHotel={onUpdateHotel}
+        isEditing={isEditing}
+      />
     </motion.div>
   );
 };
