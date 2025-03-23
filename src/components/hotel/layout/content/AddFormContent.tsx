@@ -26,7 +26,7 @@ const AddFormContent: React.FC<AddFormContentProps> = ({
       animate="visible"
       exit="hidden"
       variants={contentVariants}
-      className="flex-1"
+      className="flex-1 overflow-auto"
     >
       <HotelAddForm
         isLoading={isLoading}

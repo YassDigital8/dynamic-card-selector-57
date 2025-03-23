@@ -5,8 +5,7 @@ import { useForm } from 'react-hook-form';
 import { Form } from '@/components/ui/form';
 import { Hotel, HotelFormData } from '@/models/HotelModel';
 import { formSchema, defaultValues } from './form';
-import FormSections from './form/FormSections';
-import FormActions from './form/FormActions';
+import StepBasedForm from './form/StepBasedForm';
 import { useFormProcessor } from './form/hooks/useFormProcessor';
 
 interface HotelFormProps {
@@ -33,8 +32,12 @@ const HotelForm = memo(({
   return (
     <Form {...form}>
       <form id="hotel-form" onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
-        <FormSections form={form} hotelId={initialData?.id} />
-        <FormActions isLoading={isLoading} showButtons={showButtons} />
+        <StepBasedForm 
+          form={form} 
+          hotelId={initialData?.id} 
+          onSubmit={form.handleSubmit(handleSubmit)}
+          isLoading={isLoading}
+        />
       </form>
     </Form>
   );

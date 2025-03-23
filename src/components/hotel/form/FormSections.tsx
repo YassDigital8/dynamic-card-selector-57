@@ -10,9 +10,12 @@ import { FormValues } from './formSchema';
 interface FormSectionsProps {
   form: UseFormReturn<FormValues>;
   hotelId?: string;
+  mode?: 'step' | 'full';
 }
 
-const FormSections: React.FC<FormSectionsProps> = ({ form, hotelId }) => {
+const FormSections: React.FC<FormSectionsProps> = ({ form, hotelId, mode = 'full' }) => {
+  // This component is kept for backward compatibility with edit forms
+  // New forms use StepBasedForm component
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       <BasicInformation form={form} />
