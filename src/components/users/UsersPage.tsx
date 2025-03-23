@@ -11,15 +11,11 @@ import { Button } from '@/components/ui/button';
 import { UserPlus, RefreshCw } from 'lucide-react';
 import UsersTable from './UsersTable';
 import AddUserDialog from './AddUserDialog';
-import ModulePermissions from './ModulePermissions';
 import useUsers from '@/hooks/useUsers';
-import { User } from '@/types/user.types';
 
 const UsersPage: React.FC = () => {
   const {
     users,
-    selectedUser,
-    setSelectedUser,
     isLoading,
     fetchUsers,
     handleUpdateRole,
@@ -28,7 +24,6 @@ const UsersPage: React.FC = () => {
     handleDeleteUser,
     handleAddUser,
     userPrivileges,
-    modulePermissions
   } = useUsers();
 
   const [showAddDialog, setShowAddDialog] = useState(false);
@@ -66,38 +61,25 @@ const UsersPage: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
-          <Card>
-            <CardHeader>
-              <CardTitle>Users</CardTitle>
-              <CardDescription>
-                View and manage all system users
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <UsersTable
-                users={users}
-                privileges={userPrivileges}
-                onSelectUser={setSelectedUser}
-                onUpdateRole={handleUpdateRole}
-                onToggleStatus={handleToggleStatus}
-                onDeleteUser={handleDeleteUser}
-                isLoading={isLoading}
-              />
-            </CardContent>
-          </Card>
-        </div>
-
-        <div>
-          <ModulePermissions
-            modules={modulePermissions}
-            selectedUser={selectedUser}
-            userPrivileges={userPrivileges}
-            onUpdateModuleRole={handleUpdateModuleRole}
+      <Card>
+        <CardHeader>
+          <CardTitle>Users</CardTitle>
+          <CardDescription>
+            View and manage all system users
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <UsersTable
+            users={users}
+            privileges={userPrivileges}
+            onSelectUser={() => {}} // Empty function since we no longer need to select users
+            onUpdateRole={handleUpdateRole}
+            onToggleStatus={handleToggleStatus}
+            onDeleteUser={handleDeleteUser}
+            isLoading={isLoading}
           />
-        </div>
-      </div>
+        </CardContent>
+      </Card>
 
       <AddUserDialog
         open={showAddDialog}
