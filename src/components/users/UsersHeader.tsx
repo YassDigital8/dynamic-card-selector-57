@@ -22,22 +22,20 @@ const UsersHeader: React.FC<UsersHeaderProps> = ({ onRefresh, onAddUser, isLoadi
       transition={{ duration: 0.3 }}
       className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8"
     >
-      <div className="flex items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-            User Management
-          </h1>
-          <p className="text-muted-foreground mt-1">
-            Manage system users and their module-specific privileges
-          </p>
-        </div>
-        <ThemeToggle />
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+          User Management
+        </h1>
+        <p className="text-muted-foreground mt-1">
+          Manage system users and their module-specific privileges
+        </p>
       </div>
       <div className="flex flex-col md:flex-row items-end md:items-center gap-3 mt-4 md:mt-0">
         <div className="text-right text-sm text-muted-foreground mr-2">
           Welcome, <span className="font-medium text-foreground">{userInfo?.firstName || 'User'}</span>
         </div>
-        <div className="flex space-x-3">
+        <div className="flex items-center space-x-3">
+          <ThemeToggle />
           <Button 
             onClick={onRefresh} 
             variant="outline"
