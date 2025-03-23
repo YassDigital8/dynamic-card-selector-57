@@ -22,7 +22,7 @@ interface PaymentMethodItemProps {
 const PaymentMethodItem: React.FC<PaymentMethodItemProps> = ({ index, field, onRemove }) => {
   const form = useFormContext<FormValues>();
   const isBankTransfer = field.id === 'bank-transfer';
-  const isEnabled = form.getValues(`paymentMethods.${index}.enabled`);
+  const isEnabled = form.watch(`paymentMethods.${index}.enabled`);
   const isCustomMethod = !['cash', 'credit-card', 'debit-card', 'bank-transfer'].includes(field.id);
 
   return (
@@ -59,7 +59,7 @@ const PaymentMethodItem: React.FC<PaymentMethodItemProps> = ({ index, field, onR
         )}
       />
 
-      {/* Bank Transfer Details */}
+      {/* Bank Transfer Details - Use watch instead of getValues for reactivity */}
       {isBankTransfer && isEnabled && <BankAccountDetails paymentMethodIndex={index} />}
     </div>
   );
