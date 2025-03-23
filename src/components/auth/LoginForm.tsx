@@ -1,9 +1,9 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Loader2, AlertCircle, ShieldAlert } from 'lucide-react';
+import { Loader2, AlertCircle, ShieldAlert, InfoIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -11,7 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import useAuthentication from '@/hooks/useAuthentication';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useNavigate } from 'react-router-dom';
-import { enableDemoMode } from '@/services/authService';
+import { enableDemoMode, checkApiConnectivity } from '@/services/authService';
 
 // Define the schema for the login form
 const loginSchema = z.object({
@@ -24,6 +24,7 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
+  const [apiStatus, setApiStatus] = useState<'checking' | 'available' | 'unavailable'>('checking');
   const { toast } = useToast();
   const { login, demoMode } = useAuthentication();
   const navigate = useNavigate();
@@ -39,6 +40,16 @@ const LoginForm = () => {
       password: '',
     }
   });
+
+  // Check API connectivity on load
+  useEffect(() => {
+    const checkConnection = async () => {
+      setApiStatus('checking');
+      const isConnected = await checkApiConnectivity();
+      setApiStatus(isConnected ? 'available' : 'unavailable');
+    };
+    checkConnection();
+  }, []);
 
   const onSubmit = async (data: LoginFormValues) => {
     setIsLoading(true);
@@ -62,7 +73,7 @@ const LoginForm = () => {
       let errorMessage = '';
       
       if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
-        errorMessage = 'Network error: The authentication server is not accessible. This might be due to an SSL certificate issue.';
+        errorMessage = 'Network error: The authentication server is not accessible. This might be due to an SSL certificate issue or server unavailability.';
       } else if (error instanceof Error) {
         errorMessage = error.message;
       } else {
@@ -97,6 +108,19 @@ const LoginForm = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      {/* API Status Indicator */}
+      <div className="mb-4">
+        <Alert variant={apiStatus === 'checking' ? 'default' : apiStatus === 'available' ? 'default' : 'warning'} className="mb-4">
+          <InfoIcon className="h-4 w-4" />
+          <AlertTitle>API Connection Status</AlertTitle>
+          <AlertDescription>
+            {apiStatus === 'checking' && 'Checking connection to authentication server...'}
+            {apiStatus === 'available' && 'Connected to authentication server. You can log in with your credentials.'}
+            {apiStatus === 'unavailable' && 'Unable to connect to authentication server. The server may be down or there might be network issues. You can still use demo mode.'}
+          </AlertDescription>
+        </Alert>
+      </div>
+
       {loginError && (
         <Alert 
           variant={isCertificateError(loginError) ? "warning" : "destructive"} 
@@ -106,7 +130,7 @@ const LoginForm = () => {
             <ShieldAlert className="h-4 w-4" /> : 
             <AlertCircle className="h-4 w-4" />
           }
-          <AlertTitle>{isCertificateError(loginError) ? "SSL Certificate Issue" : "Login failed"}</AlertTitle>
+          <AlertTitle>{isCertificateError(loginError) ? "Connection Issue" : "Login failed"}</AlertTitle>
           <AlertDescription>{loginError}</AlertDescription>
           
           {isCertificateError(loginError) && (
@@ -160,15 +184,20 @@ const LoginForm = () => {
         )}
       </Button>
       
-      {isCertificateError(loginError) && (
+      {(isCertificateError(loginError) || apiStatus === 'unavailable') && (
         <div className="mt-4 text-sm text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 p-3 rounded border border-amber-200 dark:border-amber-800">
-          <p className="font-medium mb-1">SSL Certificate Warning</p>
-          <p className="mb-2">The server is using a self-signed or invalid SSL certificate. This is common in development or staging environments.</p>
-          <p>Options to resolve this:</p>
+          <p className="font-medium mb-1">Connection Issues</p>
+          <p className="mb-2">There are connectivity issues with the authentication server. This could be due to:</p>
           <ul className="list-disc pl-5 mt-1 space-y-1">
-            <li>Visit <a href="https://staging.sa3d.online:7182" target="_blank" rel="noopener noreferrer" className="underline font-medium">https://staging.sa3d.online:7182</a> directly in your browser and accept the certificate</li>
+            <li>Server might be down or unreachable</li>
+            <li>SSL certificate issues with the staging environment</li>
+            <li>Network restrictions or firewall settings blocking the connection</li>
+          </ul>
+          <p className="mt-2">You can try:</p>
+          <ul className="list-disc pl-5 mt-1 space-y-1">
+            <li>Visit <a href="https://staging.sa3d.online:7182" target="_blank" rel="noopener noreferrer" className="underline font-medium">https://staging.sa3d.online:7182</a> directly in your browser to check the connection</li>
             <li>Use the "Enter Demo Mode" button to continue with limited functionality</li>
-            <li>Contact your system administrator to fix the certificate issue</li>
+            <li>Contact your system administrator to check server status</li>
           </ul>
         </div>
       )}
