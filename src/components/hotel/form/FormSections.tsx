@@ -20,9 +20,8 @@ const FormSections: React.FC<FormSectionsProps> = ({ form, hotelId }) => {
       <AmenitiesSection form={form} hotelId={hotelId} />
       <RoomTypesSection form={form} />
       <ContactDetailsSection />
-      <PaymentMethodsSection />
-      <ContractDocumentSection />
       <ExtendedFeaturesSection />
+      <ContractDocumentSection />
     </div>
   );
 };

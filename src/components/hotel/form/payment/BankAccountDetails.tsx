@@ -27,10 +27,10 @@ const BankAccountDetails: React.FC<BankAccountDetailsProps> = ({ paymentMethodIn
   }, [paymentMethodIndex, form]);
 
   return (
-    <div className="mt-2 ml-8 mr-2 border p-4 rounded-md bg-blue-50">
+    <div className="mt-2 ml-8 mr-2 border p-4 rounded-md bg-blue-50 dark:bg-blue-950/30">
       <Accordion type="single" collapsible defaultValue="bank-details">
-        <AccordionItem value="bank-details">
-          <AccordionTrigger className="py-2">
+        <AccordionItem value="bank-details" className="border-none">
+          <AccordionTrigger className="py-2 hover:no-underline">
             <div className="flex items-center text-sm font-medium">
               <Building className="h-4 w-4 mr-2 text-blue-500" />
               Bank Account Details

@@ -22,7 +22,7 @@ interface PaymentMethodItemProps {
 const PaymentMethodItem: React.FC<PaymentMethodItemProps> = ({ index, field, onRemove }) => {
   const form = useFormContext<FormValues>();
   
-  // Use exact ID comparison from the constants 'bank-transfer'
+  // Exact ID comparison for bank transfer
   const isBankTransfer = field.id === 'bank-transfer';
   
   // Use watch for reactivity - this will trigger re-render when the checkbox changes
@@ -46,7 +46,7 @@ const PaymentMethodItem: React.FC<PaymentMethodItemProps> = ({ index, field, onR
   }, [isEnabled, field.id, field.name, index, form, isBankTransfer]);
 
   return (
-    <div>
+    <div className="space-y-2">
       <FormField
         control={form.control}
         name={`paymentMethods.${index}.enabled`}
@@ -60,7 +60,7 @@ const PaymentMethodItem: React.FC<PaymentMethodItemProps> = ({ index, field, onR
                 />
               </FormControl>
               <FormLabel className="font-normal cursor-pointer">
-                {form.getValues(`paymentMethods.${index}.name`)}
+                {field.name}
               </FormLabel>
             </div>
             {isCustomMethod && (
