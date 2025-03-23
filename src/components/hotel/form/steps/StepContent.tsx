@@ -25,7 +25,7 @@ const StepContent: React.FC<StepContentProps> = ({
         exit="hidden"
         variants={contentVariants}
         transition={{ duration: 0.3 }}
-        className="mt-6" // Increased top margin for better spacing
+        className="mt-6"
       >
         <div className="rounded-lg border p-6 bg-card shadow-sm">
           <h2 className="text-xl font-semibold mb-6 text-blue-600 dark:text-blue-400 flex items-center">

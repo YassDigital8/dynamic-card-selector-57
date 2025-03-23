@@ -22,13 +22,44 @@ const StepTabs: React.FC<StepTabsProps> = ({
 }) => {
   const tabsListRef = useRef<HTMLDivElement>(null);
 
-  // Always ensure the first step is visible
-  const visibleSteps = useMemo(() => {
-    return steps.map((step, index) => ({
-      ...step,
-      isVisible: true // Make all steps visible
-    }));
-  }, [steps]);
+  // Scroll to first tab when component mounts or window resizes
+  useEffect(() => {
+    const ensureFirstStepVisible = () => {
+      if (tabsListRef.current) {
+        // Reset scroll position to show the first tab
+        tabsListRef.current.scrollTo({ left: 0, behavior: 'auto' });
+      }
+    };
+
+    // Run on mount
+    ensureFirstStepVisible();
+    
+    // Also run on window resize
+    window.addEventListener('resize', ensureFirstStepVisible);
+    
+    return () => {
+      window.removeEventListener('resize', ensureFirstStepVisible);
+    };
+  }, []);
+
+  // Ensure active tab is visible when changed
+  useEffect(() => {
+    if (tabsListRef.current) {
+      const activeTab = tabsListRef.current.querySelector('[data-state="active"]');
+      if (activeTab) {
+        const scrollContainer = tabsListRef.current;
+        const tabElement = activeTab as HTMLElement;
+        
+        // Calculate scroll position to center the tab
+        const scrollLeft = tabElement.offsetLeft - (scrollContainer.clientWidth - tabElement.offsetWidth) / 2;
+        
+        scrollContainer.scrollTo({
+          left: Math.max(0, scrollLeft),
+          behavior: 'smooth'
+        });
+      }
+    }
+  }, [currentStepIndex]);
 
   const scrollTabsLeft = () => {
     if (tabsListRef.current) {
@@ -38,26 +69,13 @@ const StepTabs: React.FC<StepTabsProps> = ({
 
   const scrollTabsRight = () => {
     if (tabsListRef.current) {
-      tabsListRef.current.scrollBy({ left: 200, behavior: 'smooth' });
+      const container = tabsListRef.current;
+      container.scrollTo({ 
+        left: container.scrollWidth, 
+        behavior: 'smooth' 
+      });
     }
   };
-
-  // Reset scroll position when component mounts to ensure first tab is visible
-  useEffect(() => {
-    if (tabsListRef.current) {
-      tabsListRef.current.scrollTo({ left: 0, behavior: 'smooth' });
-    }
-  }, []);
-
-  // Ensure active tab is visible when changed
-  useEffect(() => {
-    if (tabsListRef.current) {
-      const activeTab = tabsListRef.current.querySelector('[data-state="active"]');
-      if (activeTab) {
-        activeTab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-      }
-    }
-  }, [currentStepIndex]);
 
   return (
     <div className="relative">
