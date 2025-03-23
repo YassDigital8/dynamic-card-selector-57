@@ -29,9 +29,10 @@ const PageContentWrapper: React.FC<PageContentWrapperProps> = ({
       transition={{ duration: 0.3 }}
     >
       <HotelPageHeader 
+        title="Hotel Network"
+        onAddHotel={onAddHotel}
         selectedPOS={selectedPOS}
         onSelectPOS={onSelectPOS}
-        onAddHotel={onAddHotel}
         filters={filters}
         onFilterChange={onFilterChange}
       />

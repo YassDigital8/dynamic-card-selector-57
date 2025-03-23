@@ -1,16 +1,27 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
+import { FilterOptions } from '../hotel/HotelFilters';
 
 interface HotelPageHeaderProps {
   title?: string;
   onAddHotel?: () => void;
+  // Add the missing properties
+  selectedPOS?: string;
+  onSelectPOS?: (pos: string) => void;
+  filters?: FilterOptions;
+  onFilterChange?: (filters: FilterOptions) => void;
 }
 
 const HotelPageHeader: React.FC<HotelPageHeaderProps> = ({ 
   title = 'Hotel Network', 
-  onAddHotel
+  onAddHotel,
+  selectedPOS,
+  onSelectPOS,
+  filters,
+  onFilterChange
 }) => {
   return (
     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 bg-white dark:bg-slate-950 p-4 rounded-lg shadow">

@@ -11,6 +11,9 @@ interface HotelCardFooterProps {
   onEdit: (hotel: Hotel) => void;
   onDelete: (id: string) => void;
   isEditing: boolean;
+  // Add the missing properties
+  disabled?: boolean;
+  hideEditButton?: boolean;
 }
 
 const HotelCardFooter: React.FC<HotelCardFooterProps> = ({
@@ -18,7 +21,9 @@ const HotelCardFooter: React.FC<HotelCardFooterProps> = ({
   onSelect,
   onEdit,
   onDelete,
-  isEditing
+  isEditing,
+  disabled = false,
+  hideEditButton = false
 }) => {
   const navigate = useNavigate();
   
@@ -47,29 +52,31 @@ const HotelCardFooter: React.FC<HotelCardFooterProps> = ({
         size="sm"
         className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 px-2 h-8"
         onClick={handleViewClick}
-        disabled={isEditing}
+        disabled={isEditing || disabled}
       >
         <Eye className="h-4 w-4 mr-1" />
         <span className="text-xs">View</span>
       </Button>
       
-      <Button
-        variant="ghost"
-        size="sm"
-        className="text-amber-600 hover:text-amber-800 dark:text-amber-400 dark:hover:text-amber-300 px-2 h-8"
-        onClick={handleEditClick}
-        disabled={isEditing}
-      >
-        <Edit className="h-4 w-4 mr-1" />
-        <span className="text-xs">Edit</span>
-      </Button>
+      {!hideEditButton && (
+        <Button
+          variant="ghost"
+          size="sm"
+          className="text-amber-600 hover:text-amber-800 dark:text-amber-400 dark:hover:text-amber-300 px-2 h-8"
+          onClick={handleEditClick}
+          disabled={isEditing || disabled}
+        >
+          <Edit className="h-4 w-4 mr-1" />
+          <span className="text-xs">Edit</span>
+        </Button>
+      )}
       
       <Button
         variant="ghost"
         size="sm"
         className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 px-2 h-8"
         onClick={handleDeleteClick}
-        disabled={isEditing}
+        disabled={isEditing || disabled}
       >
         <Trash className="h-4 w-4 mr-1" />
         <span className="text-xs">Delete</span>
