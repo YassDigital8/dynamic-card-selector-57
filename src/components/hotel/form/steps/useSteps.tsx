@@ -5,9 +5,9 @@ import { ContractDocument } from '@/models/HotelModel';
 import { BasicInformation } from '../';
 import { AmenitiesSection } from '../';
 import { RoomTypesSection } from '../';
-import { ContactDetailsSection } from '../';
-import ExtendedFeaturesSection from '../ExtendedFeaturesSection';
+import { ContactDetailsSection } from '../contact';
 import { ContractDocumentSection } from '../contract';
+import ExtendedFeaturesSection from '../ExtendedFeaturesSection';
 import { CommercialDealsView } from '../../details/commercial';
 import { UseFormReturn } from 'react-hook-form';
 

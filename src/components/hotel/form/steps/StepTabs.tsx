@@ -78,10 +78,6 @@ const StepTabs: React.FC<StepTabsProps> = ({
     }
   };
 
-  // Split steps into left and right sides for better visual organization
-  const firstHalfSteps = steps.slice(0, Math.ceil(steps.length / 2));
-  const secondHalfSteps = steps.slice(Math.ceil(steps.length / 2));
-
   return (
     <div className="relative">
       <Button 
