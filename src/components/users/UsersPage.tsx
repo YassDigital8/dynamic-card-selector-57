@@ -3,8 +3,10 @@ import React, { useEffect } from 'react';
 import AddUserDialog from './AddUserDialog';
 import UsersHeader from './UsersHeader';
 import UsersContent from './UsersContent';
+import UsersSearchBar from './UsersSearchBar';
 import useUsers from '@/hooks/useUsers';
 import useUserDialog from './useUserDialog';
+import useSearchFilters from './useSearchFilters';
 
 const UsersPage: React.FC = () => {
   const {
@@ -24,6 +26,14 @@ const UsersPage: React.FC = () => {
     setShowAddDialog 
   } = useUserDialog();
 
+  const {
+    searchFilters,
+    updateFilter,
+    resetFilters,
+    filteredUsers,
+    departments
+  } = useSearchFilters(users);
+
   // Fetch users when component mounts
   useEffect(() => {
     fetchUsers();
@@ -37,8 +47,18 @@ const UsersPage: React.FC = () => {
         isLoading={isLoading}
       />
 
+      <UsersSearchBar
+        nameFilter={searchFilters.name}
+        emailFilter={searchFilters.email}
+        departmentFilter={searchFilters.department}
+        statusFilter={searchFilters.status}
+        departments={departments}
+        onUpdateFilter={updateFilter}
+        onResetFilters={resetFilters}
+      />
+
       <UsersContent
-        users={users}
+        users={filteredUsers}
         userPrivileges={userPrivileges}
         isLoading={isLoading}
         onSelectUser={() => {}} // Empty function since we no longer need to select users

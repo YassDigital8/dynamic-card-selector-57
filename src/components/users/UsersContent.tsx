@@ -34,7 +34,9 @@ const UsersContent: React.FC<UsersContentProps> = ({
       <CardHeader>
         <CardTitle>Users</CardTitle>
         <CardDescription>
-          View and manage all system users
+          {users.length === 1 
+            ? "1 user found" 
+            : `${users.length} users found`}
         </CardDescription>
       </CardHeader>
       <CardContent>
