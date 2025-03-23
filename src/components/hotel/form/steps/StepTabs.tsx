@@ -22,29 +22,17 @@ const StepTabs: React.FC<StepTabsProps> = ({
 }) => {
   const tabsListRef = useRef<HTMLDivElement>(null);
 
-  // Calculate the visible range of tabs
-  const visibleRange = useMemo(() => {
-    const totalSteps = steps.length;
-    const currentStep = currentStepIndex;
-    
-    // For smaller screens, show fewer tabs
-    const isMobile = window.innerWidth < 768;
-    const visibleCount = isMobile ? 3 : 5;
-    
-    let start = Math.max(0, currentStep - Math.floor(visibleCount / 2));
-    const end = Math.min(totalSteps, start + visibleCount);
-    
-    // Adjust start if we're near the end
-    if (end === totalSteps) {
-      start = Math.max(0, totalSteps - visibleCount);
-    }
-    
-    return { start, end };
-  }, [steps.length, currentStepIndex]);
+  // Always ensure the first step is visible
+  const visibleSteps = useMemo(() => {
+    return steps.map((step, index) => ({
+      ...step,
+      isVisible: true // Make all steps visible
+    }));
+  }, [steps]);
 
   const scrollTabsLeft = () => {
     if (tabsListRef.current) {
-      tabsListRef.current.scrollBy({ left: -200, behavior: 'smooth' });
+      tabsListRef.current.scrollTo({ left: 0, behavior: 'smooth' });
     }
   };
 
@@ -53,6 +41,13 @@ const StepTabs: React.FC<StepTabsProps> = ({
       tabsListRef.current.scrollBy({ left: 200, behavior: 'smooth' });
     }
   };
+
+  // Reset scroll position when component mounts to ensure first tab is visible
+  useEffect(() => {
+    if (tabsListRef.current) {
+      tabsListRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+    }
+  }, []);
 
   // Ensure active tab is visible when changed
   useEffect(() => {
@@ -73,7 +68,7 @@ const StepTabs: React.FC<StepTabsProps> = ({
         onClick={scrollTabsLeft}
       >
         <ArrowLeft size={16} />
-        <span className="sr-only">Scroll left</span>
+        <span className="sr-only">Scroll to start</span>
       </Button>
       
       <Tabs 
