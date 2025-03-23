@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/form';
 import { useFormContext, useFieldArray } from 'react-hook-form';
 import { FormValues } from '../formSchema';
-import { CreditCard, Plus, X, Building, Bank, CreditCard as CardIcon } from 'lucide-react';
+import { CreditCard, Plus, X, Building, CreditCard as CardIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
@@ -122,7 +122,7 @@ const PaymentMethodsSection: React.FC = () => {
                     <AccordionItem value="bank-details">
                       <AccordionTrigger className="py-2">
                         <div className="flex items-center text-sm font-medium">
-                          <Bank className="h-4 w-4 mr-2 text-blue-500" />
+                          <Building className="h-4 w-4 mr-2 text-blue-500" />
                           Bank Account Details
                         </div>
                       </AccordionTrigger>
