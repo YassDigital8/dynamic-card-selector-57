@@ -72,10 +72,11 @@ const HotelEditForm: React.FC<HotelEditFormProps> = ({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      transition={{ duration: 0.3 }}
+      transition={{ duration: 0.4 }}
+      className="w-full"
     >
-      <Card className="p-6 border-blue-100 dark:border-blue-900 shadow-lg">
-        <div className="flex justify-between items-center mb-6">
+      <Card className="p-6 border-indigo-100 dark:border-indigo-900 shadow-lg rounded-xl bg-white dark:bg-slate-900 overflow-hidden">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8 pb-4 border-b border-indigo-50 dark:border-indigo-950">
           <EditFormHeader 
             hotelName={selectedHotel.name}
             customLogo={customLogo}
@@ -89,14 +90,22 @@ const HotelEditForm: React.FC<HotelEditFormProps> = ({
           />
         </div>
         
-        <HotelForm
-          initialData={{...selectedHotel, logoUrl: customLogo}}
-          onSubmit={handleSubmit}
-          isLoading={isLoading}
-          showButtons={false}
-        />
+        <div className="relative">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2, duration: 0.4 }}
+          >
+            <HotelForm
+              initialData={{...selectedHotel, logoUrl: customLogo}}
+              onSubmit={handleSubmit}
+              isLoading={isLoading}
+              showButtons={false}
+            />
+          </motion.div>
+        </div>
         
-        <div className="mt-6 flex justify-end">
+        <div className="mt-8 pt-4 border-t border-indigo-50 dark:border-indigo-950 flex justify-end">
           <EditFormButtons
             isLoading={isLoading}
             onCancel={onCancel}
