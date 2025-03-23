@@ -155,7 +155,7 @@ const StepBasedForm: React.FC<StepBasedFormProps> = ({
               <TabsTrigger 
                 key={step.id} 
                 value={step.id}
-                className={`flex-1 min-w-[120px] h-10 px-3 text-xs sm:text-sm md:text-base whitespace-nowrap 
+                className={`flex-1 min-w-[150px] h-10 px-4 mx-1 text-xs sm:text-sm md:text-base whitespace-nowrap 
                   ${index === currentStepIndex ? 'bg-blue-50 dark:bg-blue-900/20 font-medium' : ''}`}
               >
                 <span className="hidden sm:inline">{step.label}</span>

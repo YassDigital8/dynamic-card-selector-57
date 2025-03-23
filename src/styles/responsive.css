@@ -102,6 +102,12 @@
   [data-radix-select-viewport] {
     @apply p-0.5;
   }
+  
+  /* Better tabs spacing */
+  .TabsTrigger {
+    @apply px-1.5 py-0.5;
+    font-size: 0.65rem;
+  }
 }
 
 /* Extra compact mode for very small screens */
@@ -133,4 +139,12 @@
 
 .scrollbar-none::-webkit-scrollbar {
   display: none;  /* Chrome, Safari and Opera */
+}
+
+/* Tab spacing improvements */
+@media (min-width: 640px) {
+  .TabsList > .TabsTrigger {
+    @apply px-3;
+    min-width: 120px;
+  }
 }
