@@ -11,7 +11,6 @@ interface HotelCardFooterProps {
   onEdit: (hotel: Hotel) => void;
   onDelete: (id: string) => void;
   isEditing: boolean;
-  // Add the missing properties
   disabled?: boolean;
   hideEditButton?: boolean;
 }
@@ -29,7 +28,7 @@ const HotelCardFooter: React.FC<HotelCardFooterProps> = ({
   
   const handleViewClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    onSelect(hotel);
+    navigate(`/hotel/view/${hotel.id}`);
   };
   
   const handleEditClick = (e: React.MouseEvent) => {

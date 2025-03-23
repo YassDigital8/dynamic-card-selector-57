@@ -13,6 +13,7 @@ import Gallery from "./pages/Gallery";
 import Hotel from "./pages/Hotel";
 import HotelAdd from "./pages/HotelAdd";
 import HotelEdit from "./pages/HotelEdit";
+import HotelView from "./pages/HotelView"; // Import the new HotelView page
 import Users from "./pages/Users";
 import useAuthentication from "./hooks/useAuthentication";
 
@@ -129,6 +130,12 @@ const App = () => {
             <Route path="/hotel/edit/:hotelId" element={
               <ProtectedRoute>
                 <HotelEdit />
+              </ProtectedRoute>
+            } />
+            {/* Add new route for viewing hotel details */}
+            <Route path="/hotel/view/:hotelId" element={
+              <ProtectedRoute>
+                <HotelView />
               </ProtectedRoute>
             } />
             
