@@ -62,35 +62,6 @@ const UsersTable: React.FC<UsersTableProps> = ({
     return moduleRole ? moduleRole.role : user.role;
   };
 
-  // Function to render role badge with appropriate color
-  const renderRoleBadge = (role: UserPrivilege) => {
-    let color = "bg-gray-200 text-gray-800";
-    
-    switch (role) {
-      case 'Super Admin':
-        color = "bg-red-100 text-red-800";
-        break;
-      case 'Admin':
-        color = "bg-purple-100 text-purple-800";
-        break;
-      case 'Manager':
-        color = "bg-blue-100 text-blue-800";
-        break;
-      case 'Supervisor':
-        color = "bg-green-100 text-green-800";
-        break;
-      case 'Officer':
-        color = "bg-slate-100 text-slate-800";
-        break;
-    }
-    
-    return (
-      <span className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${color}`}>
-        {role}
-      </span>
-    );
-  };
-
   return (
     <div className="rounded-md border overflow-x-auto">
       <Table>
@@ -99,7 +70,6 @@ const UsersTable: React.FC<UsersTableProps> = ({
             <TableHead className="w-[50px]"></TableHead>
             <TableHead>Name</TableHead>
             <TableHead>Email</TableHead>
-            <TableHead>Role</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Department</TableHead>
             <TableHead>Last Login</TableHead>
@@ -128,19 +98,18 @@ const UsersTable: React.FC<UsersTableProps> = ({
                 <FileText className="h-4 w-4" />
               </div>
             </TableHead>
-            <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {isLoading ? (
             <TableRow>
-              <TableCell colSpan={13} className="h-24 text-center">
+              <TableCell colSpan={11} className="h-24 text-center">
                 Loading users...
               </TableCell>
             </TableRow>
           ) : users.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={13} className="h-24 text-center">
+              <TableCell colSpan={11} className="h-24 text-center">
                 No users found.
               </TableCell>
             </TableRow>
@@ -159,27 +128,6 @@ const UsersTable: React.FC<UsersTableProps> = ({
                 <TableCell className="font-medium">{user.name}</TableCell>
                 <TableCell>{user.email}</TableCell>
                 <TableCell>
-                  <Select
-                    defaultValue={user.role}
-                    onValueChange={(value: UserPrivilege) => onUpdateRole(user.id, value)}
-                    disabled={isLoading}
-                  >
-                    <SelectTrigger className="w-[140px]">
-                      <SelectValue placeholder="Select role" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {privileges.map((role) => (
-                        <SelectItem key={role} value={role}>
-                          <div className="flex items-center">
-                            <Shield className="mr-2 h-4 w-4" />
-                            <span>{role}</span>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </TableCell>
-                <TableCell>
                   <Badge 
                     variant={user.isActive ? "success" : "destructive"}
                     className="cursor-pointer"
@@ -197,42 +145,106 @@ const UsersTable: React.FC<UsersTableProps> = ({
                   {user.lastLogin ? format(user.lastLogin, 'MMM dd, yyyy') : 'Never'}
                 </TableCell>
                 
-                {/* Module roles */}
+                {/* Module roles dropdowns */}
                 <TableCell className="text-center px-2">
-                  {renderRoleBadge(getUserModuleRole(user, 'hotels'))}
+                  <Select
+                    value={getUserModuleRole(user, 'hotels')}
+                    onValueChange={(value: UserPrivilege) => onUpdateRole(user.id, value)}
+                  >
+                    <SelectTrigger className="w-[110px]">
+                      <SelectValue placeholder="Select role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {privileges.map((role) => (
+                        <SelectItem key={role} value={role}>
+                          <div className="flex items-center">
+                            <Shield className="mr-2 h-4 w-4" />
+                            <span>{role}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </TableCell>
                 <TableCell className="text-center px-2">
-                  {renderRoleBadge(getUserModuleRole(user, 'users'))}
+                  <Select
+                    value={getUserModuleRole(user, 'users')}
+                    onValueChange={(value: UserPrivilege) => onUpdateRole(user.id, value)}
+                  >
+                    <SelectTrigger className="w-[110px]">
+                      <SelectValue placeholder="Select role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {privileges.map((role) => (
+                        <SelectItem key={role} value={role}>
+                          <div className="flex items-center">
+                            <Shield className="mr-2 h-4 w-4" />
+                            <span>{role}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </TableCell>
                 <TableCell className="text-center px-2">
-                  {renderRoleBadge(getUserModuleRole(user, 'gallery'))}
+                  <Select
+                    value={getUserModuleRole(user, 'gallery')}
+                    onValueChange={(value: UserPrivilege) => onUpdateRole(user.id, value)}
+                  >
+                    <SelectTrigger className="w-[110px]">
+                      <SelectValue placeholder="Select role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {privileges.map((role) => (
+                        <SelectItem key={role} value={role}>
+                          <div className="flex items-center">
+                            <Shield className="mr-2 h-4 w-4" />
+                            <span>{role}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </TableCell>
                 <TableCell className="text-center px-2">
-                  {renderRoleBadge(getUserModuleRole(user, 'settings'))}
+                  <Select
+                    value={getUserModuleRole(user, 'settings')}
+                    onValueChange={(value: UserPrivilege) => onUpdateRole(user.id, value)}
+                  >
+                    <SelectTrigger className="w-[110px]">
+                      <SelectValue placeholder="Select role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {privileges.map((role) => (
+                        <SelectItem key={role} value={role}>
+                          <div className="flex items-center">
+                            <Shield className="mr-2 h-4 w-4" />
+                            <span>{role}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </TableCell>
                 <TableCell className="text-center px-2">
-                  {renderRoleBadge(getUserModuleRole(user, 'reports'))}
-                </TableCell>
-
-                <TableCell className="text-right">
-                  <div className="flex justify-end space-x-2">
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => onSelectUser(user)}
-                    >
-                      <Edit className="h-3.5 w-3.5 mr-1" />
-                      Edit
-                    </Button>
-                    <Button 
-                      variant="destructive" 
-                      size="sm"
-                      onClick={() => onDeleteUser(user.id)}
-                    >
-                      <Trash2 className="h-3.5 w-3.5 mr-1" />
-                      Delete
-                    </Button>
-                  </div>
+                  <Select
+                    value={getUserModuleRole(user, 'reports')}
+                    onValueChange={(value: UserPrivilege) => onUpdateRole(user.id, value)}
+                  >
+                    <SelectTrigger className="w-[110px]">
+                      <SelectValue placeholder="Select role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {privileges.map((role) => (
+                        <SelectItem key={role} value={role}>
+                          <div className="flex items-center">
+                            <Shield className="mr-2 h-4 w-4" />
+                            <span>{role}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </TableCell>
               </TableRow>
             ))
