@@ -3,10 +3,10 @@ import React from 'react';
 import { BasicInformation, AmenitiesSection, RoomTypesSection } from './';
 import { ContactDetailsSection } from './contact';
 import { ContractDocumentSection } from './contract';
+import { PaymentMethodsSection } from './payment';
 import ExtendedFeaturesSection from './ExtendedFeaturesSection';
 import { UseFormReturn } from 'react-hook-form';
 import { FormValues } from './formSchema';
-import { Hotel } from '@/models/HotelModel';
 
 interface FormSectionsProps {
   form: UseFormReturn<FormValues>;
@@ -20,6 +20,7 @@ const FormSections: React.FC<FormSectionsProps> = ({ form, hotelId }) => {
       <AmenitiesSection form={form} hotelId={hotelId} />
       <RoomTypesSection form={form} />
       <ContactDetailsSection />
+      <PaymentMethodsSection />
       <ContractDocumentSection />
       <ExtendedFeaturesSection />
     </div>

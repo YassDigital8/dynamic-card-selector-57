@@ -6,5 +6,6 @@ export { default as RatingInput } from './RatingInput';
 export { default as FormSections } from './FormSections';
 export { default as FormActions } from './FormActions';
 export { ContactDetailsSection } from './contact';
+export { PaymentMethodsSection } from './payment';
 export { formSchema } from './formSchema';
 export { defaultValues } from './formDefaults';
