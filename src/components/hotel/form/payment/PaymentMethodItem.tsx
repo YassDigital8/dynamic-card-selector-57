@@ -21,8 +21,10 @@ interface PaymentMethodItemProps {
 
 const PaymentMethodItem: React.FC<PaymentMethodItemProps> = ({ index, field, onRemove }) => {
   const form = useFormContext<FormValues>();
-  // Check if this payment method is bank transfer - ensure correct ID matching
+  
+  // Use exact ID comparison from the constants 'bank-transfer'
   const isBankTransfer = field.id === 'bank-transfer';
+  
   // Use watch for reactivity - this will trigger re-render when the checkbox changes
   const isEnabled = form.watch(`paymentMethods.${index}.enabled`);
   const isCustomMethod = !['cash', 'credit-card', 'debit-card', 'bank-transfer'].includes(field.id);
