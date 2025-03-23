@@ -11,7 +11,7 @@ const UsersTableHeader: React.FC = () => {
         <TableHead>Name</TableHead>
         <TableHead>Email</TableHead>
         <TableHead>Status</TableHead>
-        <TableHead>Department</TableHead>
+        <TableHead>Dep</TableHead>
         <TableHead>Last Login</TableHead>
         <TableHead className="px-2">
           <div className="flex items-center justify-center">

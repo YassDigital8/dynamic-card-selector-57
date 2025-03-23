@@ -58,7 +58,7 @@ const UserTableRow: React.FC<UserTableRowProps> = ({
       </TableCell>
       <TableCell>{user.department || 'N/A'}</TableCell>
       <TableCell>
-        {user.lastLogin ? format(user.lastLogin, 'MMM dd, yyyy') : 'Never'}
+        {user.lastLogin ? format(user.lastLogin, 'MMM dd, yyyy h:mm a') : 'Never'}
       </TableCell>
       
       {/* Module roles dropdowns */}

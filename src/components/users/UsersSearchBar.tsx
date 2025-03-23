@@ -62,7 +62,7 @@ const UsersSearchBar: React.FC<UsersSearchBarProps> = ({
         </div>
         
         <div className="w-full md:w-[180px]">
-          <div className="text-sm font-medium mb-1.5 text-muted-foreground">Department</div>
+          <div className="text-sm font-medium mb-1.5 text-muted-foreground">Dep</div>
           <Select 
             value={departmentFilter}
             onValueChange={(value) => onUpdateFilter('department', value)}
