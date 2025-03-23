@@ -24,7 +24,7 @@ const UsersHeader: React.FC<UsersHeaderProps> = ({ onRefresh, onAddUser, isLoadi
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
-      className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8"
+      className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 border-b border-sidebar-border py-2 px-2 md:py-4 md:px-3"
     >
       <div className="flex items-center space-x-3">
         <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
