@@ -1,5 +1,5 @@
 
-import { User, UserPrivilege, ModulePermission } from '@/types/user.types';
+import { User, UserPrivilege, ModulePermission, ModuleType, ModuleRole } from '@/types/user.types';
 import { v4 as uuidv4 } from 'uuid';
 
 // Mock data
@@ -9,6 +9,13 @@ const mockUsers: User[] = [
     name: 'John Doe',
     email: 'john.doe@example.com',
     role: 'Super Admin',
+    moduleRoles: [
+      { moduleId: 'hotels', role: 'Super Admin' },
+      { moduleId: 'users', role: 'Super Admin' },
+      { moduleId: 'gallery', role: 'Super Admin' },
+      { moduleId: 'settings', role: 'Super Admin' },
+      { moduleId: 'reports', role: 'Super Admin' },
+    ],
     createdAt: new Date('2023-01-10'),
     updatedAt: new Date('2023-04-15'),
     lastLogin: new Date('2023-06-20'),
@@ -20,6 +27,13 @@ const mockUsers: User[] = [
     name: 'Jane Smith',
     email: 'jane.smith@example.com',
     role: 'Admin',
+    moduleRoles: [
+      { moduleId: 'hotels', role: 'Admin' },
+      { moduleId: 'users', role: 'Manager' },
+      { moduleId: 'gallery', role: 'Admin' },
+      { moduleId: 'settings', role: 'Admin' },
+      { moduleId: 'reports', role: 'Admin' },
+    ],
     createdAt: new Date('2023-02-15'),
     updatedAt: new Date('2023-05-10'),
     lastLogin: new Date('2023-06-18'),
@@ -31,6 +45,13 @@ const mockUsers: User[] = [
     name: 'Robert Johnson',
     email: 'robert.johnson@example.com',
     role: 'Manager',
+    moduleRoles: [
+      { moduleId: 'hotels', role: 'Manager' },
+      { moduleId: 'users', role: 'Supervisor' },
+      { moduleId: 'gallery', role: 'Manager' },
+      { moduleId: 'settings', role: 'Officer' },
+      { moduleId: 'reports', role: 'Manager' },
+    ],
     createdAt: new Date('2023-03-05'),
     updatedAt: new Date('2023-04-20'),
     lastLogin: new Date('2023-06-15'),
@@ -42,6 +63,13 @@ const mockUsers: User[] = [
     name: 'Emily Davis',
     email: 'emily.davis@example.com',
     role: 'Supervisor',
+    moduleRoles: [
+      { moduleId: 'hotels', role: 'Supervisor' },
+      { moduleId: 'users', role: 'Officer' },
+      { moduleId: 'gallery', role: 'Admin' },
+      { moduleId: 'settings', role: 'Officer' },
+      { moduleId: 'reports', role: 'Supervisor' },
+    ],
     createdAt: new Date('2023-04-10'),
     updatedAt: new Date('2023-05-25'),
     lastLogin: new Date('2023-06-10'),
@@ -53,6 +81,13 @@ const mockUsers: User[] = [
     name: 'Michael Wilson',
     email: 'michael.wilson@example.com',
     role: 'Officer',
+    moduleRoles: [
+      { moduleId: 'hotels', role: 'Officer' },
+      { moduleId: 'users', role: 'Officer' },
+      { moduleId: 'gallery', role: 'Supervisor' },
+      { moduleId: 'settings', role: 'Officer' },
+      { moduleId: 'reports', role: 'Officer' },
+    ],
     createdAt: new Date('2023-05-15'),
     updatedAt: new Date('2023-06-05'),
     lastLogin: new Date('2023-06-05'),
@@ -125,6 +160,42 @@ export const updateUserRole = (userId: string, newRole: UserPrivilege): User | u
   return undefined;
 };
 
+export const updateUserModuleRole = (
+  userId: string, 
+  moduleId: ModuleType, 
+  newRole: UserPrivilege
+): User | undefined => {
+  const userIndex = mockUsers.findIndex(user => user.id === userId);
+  if (userIndex !== -1) {
+    const user = mockUsers[userIndex];
+    
+    // Create moduleRoles array if it doesn't exist
+    if (!user.moduleRoles) {
+      user.moduleRoles = [];
+    }
+    
+    // Check if the module role already exists
+    const moduleRoleIndex = user.moduleRoles.findIndex(mr => mr.moduleId === moduleId);
+    
+    if (moduleRoleIndex !== -1) {
+      // Update existing module role
+      user.moduleRoles[moduleRoleIndex] = { moduleId, role: newRole };
+    } else {
+      // Add new module role
+      user.moduleRoles.push({ moduleId, role: newRole });
+    }
+    
+    // Update the user
+    mockUsers[userIndex] = {
+      ...user,
+      updatedAt: new Date()
+    };
+    
+    return mockUsers[userIndex];
+  }
+  return undefined;
+};
+
 export const toggleUserStatus = (userId: string): User | undefined => {
   const userIndex = mockUsers.findIndex(user => user.id === userId);
   if (userIndex !== -1) {
@@ -152,7 +223,12 @@ export const addUser = (user: Omit<User, 'id' | 'createdAt' | 'updatedAt'>): Use
     id: uuidv4(),
     ...user,
     createdAt: new Date(),
-    updatedAt: new Date()
+    updatedAt: new Date(),
+    // Initialize moduleRoles for new users
+    moduleRoles: modulePermissions.map(module => ({
+      moduleId: module.id,
+      role: user.role // Default to the user's main role
+    }))
   };
   mockUsers.push(newUser);
   return newUser;

@@ -10,11 +10,17 @@ export interface ModulePermission {
   allowedRoles: UserPrivilege[];
 }
 
+export interface ModuleRole {
+  moduleId: ModuleType;
+  role: UserPrivilege;
+}
+
 export interface User {
   id: string;
   name: string;
   email: string;
-  role: UserPrivilege;
+  role: UserPrivilege; // Default role
+  moduleRoles?: ModuleRole[]; // Specific roles per module
   createdAt: Date;
   updatedAt: Date;
   lastLogin?: Date;

@@ -23,6 +23,7 @@ const UsersPage: React.FC = () => {
     isLoading,
     fetchUsers,
     handleUpdateRole,
+    handleUpdateModuleRole,
     handleToggleStatus,
     handleDeleteUser,
     handleAddUser,
@@ -43,7 +44,7 @@ const UsersPage: React.FC = () => {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">User Management</h1>
           <p className="text-muted-foreground">
-            Manage system users and their privileges
+            Manage system users and their module-specific privileges
           </p>
         </div>
         <div className="flex space-x-2 mt-4 md:mt-0">
@@ -89,24 +90,12 @@ const UsersPage: React.FC = () => {
         </div>
 
         <div>
-          {selectedUser ? (
-            <ModulePermissions
-              modules={modulePermissions}
-              selectedRole={selectedUser.role}
-            />
-          ) : (
-            <Card>
-              <CardHeader>
-                <CardTitle>Module Permissions</CardTitle>
-                <CardDescription>
-                  Select a user to view their permissions
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="text-center py-8 text-muted-foreground">
-                No user selected. Click on a user to view their permissions.
-              </CardContent>
-            </Card>
-          )}
+          <ModulePermissions
+            modules={modulePermissions}
+            selectedUser={selectedUser}
+            userPrivileges={userPrivileges}
+            onUpdateModuleRole={handleUpdateModuleRole}
+          />
         </div>
       </div>
 

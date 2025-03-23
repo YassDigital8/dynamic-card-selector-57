@@ -3,11 +3,13 @@ import { useState, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { 
   User, 
-  UserPrivilege 
+  UserPrivilege,
+  ModuleType 
 } from '@/types/user.types';
 import { 
   getUsersList, 
   updateUserRole, 
+  updateUserModuleRole,
   toggleUserStatus, 
   deleteUser, 
   addUser,
@@ -52,13 +54,38 @@ export const useUsers = () => {
         }
         toast({
           title: "Role updated",
-          description: `User role updated to ${newRole}`,
+          description: `User's default role updated to ${newRole}`,
         });
       }
     } catch (error) {
       toast({
         title: "Error",
         description: "Failed to update user role",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }, [toast, selectedUser]);
+
+  const handleUpdateModuleRole = useCallback((userId: string, moduleId: ModuleType, newRole: UserPrivilege) => {
+    setIsLoading(true);
+    try {
+      const updatedUser = updateUserModuleRole(userId, moduleId, newRole);
+      if (updatedUser) {
+        setUsers(prev => prev.map(user => user.id === userId ? updatedUser : user));
+        if (selectedUser?.id === userId) {
+          setSelectedUser(updatedUser);
+        }
+        toast({
+          title: "Module role updated",
+          description: `User's role for ${moduleId} module updated to ${newRole}`,
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update module role",
         variant: "destructive",
       });
     } finally {
@@ -145,6 +172,7 @@ export const useUsers = () => {
     isLoading,
     fetchUsers,
     handleUpdateRole,
+    handleUpdateModuleRole,
     handleToggleStatus,
     handleDeleteUser,
     handleAddUser,

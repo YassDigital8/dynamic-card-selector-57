@@ -7,23 +7,54 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
-import { UserPrivilege, ModulePermission } from '@/types/user.types';
+import { User as UserType, UserPrivilege, ModulePermission, ModuleRole } from '@/types/user.types';
 import { User, Shield, LockKeyhole, Folder, Settings, Image, FileText, Hotel } from 'lucide-react';
 
 interface ModulePermissionsProps {
   modules: ModulePermission[];
-  selectedRole: UserPrivilege;
+  selectedUser: UserType | null;
+  userPrivileges: UserPrivilege[];
+  onUpdateModuleRole: (userId: string, moduleId: ModuleType, role: UserPrivilege) => void;
 }
 
 const ModulePermissions: React.FC<ModulePermissionsProps> = ({
   modules,
-  selectedRole,
+  selectedUser,
+  userPrivileges,
+  onUpdateModuleRole,
 }) => {
-  // Function to determine if a role has access to a module
-  const hasAccess = (module: ModulePermission, role: UserPrivilege): boolean => {
-    return module.allowedRoles.includes(role);
+  if (!selectedUser) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Module Permissions</CardTitle>
+          <CardDescription>
+            Select a user to manage their module permissions
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="text-center py-8 text-muted-foreground">
+          No user selected. Click on a user to manage their permissions.
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Function to get the user's role for a specific module
+  const getUserModuleRole = (moduleId: ModuleType): UserPrivilege => {
+    if (!selectedUser.moduleRoles) {
+      return selectedUser.role;
+    }
+    
+    const moduleRole = selectedUser.moduleRoles.find(mr => mr.moduleId === moduleId);
+    return moduleRole ? moduleRole.role : selectedUser.role;
   };
 
   const getModuleIcon = (moduleId: string) => {
@@ -64,43 +95,62 @@ const ModulePermissions: React.FC<ModulePermissionsProps> = ({
     <Card>
       <CardHeader>
         <div className="flex items-center space-x-2">
-          {getRoleIcon(selectedRole)}
+          {getRoleIcon(selectedUser.role)}
           <div>
-            <CardTitle>{selectedRole} Permissions</CardTitle>
+            <CardTitle>{selectedUser.name}'s Module Permissions</CardTitle>
             <CardDescription>
-              Module access for {selectedRole} role
+              Manage user's role for each module
             </CardDescription>
           </div>
         </div>
       </CardHeader>
       <CardContent>
         <div className="grid gap-4">
-          {modules.map((module) => (
-            <div
-              key={module.id}
-              className="flex items-center space-x-4 rounded-md border p-4"
-            >
-              <Checkbox
-                id={`module-${module.id}`}
-                checked={hasAccess(module, selectedRole)}
-                disabled
-              />
-              <div className="flex-1 space-y-1 flex items-center">
-                {getModuleIcon(module.id)}
-                <div className="ml-3">
-                  <Label
-                    htmlFor={`module-${module.id}`}
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          {modules.map((module) => {
+            const currentRole = getUserModuleRole(module.id);
+            
+            return (
+              <div
+                key={module.id}
+                className="flex items-center space-x-4 rounded-md border p-4"
+              >
+                <div className="flex-1 space-y-1 flex items-center">
+                  {getModuleIcon(module.id)}
+                  <div className="ml-3 flex-grow">
+                    <Label
+                      htmlFor={`module-${module.id}`}
+                      className="text-sm font-medium leading-none"
+                    >
+                      {module.name}
+                    </Label>
+                    <p className="text-sm text-muted-foreground">
+                      {module.description}
+                    </p>
+                  </div>
+                  <Select
+                    value={currentRole}
+                    onValueChange={(value: UserPrivilege) => 
+                      onUpdateModuleRole(selectedUser.id, module.id, value)
+                    }
                   >
-                    {module.name}
-                  </Label>
-                  <p className="text-sm text-muted-foreground">
-                    {module.description}
-                  </p>
+                    <SelectTrigger className="w-[140px]">
+                      <SelectValue placeholder="Select role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {userPrivileges.map((role) => (
+                        <SelectItem key={role} value={role}>
+                          <div className="flex items-center">
+                            {getRoleIcon(role)}
+                            <span className="ml-2">{role}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </CardContent>
     </Card>
