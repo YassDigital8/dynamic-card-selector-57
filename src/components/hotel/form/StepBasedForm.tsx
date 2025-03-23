@@ -111,15 +111,16 @@ const StepBasedForm: React.FC<StepBasedFormProps> = ({
           }
         }}
       >
-        <TabsList className="w-full grid grid-cols-3 md:grid-cols-6 mb-8">
+        <TabsList className="w-full flex mb-6 h-12 overflow-x-auto scrollbar-none p-0 md:p-1">
           {steps.map((step, index) => (
             <TabsTrigger 
               key={step.id} 
               value={step.id}
-              className={`${index === currentStepIndex ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}
+              className={`flex-1 min-w-[120px] h-10 px-3 text-xs sm:text-sm md:text-base whitespace-nowrap 
+                ${index === currentStepIndex ? 'bg-blue-50 dark:bg-blue-900/20 font-medium' : ''}`}
             >
-              <span className="hidden md:inline">{step.label}</span>
-              <span className="md:hidden">{index + 1}</span>
+              <span className="hidden sm:inline">{step.label}</span>
+              <span className="sm:hidden">{index + 1}. {step.label.split(' ')[0]}</span>
             </TabsTrigger>
           ))}
         </TabsList>
