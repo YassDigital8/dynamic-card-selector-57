@@ -78,7 +78,7 @@ const StepTabs: React.FC<StepTabsProps> = ({
                 ${index === currentStepIndex ? 'bg-blue-50 dark:bg-blue-900/20 font-medium' : ''}`}
             >
               <span className="hidden sm:inline">{step.label}</span>
-              <span className="sm:hidden">{index + 1}. {step.label.split(' ')[0]}</span>
+              <span className="sm:hidden">{index + 1}. &nbsp;{step.label.split(' ')[0]}</span>
             </TabsTrigger>
           ))}
         </TabsList>
