@@ -32,8 +32,6 @@ const PaymentMethodsSection: React.FC = () => {
           append(method);
         }
       });
-    } else {
-      console.log("Payment methods already initialized:", fields);
     }
   }, [fields.length, append]);
 

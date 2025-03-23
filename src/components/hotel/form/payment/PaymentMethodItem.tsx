@@ -29,17 +29,22 @@ const PaymentMethodItem: React.FC<PaymentMethodItemProps> = ({ index, field, onR
 
   // Debug logging to help understand state
   useEffect(() => {
+    console.log(`Payment Method (index: ${index}):`, { 
+      name: field.name,
+      isEnabled, 
+      id: field.id,
+      isBankTransfer
+    });
+    
     if (isBankTransfer) {
-      console.log(`Bank Transfer Payment Method (index: ${index}):`, { 
-        isEnabled, 
-        id: field.id,
+      console.log(`Bank Transfer Payment Method Details:`, { 
         bankDetails: form.getValues(`paymentMethods.${index}.bankAccountDetails`)
       });
     }
-  }, [isBankTransfer, isEnabled, field.id, index, form]);
+  }, [isEnabled, field.id, field.name, index, form, isBankTransfer]);
 
   return (
-    <div key={field.id}>
+    <div>
       <FormField
         control={form.control}
         name={`paymentMethods.${index}.enabled`}

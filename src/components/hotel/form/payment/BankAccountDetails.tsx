@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   FormField,
   FormItem,
@@ -21,7 +21,7 @@ const BankAccountDetails: React.FC<BankAccountDetailsProps> = ({ paymentMethodIn
   const form = useFormContext<FormValues>();
   
   // Log when this component renders
-  React.useEffect(() => {
+  useEffect(() => {
     console.log(`BankAccountDetails rendering for payment method ${paymentMethodIndex}`);
     console.log('Bank Account Details:', form.getValues(`paymentMethods.${paymentMethodIndex}.bankAccountDetails`));
   }, [paymentMethodIndex, form]);
