@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -38,6 +39,7 @@ const StepBasedForm: React.FC<StepBasedFormProps> = ({
 }) => {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   
+  // Add type assertion to ensure TypeScript treats the watched value as ContractDocument[]
   const contractDocuments = form.watch("contractDocuments") as ContractDocument[];
   
   const steps: Step[] = [
