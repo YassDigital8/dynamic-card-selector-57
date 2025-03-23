@@ -11,6 +11,8 @@ import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import Gallery from "./pages/Gallery";
 import Hotel from "./pages/Hotel";
+import HotelAdd from "./pages/HotelAdd";
+import HotelEdit from "./pages/HotelEdit";
 import Users from "./pages/Users";
 import useAuthentication from "./hooks/useAuthentication";
 
@@ -112,9 +114,21 @@ const App = () => {
                 <Gallery />
               </ProtectedRoute>
             } />
+            
+            {/* Hotel routes */}
             <Route path="/hotel" element={
               <ProtectedRoute>
                 <Hotel />
+              </ProtectedRoute>
+            } />
+            <Route path="/hotel/add" element={
+              <ProtectedRoute>
+                <HotelAdd />
+              </ProtectedRoute>
+            } />
+            <Route path="/hotel/edit/:hotelId" element={
+              <ProtectedRoute>
+                <HotelEdit />
               </ProtectedRoute>
             } />
             

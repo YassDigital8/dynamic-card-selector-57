@@ -1,67 +1,78 @@
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Pencil, Trash2 } from 'lucide-react';
+import { Edit, Eye, Trash } from 'lucide-react';
 import { Hotel } from '@/models/HotelModel';
-import { useIsMobile } from '@/hooks/use-mobile';
 
 interface HotelCardFooterProps {
   hotel: Hotel;
-  onEdit: () => void;
-  onDelete: () => void;
-  disabled?: boolean;
-  hideEditButton?: boolean;
+  onSelect: (hotel: Hotel) => void;
+  onEdit: (hotel: Hotel) => void;
+  onDelete: (id: string) => void;
+  isEditing: boolean;
 }
 
-export const HotelCardFooter = ({ 
-  hotel, 
-  onEdit, 
-  onDelete, 
-  disabled = false,
-  hideEditButton = false 
-}: HotelCardFooterProps) => {
-  const isMobile = useIsMobile();
+const HotelCardFooter: React.FC<HotelCardFooterProps> = ({
+  hotel,
+  onSelect,
+  onEdit,
+  onDelete,
+  isEditing
+}) => {
+  const navigate = useNavigate();
   
-  const handleEdit = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleViewClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!disabled) {
-      onEdit();
+    onSelect(hotel);
+  };
+  
+  const handleEditClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigate(`/hotel/edit/${hotel.id}`);
+  };
+  
+  const handleDeleteClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    
+    if (window.confirm(`Are you sure you want to delete ${hotel.name}?`)) {
+      onDelete(hotel.id);
     }
   };
   
-  const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
-    if (!disabled) {
-      onDelete();
-    }
-  };
-
   return (
-    <div className="flex justify-end space-x-2 pt-1 mt-auto">
-      {!hideEditButton && (
-        <Button 
-          variant="ghost" 
-          size="icon"
-          onClick={handleEdit}
-          type="button"
-          className={`h-8 w-8 p-0 ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
-          disabled={disabled}
-        >
-          <Pencil className={`${isMobile ? 'h-3.5 w-3.5' : 'h-4 w-4'} text-indigo-500`} />
-          <span className="sr-only">Edit</span>
-        </Button>
-      )}
-      
-      <Button 
-        variant="ghost" 
-        size="icon"
-        onClick={handleDelete}
-        type="button"
-        className={`h-8 w-8 p-0 ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
-        disabled={disabled}
+    <div className="flex justify-between items-center mt-2 pt-2 border-t border-gray-100 dark:border-gray-800">
+      <Button
+        variant="ghost"
+        size="sm"
+        className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 px-2 h-8"
+        onClick={handleViewClick}
+        disabled={isEditing}
       >
-        <Trash2 className={`${isMobile ? 'h-3.5 w-3.5' : 'h-4 w-4'} text-red-500`} />
-        <span className="sr-only">Delete</span>
+        <Eye className="h-4 w-4 mr-1" />
+        <span className="text-xs">View</span>
+      </Button>
+      
+      <Button
+        variant="ghost"
+        size="sm"
+        className="text-amber-600 hover:text-amber-800 dark:text-amber-400 dark:hover:text-amber-300 px-2 h-8"
+        onClick={handleEditClick}
+        disabled={isEditing}
+      >
+        <Edit className="h-4 w-4 mr-1" />
+        <span className="text-xs">Edit</span>
+      </Button>
+      
+      <Button
+        variant="ghost"
+        size="sm"
+        className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 px-2 h-8"
+        onClick={handleDeleteClick}
+        disabled={isEditing}
+      >
+        <Trash className="h-4 w-4 mr-1" />
+        <span className="text-xs">Delete</span>
       </Button>
     </div>
   );

@@ -8,7 +8,9 @@ import {
   Hotel, 
   Users, 
   Settings,
-  HelpCircle
+  HelpCircle,
+  PlusCircle,
+  ListFilter
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -16,6 +18,9 @@ const AdminSidebar: React.FC = () => {
   const location = useLocation();
   
   const isActive = (path: string) => {
+    if (path === '/hotel' && location.pathname.startsWith('/hotel/')) {
+      return true;
+    }
     return location.pathname === path;
   };
   
@@ -38,7 +43,19 @@ const AdminSidebar: React.FC = () => {
     { 
       label: 'Hotel Network', 
       icon: Hotel, 
-      href: '/hotel' 
+      href: '/hotel',
+      subItems: [
+        {
+          label: 'All Hotels',
+          icon: ListFilter,
+          href: '/hotel'
+        },
+        {
+          label: 'Add New Hotel',
+          icon: PlusCircle,
+          href: '/hotel/add'
+        }
+      ]
     },
     { 
       label: 'Users', 
@@ -66,19 +83,41 @@ const AdminSidebar: React.FC = () => {
         <h2 className="text-sm mb-3 text-muted-foreground">Navigation</h2>
         <nav className="space-y-1">
           {navItems.map((item) => (
-            <Link 
-              key={item.label} 
-              to={item.href}
-              className={cn(
-                "flex items-center px-3 py-2 rounded-md text-sm group",
-                isActive(item.href) 
-                  ? "bg-accent text-accent-foreground font-medium" 
-                  : "hover:bg-accent/50 text-sidebar-foreground"
+            <React.Fragment key={item.label}>
+              <Link 
+                to={item.href}
+                className={cn(
+                  "flex items-center px-3 py-2 rounded-md text-sm group",
+                  isActive(item.href) 
+                    ? "bg-accent text-accent-foreground font-medium" 
+                    : "hover:bg-accent/50 text-sidebar-foreground"
+                )}
+              >
+                <item.icon className="mr-2 h-4 w-4" />
+                {item.label}
+              </Link>
+              
+              {/* Show subitems if expanded and there are subitems */}
+              {item.subItems && isActive(item.href) && (
+                <div className="ml-6 mt-1 space-y-1">
+                  {item.subItems.map((subItem) => (
+                    <Link
+                      key={subItem.label}
+                      to={subItem.href}
+                      className={cn(
+                        "flex items-center px-3 py-1.5 rounded-md text-xs group",
+                        location.pathname === subItem.href
+                          ? "bg-accent/80 text-accent-foreground font-medium"
+                          : "hover:bg-accent/30 text-sidebar-foreground"
+                      )}
+                    >
+                      <subItem.icon className="mr-2 h-3.5 w-3.5" />
+                      {subItem.label}
+                    </Link>
+                  ))}
+                </div>
               )}
-            >
-              <item.icon className="mr-2 h-4 w-4" />
-              {item.label}
-            </Link>
+            </React.Fragment>
           ))}
         </nav>
       </div>

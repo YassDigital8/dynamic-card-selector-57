@@ -1,5 +1,6 @@
 
 import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Hotel, HotelFormData } from '@/models/HotelModel';
 import { useToast } from '@/hooks/use-toast';
@@ -49,10 +50,25 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
   onUpdateHotel
 }) => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const { contentVariants } = useContentAnimations();
   
   // Determine if we should show content (either a selected hotel, add form, or edit form)
   const showContent = selectedHotel || showAddForm || isEditing;
+
+  // Redirect to dedicated edit page when isEditing is true
+  useEffect(() => {
+    if (isEditing && selectedHotel) {
+      navigate(`/hotel/edit/${selectedHotel.id}`);
+    }
+  }, [isEditing, selectedHotel, navigate]);
+
+  // Redirect to dedicated add page when showAddForm is true
+  useEffect(() => {
+    if (showAddForm) {
+      navigate('/hotel/add');
+    }
+  }, [showAddForm, navigate]);
 
   // Log when hotel data changes for debugging
   useEffect(() => {
@@ -94,30 +110,10 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
       )}
       
       <AnimatePresence mode="wait">
-        {showAddForm && (
-          <AddFormContent 
-            isLoading={isLoading}
-            onSubmitAdd={onSubmitAdd}
-            selectedPOS={selectedPOS}
-            posName={posName}
-            contentVariants={contentVariants}
-          />
-        )}
-
-        {isEditing && selectedHotel && (
-          <EditFormContent 
-            selectedHotel={selectedHotel}
-            isLoading={isLoading}
-            onSubmitEdit={handleEditSubmit}
-            onCancelEdit={onCancelEdit}
-            contentVariants={contentVariants}
-          />
-        )}
-
         {!showAddForm && !isEditing && selectedHotel && (
           <DetailsContent 
             hotel={selectedHotel}
-            onStartEdit={onStartEdit}
+            onStartEdit={() => navigate(`/hotel/edit/${selectedHotel.id}`)}
             onBackToList={onBackToList}
             onUpdateHotel={onUpdateHotel}
             isEditing={isEditing}
@@ -130,7 +126,7 @@ const HotelContentPanel: React.FC<HotelContentPanelProps> = ({
             hasHotels={hasHotels}
             selectedPOS={selectedPOS}
             posName={posName}
-            onAddHotel={onAddHotel}
+            onAddHotel={() => navigate('/hotel/add')}
             contentVariants={contentVariants}
           />
         )}
