@@ -13,8 +13,8 @@ export const useSearchFilters = (users: User[]) => {
   const [searchFilters, setSearchFilters] = useState<SearchFilters>({
     name: '',
     email: '',
-    department: '',
-    status: ''
+    department: 'all',
+    status: 'all'
   });
 
   // Get unique departments for filter dropdown
@@ -41,8 +41,8 @@ export const useSearchFilters = (users: User[]) => {
     setSearchFilters({
       name: '',
       email: '',
-      department: '',
-      status: ''
+      department: 'all',
+      status: 'all'
     });
   }, []);
 
@@ -60,12 +60,12 @@ export const useSearchFilters = (users: User[]) => {
       }
       
       // Department filter
-      if (searchFilters.department && user.department !== searchFilters.department) {
+      if (searchFilters.department !== 'all' && user.department !== searchFilters.department) {
         return false;
       }
       
       // Status filter
-      if (searchFilters.status) {
+      if (searchFilters.status !== 'all') {
         if (searchFilters.status === 'active' && !user.isActive) {
           return false;
         }
