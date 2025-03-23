@@ -27,13 +27,15 @@ const StepContent: React.FC<StepContentProps> = ({
         transition={{ duration: 0.3 }}
       >
         <div className="rounded-lg border p-6 bg-card">
-          <h2 className="text-xl font-semibold mb-6 text-blue-600 dark:text-blue-400 flex items-center">
-            <span className="bg-blue-600 dark:bg-blue-500 text-white w-7 h-7 rounded-full inline-flex items-center justify-center mr-2 text-sm">
+          <h2 className="text-xl font-semibold mb-8 text-blue-600 dark:text-blue-400 flex items-center">
+            <span className="bg-blue-600 dark:bg-blue-500 text-white w-7 h-7 rounded-full inline-flex items-center justify-center mr-3 text-sm">
               {currentStepIndex + 1}
             </span>
             {stepLabel}
           </h2>
-          {children}
+          <div className="space-y-6">
+            {children}
+          </div>
         </div>
       </motion.div>
     </AnimatePresence>
