@@ -78,13 +78,13 @@ const HotelCard: React.FC<HotelCardProps> = ({
 
   // Determine height based on view mode and screen size
   const cardHeight = useGridView 
-    ? isMobile ? "h-full min-h-[300px]" : "h-full min-h-[380px]" 
-    : "min-h-[160px]";
+    ? "h-full" 
+    : "h-auto";
 
   return (
     <motion.div 
       layoutId={`hotel-card-${hotel.id}`}
-      className={`relative overflow-hidden w-full mb-2 ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+      className={`relative overflow-hidden w-full ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
       onClick={handleCardClick}
       initial="rest"
       whileHover="hover"
@@ -102,14 +102,14 @@ const HotelCard: React.FC<HotelCardProps> = ({
         className={`transition-all will-change-transform flex flex-col ${cardHeight} ${
           isSelected 
           ? 'border-indigo-400 dark:border-indigo-500 shadow-md bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-900/40 dark:to-indigo-800/40' 
-          : 'hover:border-indigo-200 dark:hover:border-indigo-800'
-        } ${disabled ? 'opacity-70' : ''}`}
+          : 'hover:border-indigo-200 dark:hover:border-indigo-800 border-gray-200'
+        } ${disabled ? 'opacity-70' : 'border border-gray-200 dark:border-gray-700'} rounded-lg overflow-hidden`}
       >
         <HotelCardHeader hotel={hotel} useGridView={useGridView} />
         
-        <CardContent className="flex-1 space-y-3 py-2 px-3">
+        <CardContent className={`flex-1 ${useGridView ? 'p-3' : 'p-4'}`}>
           <div className="space-y-3">
-            <HotelLocationInfo hotel={hotel} />
+            {!useGridView && <HotelLocationInfo hotel={hotel} />}
             <HotelCardAmenities amenities={hotel.amenities} />
           </div>
           

@@ -23,7 +23,7 @@ const PageContentWrapper: React.FC<PageContentWrapperProps> = ({
 }) => {
   return (
     <motion.div 
-      className="container mx-auto py-3 sm:py-4 md:py-6 space-y-4 sm:space-y-6 md:space-y-8 px-2 sm:px-4"
+      className="w-full h-full px-0 py-0 md:px-2"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}

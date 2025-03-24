@@ -86,22 +86,25 @@ const HotelList: React.FC<HotelListProps> = ({
   };
 
   return (
-    <div className="space-y-6 w-full p-4 md:p-6">
+    <div className="w-full h-full p-4 md:p-6">
       <motion.div 
         initial={{ opacity: 0, y: -5 }}
         animate={{ opacity: 1, y: 0 }}
         transition={springConfig}
-        className="flex items-center justify-between"
+        className="flex items-center justify-between mb-4"
       >
-        <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-blue-600 dark:from-indigo-400 dark:to-blue-400">
+        <h2 className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
           Hotels ({filteredHotels.length})
         </h2>
         
-        <HotelViewToggle 
-          isGridView={gridView} 
-          onToggleView={toggleView} 
-          disabled={isEditing}
-        />
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-gray-500">View:</span>
+          <HotelViewToggle 
+            isGridView={gridView} 
+            onToggleView={toggleView} 
+            disabled={isEditing}
+          />
+        </div>
       </motion.div>
       
       {hotels.length > 0 && (
@@ -109,7 +112,7 @@ const HotelList: React.FC<HotelListProps> = ({
           initial={{ opacity: 0, y: 5 }}
           animate={{ opacity: 1, y: 0 }}
           transition={springConfig}
-          className={`rounded-lg overflow-hidden border border-indigo-100 dark:border-indigo-900 ${isEditing ? 'opacity-70' : ''}`}
+          className="mb-4 w-full"
         >
           <HotelSearch 
             searchTerm={searchTerm} 

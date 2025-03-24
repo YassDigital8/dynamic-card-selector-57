@@ -40,12 +40,12 @@ const HotelListPanel: React.FC<HotelListPanelProps> = ({
   }, [filteredHotels.length]);
 
   return (
-    <div className="h-full w-full p-2 sm:p-4">
-      <Card className="h-full overflow-hidden border-indigo-100 dark:border-indigo-900 shadow-md bg-white dark:bg-slate-900 rounded-xl transition-all duration-300 ease-in-out">
+    <div className="h-full w-full p-0">
+      <Card className="h-full w-full overflow-hidden border-0 shadow-none bg-white dark:bg-slate-900 rounded-none">
         <ScrollArea 
-          className={`${contentHeight === 'auto' ? 'h-auto' : 'h-[calc(100vh-130px)] sm:h-[calc(100vh-140px)] md:h-[calc(100vh-145px)] lg:h-[calc(100vh-150px)]'} overflow-y-auto`}
+          className="h-full w-full"
         >
-          <div ref={listRef}>
+          <div ref={listRef} className="h-full w-full">
             <HotelList
               hotels={filteredHotels}
               selectedHotel={selectedHotel}

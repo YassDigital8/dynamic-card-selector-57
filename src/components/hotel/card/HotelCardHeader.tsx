@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { CardHeader, CardTitle } from '@/components/ui/card';
 import { Hotel } from '@/models/HotelModel';
 import { getHotelAvatar } from './HotelCardUtils';
-import { Flag } from 'lucide-react';
+import { Flag, MapPin } from 'lucide-react';
 import StarRating from './StarRating';
 
 interface HotelCardHeaderProps {
@@ -32,7 +32,7 @@ const HotelCardHeader: React.FC<HotelCardHeaderProps> = ({ hotel, useGridView })
       <div className="relative w-full">
         <motion.div 
           layoutId={`hotel-image-container-${hotel.id}`}
-          className="w-full h-40 overflow-hidden"
+          className="w-full h-44 overflow-hidden"
           variants={imageVariants}
           initial="rest"
           whileHover="hover"
@@ -50,28 +50,29 @@ const HotelCardHeader: React.FC<HotelCardHeaderProps> = ({ hotel, useGridView })
           />
         </motion.div>
         
+        <div className="absolute top-0 left-0 m-2">
+          <div className="flex items-center gap-1 bg-indigo-600 text-white text-xs px-2 py-0.5 rounded-full">
+            <Flag className="h-3 w-3" />
+            <span>{hotel.posKey}</span>
+          </div>
+        </div>
+        
         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
-          <motion.div layoutId={`hotel-title-${hotel.id}`} className="flex items-center gap-2">
-            <CardTitle className="text-sm sm:text-base md:text-lg text-white truncate font-semibold">
+          <motion.div layoutId={`hotel-title-${hotel.id}`} className="flex items-center">
+            <CardTitle className="text-sm sm:text-base text-white truncate font-semibold mr-2">
               {hotel.name}
             </CardTitle>
-            
-            <motion.div layoutId={`hotel-flag-${hotel.id}`} className="flex-shrink-0">
-              <div className="flex items-center">
-                <Flag className="h-3.5 w-3.5 text-indigo-300" />
-                <span className="text-xs text-indigo-200 ml-1">{hotel.posKey}</span>
-              </div>
-            </motion.div>
           </motion.div>
           
           {/* Display star rating if available */}
           {typeof hotel.rating === 'number' && hotel.rating > 0 && (
-            <motion.div layoutId={`hotel-rating-${hotel.id}`} className="mt-1.5">
+            <motion.div layoutId={`hotel-rating-${hotel.id}`} className="mt-1">
               <StarRating rating={hotel.rating} size="sm" />
             </motion.div>
           )}
           
-          <motion.div className="mt-1 text-xs text-gray-300" layoutId={`hotel-country-${hotel.id}`}>
+          <motion.div className="mt-1 text-xs text-gray-300 flex items-center" layoutId={`hotel-country-${hotel.id}`}>
+            <MapPin className="h-3 w-3 mr-1" />
             {hotel.country}
           </motion.div>
         </div>
@@ -105,7 +106,7 @@ const HotelCardHeader: React.FC<HotelCardHeaderProps> = ({ hotel, useGridView })
         <div className="flex-1 min-w-0">
           <div className="flex flex-col">
             <motion.div layoutId={`hotel-title-${hotel.id}`} className="flex items-center gap-2">
-              <CardTitle className="text-sm sm:text-base md:text-lg text-indigo-700 dark:text-indigo-300 truncate font-semibold">
+              <CardTitle className="text-sm sm:text-base text-indigo-700 dark:text-indigo-300 truncate font-semibold">
                 {hotel.name}
               </CardTitle>
               
@@ -119,12 +120,13 @@ const HotelCardHeader: React.FC<HotelCardHeaderProps> = ({ hotel, useGridView })
             
             {/* Display star rating if available */}
             {typeof hotel.rating === 'number' && hotel.rating > 0 && (
-              <motion.div layoutId={`hotel-rating-${hotel.id}`} className="mt-1.5">
+              <motion.div layoutId={`hotel-rating-${hotel.id}`} className="mt-1">
                 <StarRating rating={hotel.rating} size="sm" />
               </motion.div>
             )}
             
-            <motion.div className="mt-1 text-xs text-gray-600 dark:text-gray-400" layoutId={`hotel-country-${hotel.id}`}>
+            <motion.div className="mt-1 text-xs text-gray-600 dark:text-gray-400 flex items-center" layoutId={`hotel-country-${hotel.id}`}>
+              <MapPin className="h-3 w-3 mr-1" />
               {hotel.country}
             </motion.div>
           </div>
