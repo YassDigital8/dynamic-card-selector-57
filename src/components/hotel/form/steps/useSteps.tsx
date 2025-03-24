@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { FormValues } from '../formSchema';
 import { ContractDocument } from '@/models/HotelModel';
@@ -36,10 +35,18 @@ export const useSteps = ({ form, hotelId }: UseStepsProps) => {
       component: <AmenitiesSection form={form} hotelId={hotelId} />,
       // Custom validation to check if at least one amenity is enabled
       customValidation: (formValues: FormValues) => {
-        const amenities = formValues.amenities;
-        return Object.values(amenities).some(value => 
-          typeof value === 'boolean' && value === true
-        );
+        if (!formValues.amenities) return false;
+        
+        // Check all boolean properties in the amenities object
+        const amenityKeys = Object.keys(formValues.amenities);
+        for (const key of amenityKeys) {
+          // Only check boolean properties (exclude image arrays)
+          const value = formValues.amenities[key as keyof typeof formValues.amenities];
+          if (typeof value === 'boolean' && value === true) {
+            return true;
+          }
+        }
+        return false;
       }
     },
     {
