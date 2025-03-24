@@ -19,7 +19,7 @@ export const useStepValidation = ({ form, steps, visitedSteps }: UseStepValidati
   }, [steps.length]);
 
   // Function to validate a specific step
-  const validateStep = (step: Step, formValues: FormValues, index: number): boolean => {
+  const validateStep = useCallback((step: Step, formValues: FormValues, index: number): boolean => {
     // If using custom validation
     if (step.customValidation) {
       const isValid = step.customValidation(formValues);
@@ -47,7 +47,7 @@ export const useStepValidation = ({ form, steps, visitedSteps }: UseStepValidati
 
     console.log(`Standard validation for step ${index} (${step.label}):`, isValid);
     return isValid;
-  };
+  }, [form]);
 
   // Immediately validate steps when they're marked as visited
   useEffect(() => {
@@ -65,7 +65,7 @@ export const useStepValidation = ({ form, steps, visitedSteps }: UseStepValidati
       console.log("Initial validation result:", newStepsValidity);
       setStepsValidity(newStepsValidity);
     }
-  }, [visitedSteps, form, steps]);
+  }, [visitedSteps, form, steps, stepsValidity, validateStep]);
 
   // Update step validity whenever form values change
   useEffect(() => {
@@ -88,7 +88,7 @@ export const useStepValidation = ({ form, steps, visitedSteps }: UseStepValidati
     });
     
     return () => subscription.unsubscribe();
-  }, [form, steps, visitedSteps]);
+  }, [form, steps, visitedSteps, validateStep]);
 
   // Function to validate multiple steps at once (used when jumping to a step)
   const validateSteps = useCallback((upToIndex: number) => {
@@ -105,7 +105,7 @@ export const useStepValidation = ({ form, steps, visitedSteps }: UseStepValidati
     console.log("Validation result:", newStepsValidity);
     setStepsValidity(newStepsValidity);
     return newStepsValidity;
-  }, [form, steps, stepsValidity, visitedSteps]);
+  }, [form, steps, stepsValidity, visitedSteps, validateStep]);
 
   return {
     stepsValidity,

@@ -62,6 +62,8 @@ const AmenityItem: React.FC<AmenityItemProps> = ({
 
   // Trigger validation when amenity is toggled
   const handleToggleChange = (checked: boolean) => {
+    console.log(`Setting amenity ${name} to:`, checked);
+    
     // Update the form value
     form.setValue(`amenities.${name}` as any, checked, { 
       shouldValidate: true,
@@ -80,7 +82,10 @@ const AmenityItem: React.FC<AmenityItemProps> = ({
     }
     
     // Trigger validation for the amenities step
-    form.trigger();
+    setTimeout(() => {
+      form.trigger();
+      console.log("Form values after toggle:", form.getValues());
+    }, 0);
   };
 
   useEffect(() => {
@@ -95,6 +100,13 @@ const AmenityItem: React.FC<AmenityItemProps> = ({
       }, { shouldValidate: true });
     }
   }, [isExtraBed, amenityEnabled, form]);
+
+  // Add additional debug effect
+  useEffect(() => {
+    if (amenityEnabled) {
+      console.log(`Amenity ${name} is enabled:`, amenityEnabled);
+    }
+  }, [amenityEnabled, name]);
 
   return (
     <div className={cn(

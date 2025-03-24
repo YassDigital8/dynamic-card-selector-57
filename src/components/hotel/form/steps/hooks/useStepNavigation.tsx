@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { FormValues } from '../../formSchema';
 import { Step } from '../types';
@@ -36,7 +36,24 @@ export const useStepNavigation = ({ form, steps }: UseStepNavigationProps) => {
     }
   }, [visitedSteps, validateSteps]);
 
-  const goToNextStep = () => {
+  // Force revalidation of steps when form values change
+  useEffect(() => {
+    const subscription = form.watch(() => {
+      // Validate all visited steps
+      const visitedIndices = visitedSteps
+        .map((visited, index) => visited ? index : -1)
+        .filter(index => index !== -1);
+      
+      if (visitedIndices.length > 0) {
+        const maxVisitedIndex = Math.max(...visitedIndices);
+        validateSteps(maxVisitedIndex);
+      }
+    });
+    
+    return () => subscription.unsubscribe();
+  }, [form, visitedSteps, validateSteps]);
+
+  const goToNextStep = useCallback(() => {
     if (currentStepIndex < steps.length - 1) {
       // Mark the next step as visited
       setVisitedSteps(prev => {
@@ -54,16 +71,16 @@ export const useStepNavigation = ({ form, steps }: UseStepNavigationProps) => {
         validateSteps(currentStepIndex + 1);
       }, 0);
     }
-  };
+  }, [currentStepIndex, steps.length, validateSteps]);
 
-  const goToPreviousStep = () => {
+  const goToPreviousStep = useCallback(() => {
     if (currentStepIndex > 0) {
       console.log(`Moving to previous step: ${currentStepIndex - 1}`);
       setCurrentStepIndex(currentStepIndex - 1);
     }
-  };
+  }, [currentStepIndex]);
 
-  const goToStep = (index: number) => {
+  const goToStep = useCallback((index: number) => {
     // Mark this step and all steps before it as visited
     setVisitedSteps(prev => {
       const newVisited = [...prev];
@@ -79,7 +96,7 @@ export const useStepNavigation = ({ form, steps }: UseStepNavigationProps) => {
     // Immediately validate all visited steps to update status indicators
     validateSteps(index);
     setCurrentStepIndex(index);
-  };
+  }, [validateSteps]);
 
   const isLastStep = currentStepIndex === steps.length - 1;
   const isFirstStep = currentStepIndex === 0;
