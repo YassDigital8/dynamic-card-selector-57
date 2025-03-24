@@ -4,7 +4,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { Form } from '@/components/ui/form';
 import { Hotel, HotelFormData } from '@/models/HotelModel';
-import { formSchema, defaultValues } from './form';
+import { formSchema } from './form/schemas';
+import { defaultValues } from './form/formDefaults';
 import StepBasedForm from './form/StepBasedForm';
 import { useFormProcessor } from './form/hooks/useFormProcessor';
 

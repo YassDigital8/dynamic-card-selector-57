@@ -7,5 +7,5 @@ export { default as FormSections } from './FormSections';
 export { default as FormActions } from './FormActions';
 export { ContactDetailsSection } from './contact';
 export { PaymentMethodsSection } from './payment';
-export { formSchema } from './formSchema';
+export { formSchema } from './schemas';
 export { defaultValues } from './formDefaults';

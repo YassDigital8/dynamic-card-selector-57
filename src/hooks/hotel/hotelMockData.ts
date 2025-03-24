@@ -1,4 +1,3 @@
-
 import { Hotel } from '@/models/HotelModel';
 
 // Mock data for demonstration
@@ -22,7 +21,8 @@ export const defaultHotels: Hotel[] = [
       wifi: true,
       swimmingPool: true,
       petsAllowed: false,
-      extraBed: true
+      extraBed: true,
+      shuttleBus: true
     },
     roomTypes: [
       {
@@ -64,7 +64,8 @@ export const defaultHotels: Hotel[] = [
       wifi: true,
       swimmingPool: true,
       petsAllowed: false,
-      extraBed: true
+      extraBed: true,
+      shuttleBus: true
     },
     roomTypes: [
       {
@@ -106,7 +107,8 @@ export const defaultHotels: Hotel[] = [
       wifi: true,
       swimmingPool: false,
       petsAllowed: true,
-      extraBed: true
+      extraBed: true,
+      shuttleBus: true
     },
     roomTypes: [
       {
@@ -148,7 +150,8 @@ export const defaultHotels: Hotel[] = [
       wifi: true,
       swimmingPool: true,
       petsAllowed: false,
-      extraBed: true
+      extraBed: true,
+      shuttleBus: true
     },
     roomTypes: [
       {
@@ -190,7 +193,8 @@ export const defaultHotels: Hotel[] = [
       wifi: true,
       swimmingPool: false,
       petsAllowed: true,
-      extraBed: true
+      extraBed: true,
+      shuttleBus: true
     },
     roomTypes: [
       {
@@ -232,7 +236,8 @@ export const defaultHotels: Hotel[] = [
       wifi: true,
       swimmingPool: true,
       petsAllowed: false,
-      extraBed: true
+      extraBed: true,
+      shuttleBus: true
     },
     roomTypes: [
       {
@@ -274,7 +279,8 @@ export const defaultHotels: Hotel[] = [
       wifi: true,
       swimmingPool: true,
       petsAllowed: false,
-      extraBed: true
+      extraBed: true,
+      shuttleBus: true
     },
     roomTypes: [
       {
@@ -316,7 +322,8 @@ export const defaultHotels: Hotel[] = [
       wifi: true,
       swimmingPool: true,
       petsAllowed: false,
-      extraBed: true
+      extraBed: true,
+      shuttleBus: true
     },
     roomTypes: [
       {
@@ -358,7 +365,8 @@ export const defaultHotels: Hotel[] = [
       wifi: true,
       swimmingPool: false,
       petsAllowed: true,
-      extraBed: true
+      extraBed: true,
+      shuttleBus: true
     },
     roomTypes: [
       {
@@ -400,7 +408,8 @@ export const defaultHotels: Hotel[] = [
       wifi: true,
       swimmingPool: false,
       petsAllowed: false,
-      extraBed: false
+      extraBed: false,
+      shuttleBus: true
     },
     roomTypes: [
       {
