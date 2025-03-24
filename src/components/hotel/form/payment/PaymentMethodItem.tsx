@@ -38,7 +38,9 @@ const PaymentMethodItem: React.FC<PaymentMethodItemProps> = ({ index, field }) =
         control={form.control}
         name={`paymentMethods.${index}.enabled`}
         render={({ field: checkboxField }) => (
-          <FormItem className="flex flex-row items-center justify-between space-x-3 space-y-0 rounded-md border p-4">
+          <FormItem className={`flex flex-row items-center justify-between space-x-3 space-y-0 rounded-md border p-4 ${
+            checkboxField.value ? 'bg-blue-50 border-blue-200 dark:bg-blue-950 dark:border-blue-800' : ''
+          }`}>
             <div className="flex items-center space-x-3">
               <FormControl>
                 <Checkbox

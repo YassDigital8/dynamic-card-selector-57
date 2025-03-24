@@ -77,7 +77,11 @@ export const useSteps = ({ form, hotelId }: UseStepsProps) => {
       id: 'payment-options',
       label: 'Payment Options',
       component: <ExtendedFeaturesSection />,
-      validationFields: [] // Payment options are optional
+      // Custom validation to check if at least one payment method is enabled
+      customValidation: (formValues: FormValues) => {
+        return formValues.paymentMethods && 
+               formValues.paymentMethods.some(method => method.enabled === true);
+      }
     },
     {
       id: 'contract-commercial',
