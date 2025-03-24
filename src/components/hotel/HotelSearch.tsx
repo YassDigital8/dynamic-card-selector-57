@@ -22,7 +22,6 @@ interface HotelSearchProps {
     stars: number | null;
     extendedFeatures: {
       bankTransfer: boolean;
-      hasGeolocation: boolean;
     };
   };
   onFilterChange: (filters: any) => void;
@@ -88,8 +87,7 @@ const HotelSearch: React.FC<HotelSearchProps> = ({
       amenities: resetAmenities,
       stars: null,
       extendedFeatures: {
-        bankTransfer: false,
-        hasGeolocation: false
+        bankTransfer: false
       }
     });
   };

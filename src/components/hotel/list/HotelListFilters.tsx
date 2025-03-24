@@ -15,7 +15,6 @@ interface HotelListFiltersProps {
     extendedFeatures: {
       extraBed: boolean;
       bankTransfer: boolean;
-      hasGeolocation: boolean;
     };
   };
   onFilterChange: (filters: any) => void;
