@@ -1,18 +1,21 @@
 
-import React from 'react';
-import { UseFormReturn } from 'react-hook-form';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Button } from '@/components/ui/button';
-import { Plus, LucideIcon } from 'lucide-react';
-import { 
+import React, { useEffect } from 'react';
+import { UseFormReturn, useWatch } from 'react-hook-form';
+import { FormValues } from '../formSchema';
+import {
+  FormField,
   FormItem,
-  FormLabel,
   FormControl,
+  FormLabel,
   FormDescription,
 } from '@/components/ui/form';
-import { AmenityImage } from '@/models/HotelModel';
-import { FormValues } from '../formSchema';
-import { RoomImagesCarousel } from '../room-types';
+import { Switch } from '@/components/ui/switch';
+import { DollarSign } from 'lucide-react';
+import { LucideIcon } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { PlusCircle, Trash2, Image } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import AmenityImages from './AmenityImages';
 
 interface AmenityItemProps {
   name: string;
@@ -35,118 +38,125 @@ const AmenityItem: React.FC<AmenityItemProps> = ({
   onAddImage,
   onRemoveImage
 }) => {
-  // Get actual field path from name (amenities.bar -> bar)
-  const amenityKey = name.split('.')[1];
-  const isChecked = form.watch(name as any);
-  let images: AmenityImage[] = [];
+  const amenityValue = useWatch({
+    control: form.control,
+    name: `amenities.${name}`
+  });
   
-  if (imageField) {
-    images = form.watch(imageField as any) || [];
-    // Force array type
-    if (!Array.isArray(images)) {
-      images = [];
-    }
-  }
-  
-  const handleDeleteImage = (imageUrl: string) => {
-    if (!imageField || !onRemoveImage) return;
-    
-    const imageIndex = images.findIndex((img: AmenityImage) => img.url === imageUrl);
-    
-    if (imageIndex !== -1) {
-      onRemoveImage(amenityKey, imageIndex);
-    }
-  };
+  const extraBedPrice = useWatch({
+    control: form.control,
+    name: 'extraBedPolicy.pricePerNight',
+    defaultValue: 0
+  });
 
-  // Log for debugging this specific amenity
-  React.useEffect(() => {
-    if (hasImages && imageField) {
-      console.log(`AmenityItem - ${label} (${amenityKey}) - enabled:`, isChecked);
-      console.log(`AmenityItem - ${label} (${amenityKey}) - images array:`, JSON.stringify(images, null, 2));
-      
-      if (Array.isArray(images) && images.length > 0) {
-        console.log(`${label} has ${images.length} images in form state`);
-        console.log(`First image:`, JSON.stringify(images[0], null, 2));
-      }
+  // Get the images array if this amenity has images
+  const images = hasImages && imageField
+    ? useWatch({ 
+        control: form.control, 
+        name: `amenities.${imageField}` 
+      }) || []
+    : [];
+
+  // Check if the current amenity is extra bed
+  const isExtraBed = name === 'extraBed';
+
+  useEffect(() => {
+    // If this is the extraBed amenity and it has just been enabled,
+    // ensure we have a default extraBedPolicy
+    if (isExtraBed && amenityValue && !form.getValues('extraBedPolicy')) {
+      form.setValue('extraBedPolicy', {
+        pricePerNight: 0,
+        availableForRoomTypes: [],
+        maxExtraBedsPerRoom: 1,
+        notes: ''
+      }, { shouldValidate: true });
     }
-  }, [hasImages, imageField, images, isChecked, name, label, amenityKey]);
+  }, [isExtraBed, amenityValue, form]);
 
   return (
-    <div className="space-y-2">
-      <FormItem className="flex flex-row items-center space-x-3 space-y-0 rounded-md border p-3">
-        <FormControl>
-          <Checkbox
-            checked={isChecked}
-            onCheckedChange={(checked) => {
-              form.setValue(name as any, !!checked, { 
-                shouldDirty: true,
-                shouldTouch: true,
-                shouldValidate: true 
-              });
-            }}
-          />
-        </FormControl>
-        <div className="flex items-center space-x-2">
-          <Icon className="h-4 w-4 text-muted-foreground" />
-          <FormLabel className="m-0">{label}</FormLabel>
-        </div>
-      </FormItem>
-      
-      {/* Image section for amenities that can have images */}
-      {hasImages && imageField && (
-        <FormItem className={`mt-2 ${!images.length && !isChecked ? 'hidden' : ''}`}>
-          <div className="flex items-center justify-between">
-            <FormLabel className="text-xs">{label} Images</FormLabel>
-            <Button 
-              type="button" 
-              variant="outline" 
-              size="sm" 
-              className="h-7"
-              onClick={() => onAddImage && onAddImage(name)}
-              disabled={!isChecked}
-            >
-              <Plus className="h-3 w-3 mr-1" />
-              Add Image
-            </Button>
-          </div>
-          <FormControl>
-            {images.length > 0 ? (
-              images.length > 1 ? (
-                <RoomImagesCarousel 
-                  images={images.map((img: AmenityImage) => img.url)}
-                  onDeleteImage={onRemoveImage ? handleDeleteImage : undefined}
-                  className="mt-2"
-                />
-              ) : (
-                <div className="grid grid-cols-3 gap-2 mt-1">
-                  {images.map((image: AmenityImage, index: number) => (
-                    <div key={`${image.id || index}`} className="relative group">
-                      <img 
-                        src={image.url} 
-                        alt={image.description || label}
-                        className="h-16 w-full object-cover rounded border"
-                      />
-                      <Button
-                        type="button"
-                        variant="destructive"
-                        size="sm"
-                        className="absolute top-1 right-1 h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                        onClick={() => onRemoveImage && onRemoveImage(amenityKey, index)}
-                      >
-                        ×
-                      </Button>
-                    </div>
-                  ))}
+    <div className={cn(
+      "space-y-3 rounded-lg border p-4",
+      amenityValue 
+        ? "border-blue-200 bg-blue-50/50 dark:border-blue-900 dark:bg-blue-950/10" 
+        : "border-gray-200 dark:border-gray-800"
+    )}>
+      <FormField
+        control={form.control}
+        name={`amenities.${name}`}
+        render={({ field }) => (
+          <FormItem className="flex flex-row items-center justify-between space-y-0">
+            <div className="flex items-center space-x-2">
+              <Icon className={cn(
+                "h-5 w-5",
+                field.value ? "text-blue-500" : "text-gray-400"
+              )} />
+              <FormLabel className="font-medium cursor-pointer">{label}</FormLabel>
+              
+              {/* Display extra bed price if this is the extra bed amenity and it's enabled */}
+              {isExtraBed && field.value && (
+                <div className="text-sm text-blue-600 dark:text-blue-400 flex items-center ml-2">
+                  <DollarSign className="h-3.5 w-3.5 mr-0.5" />
+                  {extraBedPrice}
                 </div>
-              )
-            ) : (
-              <div className="text-xs text-muted-foreground mt-1">No images added yet</div>
+              )}
+            </div>
+            <FormControl>
+              <Switch
+                checked={field.value}
+                onCheckedChange={field.onChange}
+              />
+            </FormControl>
+          </FormItem>
+        )}
+      />
+
+      {/* Show image management if this amenity has images and is enabled */}
+      {hasImages && amenityValue && (
+        <div className="border-t border-gray-200 dark:border-gray-800 pt-3 mt-3">
+          <div className="flex items-center justify-between mb-2">
+            <FormDescription className="text-xs mt-0">
+              Add images for this amenity
+            </FormDescription>
+            {onAddImage && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="h-8 text-xs"
+                onClick={() => onAddImage(name)}
+              >
+                <PlusCircle className="h-3.5 w-3.5 mr-1.5" />
+                Add
+              </Button>
             )}
-          </FormControl>
-          <FormDescription className="text-xs">
-            Upload images of your {label.toLowerCase()}
-          </FormDescription>
-        </FormItem>
+          </div>
+          
+          {/* Display uploaded images */}
+          {imageField && images.length > 0 ? (
+            <AmenityImages 
+              images={images} 
+              amenityKey={imageField} 
+              onRemove={onRemoveImage} 
+            />
+          ) : (
+            <div className="flex flex-col items-center justify-center border border-dashed border-gray-300 dark:border-gray-700 rounded-md p-4 text-gray-500 dark:text-gray-400">
+              <Image className="h-8 w-8 mb-2 text-gray-300 dark:text-gray-600" />
+              <p className="text-xs text-center">No images added yet</p>
+              {onAddImage && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 text-xs mt-2"
+                  onClick={() => onAddImage(name)}
+                >
+                  <PlusCircle className="h-3.5 w-3.5 mr-1.5" />
+                  Add Image
+                </Button>
+              )}
+            </div>
+          )}
+        </div>
       )}
     </div>
   );

@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { 
   FormField, 
@@ -21,18 +21,32 @@ const ExtraBedPricingSection: React.FC = () => {
   const roomTypes = form.watch('roomTypes') || [];
   const amenities = form.watch('amenities') || {};
   const extraBedEnabled = amenities.extraBed || false;
+  
+  // Watch for price changes to force updates
+  const pricePerNight = useWatch({
+    control: form.control,
+    name: 'extraBedPolicy.pricePerNight',
+    defaultValue: 0
+  });
 
   // Initialize extra bed policy if not present
-  React.useEffect(() => {
+  useEffect(() => {
     if (!form.getValues('extraBedPolicy') && extraBedEnabled) {
       form.setValue('extraBedPolicy', {
         pricePerNight: 0,
         availableForRoomTypes: [],
         maxExtraBedsPerRoom: 1,
         notes: ''
-      });
+      }, { shouldValidate: true });
     }
   }, [form, extraBedEnabled]);
+
+  // Log when the price changes to debug
+  useEffect(() => {
+    if (extraBedEnabled) {
+      console.log('Extra bed price updated:', pricePerNight);
+    }
+  }, [extraBedEnabled, pricePerNight]);
 
   // Toggle extra bed availability
   const toggleRoomTypeForExtraBed = (roomTypeId: string) => {
@@ -95,7 +109,10 @@ const ExtraBedPricingSection: React.FC = () => {
                       type="number"
                       min="0"
                       step="0.01"
-                      onChange={e => field.onChange(parseFloat(e.target.value))}
+                      onChange={e => {
+                        const value = parseFloat(e.target.value) || 0;
+                        field.onChange(value);
+                      }}
                       className="pl-10"
                     />
                   </FormControl>
