@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
@@ -11,6 +12,7 @@ import HotelCommandSearch from './HotelCommandSearch';
 
 interface RouteParams {
   pos?: string;
+  [key: string]: string | undefined;
 }
 
 const HotelPageContainer = () => {
@@ -40,7 +42,11 @@ const HotelPageContainer = () => {
   } = useHotelNetwork(selectedPOS);
 
   const useHotelFiltersResult = useHotelFilters(hotels);
-  const { panelSize, setPanelSize } = usePanelSizing();
+  const { panelSize, setPanelSize } = usePanelSizing({
+    selectedHotel,
+    showAddForm,
+    isEditing
+  });
 
   useEffect(() => {
     if (pos) {
@@ -158,7 +164,8 @@ const HotelPageContainer = () => {
 
   const posName = useMemo(() => {
     if (selectedPOS === 'all') return 'All POS';
-    return allHotels.find(hotel => hotel.posKey === selectedPOS)?.posName;
+    const foundHotel = allHotels.find(hotel => hotel.posKey === selectedPOS);
+    return foundHotel ? foundHotel.posKey : undefined;
   }, [selectedPOS, allHotels]);
 
   const hasHotels = hotels && hotels.length > 0;

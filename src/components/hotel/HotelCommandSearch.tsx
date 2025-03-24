@@ -1,17 +1,10 @@
 
-import React, { useState, useEffect } from 'react';
-import { 
-  CommandDialog, 
-  Command, 
-  CommandInput, 
-  CommandList, 
-  CommandEmpty, 
-  CommandGroup, 
-  CommandItem,
-  CommandSeparator
-} from '@/components/ui/command';
+import React, { useEffect, useState } from 'react';
+import { CommandDialog, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem } from '@/components/ui/command';
+import { Button } from '@/components/ui/button';
+import { Search, Hotel as HotelIcon, MapPin } from 'lucide-react';
 import { Hotel } from '@/models/HotelModel';
-import { Building, MapPin, Star, Phone, Calendar } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 interface HotelCommandSearchProps {
   hotels: Hotel[];
@@ -20,16 +13,16 @@ interface HotelCommandSearchProps {
 
 const HotelCommandSearch: React.FC<HotelCommandSearchProps> = ({ hotels, onSelectHotel }) => {
   const [open, setOpen] = useState(false);
-  
-  // Open command dialog when user presses Cmd+K or Ctrl+K
+  const { toast } = useToast();
+
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
-      if ((e.key === 'k' && (e.metaKey || e.ctrlKey)) || (e.key === '/' && !e.ctrlKey && !e.metaKey)) {
+      if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
         setOpen((open) => !open);
       }
     };
-    
+
     document.addEventListener('keydown', down);
     return () => document.removeEventListener('keydown', down);
   }, []);
@@ -37,53 +30,52 @@ const HotelCommandSearch: React.FC<HotelCommandSearchProps> = ({ hotels, onSelec
   const handleSelect = (hotel: Hotel) => {
     onSelectHotel(hotel);
     setOpen(false);
+    toast({
+      title: "Hotel Selected",
+      description: `${hotel.name} has been selected.`,
+    });
   };
 
-  // Group hotels by country
-  const hotelsByCountry = hotels.reduce((acc: Record<string, Hotel[]>, hotel) => {
-    if (!acc[hotel.country]) {
-      acc[hotel.country] = [];
-    }
-    acc[hotel.country].push(hotel);
-    return acc;
-  }, {});
-
   return (
-    <CommandDialog open={open} onOpenChange={setOpen}>
-      <Command className="rounded-lg border-0">
-        <CommandInput placeholder="Search hotels by name, country or city..." />
+    <>
+      <Button
+        variant="outline"
+        size="sm"
+        className="fixed right-4 top-4 z-30 h-8 gap-1"
+        onClick={() => setOpen(true)}
+      >
+        <Search className="h-4 w-4" />
+        <span className="hidden sm:inline-flex">Search hotels...</span>
+        <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
+          <span className="text-xs">⌘</span>K
+        </kbd>
+      </Button>
+
+      <CommandDialog open={open} onOpenChange={setOpen}>
+        <CommandInput placeholder="Search hotels by name, country or location..." />
         <CommandList>
           <CommandEmpty>No hotels found.</CommandEmpty>
-          
-          {Object.entries(hotelsByCountry).map(([country, countryHotels]) => (
-            <React.Fragment key={country}>
-              <CommandGroup heading={country}>
-                {countryHotels.map((hotel) => (
-                  <CommandItem 
-                    key={hotel.id} 
-                    value={`${hotel.name} ${hotel.country} ${hotel.city} ${hotel.governorate}`}
-                    onSelect={() => handleSelect(hotel)}
-                    className="cursor-pointer"
-                  >
-                    <div className="flex items-center justify-between w-full">
-                      <div className="flex items-center">
-                        <Building className="mr-2 h-4 w-4 text-indigo-500" />
-                        <span>{hotel.name}</span>
-                      </div>
-                      <div className="flex items-center text-sm text-muted-foreground">
-                        <MapPin className="mr-1 h-3 w-3" />
-                        <span>{hotel.city}, {hotel.governorate}</span>
-                      </div>
-                    </div>
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-              <CommandSeparator />
-            </React.Fragment>
-          ))}
+          <CommandGroup heading="Hotels">
+            {hotels.map((hotel) => (
+              <CommandItem
+                key={hotel.id}
+                value={`${hotel.name} ${hotel.country} ${hotel.governorate} ${hotel.streetAddress}`}
+                onSelect={() => handleSelect(hotel)}
+              >
+                <div className="flex items-center">
+                  <HotelIcon className="mr-2 h-4 w-4 text-indigo-500" />
+                  <span className="font-medium">{hotel.name}</span>
+                  <span className="ml-2 text-xs text-muted-foreground">
+                    <MapPin className="inline-block h-3 w-3 mr-1" />
+                    {hotel.country}, {hotel.governorate}, {hotel.streetAddress}
+                  </span>
+                </div>
+              </CommandItem>
+            ))}
+          </CommandGroup>
         </CommandList>
-      </Command>
-    </CommandDialog>
+      </CommandDialog>
+    </>
   );
 };
 

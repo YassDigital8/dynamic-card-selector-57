@@ -64,8 +64,7 @@ const HotelList: React.FC<HotelListProps> = ({
     hotel.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     hotel.country.toLowerCase().includes(searchTerm.toLowerCase()) ||
     hotel.governorate.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    hotel.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (hotel.address && hotel.address.toLowerCase().includes(searchTerm.toLowerCase()))
+    hotel.streetAddress.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const springConfig = {
