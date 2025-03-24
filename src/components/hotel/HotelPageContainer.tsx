@@ -1,12 +1,14 @@
 
 import React, { useState, useEffect } from 'react';
 import { HotelFormData } from '@/models/HotelModel';
-import HotelResizablePanels from './layout/HotelResizablePanels';
 import { usePageSelectionViewModel } from '@/viewmodels/PageSelectionViewModel';
-import { useHotelNetwork, useHotelFilters, useHotelSelection, usePanelSizing } from '@/hooks/hotel';
+import { useHotelNetwork, useHotelFilters } from '@/hooks/hotel';
 import { useHotelLoadingState } from '@/hooks/hotel/useHotelLoadingState';
 import HotelLoadingIndicator from './HotelLoadingIndicator';
 import PageContentWrapper from './layout/PageContentWrapper';
+import HotelList from './HotelList';
+import { Card } from '@/components/ui/card';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const HotelPageContainer: React.FC = () => {
   const { posOptions } = usePageSelectionViewModel();
@@ -16,9 +18,6 @@ const HotelPageContainer: React.FC = () => {
     hotels,
     isLoading,
     isInitialized,
-    addHotel,
-    updateHotel,
-    deleteHotel
   } = useHotelNetwork(selectedPOS);
   
   // Use the extracted loading state hook
@@ -28,57 +27,6 @@ const HotelPageContainer: React.FC = () => {
   });
   
   const { filters, setFilters, filteredHotels } = useHotelFilters(hotels);
-  
-  const {
-    selectedHotel,
-    isEditing,
-    showAddForm,
-    isExpanded,
-    isSelectingNewHotel,
-    forceRefresh,
-    handleSelectHotel,
-    handleEditHotel,
-    handleStartEdit,
-    handleAddHotel,
-    handleBackToList,
-    handleSubmitEdit,
-    handleCancelEdit
-  } = useHotelSelection(updateHotel, deleteHotel);
-  
-  const { panelSize, setPanelSize } = usePanelSizing({
-    selectedHotel,
-    showAddForm,
-    isEditing
-  });
-
-  // Log selected hotel changes for debugging
-  useEffect(() => {
-    if (selectedHotel) {
-      console.log('HotelPageContainer - Selected hotel updated:', selectedHotel.id, forceRefresh);
-    }
-  }, [selectedHotel, forceRefresh]);
-
-  const handleSubmitAdd = (data: HotelFormData) => {
-    const hotelWithPOS = {
-      ...data,
-      posKey: selectedPOS === 'all' ? '' : selectedPOS
-    };
-    const result = addHotel(hotelWithPOS);
-    if (result && result.success && result.hotel) {
-      handleSelectHotel(result.hotel);
-    } else {
-      handleBackToList();
-    }
-  };
-
-  const handleSubmitUpdate = (data: HotelFormData) => {
-    handleSubmitEdit(data);
-  };
-
-  const getSelectedPOSName = () => {
-    if (!selectedPOS || selectedPOS === 'all') return undefined;
-    return posOptions.find(p => p.key.toLowerCase() === selectedPOS.toLowerCase())?.englishName;
-  };
 
   // If data is not yet loaded, show the loading indicator
   if (!dataLoaded) {
@@ -93,33 +41,25 @@ const HotelPageContainer: React.FC = () => {
     <PageContentWrapper
       selectedPOS={selectedPOS}
       onSelectPOS={setSelectedPOS}
-      onAddHotel={handleAddHotel}
       filters={filters}
       onFilterChange={setFilters}
     >
-      <HotelResizablePanels
-        panelSize={panelSize}
-        setPanelSize={setPanelSize}
-        filteredHotels={filteredHotels}
-        selectedHotel={selectedHotel}
-        isSelectingNewHotel={isSelectingNewHotel}
-        isLoading={isLoading}
-        isEditing={isEditing}
-        showAddForm={showAddForm}
-        isExpanded={isExpanded}
-        selectedPOS={selectedPOS}
-        posName={getSelectedPOSName()}
-        hasHotels={hotels.length > 0}
-        onSelectHotel={handleSelectHotel}
-        onEditHotel={handleEditHotel}
-        onDeleteHotel={deleteHotel}
-        onAddHotel={handleAddHotel}
-        onBackToList={handleBackToList}
-        onSubmitAdd={handleSubmitAdd}
-        onSubmitEdit={handleSubmitUpdate}
-        onCancelEdit={handleCancelEdit}
-        onStartEdit={handleStartEdit}
-      />
+      <div className="w-full p-2 sm:p-4">
+        <Card className="h-full overflow-hidden border-indigo-100 dark:border-indigo-900 shadow-md bg-white dark:bg-slate-900 rounded-xl">
+          <ScrollArea 
+            className="h-[calc(100vh-130px)] sm:h-[calc(100vh-140px)] md:h-[calc(100vh-145px)] lg:h-[calc(100vh-150px)] overflow-y-auto"
+          >
+            <HotelList
+              hotels={filteredHotels}
+              selectedHotel={null}
+              onSelectHotel={() => {}}
+              onEditHotel={() => {}}
+              onDeleteHotel={() => {}}
+              isEditing={false}
+            />
+          </ScrollArea>
+        </Card>
+      </div>
     </PageContentWrapper>
   );
 };

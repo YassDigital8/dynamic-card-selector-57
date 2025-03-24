@@ -30,7 +30,7 @@ const HotelCard: React.FC<HotelCardProps> = ({
   onDelete,
   useGridView = false,
   disabled = false,
-  hideEditButton = false // Setting this to false by default to show edit button in cards
+  hideEditButton = false
 }) => {
   const isMobile = useIsMobile();
   
