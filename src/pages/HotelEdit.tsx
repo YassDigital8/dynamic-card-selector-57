@@ -1,11 +1,11 @@
 
 import React from 'react';
 import { Building, Hotel, PencilLine } from 'lucide-react';
-import AdminLayout from '@/components/layout/AdminLayout';
 import { BreadcrumbNav } from '@/components/ui/breadcrumb-nav';
 import { useParams } from 'react-router-dom';
 import { useHotelNetwork } from '@/hooks/hotel/useHotelNetwork';
 import HotelEditPage from '@/components/hotel/edit/HotelEditPage';
+import StandardLayout from '@/components/layout/StandardLayout';
 
 const HotelEdit = () => {
   const { hotelId } = useParams<{ hotelId: string }>();
@@ -15,7 +15,7 @@ const HotelEdit = () => {
   const hotelName = allHotels.find(h => h.id === hotelId)?.name || 'Edit Hotel';
   
   return (
-    <AdminLayout>
+    <StandardLayout>
       <div className="container mx-auto py-6">
         <BreadcrumbNav items={[
           { label: 'Hotel Network', href: '/hotel', icon: Building },
@@ -24,7 +24,7 @@ const HotelEdit = () => {
         ]} />
         {hotelId && <HotelEditPage hotelId={hotelId} />}
       </div>
-    </AdminLayout>
+    </StandardLayout>
   );
 };
 

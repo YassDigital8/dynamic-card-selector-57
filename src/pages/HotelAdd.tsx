@@ -1,13 +1,13 @@
 
 import React from 'react';
 import { Hotel, Building } from 'lucide-react';
-import AdminLayout from '@/components/layout/AdminLayout';
 import { BreadcrumbNav } from '@/components/ui/breadcrumb-nav';
 import { HotelAddPage } from '@/components/hotel/add';
+import StandardLayout from '@/components/layout/StandardLayout';
 
 const HotelAdd = () => {
   return (
-    <AdminLayout>
+    <StandardLayout>
       <div className="container mx-auto py-6">
         <BreadcrumbNav items={[
           { label: 'Hotel Network', href: '/hotel', icon: Building },
@@ -15,7 +15,7 @@ const HotelAdd = () => {
         ]} />
         <HotelAddPage />
       </div>
-    </AdminLayout>
+    </StandardLayout>
   );
 };
 

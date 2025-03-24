@@ -2,13 +2,13 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import AdminLayout from '@/components/layout/AdminLayout';
 import HotelLoadingIndicator from '@/components/hotel/HotelLoadingIndicator';
 import { useToast } from '@/hooks/use-toast';
 import { useHotelNetwork } from '@/hooks/hotel/useHotelNetwork';
 import { HotelViewHeader, HotelViewAccordion, ErrorState } from '@/components/hotel/view';
 import { BreadcrumbNav } from '@/components/ui/breadcrumb-nav';
 import { Building, Hotel } from 'lucide-react';
+import StandardLayout from '@/components/layout/StandardLayout';
 
 const HotelView = () => {
   const { hotelId } = useParams<{ hotelId: string }>();
@@ -29,7 +29,7 @@ const HotelView = () => {
   
   if (isLoading) {
     return (
-      <AdminLayout>
+      <StandardLayout>
         <div className="container mx-auto py-6">
           <BreadcrumbNav items={[
             { label: 'Hotel Network', href: '/hotel', icon: Building },
@@ -37,7 +37,7 @@ const HotelView = () => {
           ]} />
           <HotelLoadingIndicator />
         </div>
-      </AdminLayout>
+      </StandardLayout>
     );
   }
   
@@ -49,7 +49,7 @@ const HotelView = () => {
     });
     
     return (
-      <AdminLayout>
+      <StandardLayout>
         <div className="container mx-auto py-6">
           <BreadcrumbNav items={[
             { label: 'Hotel Network', href: '/hotel', icon: Building },
@@ -57,12 +57,12 @@ const HotelView = () => {
           ]} />
           <ErrorState />
         </div>
-      </AdminLayout>
+      </StandardLayout>
     );
   }
   
   return (
-    <AdminLayout>
+    <StandardLayout>
       <div className="container mx-auto py-6 space-y-6">
         <BreadcrumbNav items={[
           { label: 'Hotel Network', href: '/hotel', icon: Building },
@@ -71,7 +71,7 @@ const HotelView = () => {
         <HotelViewHeader hotel={hotel} />
         <HotelViewAccordion hotel={hotel} />
       </div>
-    </AdminLayout>
+    </StandardLayout>
   );
 };
 
