@@ -28,7 +28,7 @@ const HotelForm = memo(({
     mode: 'onChange',
   });
   
-  // We'll store these from the StepBasedForm using a ref
+  // We'll store these from the StepBasedForm using state
   const [stepsValidity, setStepsValidity] = React.useState<boolean[]>([]);
   const [goToStepFn, setGoToStepFn] = React.useState<((index: number) => void) | undefined>();
   
@@ -38,6 +38,11 @@ const HotelForm = memo(({
     stepsValidity,
     goToStep: goToStepFn
   });
+
+  // For debugging
+  useEffect(() => {
+    console.log("Current steps validity in HotelForm:", stepsValidity);
+  }, [stepsValidity]);
 
   // Make sure extraBedPolicy is properly set when extraBed is enabled
   useEffect(() => {

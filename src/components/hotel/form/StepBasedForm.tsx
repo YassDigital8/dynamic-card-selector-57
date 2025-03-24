@@ -35,14 +35,16 @@ const StepBasedForm: React.FC<StepBasedFormProps> = ({
 
   // Pass step validation status to parent component when it changes
   useEffect(() => {
-    if (onStepsValidityChange) {
+    if (onStepsValidityChange && stepsValidity) {
+      console.log("Passing steps validity to parent:", stepsValidity);
       onStepsValidityChange(stepsValidity);
     }
   }, [stepsValidity, onStepsValidityChange]);
 
   // Pass goToStep function to parent
   useEffect(() => {
-    if (onGoToStepChange) {
+    if (onGoToStepChange && goToStep) {
+      console.log("Passing goToStep function to parent");
       onGoToStepChange(goToStep);
     }
   }, [goToStep, onGoToStepChange]);

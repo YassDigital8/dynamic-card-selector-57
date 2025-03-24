@@ -27,7 +27,9 @@ export const useFormProcessor = ({
       const invalidStepIndex = stepsValidity.findIndex(valid => valid === false);
       
       if (invalidStepIndex !== -1) {
-        // Show error toast about incomplete steps
+        // Show error toast about incomplete steps - make sure we use the toast correctly
+        console.log("Invalid step found, showing toast notification and navigating to step:", invalidStepIndex);
+        
         toast({
           title: "Incomplete Form",
           description: "Please complete all required steps before saving.",
