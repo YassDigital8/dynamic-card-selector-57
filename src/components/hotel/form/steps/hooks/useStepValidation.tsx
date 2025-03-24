@@ -49,46 +49,41 @@ export const useStepValidation = ({ form, steps, visitedSteps }: UseStepValidati
     return isValid;
   }, [form]);
 
+  // Update step validity whenever form values change
+  const updateStepsValidity = useCallback(() => {
+    const formData = form.getValues();
+    console.log("Form values changed, revalidating steps");
+    
+    // Validate all visited steps
+    const newStepsValidity = steps.map((step, index) => {
+      // If the step hasn't been visited yet, don't validate it
+      if (!visitedSteps[index]) {
+        return false;
+      }
+      
+      return validateStep(step, formData, index);
+    });
+    
+    console.log("Updated steps validity:", newStepsValidity);
+    setStepsValidity(newStepsValidity);
+    return newStepsValidity;
+  }, [form, steps, visitedSteps, validateStep]);
+
   // Immediately validate steps when they're marked as visited
   useEffect(() => {
     if (visitedSteps.some(visited => visited)) {
-      const formData = form.getValues();
-      console.log("Visited steps changed, validating steps:", visitedSteps);
-      
-      const newStepsValidity = steps.map((step, index) => {
-        if (visitedSteps[index]) {
-          return validateStep(step, formData, index);
-        }
-        return stepsValidity[index]; 
-      });
-      
-      console.log("Initial validation result:", newStepsValidity);
-      setStepsValidity(newStepsValidity);
+      updateStepsValidity();
     }
-  }, [visitedSteps, form, steps, stepsValidity, validateStep]);
+  }, [visitedSteps, updateStepsValidity]);
 
   // Update step validity whenever form values change
   useEffect(() => {
-    const subscription = form.watch((formValues) => {
-      const formData = form.getValues();
-      console.log("Form values changed, revalidating steps");
-      
-      // Validate all visited steps
-      const newStepsValidity = steps.map((step, index) => {
-        // If the step hasn't been visited yet, don't validate it
-        if (!visitedSteps[index]) {
-          return false;
-        }
-        
-        return validateStep(step, formData, index);
-      });
-      
-      console.log("Updated steps validity:", newStepsValidity);
-      setStepsValidity(newStepsValidity);
+    const subscription = form.watch(() => {
+      updateStepsValidity();
     });
     
     return () => subscription.unsubscribe();
-  }, [form, steps, visitedSteps, validateStep]);
+  }, [form, updateStepsValidity]);
 
   // Function to validate multiple steps at once (used when jumping to a step)
   const validateSteps = useCallback((upToIndex: number) => {

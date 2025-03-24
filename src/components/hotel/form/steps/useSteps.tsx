@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { FormValues } from '../formSchema';
 import { ContractDocument } from '@/models/HotelModel';
@@ -34,33 +33,22 @@ export const useSteps = ({ form, hotelId }: UseStepsProps) => {
       id: 'amenities',
       label: 'Amenities',
       component: <AmenitiesSection form={form} hotelId={hotelId} />,
-      // Custom validation to check if at least one amenity is enabled
+      // Simplified custom validation to check if at least one amenity is enabled
       customValidation: (formValues: FormValues) => {
-        if (!formValues.amenities) {
-          console.log("No amenities object found");
-          return false;
-        }
+        if (!formValues.amenities) return false;
         
-        // Check all boolean properties in the amenities object
-        const amenityKeys = Object.keys(formValues.amenities);
+        // Get only boolean properties in the amenities object
+        const amenityBooleans = Object.entries(formValues.amenities)
+          .filter(([key, value]) => typeof value === 'boolean');
         
-        // Log for debugging
-        console.log("Validating amenities:", formValues.amenities);
+        // DEBUG: Log the boolean amenities found
+        console.log("Amenity booleans:", amenityBooleans);
         
-        for (const key of amenityKeys) {
-          // Skip image arrays and only check boolean properties
-          if (!key.includes('Images')) {
-            const value = formValues.amenities[key as keyof typeof formValues.amenities];
-            console.log(`Checking amenity ${key}:`, value);
-            if (typeof value === 'boolean' && value === true) {
-              console.log(`Found enabled amenity: ${key}`);
-              return true;
-            }
-          }
-        }
+        // Check if at least one amenity is enabled (true)
+        const hasEnabledAmenity = amenityBooleans.some(([_, value]) => value === true);
         
-        console.log("No enabled amenities found");
-        return false;
+        console.log("Has enabled amenity:", hasEnabledAmenity);
+        return hasEnabledAmenity;
       }
     },
     {

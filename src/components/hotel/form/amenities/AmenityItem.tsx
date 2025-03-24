@@ -81,11 +81,12 @@ const AmenityItem: React.FC<AmenityItemProps> = ({
       }, { shouldValidate: true });
     }
     
-    // Trigger validation for the amenities step
+    // Force validation immediately after state changes
     setTimeout(() => {
+      // Explicitly trigger validation for amenities step
       form.trigger();
       console.log("Form values after toggle:", form.getValues());
-    }, 0);
+    }, 10);
   };
 
   useEffect(() => {
@@ -101,7 +102,7 @@ const AmenityItem: React.FC<AmenityItemProps> = ({
     }
   }, [isExtraBed, amenityEnabled, form]);
 
-  // Add additional debug effect
+  // Debug effect for amenities
   useEffect(() => {
     if (amenityEnabled) {
       console.log(`Amenity ${name} is enabled:`, amenityEnabled);

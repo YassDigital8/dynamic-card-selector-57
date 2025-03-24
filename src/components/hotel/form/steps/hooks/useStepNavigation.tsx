@@ -69,7 +69,7 @@ export const useStepNavigation = ({ form, steps }: UseStepNavigationProps) => {
       // Validate the new step after moving
       setTimeout(() => {
         validateSteps(currentStepIndex + 1);
-      }, 0);
+      }, 10);
     }
   }, [currentStepIndex, steps.length, validateSteps]);
 
