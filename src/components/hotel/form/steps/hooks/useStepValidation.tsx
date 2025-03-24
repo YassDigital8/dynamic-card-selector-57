@@ -22,7 +22,9 @@ export const useStepValidation = ({ form, steps, visitedSteps }: UseStepValidati
   const validateStep = (step: Step, formValues: FormValues, index: number): boolean => {
     // If using custom validation
     if (step.customValidation) {
-      return step.customValidation(formValues);
+      const isValid = step.customValidation(formValues);
+      console.log(`Custom validation for step ${index} (${step.label}):`, isValid);
+      return isValid;
     }
     
     // If no validation fields specified and no custom validation, step is always valid
@@ -31,7 +33,7 @@ export const useStepValidation = ({ form, steps, visitedSteps }: UseStepValidati
     }
     
     // Check if all required fields for this step have values
-    return step.validationFields.every(field => {
+    const isValid = step.validationFields.every(field => {
       const fieldValue = field.includes('.') 
         ? form.getValues(field as any) 
         : form.getValues()[field as keyof FormValues];
@@ -42,12 +44,16 @@ export const useStepValidation = ({ form, steps, visitedSteps }: UseStepValidati
       
       return true;
     });
+
+    console.log(`Standard validation for step ${index} (${step.label}):`, isValid);
+    return isValid;
   };
 
   // Update step validity whenever form values change
   useEffect(() => {
     const subscription = form.watch((formValues) => {
       const formData = form.getValues();
+      console.log("Form values changed, revalidating steps");
       
       // Validate all visited steps
       const newStepsValidity = steps.map((step, index) => {
@@ -59,6 +65,7 @@ export const useStepValidation = ({ form, steps, visitedSteps }: UseStepValidati
         return validateStep(step, formData, index);
       });
       
+      console.log("Updated steps validity:", newStepsValidity);
       setStepsValidity(newStepsValidity);
     });
     
@@ -68,6 +75,8 @@ export const useStepValidation = ({ form, steps, visitedSteps }: UseStepValidati
   // Function to validate multiple steps at once (used when jumping to a step)
   const validateSteps = useCallback((upToIndex: number) => {
     const formData = form.getValues();
+    console.log(`Validating steps up to index ${upToIndex}`);
+    
     const newStepsValidity = steps.map((step, stepIndex) => {
       if (stepIndex <= upToIndex) {
         return validateStep(step, formData, stepIndex);
@@ -75,6 +84,7 @@ export const useStepValidation = ({ form, steps, visitedSteps }: UseStepValidati
       return stepsValidity[stepIndex];
     });
     
+    console.log("Validation result:", newStepsValidity);
     setStepsValidity(newStepsValidity);
     return newStepsValidity;
   }, [form, steps, stepsValidity]);

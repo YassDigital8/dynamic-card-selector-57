@@ -44,12 +44,23 @@ export const useStepNavigation = ({ form, steps }: UseStepNavigationProps) => {
         newVisited[currentStepIndex + 1] = true;
         return newVisited;
       });
+      
+      // Force validation of the current step before moving
+      const formData = form.getValues();
+      console.log(`Moving to next step: ${currentStepIndex + 1}`);
+      
       setCurrentStepIndex(currentStepIndex + 1);
+      
+      // Validate the new step after moving
+      setTimeout(() => {
+        validateSteps(currentStepIndex + 1);
+      }, 0);
     }
   };
 
   const goToPreviousStep = () => {
     if (currentStepIndex > 0) {
+      console.log(`Moving to previous step: ${currentStepIndex - 1}`);
       setCurrentStepIndex(currentStepIndex - 1);
     }
   };
@@ -64,6 +75,8 @@ export const useStepNavigation = ({ form, steps }: UseStepNavigationProps) => {
       }
       return newVisited;
     });
+    
+    console.log(`Jumping to step: ${index}`);
     
     // Immediately validate all visited steps to update status indicators
     validateSteps(index);

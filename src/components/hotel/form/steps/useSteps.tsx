@@ -40,15 +40,23 @@ export const useSteps = ({ form, hotelId }: UseStepsProps) => {
         
         // Check all boolean properties in the amenities object
         const amenityKeys = Object.keys(formValues.amenities);
+        
+        // Log for debugging
+        console.log("Validating amenities:", formValues.amenities);
+        
         for (const key of amenityKeys) {
           // Skip image arrays and only check boolean properties
           if (!key.includes('Images')) {
             const value = formValues.amenities[key as keyof typeof formValues.amenities];
+            console.log(`Checking amenity ${key}:`, value);
             if (typeof value === 'boolean' && value === true) {
+              console.log(`Found enabled amenity: ${key}`);
               return true;
             }
           }
         }
+        
+        console.log("No enabled amenities found");
         return false;
       }
     },
