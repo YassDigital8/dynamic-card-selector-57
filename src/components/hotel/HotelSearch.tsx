@@ -21,7 +21,6 @@ interface HotelSearchProps {
     amenities: { [K in keyof HotelAmenities]: boolean };
     stars: number | null;
     extendedFeatures: {
-      extraBed: boolean;
       bankTransfer: boolean;
       hasGeolocation: boolean;
     };
@@ -89,7 +88,6 @@ const HotelSearch: React.FC<HotelSearchProps> = ({
       amenities: resetAmenities,
       stars: null,
       extendedFeatures: {
-        extraBed: false,
         bankTransfer: false,
         hasGeolocation: false
       }

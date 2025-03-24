@@ -14,6 +14,10 @@ export interface RoomType {
     endDate: string;
     price: number;
   }[];
+  // Extra bed settings
+  allowExtraBed?: boolean;
+  maxExtraBeds?: number;
+  extraBedPrice?: number;
 }
 
 export interface AmenityImage {

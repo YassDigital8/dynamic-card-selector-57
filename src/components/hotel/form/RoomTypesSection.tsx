@@ -70,6 +70,23 @@ const RoomTypesSection: React.FC<RoomTypesSectionProps> = ({ form }) => {
     setIsImageDialogOpen(true);
   };
 
+  // Initialize new room type with empty extra bed values
+  const addNewRoomType = () => {
+    const currentRoomTypes = form.getValues('roomTypes');
+    form.setValue('roomTypes', [
+      ...currentRoomTypes,
+      { 
+        name: '', 
+        maxAdults: 1, 
+        maxChildren: 0, 
+        images: [],
+        allowExtraBed: false,
+        maxExtraBeds: 1,
+        extraBedPrice: 0
+      }
+    ]);
+  };
+
   return (
     <div className="space-y-6 col-span-2">
       <h3 className="text-lg font-medium text-foreground">Room Types</h3>
@@ -88,13 +105,7 @@ const RoomTypesSection: React.FC<RoomTypesSectionProps> = ({ form }) => {
       <Button
         type="button"
         variant="outline"
-        onClick={() => {
-          const currentRoomTypes = form.getValues('roomTypes');
-          form.setValue('roomTypes', [
-            ...currentRoomTypes,
-            { name: '', maxAdults: 1, maxChildren: 0, images: [] }
-          ]);
-        }}
+        onClick={addNewRoomType}
       >
         Add Room Type
       </Button>

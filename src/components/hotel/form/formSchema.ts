@@ -1,3 +1,4 @@
+
 import * as z from 'zod';
 
 const amenityImageSchema = z.object({
@@ -181,6 +182,10 @@ export const formSchema = z.object({
       imageUrl: z.string().optional(),
       images: z.array(z.string()).optional().default([]),
       seasonalPrices: z.array(seasonalPriceSchema).optional().default([]),
+      // New extra bed fields
+      allowExtraBed: z.boolean().optional().default(false),
+      maxExtraBeds: z.number().min(1).max(5).optional().default(1),
+      extraBedPrice: z.number().min(0).optional().default(0),
     })
   ).default([]),
   contactDetails: z.array(contactDetailSchema).optional().default([]),
