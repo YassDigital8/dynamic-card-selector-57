@@ -1,135 +1,126 @@
 
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { Card, CardContent } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
-import { BedDouble, Bath, Utensils, Wifi, Car, Dog, Cigarette, Accessibility } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+import React, { useMemo, memo } from 'react';
+import { motion } from 'framer-motion';
 import { Hotel } from '@/models/HotelModel';
+import { Card, CardContent } from '@/components/ui/card';
+import { 
+  HotelCardHeader, 
+  HotelLocationInfo, 
+  HotelCardAmenities, 
+  HotelCardFooter
+} from './card';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface HotelCardProps {
-  hotel: Hotel | null;
-  isLoading?: boolean;
-  isSelected?: boolean;
-  onSelect?: (hotel: Hotel) => void;
-  onEdit?: (hotel: Hotel) => void;
-  onDelete?: (id: string) => void;
+  hotel: Hotel;
+  isSelected: boolean;
+  onSelect: () => void;
+  onEdit: () => void;
+  onDelete: () => void;
   useGridView?: boolean;
   disabled?: boolean;
   hideEditButton?: boolean;
 }
 
-const HotelCard: React.FC<HotelCardProps> = ({ 
-  hotel, 
-  isLoading,
+const HotelCard: React.FC<HotelCardProps> = ({
+  hotel,
   isSelected,
   onSelect,
   onEdit,
   onDelete,
   useGridView = false,
   disabled = false,
-  hideEditButton = false
+  hideEditButton = false // Setting this to false by default to show edit button in cards
 }) => {
-  if (isLoading || !hotel) {
-    return (
-      <Card className="shadow-md hover:shadow-lg transition-shadow duration-300">
-        <CardContent className="p-4 space-y-2">
-          <Skeleton className="h-4 w-[200px]" />
-          <Skeleton className="h-4 w-[150px]" />
-          <Skeleton className="h-4 w-[100px]" />
-        </CardContent>
-      </Card>
-    );
-  }
-
-  // Extract amenities from the hotel object into a simple string array for display
-  let amenitiesList: string[] = [];
-  if (hotel.amenities) {
-    // Convert amenities object to a list of enabled amenities for display
-    amenitiesList = Object.entries(hotel.amenities)
-      .filter(([key, value]) => 
-        typeof value === 'boolean' && 
-        value === true && 
-        !key.includes('Images')
-      )
-      .map(([key]) => {
-        // Convert camelCase to readable format
-        return key
-          .replace(/([A-Z])/g, ' $1')
-          .replace(/^./, (str) => str.toUpperCase());
-      });
-  }
-
-  const getAmenityIcon = (amenity: string) => {
-    switch (amenity.toLowerCase()) {
-      case 'bed double':
-      case 'air conditioning':
-        return <BedDouble className="h-4 w-4 mr-1" />;
-      case 'bath':
-      case 'bathtub':
-        return <Bath className="h-4 w-4 mr-1" />;
-      case 'restaurant':
-      case 'utensils':
-        return <Utensils className="h-4 w-4 mr-1" />;
-      case 'wifi':
-        return <Wifi className="h-4 w-4 mr-1" />;
-      case 'parking':
-      case 'car':
-        return <Car className="h-4 w-4 mr-1" />;
-      case 'pets allowed':
-      case 'dog':
-        return <Dog className="h-4 w-4 mr-1" />;
-      case 'smoking rooms':
-      case 'smoking':
-      case 'cigarette':
-        return <Cigarette className="h-4 w-4 mr-1" />;
-      case 'wheelchair accessible':
-      case 'accessibility':
-        return <Accessibility className="h-4 w-4 mr-1" />;
-      default:
-        return null;
+  const isMobile = useIsMobile();
+  
+  const cardAnimation = useMemo(() => ({
+    rest: { 
+      scale: 1,
+      boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+      y: 0
+    },
+    hover: { 
+      scale: disabled ? 1 : 1.02,
+      boxShadow: disabled ? "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)" : "0 10px 15px -3px rgba(79, 70, 229, 0.15), 0 4px 6px -2px rgba(79, 70, 229, 0.1)",
+      y: disabled ? 0 : -4,
+      transition: {
+        type: "spring",
+        stiffness: 400,
+        damping: 20
+      }
+    },
+    tap: { 
+      scale: disabled ? 1 : 0.98, 
+      boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+      transition: {
+        type: "spring",
+        stiffness: 400,
+        damping: 25
+      }
+    },
+    selected: {
+      scale: 1.01,
+      boxShadow: "0 10px 15px -3px rgba(79, 70, 229, 0.2), 0 4px 6px -2px rgba(79, 70, 229, 0.15)",
+      transition: {
+        type: "spring",
+        stiffness: 400,
+        damping: 25
+      }
     }
-  };
+  }), [disabled]);
 
-  const handleClick = () => {
-    if (!disabled && onSelect) {
-      onSelect(hotel);
+  const handleCardClick = () => {
+    if (!disabled) {
+      onSelect();
     }
   };
 
   return (
-    <Card 
-      className={`shadow-md hover:shadow-lg transition-shadow duration-300 ${isSelected ? 'ring-2 ring-blue-500' : ''} ${disabled ? 'opacity-70' : 'cursor-pointer'}`}
-      onClick={handleClick}
+    <motion.div 
+      layoutId={`hotel-card-${hotel.id}`}
+      className={`relative overflow-hidden w-full mb-2 ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+      onClick={handleCardClick}
+      initial="rest"
+      whileHover="hover"
+      whileTap="tap"
+      animate={isSelected ? "selected" : "rest"}
+      variants={cardAnimation}
+      transition={{
+        type: "spring",
+        stiffness: 300,
+        damping: 25,
+        layout: { duration: 0.2 }
+      }}
     >
-      <CardContent className="p-4 space-y-2">
-        <Link to={`/hotel/view/${hotel.id}`} className="hover:underline">
-          <h3 className="text-lg font-semibold">{hotel.name}</h3>
-        </Link>
-        <p className="text-sm text-muted-foreground">
-          {hotel.streetAddress}, {hotel.governorate}, {hotel.country}
-        </p>
-        <div className="flex flex-wrap gap-1">
-          {amenitiesList.slice(0, 5).map((amenity, index) => (
-            <Badge key={index} variant="secondary" className="text-xs flex items-center">
-              {getAmenityIcon(amenity)}
-              {amenity}
-            </Badge>
-          ))}
-          {amenitiesList.length > 5 && (
-            <Badge variant="outline" className="text-xs">
-              +{amenitiesList.length - 5} more
-            </Badge>
-          )}
-        </div>
-        {hotel.posKey && (
-          <div className="mt-2">
-            <Badge variant="outline" className="text-[0.6rem]">POS: {hotel.posKey}</Badge>
+      <Card 
+        className={`transition-all will-change-transform flex flex-col min-h-[160px] ${
+          isSelected 
+          ? 'border-indigo-400 dark:border-indigo-500 shadow-md bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-900/40 dark:to-indigo-800/40' 
+          : 'hover:border-indigo-200 dark:hover:border-indigo-800'
+        } ${disabled ? 'opacity-70' : ''}`}
+      >
+        <HotelCardHeader hotel={hotel} useGridView={useGridView} />
+        
+        <CardContent className="flex-1 space-y-3 py-2 px-3">
+          <div className="space-y-3">
+            <HotelLocationInfo hotel={hotel} />
+            <HotelCardAmenities amenities={hotel.amenities} />
           </div>
-        )}
-      </CardContent>
-    </Card>
+          
+          <HotelCardFooter 
+            hotel={hotel} 
+            onSelect={onSelect} 
+            onEdit={onEdit} 
+            onDelete={onDelete}
+            isEditing={disabled}
+            disabled={disabled}
+            hideEditButton={hideEditButton}
+          />
+        </CardContent>
+      </Card>
+    </motion.div>
   );
 };
 
-export default HotelCard;
+export default memo(HotelCard);
