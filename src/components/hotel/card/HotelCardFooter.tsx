@@ -45,40 +45,40 @@ const HotelCardFooter: React.FC<HotelCardFooterProps> = ({
   };
   
   return (
-    <div className="flex justify-between items-center gap-0.5 mt-2 pt-2 border-t border-gray-100 dark:border-gray-800">
+    <div className="flex justify-evenly items-center gap-1 mt-2 pt-2 border-t border-gray-100 dark:border-gray-800">
       <Button
         variant="ghost"
-        size="sm"
-        className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 h-6 px-1"
+        size="icon"
+        className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 h-7 w-7"
         onClick={handleViewClick}
         disabled={isEditing || disabled}
+        title="View"
       >
-        <Eye className="h-3 w-3 mr-0.5" />
-        <span className="text-xs">View</span>
+        <Eye className="h-4 w-4" />
       </Button>
       
       {!hideEditButton && (
         <Button
           variant="ghost"
-          size="sm"
-          className="text-amber-600 hover:text-amber-800 dark:text-amber-400 dark:hover:text-amber-300 h-6 px-1"
+          size="icon"
+          className="text-amber-600 hover:text-amber-800 dark:text-amber-400 dark:hover:text-amber-300 h-7 w-7"
           onClick={handleEditClick}
           disabled={isEditing || disabled}
+          title="Edit"
         >
-          <PenLine className="h-3 w-3 mr-0.5" />
-          <span className="text-xs">Edit</span>
+          <PenLine className="h-4 w-4" />
         </Button>
       )}
       
       <Button
         variant="ghost"
-        size="sm"
-        className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 h-6 px-1"
+        size="icon"
+        className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 h-7 w-7"
         onClick={handleDeleteClick}
         disabled={isEditing || disabled}
+        title="Delete"
       >
-        <Trash2 className="h-3 w-3 mr-0.5" />
-        <span className="text-xs">Delete</span>
+        <Trash2 className="h-4 w-4" />
       </Button>
     </div>
   );
