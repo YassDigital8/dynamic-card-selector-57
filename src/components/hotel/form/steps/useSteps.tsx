@@ -8,6 +8,7 @@ import { RoomTypesSection } from '../';
 import { ContactDetailsSection } from '../contact';
 import { ContractDocumentSection } from '../contract';
 import ExtendedFeaturesSection from '../ExtendedFeaturesSection';
+import { PreviewSection } from '../preview';
 import { CommercialDealsView } from '../../details/commercial';
 import { UseFormReturn } from 'react-hook-form';
 
@@ -61,6 +62,12 @@ export const useSteps = ({ form, hotelId }: UseStepsProps) => {
       label: 'Payment Options',
       component: <ExtendedFeaturesSection />,
       validationFields: [] // Extended features are optional
+    },
+    {
+      id: 'preview',
+      label: 'Preview',
+      component: <PreviewSection />,
+      validationFields: [] // Preview has no validation
     },
     {
       id: 'contract-commercial',

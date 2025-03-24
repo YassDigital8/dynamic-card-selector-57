@@ -3,10 +3,9 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PaymentMethodsSection, BankDetailsSection } from './payment';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { CreditCard, Eye, Building } from 'lucide-react';
+import { CreditCard, Building } from 'lucide-react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { FormValues } from './formSchema';
-import HotelPreviewCard from './preview/HotelPreviewCard';
 
 const ExtendedFeaturesSection: React.FC = () => {
   const form = useFormContext<FormValues>();
@@ -29,7 +28,7 @@ const ExtendedFeaturesSection: React.FC = () => {
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="payment" className="space-y-4">
-          <TabsList className={`grid ${showBankDetailsTab ? 'grid-cols-3' : 'grid-cols-2'}`}>
+          <TabsList className={`grid ${showBankDetailsTab ? 'grid-cols-2' : 'grid-cols-1'}`}>
             <TabsTrigger value="payment" className="flex items-center gap-2">
               <CreditCard className="h-4 w-4" />
               <span className="hidden sm:inline">Payment Methods</span>
@@ -40,10 +39,6 @@ const ExtendedFeaturesSection: React.FC = () => {
                 <span className="hidden sm:inline">Bank Details</span>
               </TabsTrigger>
             )}
-            <TabsTrigger value="preview" className="flex items-center gap-2">
-              <Eye className="h-4 w-4" />
-              <span className="hidden sm:inline">Preview</span>
-            </TabsTrigger>
           </TabsList>
           
           <TabsContent value="payment" className="mt-0">
@@ -55,10 +50,6 @@ const ExtendedFeaturesSection: React.FC = () => {
               <BankDetailsSection bankTransferMethod={bankTransferMethod} />
             </TabsContent>
           )}
-          
-          <TabsContent value="preview" className="mt-0">
-            <HotelPreviewCard />
-          </TabsContent>
         </Tabs>
       </CardContent>
     </Card>
