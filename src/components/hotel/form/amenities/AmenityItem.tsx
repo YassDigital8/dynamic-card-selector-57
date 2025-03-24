@@ -39,7 +39,7 @@ const AmenityItem: React.FC<AmenityItemProps> = ({
   // Watch the amenity value to determine if it's enabled
   const amenityEnabled = useWatch({
     control: form.control,
-    name: `amenities.${name}`
+    name: `amenities.${name}` as any
   });
   
   // For the Extra Bed amenity, also watch the price
@@ -53,7 +53,7 @@ const AmenityItem: React.FC<AmenityItemProps> = ({
   const images = hasImages && imageField
     ? useWatch({ 
         control: form.control, 
-        name: `amenities.${imageField}` 
+        name: `amenities.${imageField}` as any
       }) 
     : [];
 
@@ -97,7 +97,7 @@ const AmenityItem: React.FC<AmenityItemProps> = ({
         
         <FormField
           control={form.control}
-          name={`amenities.${name}`}
+          name={`amenities.${name}` as any}
           render={({ field }) => (
             <FormItem className="flex flex-row items-center space-y-0 m-0">
               <FormControl>
@@ -114,9 +114,9 @@ const AmenityItem: React.FC<AmenityItemProps> = ({
       {/* Images section (only shows if this amenity has images and is enabled) */}
       <AmenityImagesSection 
         hasImages={hasImages}
-        amenityValue={amenityEnabled}
+        amenityValue={Boolean(amenityEnabled)}
         imageField={imageField}
-        images={images}
+        images={Array.isArray(images) ? images : []}
         name={name}
         onAddImage={onAddImage}
         onRemoveImage={onRemoveImage}
