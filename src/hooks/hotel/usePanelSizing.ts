@@ -4,14 +4,13 @@ import { useScreenSize } from '@/hooks/use-mobile';
 import { Hotel } from '@/models/HotelModel';
 
 interface UsePanelSizingProps {
-  selectedHotel?: Hotel | null;
-  showAddForm?: boolean;
-  isEditing?: boolean;
+  selectedHotel: Hotel | null;
+  showAddForm: boolean;
+  isEditing: boolean;
 }
 
-export const usePanelSizing = (props?: UsePanelSizingProps) => {
+export const usePanelSizing = ({ selectedHotel, showAddForm, isEditing }: UsePanelSizingProps) => {
   const screenSize = useScreenSize();
-  const { selectedHotel = null, showAddForm = false, isEditing = false } = props || {};
   
   // Calculate dynamic panel sizes based on whether there's a selected hotel
   const getInitialLeftPanelSize = useCallback(() => {
