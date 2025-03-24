@@ -40,10 +40,13 @@ const HotelList: React.FC<HotelListProps> = ({
     handleFilterChange
   } = useHotelFiltering(hotels);
 
-  const handleDeleteClick = (hotel: Hotel) => {
+  const handleDeleteClick = (hotelId: string) => {
     if (isEditing) return;
-    setHotelToDelete(hotel);
-    setConfirmDialogOpen(true);
+    const hotel = hotels.find(h => h.id === hotelId);
+    if (hotel) {
+      setHotelToDelete(hotel);
+      setConfirmDialogOpen(true);
+    }
   };
 
   const confirmDelete = () => {

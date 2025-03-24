@@ -53,7 +53,7 @@ const HotelCardGrid: React.FC<HotelCardGridProps> = ({
           isSelected={selectedHotel?.id === hotel.id}
           onSelect={() => onSelectHotel(hotel)}
           onEdit={() => onEditHotel(hotel)}
-          onDelete={() => onDeleteHotel(hotel)}
+          onDelete={() => onDeleteHotel(hotel.id)}
           useGridView={true}
           disabled={isEditing}
           hideEditButton={hideEditButton}
