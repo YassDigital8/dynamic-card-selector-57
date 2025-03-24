@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { MapPin, Hotel, PointerIcon, Plus } from 'lucide-react';
+import { MapPin, Hotel, PointerIcon, Plus, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface NoHotelSelectedProps {
@@ -36,6 +36,22 @@ const NoHotelSelected: React.FC<NoHotelSelectedProps> = ({ hasHotels, onAddHotel
               : 'Get started by adding your first hotel to the system.'}
           </p>
         </div>
+        
+        {hasHotels && (
+          <div className="bg-white/70 dark:bg-indigo-950/40 p-3 rounded-lg text-sm">
+            <div className="text-left space-y-2 text-slate-700 dark:text-slate-300">
+              <h4 className="font-medium text-indigo-700 dark:text-indigo-300 text-center mb-1">Quick Tips</h4>
+              <div className="flex items-start">
+                <Search className="h-4 w-4 mr-2 mt-0.5 text-indigo-500" />
+                <span>Use the search bar to filter by name, country, or city</span>
+              </div>
+              <div className="flex items-start">
+                <MapPin className="h-4 w-4 mr-2 mt-0.5 text-indigo-500" />
+                <span>Click on a hotel card to view full details</span>
+              </div>
+            </div>
+          </div>
+        )}
         
         <motion.div
           whileHover={{ scale: 1.05 }}

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { PlusCircle, Hotel as HotelIcon } from 'lucide-react';
+import { PlusCircle, Hotel as HotelIcon, MapPin, Search, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { motion } from 'framer-motion';
@@ -48,7 +48,7 @@ const HotelEmptyState: React.FC<HotelEmptyStateProps> = ({
       y: [0, -5, 0],
       transition: { 
         repeat: Infinity, 
-        repeatType: "reverse" as const, // Fix: Use "reverse" as a const type
+        repeatType: "reverse" as const,
         duration: 1.5 
       }
     }
@@ -91,24 +91,58 @@ const HotelEmptyState: React.FC<HotelEmptyStateProps> = ({
           >
             <HotelIcon className="h-12 w-12 text-indigo-600 dark:text-indigo-300" />
           </motion.div>
+          
           <h2 className="text-2xl font-bold mb-4 text-indigo-700 dark:text-indigo-300">
             Hotel Network Management
           </h2>
-          <p className="text-muted-foreground mb-8 max-w-md">
-            {selectedPOS ? 
-              hasHotels 
-                ? `Select a hotel from the ${posName || 'selected'} region to view details.` 
-                : `No hotels found for ${posName || 'selected region'}. Add your first hotel.`
-              : 'Select a region to view hotels, or add a new hotel to your network.'}
-          </p>
+          
+          <div className="mb-8 max-w-md">
+            <p className="text-muted-foreground mb-4">
+              {selectedPOS ? 
+                hasHotels 
+                  ? `Select a hotel from the ${posName || 'selected'} region to view details.` 
+                  : `No hotels found for ${posName || 'selected region'}. Add your first hotel.`
+                : 'Select a region to view hotels, or add a new hotel to your network.'}
+            </p>
+            
+            {/* New guidance section */}
+            <div className="bg-white/70 dark:bg-indigo-950/50 p-4 rounded-lg mb-4">
+              <h3 className="text-lg font-medium text-indigo-700 dark:text-indigo-300 mb-2 flex items-center justify-center">
+                <Info className="h-5 w-5 mr-2" />
+                Getting Started
+              </h3>
+              <ul className="text-sm text-left space-y-2 text-slate-700 dark:text-slate-300">
+                <li className="flex items-start">
+                  <MapPin className="h-4 w-4 mr-2 mt-0.5 text-indigo-500" />
+                  <span>Select a <strong>region</strong> from the dropdown above to filter hotels</span>
+                </li>
+                <li className="flex items-start">
+                  <Search className="h-4 w-4 mr-2 mt-0.5 text-indigo-500" />
+                  <span>Use <strong>search and filters</strong> to find specific hotels</span>
+                </li>
+                <li className="flex items-start">
+                  <PlusCircle className="h-4 w-4 mr-2 mt-0.5 text-indigo-500" />
+                  <span>Click <strong>Add Hotel</strong> to create a new property</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+          
           <motion.div
             variants={buttonVariants}
             whileHover="hover"
+            className="space-y-3"
           >
             <Button onClick={onAddHotel} className="gap-2 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 shadow-sm">
               <PlusCircle className="h-4 w-4" />
               Add Hotel
             </Button>
+            
+            {!selectedPOS && (
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                Or first select a region from the dropdown above
+              </p>
+            )}
           </motion.div>
         </Card>
       </motion.div>

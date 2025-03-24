@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { HotelIcon } from 'lucide-react';
+import { HotelIcon, Search, Filter, MapPin } from 'lucide-react';
 
 const HotelListEmptyState: React.FC = () => {
   return (
@@ -12,6 +12,25 @@ const HotelListEmptyState: React.FC = () => {
       <p className="text-sm text-muted-foreground mb-4">
         No hotels in this region. Add your first hotel to get started.
       </p>
+      
+      {/* New suggestions section */}
+      <div className="w-full max-w-xs bg-white/80 dark:bg-indigo-950/40 rounded-lg p-3 mt-2">
+        <h4 className="font-medium text-indigo-600 dark:text-indigo-400 text-sm mb-2">Try these options:</h4>
+        <ul className="text-xs text-left space-y-2 text-slate-700 dark:text-slate-300">
+          <li className="flex items-start">
+            <Search className="h-3.5 w-3.5 mr-1.5 mt-0.5 text-indigo-500" />
+            <span>Try different search terms</span>
+          </li>
+          <li className="flex items-start">
+            <Filter className="h-3.5 w-3.5 mr-1.5 mt-0.5 text-indigo-500" />
+            <span>Clear applied filters</span>
+          </li>
+          <li className="flex items-start">
+            <MapPin className="h-3.5 w-3.5 mr-1.5 mt-0.5 text-indigo-500" />
+            <span>Select a different region</span>
+          </li>
+        </ul>
+      </div>
     </div>
   );
 };
