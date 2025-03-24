@@ -50,19 +50,19 @@ export const useSteps = ({ form, hotelId }: UseStepsProps) => {
       id: 'room-types',
       label: 'Room Types',
       component: <RoomTypesSection form={form} />,
-      // Room types are optional, so no validation required
+      validationFields: []  // Room types are optional
     },
     {
       id: 'contact',
       label: 'Contact & Social Media',
       component: <ContactDetailsSection />,
-      // Contact details are optional, so no validation required
+      validationFields: [] // Contact details are optional
     },
     {
       id: 'payment-options',
       label: 'Payment Options',
       component: <ExtendedFeaturesSection />,
-      // Extended features are optional, so no validation required
+      validationFields: [] // Extended features are optional
     },
     {
       id: 'contract-commercial',
@@ -73,30 +73,20 @@ export const useSteps = ({ form, hotelId }: UseStepsProps) => {
           <CommercialDealsView contractDocuments={contractDocuments} />
         </div>
       ),
-      // Contract documents are optional, so no validation required
+      validationFields: [] // Contract documents are optional
     },
     {
       id: 'preview',
       label: 'Preview',
       component: <PreviewSection />,
-      // Preview has no validation, always valid
+      validationFields: [] // Preview has no validation
     },
   ];
 
   // Initialize steps validity and visited steps arrays
   useEffect(() => {
-    // Initialize step validity array based on steps having validation fields
-    const initialStepsValidity = steps.map(step => {
-      // If no validation fields defined, the step is always valid
-      if (!step.validationFields || step.validationFields.length === 0) {
-        return true;
-      }
-      return false; // Otherwise assume invalid until validated
-    });
-    
-    setStepsValidity(initialStepsValidity);
+    setStepsValidity(Array(steps.length).fill(false));
     setVisitedSteps(Array(steps.length).fill(false));
-    
     // Mark the first step as visited
     setVisitedSteps(prev => {
       const newVisited = [...prev];
@@ -108,10 +98,9 @@ export const useSteps = ({ form, hotelId }: UseStepsProps) => {
   // Update step validity whenever form values change
   useEffect(() => {
     const subscription = form.watch(() => {
-      const newStepsValidity = steps.map((step) => {
-        // If no validation fields specified, step is always valid
+      const newStepsValidity = steps.map((step, index) => {
         if (!step.validationFields || step.validationFields.length === 0) {
-          return true;
+          return true; // If no validation fields specified, step is always valid
         }
         
         // Check if all required fields for this step have values
@@ -120,12 +109,7 @@ export const useSteps = ({ form, hotelId }: UseStepsProps) => {
             ? form.getValues(field as any) 
             : form.getValues()[field as keyof FormValues];
             
-          // Check for arrays, objects, strings, etc.
-          if (Array.isArray(fieldValue)) {
-            return fieldValue.length > 0;
-          } else if (typeof fieldValue === 'object' && fieldValue !== null) {
-            return Object.keys(fieldValue).length > 0;
-          } else if (fieldValue === undefined || fieldValue === null || fieldValue === '') {
+          if (fieldValue === undefined || fieldValue === null || fieldValue === '') {
             return false;
           }
           
