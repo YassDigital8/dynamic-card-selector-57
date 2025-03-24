@@ -21,13 +21,21 @@ export const useAmenityAddMultipleImages = ({
       return;
     }
     
-    const imageFieldName = `amenities.${selectedAmenity}Images` as const;
-    const currentImages = form.getValues(imageFieldName as any) || [];
+    // Format this as a valid field path that TypeScript can understand
+    const imageFieldPath = `amenities.${selectedAmenity}Images`;
+    
+    // Get the current images using getValues with a proper type assertion
+    const formValues = form.getValues();
+    const amenitiesValues = formValues.amenities || {};
+    
+    // Access images in a type-safe way
+    const currentImages = amenitiesValues[`${selectedAmenity}Images` as keyof typeof amenitiesValues] || [];
     
     console.log(`Adding ${files.length} images to ${selectedAmenity}`);
     
     // First, ensure the amenity is enabled
-    if (!form.getValues(`amenities.${selectedAmenity}`)) {
+    if (!formValues.amenities?.[selectedAmenity as keyof typeof amenitiesValues]) {
+      // Enable the amenity in a type-safe way
       form.setValue(`amenities.${selectedAmenity}`, true, { 
         shouldDirty: true,
         shouldTouch: true,
@@ -51,7 +59,8 @@ export const useAmenityAddMultipleImages = ({
       ? [...currentImages, ...newImages] 
       : [...newImages];
     
-    form.setValue(imageFieldName as any, updatedImages, {
+    // Use a type assertion to handle the dynamic path
+    form.setValue(imageFieldPath as any, updatedImages, {
       shouldDirty: true,
       shouldTouch: true,
       shouldValidate: true
