@@ -1,51 +1,35 @@
 
-import { UseFormReturn } from 'react-hook-form';
-import { FormValues } from '../formSchema';
-import { HotelFormData } from '@/models/HotelModel';
-import { useToast } from '@/hooks/use-toast';
-import { AlertCircle } from 'lucide-react';
-
-interface UseFormProcessorProps {
-  form: UseFormReturn<FormValues>;
-  onSubmit: (data: HotelFormData) => void;
-  stepsValidity?: boolean[];
-  goToStep?: (index: number) => void;
-}
+import { FormProcessorProps } from './types';
+import { useFormValidation } from './useFormValidation';
+import { useFormNotification } from './useFormNotification';
 
 export const useFormProcessor = ({ 
   form, 
   onSubmit,
   stepsValidity,
   goToStep
-}: UseFormProcessorProps) => {
-  const { toast } = useToast();
+}: FormProcessorProps) => {
+  const { validateFormSteps } = useFormValidation();
+  const { showIncompleteFormError } = useFormNotification();
   
-  const handleSubmit = (data: FormValues) => {
+  const handleSubmit = (data: any) => {
     console.log("Handling form submission. Steps validity:", stepsValidity);
     
-    // If we have step validation info, use it to check if all steps are valid
-    if (stepsValidity && goToStep) {
-      const invalidStepIndex = stepsValidity.findIndex(valid => valid === false);
+    // Validate steps if we have validation info
+    const validationResult = validateFormSteps(stepsValidity);
+    
+    if (!validationResult.isValid && goToStep && validationResult.invalidStepIndex !== undefined) {
+      // Show error toast about incomplete steps
+      showIncompleteFormError();
       
-      if (invalidStepIndex !== -1) {
-        console.log("Invalid step found at index:", invalidStepIndex);
-        
-        // Show error toast about incomplete steps - without using JSX
-        toast({
-          variant: "destructive",
-          title: "Incomplete Form",
-          description: "Please complete all required information before saving. Navigating to the first incomplete step."
-        });
-        
-        // Navigate to the first invalid step
-        goToStep(invalidStepIndex);
-        return;
-      }
+      // Navigate to the first invalid step
+      goToStep(validationResult.invalidStepIndex);
+      return;
     }
     
     // If all steps are valid, or if we don't have validation info, proceed with submission
     console.log('Form data before submission:', data);
-    onSubmit(data as HotelFormData);
+    onSubmit(data);
   };
 
   return { handleSubmit };
