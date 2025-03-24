@@ -38,10 +38,7 @@ const HotelCardFooter: React.FC<HotelCardFooterProps> = ({
   
   const handleDeleteClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    
-    if (window.confirm(`Are you sure you want to delete ${hotel.name}?`)) {
-      onDelete(hotel.id);
-    }
+    onDelete(hotel.id);
   };
   
   return (

@@ -2,13 +2,15 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Hotel } from '@/models/HotelModel';
 
 interface DeleteHotelDialogProps {
@@ -24,25 +26,34 @@ const DeleteHotelDialog: React.FC<DeleteHotelDialogProps> = ({
   onOpenChange,
   onConfirm
 }) => {
+  if (!hotel) return null;
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="border-red-100 dark:border-red-900">
-        <DialogHeader>
-          <DialogTitle className="text-destructive">Confirm Deletion</DialogTitle>
-          <DialogDescription>
-            Are you sure you want to delete <span className="font-semibold">{hotel?.name}</span>? This action cannot be undone.
-          </DialogDescription>
-        </DialogHeader>
-        <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+    <AlertDialog open={open} onOpenChange={onOpenChange}>
+      <AlertDialogContent className="bg-background border border-red-100 dark:border-red-900 max-w-md">
+        <AlertDialogHeader>
+          <AlertDialogTitle className="text-destructive">
+            Confirm Deletion
+          </AlertDialogTitle>
+          <AlertDialogDescription>
+            Are you sure you want to delete <span className="font-semibold">{hotel.name}</span>? This action cannot be undone.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel 
+            className="bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 border-0"
+          >
             Cancel
-          </Button>
-          <Button variant="destructive" onClick={onConfirm}>
+          </AlertDialogCancel>
+          <AlertDialogAction
+            onClick={onConfirm}
+            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+          >
             Delete
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 };
 
