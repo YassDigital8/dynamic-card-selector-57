@@ -113,6 +113,22 @@ const AmenityItem: React.FC<AmenityItemProps> = ({
         />
       </div>
 
+      {/* Extra Bed Price Box - only shown when extra bed is enabled */}
+      {isExtraBed && amenityEnabled && (
+        <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-md dark:bg-blue-900/20 dark:border-blue-800">
+          <div className="flex items-center text-blue-700 dark:text-blue-300 font-medium mb-1">
+            <DollarSign className="h-4 w-4 mr-1" />
+            <span>Extra Bed Price Per Night</span>
+          </div>
+          <div className="text-sm text-blue-600 dark:text-blue-400">
+            Current price: ${extraBedPrice || 0}
+          </div>
+          <div className="text-xs text-blue-500 dark:text-blue-500 mt-1">
+            You can change this price in the Pricing section
+          </div>
+        </div>
+      )}
+
       {/* Images section (only shows if this amenity has images and is enabled) */}
       <AmenityImagesSection 
         hasImages={hasImages}
