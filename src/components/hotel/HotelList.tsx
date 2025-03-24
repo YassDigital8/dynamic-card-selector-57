@@ -1,11 +1,16 @@
 
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState } from 'react';
+import { AnimatePresence } from 'framer-motion';
 import { Hotel } from '@/models/HotelModel';
 import DeleteHotelDialog from './DeleteHotelDialog';
-import HotelCard from './HotelCard';
 import HotelListEmptyState from './HotelListEmptyState';
-import HotelSearch from './HotelSearch';
+import { 
+  HotelListHeader,
+  HotelListFilters,
+  NoResultsFound,
+  HotelCardGrid,
+  useHotelFiltering
+} from './list';
 
 interface HotelListProps {
   hotels: Hotel[];
@@ -26,18 +31,14 @@ const HotelList: React.FC<HotelListProps> = ({
 }) => {
   const [hotelToDelete, setHotelToDelete] = useState<Hotel | null>(null);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filters, setFilters] = useState({
-    pos: null as string | null,
-    country: null as string | null,
-    amenities: {
-      wifi: false,
-      restaurant: false,
-      gym: false,
-      swimmingPool: false
-    },
-    stars: null as number | null
-  });
+  
+  const {
+    searchTerm,
+    filters,
+    filteredHotels,
+    handleSearchChange,
+    handleFilterChange
+  } = useHotelFiltering(hotels);
 
   const handleDeleteClick = (hotel: Hotel) => {
     if (isEditing) return;
@@ -65,34 +66,6 @@ const HotelList: React.FC<HotelListProps> = ({
     }
   };
 
-  // Apply all filters to hotels
-  const filteredHotels = hotels.filter(hotel => {
-    // Text search filter
-    const matchesSearch = 
-      hotel.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      hotel.country.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      hotel.governorate.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    if (!matchesSearch) return false;
-    
-    // POS filter
-    if (filters.pos && hotel.posKey !== filters.pos) return false;
-    
-    // Country filter
-    if (filters.country && hotel.country !== filters.country) return false;
-    
-    // Amenities filter
-    if (filters.amenities.wifi && !hotel.amenities.wifi) return false;
-    if (filters.amenities.restaurant && !hotel.amenities.restaurant) return false;
-    if (filters.amenities.gym && !hotel.amenities.gym) return false;
-    if (filters.amenities.swimmingPool && !hotel.amenities.swimmingPool) return false;
-    
-    // Star rating filter
-    if (filters.stars !== null && hotel.rating !== filters.stars) return false;
-    
-    return true;
-  });
-
   const springConfig = {
     type: "spring" as const,
     stiffness: 220,
@@ -100,85 +73,36 @@ const HotelList: React.FC<HotelListProps> = ({
     mass: 0.7
   };
 
-  const container = {
-    hidden: { opacity: 1 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.02,
-        delayChildren: 0,
-        ...springConfig
-      }
-    }
-  };
-
   return (
     <div className="w-full h-full p-4 md:p-6">
-      <motion.div 
-        initial={{ opacity: 0, y: -5 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={springConfig}
-        className="flex items-center justify-between mb-4"
-      >
-        <h2 className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
-          Hotels ({filteredHotels.length})
-        </h2>
-      </motion.div>
+      <HotelListHeader count={filteredHotels.length} />
       
       {hotels.length > 0 && (
-        <motion.div
-          initial={{ opacity: 0, y: 5 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={springConfig}
-          className="mb-4 w-full"
-        >
-          <HotelSearch 
-            searchTerm={searchTerm} 
-            onSearchChange={setSearchTerm}
-            filters={filters}
-            onFilterChange={setFilters}
-            disabled={isEditing}
-          />
-        </motion.div>
+        <HotelListFilters 
+          searchTerm={searchTerm}
+          onSearchChange={handleSearchChange}
+          filters={filters}
+          onFilterChange={handleFilterChange}
+          disabled={isEditing}
+          hotels={hotels}
+        />
       )}
       
       <AnimatePresence mode="popLayout">
         {hotels.length === 0 ? (
           <HotelListEmptyState key="empty-state" />
         ) : filteredHotels.length === 0 ? (
-          <motion.div
-            key="no-results"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={springConfig}
-            className="p-8 text-center border border-dashed border-indigo-200 dark:border-indigo-800 rounded-lg bg-indigo-50/50 dark:bg-indigo-900/20"
-          >
-            <p className="text-muted-foreground">No hotels match your search criteria</p>
-          </motion.div>
+          <NoResultsFound springConfig={springConfig} />
         ) : (
-          <motion.div 
-            key="results"
-            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6"
-            variants={container}
-            initial="hidden"
-            animate="show"
-            layout="position"
-          >
-            {filteredHotels.map((hotel) => (
-              <HotelCard
-                key={hotel.id}
-                hotel={hotel}
-                isSelected={selectedHotel?.id === hotel.id}
-                onSelect={() => handleSelectHotel(hotel)}
-                onEdit={() => handleEditHotel(hotel)}
-                onDelete={() => handleDeleteClick(hotel)}
-                useGridView={true}
-                disabled={isEditing}
-                hideEditButton={false}
-              />
-            ))}
-          </motion.div>
+          <HotelCardGrid 
+            hotels={filteredHotels}
+            selectedHotel={selectedHotel}
+            onSelectHotel={handleSelectHotel}
+            onEditHotel={handleEditHotel}
+            onDeleteHotel={handleDeleteClick}
+            isEditing={isEditing}
+            springConfig={springConfig}
+          />
         )}
       </AnimatePresence>
 
