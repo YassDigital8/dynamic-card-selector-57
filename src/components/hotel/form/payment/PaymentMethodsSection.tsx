@@ -29,10 +29,14 @@ const PaymentMethodsSection: React.FC = () => {
           console.log("Adding bank transfer method with account details");
           append({
             ...method,
+            enabled: false, // Make sure none are enabled by default
             bankAccountDetails: defaultBankAccountDetails
           });
         } else {
-          append(method);
+          append({
+            ...method,
+            enabled: false // Make sure none are enabled by default
+          });
         }
       });
     }
