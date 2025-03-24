@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FormValues } from '../formSchema';
 import { ContractDocument } from '@/models/HotelModel';
 import { BasicInformation } from '../';
@@ -16,6 +16,7 @@ export interface Step {
   label: string;
   component: React.ReactNode;
   icon?: React.ReactNode;
+  validationFields?: string[]; // Fields to validate for this step
 }
 
 interface UseStepsProps {
@@ -25,6 +26,7 @@ interface UseStepsProps {
 
 export const useSteps = ({ form, hotelId }: UseStepsProps) => {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const [stepsValidity, setStepsValidity] = useState<boolean[]>([]);
   
   // Add type assertion to ensure TypeScript treats the watched value as ContractDocument[]
   const contractDocuments = form.watch("contractDocuments") as ContractDocument[];
@@ -33,27 +35,32 @@ export const useSteps = ({ form, hotelId }: UseStepsProps) => {
     {
       id: 'basic-info',
       label: 'Basic Information',
-      component: <BasicInformation form={form} />
+      component: <BasicInformation form={form} />,
+      validationFields: ['name', 'country', 'governorate', 'streetAddress']
     },
     {
       id: 'amenities',
       label: 'Amenities',
-      component: <AmenitiesSection form={form} hotelId={hotelId} />
+      component: <AmenitiesSection form={form} hotelId={hotelId} />,
+      validationFields: ['amenities']
     },
     {
       id: 'room-types',
       label: 'Room Types',
-      component: <RoomTypesSection form={form} />
+      component: <RoomTypesSection form={form} />,
+      validationFields: []  // Room types are optional
     },
     {
       id: 'contact',
       label: 'Contact & Social Media',
-      component: <ContactDetailsSection />
+      component: <ContactDetailsSection />,
+      validationFields: [] // Contact details are optional
     },
     {
       id: 'extended-features',
       label: 'Extended Features',
-      component: <ExtendedFeaturesSection />
+      component: <ExtendedFeaturesSection />,
+      validationFields: [] // Extended features are optional
     },
     {
       id: 'contract-commercial',
@@ -63,9 +70,43 @@ export const useSteps = ({ form, hotelId }: UseStepsProps) => {
           <ContractDocumentSection />
           <CommercialDealsView contractDocuments={contractDocuments} />
         </div>
-      )
+      ),
+      validationFields: [] // Contract documents are optional
     },
   ];
+
+  // Initialize steps validity array
+  useEffect(() => {
+    setStepsValidity(Array(steps.length).fill(false));
+  }, [steps.length]);
+
+  // Update step validity whenever form values change
+  useEffect(() => {
+    const subscription = form.watch(() => {
+      const newStepsValidity = steps.map((step, index) => {
+        if (!step.validationFields || step.validationFields.length === 0) {
+          return true; // If no validation fields specified, step is always valid
+        }
+        
+        // Check if all required fields for this step have values
+        return step.validationFields.every(field => {
+          const fieldValue = field.includes('.') 
+            ? form.getValues(field as any) 
+            : form.getValues()[field as keyof FormValues];
+            
+          if (fieldValue === undefined || fieldValue === null || fieldValue === '') {
+            return false;
+          }
+          
+          return true;
+        });
+      });
+      
+      setStepsValidity(newStepsValidity);
+    });
+    
+    return () => subscription.unsubscribe();
+  }, [form, steps]);
 
   const goToNextStep = () => {
     if (currentStepIndex < steps.length - 1) {
@@ -93,6 +134,7 @@ export const useSteps = ({ form, hotelId }: UseStepsProps) => {
     isFirstStep,
     goToNextStep,
     goToPreviousStep,
-    goToStep
+    goToStep,
+    stepsValidity
   };
 };

@@ -1,8 +1,8 @@
 
 import React from 'react';
-import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, ArrowRight, Save, Loader2 } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check } from 'lucide-react';
+import { useFormContext } from 'react-hook-form';
 
 interface StepNavigationProps {
   isFirstStep: boolean;
@@ -13,64 +13,62 @@ interface StepNavigationProps {
   isLoading: boolean;
 }
 
-const StepNavigation: React.FC<StepNavigationProps> = ({
-  isFirstStep,
-  isLastStep,
-  onPrevious,
-  onNext,
+const StepNavigation: React.FC<StepNavigationProps> = ({ 
+  isFirstStep, 
+  isLastStep, 
+  onPrevious, 
+  onNext, 
   onSubmit,
-  isLoading
+  isLoading 
 }) => {
+  const form = useFormContext();
+  
+  // Function to validate current step before proceeding
+  const handleNext = async () => {
+    // Get errors before proceeding to check if step is valid
+    const result = await form.trigger();
+    if (result) {
+      onNext();
+    }
+  };
+  
   return (
-    <motion.div 
-      className="flex justify-between mt-8 pt-4 border-t border-gray-100 dark:border-gray-800"
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.2 }}
-    >
+    <div className="flex justify-between pt-4 border-t border-gray-200 dark:border-gray-800">
       <Button
         type="button"
         variant="outline"
         onClick={onPrevious}
         disabled={isFirstStep || isLoading}
-        className="flex items-center gap-1 border-gray-200 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800"
+        className="border-indigo-200 dark:border-indigo-800 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30"
       >
-        <ArrowLeft className="w-4 h-4" />
+        <ArrowLeft className="mr-2 h-4 w-4" />
         Previous
       </Button>
       
-      <div className="flex items-center gap-2">
+      <div className="flex gap-2">
         {isLastStep ? (
-          <Button
-            type="button"
+          <Button 
+            type="button" 
             onClick={onSubmit}
             disabled={isLoading}
-            className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md hover:shadow-lg transition-all duration-200 dark:from-blue-600 dark:to-indigo-700"
+            className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
           >
-            {isLoading ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-1 animate-spin" />
-                Saving...
-              </>
-            ) : (
-              <>
-                <Save className="w-4 h-4 mr-1" />
-                Save Hotel
-              </>
-            )}
+            <Check className="mr-2 h-4 w-4" />
+            {isLoading ? 'Saving...' : 'Save Hotel'}
           </Button>
         ) : (
-          <Button
-            type="button"
-            onClick={onNext}
-            className="bg-blue-600 hover:bg-blue-700 text-white"
+          <Button 
+            type="button" 
+            onClick={handleNext}
+            disabled={isLoading}
+            className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
           >
             Next Step
-            <ArrowRight className="w-4 h-4 ml-1" />
+            <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         )}
       </div>
-    </motion.div>
+    </div>
   );
 };
 

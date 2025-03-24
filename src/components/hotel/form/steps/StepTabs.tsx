@@ -8,12 +8,14 @@ interface StepTabsProps {
   steps: Step[];
   currentStepIndex: number;
   onStepChange: (index: number) => void;
+  stepsValidity: boolean[]; // Add this new prop
 }
 
 const StepTabs: React.FC<StepTabsProps> = ({
   steps,
   currentStepIndex,
-  onStepChange
+  onStepChange,
+  stepsValidity
 }) => {
   return (
     <div className="relative">
@@ -21,7 +23,8 @@ const StepTabs: React.FC<StepTabsProps> = ({
       <div className="flex justify-between">
         {steps.map((step, index) => {
           const isActive = index === currentStepIndex;
-          const isCompleted = index < currentStepIndex;
+          const isCompleted = index < currentStepIndex && stepsValidity[index];
+          const hasError = index < currentStepIndex && !stepsValidity[index];
           
           return (
             <button
@@ -39,6 +42,8 @@ const StepTabs: React.FC<StepTabsProps> = ({
                     ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md"
                     : isCompleted
                     ? "bg-green-500 text-white"
+                    : hasError
+                    ? "bg-red-500 text-white"
                     : "bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-400"
                 )}
                 whileHover={{ scale: 1.05 }}
@@ -59,6 +64,21 @@ const StepTabs: React.FC<StepTabsProps> = ({
                       d="M5 13l4 4L19 7"
                     />
                   </svg>
+                ) : hasError ? (
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
                 ) : (
                   index + 1
                 )}
@@ -68,6 +88,8 @@ const StepTabs: React.FC<StepTabsProps> = ({
                   "text-xs whitespace-nowrap",
                   isActive
                     ? "text-blue-600 font-medium dark:text-blue-400"
+                    : hasError
+                    ? "text-red-500 dark:text-red-400"
                     : "text-gray-500 dark:text-gray-400"
                 )}
               >
