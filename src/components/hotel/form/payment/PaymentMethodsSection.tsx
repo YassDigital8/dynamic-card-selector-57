@@ -8,7 +8,6 @@ import { Separator } from '@/components/ui/separator';
 import { defaultBankAccountDetails } from '../formDefaults';
 import { DEFAULT_PAYMENT_METHODS } from './paymentMethodConstants';
 import PaymentMethodItem from './PaymentMethodItem';
-import AddPaymentMethod from './AddPaymentMethod';
 
 const PaymentMethodsSection: React.FC = () => {
   const form = useFormContext<FormValues>();
@@ -39,14 +38,6 @@ const PaymentMethodsSection: React.FC = () => {
     }
   }, [fields.length, append]);
   
-  const handleAddPaymentMethod = (name: string) => {
-    append({
-      id: `method-${Date.now()}`,
-      name: name.trim(),
-      enabled: true
-    });
-  };
-  
   return (
     <Card>
       <CardHeader>
@@ -68,10 +59,6 @@ const PaymentMethodsSection: React.FC = () => {
               onRemove={() => remove(index)}
             />
           ))}
-          
-          <Separator className="my-4" />
-          
-          <AddPaymentMethod onAdd={handleAddPaymentMethod} />
         </div>
       </CardContent>
     </Card>

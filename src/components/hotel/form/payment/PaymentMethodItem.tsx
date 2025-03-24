@@ -7,8 +7,6 @@ import {
   FormLabel
 } from '@/components/ui/form';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Button } from '@/components/ui/button';
-import { X } from 'lucide-react';
 import { useFormContext } from 'react-hook-form';
 import { FormValues } from '../formSchema';
 
@@ -18,12 +16,11 @@ interface PaymentMethodItemProps {
   onRemove: (index: number) => void;
 }
 
-const PaymentMethodItem: React.FC<PaymentMethodItemProps> = ({ index, field, onRemove }) => {
+const PaymentMethodItem: React.FC<PaymentMethodItemProps> = ({ index, field }) => {
   const form = useFormContext<FormValues>();
   
   // Use watch for reactivity - this will trigger re-render when the checkbox changes
   const isEnabled = form.watch(`paymentMethods.${index}.enabled`);
-  const isCustomMethod = !['cash', 'credit-card', 'debit-card', 'bank-transfer'].includes(field.id);
 
   // Debug logging to help understand state
   useEffect(() => {
@@ -53,18 +50,6 @@ const PaymentMethodItem: React.FC<PaymentMethodItemProps> = ({ index, field, onR
                 {field.name}
               </FormLabel>
             </div>
-            {isCustomMethod && (
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => onRemove(index)}
-                className="h-8 w-8 p-0 text-red-500 hover:text-red-700"
-              >
-                <X className="h-4 w-4" />
-                <span className="sr-only">Remove</span>
-              </Button>
-            )}
           </FormItem>
         )}
       />
