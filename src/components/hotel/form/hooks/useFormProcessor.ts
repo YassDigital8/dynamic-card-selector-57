@@ -30,16 +30,11 @@ export const useFormProcessor = ({
       if (invalidStepIndex !== -1) {
         console.log("Invalid step found at index:", invalidStepIndex);
         
-        // Show error toast about incomplete steps
+        // Show error toast about incomplete steps - without using JSX
         toast({
           variant: "destructive",
           title: "Incomplete Form",
-          description: (
-            <div className="flex items-center gap-2">
-              <AlertCircle className="h-4 w-4" />
-              <span>Please complete all required information before saving. Navigating to the first incomplete step.</span>
-            </div>
-          ),
+          description: "Please complete all required information before saving. Navigating to the first incomplete step."
         });
         
         // Navigate to the first invalid step
