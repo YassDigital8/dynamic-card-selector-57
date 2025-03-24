@@ -24,17 +24,23 @@ export const useAmenityStepManager = ({
   const { handleRemoveImage } = useAmenityRemoveImage({ form });
   const { hasEnabledAmenities, amenities, getEnabledCount } = useEnabledAmenities({ form });
 
-  // Force validation on mount and when amenities change
+  // Force validation on mount and when amenities change, but prevent excessive re-validation
   useEffect(() => {
-    // This will ensure the step is revalidated whenever amenities change
-    form.trigger('amenities');
+    // Avoid excessive validation by debouncing or using a flag
+    const timeoutId = setTimeout(() => {
+      form.trigger('amenities');
+      
+      console.log('Amenities updated:', amenities);
+      const enabledCount = getEnabledCount();
+      console.log('Any amenity enabled:', hasEnabledAmenities(), 'Count:', enabledCount);
+      
+      // Only trigger the parent form if we need to update step status
+      if (form.formState.isValid !== (enabledCount > 0)) {
+        form.trigger();
+      }
+    }, 100);
     
-    console.log('Amenities updated:', amenities);
-    const enabledCount = getEnabledCount();
-    console.log('Any amenity enabled:', hasEnabledAmenities(), 'Count:', enabledCount);
-    
-    // Force a validation of the parent form to update step status
-    form.trigger();
+    return () => clearTimeout(timeoutId);
   }, [amenities, hasEnabledAmenities, form, getEnabledCount]);
 
   return {

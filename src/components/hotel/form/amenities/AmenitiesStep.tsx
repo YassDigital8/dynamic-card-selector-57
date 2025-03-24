@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, memo } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { FormValues } from '../formSchema';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,7 +14,8 @@ interface AmenitiesStepProps {
   hotelId?: string;
 }
 
-const AmenitiesStep: React.FC<AmenitiesStepProps> = ({ form, hotelId }) => {
+// Use memo to prevent excessive re-renders
+const AmenitiesStep: React.FC<AmenitiesStepProps> = memo(({ form, hotelId }) => {
   const {
     selectedAmenity,
     isImageDialogOpen,
@@ -27,36 +28,25 @@ const AmenitiesStep: React.FC<AmenitiesStepProps> = ({ form, hotelId }) => {
     getEnabledCount
   } = useAmenityStepManager({ form, hotelId });
 
-  // Add debug effect to monitor validation state and ensure form revalidation
+  // Add debug effect with a flag to prevent infinite loops
   useEffect(() => {
-    // Initial validation
-    const validateAmenities = () => {
+    let isValidating = false;
+    
+    // Only validate if we're not already validating
+    if (!isValidating) {
+      isValidating = true;
+      
       // Force validation of the amenities field
-      form.trigger('amenities');
+      form.trigger('amenities').finally(() => {
+        isValidating = false;
+      });
       
       // Check enabled count directly from form values for consistency
       const enabledCount = getEnabledCount();
         
       console.log("Enabled amenities in AmenitiesStep:", enabledCount);
       console.log("Step validation should pass:", enabledCount > 0);
-      
-      // Force validation of the whole form to update step indicators
-      setTimeout(() => {
-        form.trigger();
-      }, 50);
-    };
-    
-    // Validate on mount
-    validateAmenities();
-    
-    // Set up subscription to watch amenity changes
-    const subscription = form.watch((value) => {
-      if (value.amenities) {
-        validateAmenities();
-      }
-    });
-    
-    return () => subscription.unsubscribe();
+    }
   }, [form, getEnabledCount]);
 
   return (
@@ -96,6 +86,8 @@ const AmenitiesStep: React.FC<AmenitiesStepProps> = ({ form, hotelId }) => {
       </Card>
     </div>
   );
-};
+});
+
+AmenitiesStep.displayName = 'AmenitiesStep';
 
 export default AmenitiesStep;
