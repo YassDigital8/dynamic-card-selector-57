@@ -9,6 +9,7 @@ import { HotelViewHeader, HotelViewAccordion, ErrorState } from '@/components/ho
 import { BreadcrumbNav } from '@/components/ui/breadcrumb-nav';
 import { Building, Hotel } from 'lucide-react';
 import StandardLayout from '@/components/layout/StandardLayout';
+import { motion } from 'framer-motion';
 
 const HotelView = () => {
   const { hotelId } = useParams<{ hotelId: string }>();
@@ -27,6 +28,31 @@ const HotelView = () => {
     enabled: !!hotelId && !!allHotels.length,
   });
   
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.05
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: {
+        type: "spring",
+        stiffness: 300,
+        damping: 25
+      }
+    }
+  };
+  
   if (isLoading) {
     return (
       <StandardLayout>
@@ -35,7 +61,9 @@ const HotelView = () => {
             { label: 'Hotel Network', href: '/hotel', icon: Building },
             { label: 'Loading...', icon: Hotel }
           ]} />
-          <HotelLoadingIndicator />
+          <div className="bg-white dark:bg-slate-900 rounded-xl p-8 shadow-lg">
+            <HotelLoadingIndicator />
+          </div>
         </div>
       </StandardLayout>
     );
@@ -55,7 +83,9 @@ const HotelView = () => {
             { label: 'Hotel Network', href: '/hotel', icon: Building },
             { label: 'Hotel Not Found', icon: Hotel }
           ]} />
-          <ErrorState />
+          <div className="bg-white dark:bg-slate-900 rounded-xl p-8 shadow-lg">
+            <ErrorState />
+          </div>
         </div>
       </StandardLayout>
     );
@@ -63,14 +93,27 @@ const HotelView = () => {
   
   return (
     <StandardLayout>
-      <div className="container mx-auto py-6 space-y-6">
-        <BreadcrumbNav items={[
-          { label: 'Hotel Network', href: '/hotel', icon: Building },
-          { label: hotel.name || 'Hotel Details', icon: Hotel }
-        ]} />
-        <HotelViewHeader hotel={hotel} />
-        <HotelViewAccordion hotel={hotel} />
-      </div>
+      <motion.div 
+        className="container mx-auto py-6 space-y-6"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        <motion.div variants={itemVariants}>
+          <BreadcrumbNav items={[
+            { label: 'Hotel Network', href: '/hotel', icon: Building },
+            { label: hotel.name || 'Hotel Details', icon: Hotel }
+          ]} />
+        </motion.div>
+        
+        <motion.div variants={itemVariants}>
+          <HotelViewHeader hotel={hotel} />
+        </motion.div>
+        
+        <motion.div variants={itemVariants} className="bg-white dark:bg-slate-900 rounded-xl shadow-lg p-6">
+          <HotelViewAccordion hotel={hotel} />
+        </motion.div>
+      </motion.div>
     </StandardLayout>
   );
 };
