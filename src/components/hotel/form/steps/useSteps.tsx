@@ -57,8 +57,8 @@ export const useSteps = ({ form, hotelId }: UseStepsProps) => {
       validationFields: [] // Contact details are optional
     },
     {
-      id: 'extended-features',
-      label: 'Extended Features',
+      id: 'payment-options',
+      label: 'Payment Options',
       component: <ExtendedFeaturesSection />,
       validationFields: [] // Extended features are optional
     },

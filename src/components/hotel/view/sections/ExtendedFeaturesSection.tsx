@@ -39,7 +39,7 @@ const ExtendedFeaturesSection: React.FC<ExtendedFeaturesSectionProps> = ({ hotel
 
           {/* Payment Methods */}
           <div>
-            <h3 className="text-lg font-medium mb-4">Payment Methods</h3>
+            <h3 className="text-lg font-medium mb-4">Payment Options</h3>
             {hotel.paymentMethods && hotel.paymentMethods.length > 0 ? (
               <div className="space-y-3">
                 {hotel.paymentMethods
