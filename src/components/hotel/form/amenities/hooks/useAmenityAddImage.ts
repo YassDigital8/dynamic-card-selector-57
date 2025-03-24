@@ -1,12 +1,13 @@
 
 import { useCallback } from 'react';
-import { AmenityHookProps, SelectedAmenityType } from './types';
+import { AmenityHookProps } from './types';
 import { useToast } from '@/hooks/use-toast';
 import { AmenityImage } from '@/models/HotelModel';
 import { FileMetadataValues } from '@/hooks/upload/useFileMetadata';
+import { amenitiesWithImages } from '../constants';
 
 interface UseAmenityAddImageProps extends AmenityHookProps {
-  selectedAmenity: SelectedAmenityType | null;
+  selectedAmenity: string;
 }
 
 export const useAmenityAddImage = ({ form, selectedAmenity }: UseAmenityAddImageProps) => {
@@ -18,23 +19,23 @@ export const useAmenityAddImage = ({ form, selectedAmenity }: UseAmenityAddImage
       return;
     }
     
-    const imageFieldName = `amenities.${selectedAmenity.key}Images` as const;
+    const imageFieldName = `amenities.${selectedAmenity}Images` as const;
     const currentImages = form.getValues(imageFieldName as any) || [];
     
     const newImage: AmenityImage = {
       url: imageUrl,
-      description: metadata?.altText || `${selectedAmenity.label} image`,
+      description: metadata?.altText || `${selectedAmenity} image`,
       title: metadata?.title || '',
       caption: metadata?.caption || '',
-      id: `${selectedAmenity.key}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: `${selectedAmenity}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       metadata
     };
     
-    console.log(`Adding image to ${selectedAmenity.key}:`, newImage);
+    console.log(`Adding image to ${selectedAmenity}:`, newImage);
     
     // First, ensure the amenity is enabled
-    if (!form.getValues(`amenities.${selectedAmenity.key}`)) {
-      form.setValue(`amenities.${selectedAmenity.key}`, true, { 
+    if (!form.getValues(`amenities.${selectedAmenity}`)) {
+      form.setValue(`amenities.${selectedAmenity}`, true, { 
         shouldDirty: true,
         shouldTouch: true,
         shouldValidate: true
@@ -55,9 +56,12 @@ export const useAmenityAddImage = ({ form, selectedAmenity }: UseAmenityAddImage
     // Force form validation
     form.trigger();
     
+    // Find the proper display label for the toast
+    const amenityLabel = amenitiesWithImages[selectedAmenity] || selectedAmenity;
+    
     toast({
       title: "Image added",
-      description: `Image was added to ${selectedAmenity.label}. Don't forget to save your changes.`,
+      description: `Image was added to ${amenityLabel}. Don't forget to save your changes.`,
       variant: "default",
     });
   }, [form, selectedAmenity, toast]);
