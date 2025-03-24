@@ -43,6 +43,9 @@ const HotelDetails = memo(({
     onEdit();
   };
 
+  // Get the extra bed price from the extraBedPolicy if available
+  const extraBedPrice = hotel.extraBedPolicy?.pricePerNight;
+
   return (
     <div className="space-y-6">
       <HotelHeader 
@@ -67,7 +70,10 @@ const HotelDetails = memo(({
         posKey={hotel.posKey} 
       />
 
-      <AmenitiesCard amenities={hotel.amenities} />
+      <AmenitiesCard 
+        amenities={hotel.amenities} 
+        extraBedPrice={extraBedPrice}
+      />
 
       <ContactDetailsCard 
         contactDetails={hotel.contactDetails} 

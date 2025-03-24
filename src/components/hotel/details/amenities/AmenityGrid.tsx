@@ -10,12 +10,16 @@ interface AmenityGridProps {
   amenities: HotelAmenities;
   amenityEntries: [keyof HotelAmenities, boolean][];
   onViewImages: (amenity: string) => void;
+  extraData?: {
+    extraBedPrice?: number;
+  };
 }
 
 const AmenityGrid: React.FC<AmenityGridProps> = ({ 
   amenities,
   amenityEntries,
-  onViewImages
+  onViewImages,
+  extraData
 }) => {
   return (
     <motion.div 
@@ -36,6 +40,7 @@ const AmenityGrid: React.FC<AmenityGridProps> = ({
             value={value}
             hasImages={hasImages}
             onViewImages={onViewImages}
+            extraData={extraData}
           />
         );
       })}

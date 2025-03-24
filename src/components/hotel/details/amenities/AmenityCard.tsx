@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Check, X, Image as ImageIcon } from 'lucide-react';
+import { Check, X, Image as ImageIcon, DollarSign } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { staggerItemVariants } from '../../animations/cardAnimations';
 import { HotelAmenities } from '@/models/HotelModel';
@@ -12,6 +12,9 @@ interface AmenityCardProps {
   value: boolean;
   hasImages: boolean;
   onViewImages: (amenity: string) => void;
+  extraData?: {
+    extraBedPrice?: number;
+  };
 }
 
 const AmenityCard: React.FC<AmenityCardProps> = ({
@@ -19,7 +22,8 @@ const AmenityCard: React.FC<AmenityCardProps> = ({
   displayName,
   value,
   hasImages,
-  onViewImages
+  onViewImages,
+  extraData
 }) => {
   return (
     <motion.div 
@@ -48,6 +52,12 @@ const AmenityCard: React.FC<AmenityCardProps> = ({
       </div>
       <span className="text-sm font-medium truncate flex-grow">
         {displayName}
+        {amenityKey === 'extraBed' && value && extraData?.extraBedPrice !== undefined && (
+          <span className="ml-2 inline-flex items-center text-xs text-blue-600 dark:text-blue-400">
+            <DollarSign className="h-3 w-3 mr-0.5" />
+            {extraData.extraBedPrice}
+          </span>
+        )}
       </span>
       {hasImages && value && (
         <Button 

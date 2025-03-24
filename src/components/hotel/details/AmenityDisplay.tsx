@@ -11,9 +11,10 @@ import {
 
 interface AmenityDisplayProps {
   amenities: HotelAmenities;
+  extraBedPrice?: number;
 }
 
-const AmenityDisplay: React.FC<AmenityDisplayProps> = ({ amenities }) => {
+const AmenityDisplay: React.FC<AmenityDisplayProps> = ({ amenities, extraBedPrice }) => {
   useEffect(() => {
     console.log('AmenityDisplay - Rendering with updated amenities');
     
@@ -53,6 +54,7 @@ const AmenityDisplay: React.FC<AmenityDisplayProps> = ({ amenities }) => {
         amenities={amenities}
         amenityEntries={amenityEntries}
         onViewImages={handleViewImages}
+        extraData={{ extraBedPrice }}
       />
 
       {/* Image Gallery Dialog */}
