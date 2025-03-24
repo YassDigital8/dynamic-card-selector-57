@@ -9,8 +9,10 @@ import PageContentWrapper from './layout/PageContentWrapper';
 import HotelList from './HotelList';
 import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { useNavigate } from 'react-router-dom';
 
 const HotelPageContainer: React.FC = () => {
+  const navigate = useNavigate();
   const { posOptions } = usePageSelectionViewModel();
   const [selectedPOS, setSelectedPOS] = useState<string>('');
   
@@ -28,6 +30,11 @@ const HotelPageContainer: React.FC = () => {
   
   const { filters, setFilters, filteredHotels } = useHotelFilters(hotels);
 
+  // Navigate to add hotel page
+  const handleAddHotel = () => {
+    navigate('/hotel/add');
+  };
+
   // If data is not yet loaded, show the loading indicator
   if (!dataLoaded) {
     return (
@@ -43,6 +50,7 @@ const HotelPageContainer: React.FC = () => {
       onSelectPOS={setSelectedPOS}
       filters={filters}
       onFilterChange={setFilters}
+      onAddHotel={handleAddHotel}
     >
       <div className="w-full p-2 sm:p-4">
         <Card className="h-full overflow-hidden border-indigo-100 dark:border-indigo-900 shadow-md bg-white dark:bg-slate-900 rounded-xl">
