@@ -29,20 +29,27 @@ const AmenitiesStep: React.FC<AmenitiesStepProps> = ({ form, hotelId }) => {
   // Add debug effect to monitor validation state and ensure form revalidation
   useEffect(() => {
     // Initial validation
-    form.trigger('amenities');
+    const validateAmenities = () => {
+      form.trigger('amenities');
+      
+      const enabledCount = Object.entries(form.getValues('amenities') || {})
+        .filter(([key, val]) => typeof val === 'boolean' && !key.includes('Images') && val === true)
+        .length;
+        
+      console.log("Enabled amenities in AmenitiesStep:", enabledCount);
+      console.log("Step validation should pass:", enabledCount > 0);
+      
+      // Force validation of the form
+      form.trigger();
+    };
     
+    // Validate on mount
+    validateAmenities();
+    
+    // Set up subscription to watch amenity changes
     const subscription = form.watch((value) => {
       if (value.amenities) {
-        const enabledAmenities = Object.entries(value.amenities)
-          .filter(([key, val]) => typeof val === 'boolean' && val === true)
-          .map(([key]) => key);
-          
-        console.log("Enabled amenities in AmenitiesStep:", 
-          enabledAmenities.length ? enabledAmenities : 'none');
-        console.log("Step validation should pass:", enabledAmenities.length > 0);
-        
-        // Force validation of the form
-        form.trigger();
+        validateAmenities();
       }
     });
     

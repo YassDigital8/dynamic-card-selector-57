@@ -8,7 +8,7 @@ import {
   FormControl,
   FormLabel,
 } from '@/components/ui/form';
-import { Switch } from '@/components/ui/switch';
+import { Checkbox } from '@/components/ui/checkbox';
 import { DollarSign } from 'lucide-react';
 import { LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -141,9 +141,10 @@ const AmenityItem: React.FC<AmenityItemProps> = ({
           render={({ field }) => (
             <FormItem className="flex flex-row items-center space-y-0 m-0">
               <FormControl>
-                <Switch
+                <Checkbox
                   checked={field.value}
                   onCheckedChange={handleToggleChange}
+                  className="data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500"
                 />
               </FormControl>
             </FormItem>

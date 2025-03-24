@@ -24,13 +24,18 @@ export const useAmenityStepManager = ({
   const { handleRemoveImage } = useAmenityRemoveImage({ form });
   const { hasEnabledAmenities, amenities } = useEnabledAmenities({ form });
 
-  // Log amenity status changes
+  // Force validation on mount and when amenities change
   useEffect(() => {
+    // This will ensure the step is revalidated whenever amenities change
+    form.trigger('amenities');
+    
     console.log('Amenities updated:', amenities);
-    console.log('Any amenity enabled:', hasEnabledAmenities());
-  }, [amenities, hasEnabledAmenities]);
+    const enabledCount = Object.entries(amenities || {})
+      .filter(([key, value]) => typeof value === 'boolean' && value === true)
+      .length;
+    console.log('Any amenity enabled:', hasEnabledAmenities(), 'Count:', enabledCount);
+  }, [amenities, hasEnabledAmenities, form]);
 
-  // Return all the functionality
   return {
     selectedAmenity,
     isImageDialogOpen,
