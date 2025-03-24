@@ -1,5 +1,5 @@
 
-import React, { memo } from 'react';
+import React, { memo, useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { Form } from '@/components/ui/form';
@@ -28,6 +28,25 @@ const HotelForm = memo(({
   });
   
   const { handleSubmit } = useFormProcessor({ form, onSubmit });
+
+  // Make sure extraBedPrice is properly set when extraBed is enabled
+  useEffect(() => {
+    const subscription = form.watch((value, { name }) => {
+      if (name === 'amenities.extraBed' && form.getValues('amenities.extraBed')) {
+        // Initialize extra bed policy if not present when enabling the extraBed amenity
+        if (!form.getValues('extraBedPolicy')) {
+          form.setValue('extraBedPolicy', {
+            pricePerNight: 0,
+            availableForRoomTypes: [],
+            maxExtraBedsPerRoom: 1,
+            notes: ''
+          }, { shouldValidate: true });
+        }
+      }
+    });
+    
+    return () => subscription.unsubscribe();
+  }, [form]);
 
   return (
     <Form {...form}>
