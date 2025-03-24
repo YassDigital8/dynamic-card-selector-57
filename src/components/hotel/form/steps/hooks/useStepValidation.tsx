@@ -49,6 +49,24 @@ export const useStepValidation = ({ form, steps, visitedSteps }: UseStepValidati
     return isValid;
   };
 
+  // Immediately validate steps when they're marked as visited
+  useEffect(() => {
+    if (visitedSteps.some(visited => visited)) {
+      const formData = form.getValues();
+      console.log("Visited steps changed, validating steps:", visitedSteps);
+      
+      const newStepsValidity = steps.map((step, index) => {
+        if (visitedSteps[index]) {
+          return validateStep(step, formData, index);
+        }
+        return stepsValidity[index]; 
+      });
+      
+      console.log("Initial validation result:", newStepsValidity);
+      setStepsValidity(newStepsValidity);
+    }
+  }, [visitedSteps, form, steps]);
+
   // Update step validity whenever form values change
   useEffect(() => {
     const subscription = form.watch((formValues) => {
@@ -78,7 +96,7 @@ export const useStepValidation = ({ form, steps, visitedSteps }: UseStepValidati
     console.log(`Validating steps up to index ${upToIndex}`);
     
     const newStepsValidity = steps.map((step, stepIndex) => {
-      if (stepIndex <= upToIndex) {
+      if (stepIndex <= upToIndex && visitedSteps[stepIndex]) {
         return validateStep(step, formData, stepIndex);
       }
       return stepsValidity[stepIndex];
@@ -87,7 +105,7 @@ export const useStepValidation = ({ form, steps, visitedSteps }: UseStepValidati
     console.log("Validation result:", newStepsValidity);
     setStepsValidity(newStepsValidity);
     return newStepsValidity;
-  }, [form, steps, stepsValidity]);
+  }, [form, steps, stepsValidity, visitedSteps]);
 
   return {
     stepsValidity,

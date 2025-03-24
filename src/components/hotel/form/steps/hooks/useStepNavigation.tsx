@@ -45,8 +45,6 @@ export const useStepNavigation = ({ form, steps }: UseStepNavigationProps) => {
         return newVisited;
       });
       
-      // Force validation of the current step before moving
-      const formData = form.getValues();
       console.log(`Moving to next step: ${currentStepIndex + 1}`);
       
       setCurrentStepIndex(currentStepIndex + 1);

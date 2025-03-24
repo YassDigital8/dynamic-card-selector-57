@@ -60,6 +60,29 @@ const AmenityItem: React.FC<AmenityItemProps> = ({
   // Check if the current amenity is extra bed
   const isExtraBed = name === 'extraBed';
 
+  // Trigger validation when amenity is toggled
+  const handleToggleChange = (checked: boolean) => {
+    // Update the form value
+    form.setValue(`amenities.${name}` as any, checked, { 
+      shouldValidate: true,
+      shouldDirty: true,
+      shouldTouch: true
+    });
+    
+    // For extraBed, also set up the policy
+    if (isExtraBed && checked && !form.getValues('extraBedPolicy')) {
+      form.setValue('extraBedPolicy', {
+        pricePerNight: 0,
+        availableForRoomTypes: [],
+        maxExtraBedsPerRoom: 1,
+        notes: ''
+      }, { shouldValidate: true });
+    }
+    
+    // Trigger validation for the amenities step
+    form.trigger();
+  };
+
   useEffect(() => {
     // If this is the extraBed amenity and it has just been enabled,
     // ensure we have a default extraBedPolicy
@@ -105,7 +128,7 @@ const AmenityItem: React.FC<AmenityItemProps> = ({
               <FormControl>
                 <Switch
                   checked={field.value}
-                  onCheckedChange={field.onChange}
+                  onCheckedChange={handleToggleChange}
                 />
               </FormControl>
             </FormItem>

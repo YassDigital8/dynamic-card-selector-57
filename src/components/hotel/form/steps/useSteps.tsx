@@ -36,7 +36,10 @@ export const useSteps = ({ form, hotelId }: UseStepsProps) => {
       component: <AmenitiesSection form={form} hotelId={hotelId} />,
       // Custom validation to check if at least one amenity is enabled
       customValidation: (formValues: FormValues) => {
-        if (!formValues.amenities) return false;
+        if (!formValues.amenities) {
+          console.log("No amenities object found");
+          return false;
+        }
         
         // Check all boolean properties in the amenities object
         const amenityKeys = Object.keys(formValues.amenities);
@@ -66,7 +69,9 @@ export const useSteps = ({ form, hotelId }: UseStepsProps) => {
       component: <RoomTypesSection form={form} />,
       // Custom validation to check if at least one room type is added
       customValidation: (formValues: FormValues) => {
-        return formValues.roomTypes && formValues.roomTypes.length > 0;
+        const isValid = formValues.roomTypes && formValues.roomTypes.length > 0;
+        console.log("Room types validation:", isValid, formValues.roomTypes);
+        return isValid;
       }
     },
     {
