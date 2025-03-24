@@ -85,7 +85,16 @@ const AmenityItem: React.FC<AmenityItemProps> = ({
     setTimeout(() => {
       // Explicitly trigger validation for amenities step
       form.trigger();
-      console.log("Form values after toggle:", form.getValues());
+      
+      // For debugging, log the amenities values after the state change
+      const amenities = form.getValues('amenities');
+      console.log("Form amenities after toggle:", amenities);
+      
+      // Log a count of enabled amenities for validation debugging
+      const enabledCount = Object.entries(amenities)
+        .filter(([key, value]) => typeof value === 'boolean' && value === true)
+        .length;
+      console.log(`Enabled amenities count: ${enabledCount}`);
     }, 10);
   };
 
@@ -101,13 +110,6 @@ const AmenityItem: React.FC<AmenityItemProps> = ({
       }, { shouldValidate: true });
     }
   }, [isExtraBed, amenityEnabled, form]);
-
-  // Debug effect for amenities
-  useEffect(() => {
-    if (amenityEnabled) {
-      console.log(`Amenity ${name} is enabled:`, amenityEnabled);
-    }
-  }, [amenityEnabled, name]);
 
   return (
     <div className={cn(

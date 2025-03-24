@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { FormValues } from '../formSchema';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -26,6 +26,18 @@ const AmenitiesStep: React.FC<AmenitiesStepProps> = ({ form, hotelId }) => {
     hasEnabledAmenities
   } = useAmenityStepManager({ form, hotelId });
 
+  // Add debug effect to monitor validation state
+  useEffect(() => {
+    const amenities = form.getValues('amenities');
+    if (amenities) {
+      const enabledAmenities = Object.entries(amenities)
+        .filter(([key, value]) => typeof value === 'boolean' && value === true);
+      
+      console.log("Enabled amenities in AmenitiesStep:", enabledAmenities.length ? enabledAmenities.map(([key]) => key) : 'none');
+      console.log("Step validation should pass:", enabledAmenities.length > 0);
+    }
+  }, [form]);
+
   return (
     <div className="space-y-6">
       <Card>
@@ -37,6 +49,7 @@ const AmenitiesStep: React.FC<AmenitiesStepProps> = ({ form, hotelId }) => {
             <InfoIcon className="h-4 w-4 text-blue-500" />
             <AlertDescription>
               Select the amenities available at your hotel. For some amenities, you can add images to showcase them.
+              <strong className="block mt-1 text-amber-600">You must enable at least one amenity to proceed.</strong>
             </AlertDescription>
           </Alert>
 

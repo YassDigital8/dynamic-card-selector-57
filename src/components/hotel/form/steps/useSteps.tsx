@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { FormValues } from '../formSchema';
 import { ContractDocument } from '@/models/HotelModel';
@@ -34,18 +35,29 @@ export const useSteps = ({ form, hotelId }: UseStepsProps) => {
       id: 'amenities',
       label: 'Amenities',
       component: <AmenitiesSection form={form} hotelId={hotelId} />,
-      // Simplified custom validation to check if at least one amenity is enabled
+      // Enhanced validation to check if at least one amenity is enabled
       customValidation: (formValues: FormValues) => {
-        if (!formValues.amenities) return false;
+        if (!formValues.amenities) {
+          console.log("Amenities validation failed: No amenities object found");
+          return false;
+        }
+        
+        // Log the entire amenities object for debugging
+        console.log("Current amenities object:", formValues.amenities);
         
         // Get only boolean properties in the amenities object
         const amenityBooleans = Object.entries(formValues.amenities)
           .filter(([key, value]) => typeof value === 'boolean');
         
-        // Check if at least one amenity is enabled (true)
-        const hasEnabledAmenity = amenityBooleans.some(([_, value]) => value === true);
+        console.log("Amenity boolean entries:", amenityBooleans);
         
-        console.log("Amenities validation:", hasEnabledAmenity);
+        // Check if at least one amenity is enabled (true)
+        const hasEnabledAmenity = amenityBooleans.some(([key, value]) => {
+          console.log(`Checking amenity ${key}: ${value}`);
+          return value === true;
+        });
+        
+        console.log("Amenities validation result:", hasEnabledAmenity);
         return hasEnabledAmenity;
       }
     },
