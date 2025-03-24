@@ -42,6 +42,7 @@ const StepBasedForm: React.FC<StepBasedFormProps> = ({
       <StepContent
         currentStepIndex={currentStepIndex}
         stepLabel={steps[currentStepIndex].label}
+        showStepLabel={false} // Set to false to hide the repeated step label
       >
         {steps[currentStepIndex].component}
       </StepContent>

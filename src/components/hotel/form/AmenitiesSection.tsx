@@ -5,7 +5,6 @@ import { FormValues } from './formSchema';
 import { AmenityImageUploadDialog, amenitiesWithImages } from './amenities';
 import { useAmenityImages } from './amenities/useAmenityImages';
 import AmenityList from './amenities/AmenityList';
-import AmenitiesSectionHeader from './amenities/AmenitiesSectionHeader';
 
 interface AmenitiesSectionProps {
   form: UseFormReturn<FormValues>;
@@ -25,8 +24,6 @@ const AmenitiesSection: React.FC<AmenitiesSectionProps> = ({ form, hotelId }) =>
 
   return (
     <div className="space-y-6 col-span-2">
-      <AmenitiesSectionHeader />
-      
       <AmenityList 
         form={form}
         onAddImage={openImageDialog}

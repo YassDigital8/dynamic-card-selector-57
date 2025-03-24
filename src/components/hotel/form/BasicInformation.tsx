@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import {
@@ -9,7 +8,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { FormValues } from './formSchema';
 import RatingInput from './RatingInput';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -72,12 +71,10 @@ const BasicInformation: React.FC<BasicInformationProps> = ({ form }) => {
     fetchPOSOptions();
   }, [isApiLive]);
 
-  // Handle POS selection and update country
   const handlePOSChange = (value: string) => {
     const selectedPOS = posOptions.find(pos => pos.key === value);
     
     if (selectedPOS) {
-      // Update country field with the English name from the POS
       form.setValue('country', selectedPOS.englishName, { shouldValidate: true });
     }
     
@@ -86,10 +83,7 @@ const BasicInformation: React.FC<BasicInformationProps> = ({ form }) => {
 
   return (
     <Card className="col-span-1 md:col-span-2">
-      <CardHeader>
-        <CardTitle className="text-xl">Basic Information</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-4 pt-6">
         <FormField
           control={form.control}
           name="name"
