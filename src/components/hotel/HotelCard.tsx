@@ -41,12 +41,12 @@ const HotelCard: React.FC<HotelCardProps> = ({
       y: 0
     },
     hover: { 
-      scale: disabled ? 1 : 1.03,
+      scale: disabled ? 1 : 1.02,
       boxShadow: disabled ? "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)" : "0 10px 15px -3px rgba(79, 70, 229, 0.15), 0 4px 6px -2px rgba(79, 70, 229, 0.1)",
-      y: disabled ? 0 : -4,
+      y: disabled ? 0 : -2,
       transition: {
         type: "spring",
-        stiffness: 400,
+        stiffness: 300,
         damping: 20
       }
     },
@@ -105,9 +105,10 @@ const HotelCard: React.FC<HotelCardProps> = ({
       >
         <HotelCardHeader hotel={hotel} useGridView={true} />
         
-        <CardContent className="flex-1 p-3">
-          <div className="space-y-3">
+        <CardContent className="flex-1 p-3 flex flex-col">
+          <div className="space-y-3 mb-auto">
             <HotelCardAmenities amenities={hotel.amenities} />
+            <HotelLocationInfo hotel={hotel} />
           </div>
           
           <HotelCardFooter 
