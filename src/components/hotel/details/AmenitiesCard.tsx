@@ -16,6 +16,13 @@ const AmenitiesCard: React.FC<AmenitiesCardProps> = ({ amenities, extraBedPrice 
     .filter(([key]) => !key.includes('Images'))
     .some(([_, value]) => value === true);
 
+  // If the extra bed amenity is enabled, log the price
+  React.useEffect(() => {
+    if (amenities.extraBed) {
+      console.log('Extra bed is enabled with price:', extraBedPrice);
+    }
+  }, [amenities.extraBed, extraBedPrice]);
+
   return (
     <Card className="bg-white dark:bg-gray-900 overflow-hidden shadow-sm border-gray-200 dark:border-gray-800 rounded-lg">
       <CardHeader className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/50 dark:to-indigo-950/50">

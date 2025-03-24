@@ -25,6 +25,11 @@ const AmenityCard: React.FC<AmenityCardProps> = ({
   onViewImages,
   extraData
 }) => {
+  // Log for debugging
+  if (amenityKey === 'extraBed' && value) {
+    console.log('Extra bed enabled with price:', extraData?.extraBedPrice);
+  }
+
   return (
     <motion.div 
       key={amenityKey}

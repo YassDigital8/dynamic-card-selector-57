@@ -9,7 +9,7 @@ import {
   FormMessage,
   FormDescription
 } from '@/components/ui/form';
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 import { FormValues } from '../formSchema';
 import { Bed, DollarSign } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -19,10 +19,12 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 const ExtraBedPricingSection: React.FC = () => {
   const form = useFormContext<FormValues>();
   const roomTypes = form.watch('roomTypes') || [];
+  const amenities = form.watch('amenities') || {};
+  const extraBedEnabled = amenities.extraBed || false;
 
   // Initialize extra bed policy if not present
   React.useEffect(() => {
-    if (!form.getValues('extraBedPolicy')) {
+    if (!form.getValues('extraBedPolicy') && extraBedEnabled) {
       form.setValue('extraBedPolicy', {
         pricePerNight: 0,
         availableForRoomTypes: [],
@@ -30,7 +32,7 @@ const ExtraBedPricingSection: React.FC = () => {
         notes: ''
       });
     }
-  }, [form]);
+  }, [form, extraBedEnabled]);
 
   // Toggle extra bed availability
   const toggleRoomTypeForExtraBed = (roomTypeId: string) => {
@@ -45,6 +47,27 @@ const ExtraBedPricingSection: React.FC = () => {
       form.setValue('extraBedPolicy.availableForRoomTypes', [...currentAvailable, roomTypeId], { shouldValidate: true });
     }
   };
+
+  // If extra bed is not enabled, don't show the pricing section
+  if (!extraBedEnabled) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-xl flex items-center gap-2">
+            <Bed className="h-5 w-5 text-blue-500" />
+            Extra Bed Pricing
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-md text-center">
+            <p className="text-gray-500 dark:text-gray-400">
+              Enable the Extra Bed amenity in the Amenities section to configure extra bed pricing.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card>

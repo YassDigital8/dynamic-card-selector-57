@@ -17,6 +17,7 @@ interface AmenityDisplayProps {
 const AmenityDisplay: React.FC<AmenityDisplayProps> = ({ amenities, extraBedPrice }) => {
   useEffect(() => {
     console.log('AmenityDisplay - Rendering with updated amenities');
+    console.log('Extra bed price:', extraBedPrice);
     
     // Check all image arrays with more detail
     Object.entries(amenityImageMapping).forEach(([amenityKey, imagesKey]) => {
@@ -29,7 +30,7 @@ const AmenityDisplay: React.FC<AmenityDisplayProps> = ({ amenities, extraBedPric
         console.log(`${amenityKey} is enabled but has no images or images array is invalid`);
       }
     });
-  }, [amenities]);
+  }, [amenities, extraBedPrice]);
 
   // Extract amenity entries, filtering out the image arrays
   const amenityEntries = Object.entries(amenities)
