@@ -194,7 +194,7 @@ export const defaultHotels: Hotel[] = [
       swimmingPool: false,
       petsAllowed: true,
       extraBed: true,
-      shuttleBus: true
+      shuttleBus: false
     },
     roomTypes: [
       {
@@ -366,7 +366,7 @@ export const defaultHotels: Hotel[] = [
       swimmingPool: false,
       petsAllowed: true,
       extraBed: true,
-      shuttleBus: true
+      shuttleBus: false
     },
     roomTypes: [
       {

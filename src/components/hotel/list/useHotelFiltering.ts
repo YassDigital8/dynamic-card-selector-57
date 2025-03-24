@@ -1,4 +1,3 @@
-
 import { useState, useCallback, useMemo } from 'react';
 import { Hotel, HotelAmenities } from '@/models/HotelModel';
 import { DEFAULT_PAYMENT_METHODS } from '../form/payment/paymentMethodConstants';
@@ -21,7 +20,8 @@ const createEmptyAmenitiesFilter = (): AmenitiesFilter => {
     wifi: false,
     swimmingPool: false,
     petsAllowed: false,
-    extraBed: false
+    extraBed: false,
+    shuttleBus: false
   };
 };
 
