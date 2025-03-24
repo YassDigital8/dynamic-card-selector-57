@@ -20,9 +20,11 @@ export const useFormProcessor = ({
   const { toast } = useToast();
   
   const handleSubmit = (data: FormValues) => {
+    console.log("Handling form submission. Steps validity:", stepsValidity);
+    
     // If we have step validation info, use it to check if all steps are valid
     if (stepsValidity && goToStep) {
-      const invalidStepIndex = stepsValidity.findIndex(valid => !valid);
+      const invalidStepIndex = stepsValidity.findIndex(valid => valid === false);
       
       if (invalidStepIndex !== -1) {
         // Show error toast about incomplete steps

@@ -1,4 +1,5 @@
-import React from 'react';
+
+import React, { useEffect } from 'react';
 import { FormValues } from '../formSchema';
 import { ContractDocument } from '@/models/HotelModel';
 import { BasicInformation } from '../';
@@ -22,7 +23,8 @@ export const useSteps = ({ form, hotelId }: UseStepsProps) => {
   // Add type assertion to ensure TypeScript treats the watched value as ContractDocument[]
   const contractDocuments = form.watch("contractDocuments") as ContractDocument[];
   
-  const steps: Step[] = [
+  // Initialize steps with proper checking
+  const steps: Step[] = React.useMemo(() => [
     {
       id: 'basic-info',
       label: 'Basic Information',
@@ -103,7 +105,7 @@ export const useSteps = ({ form, hotelId }: UseStepsProps) => {
       component: <PreviewSection />,
       validationFields: [] // Preview has no validation
     },
-  ];
+  ], [form, hotelId, contractDocuments]);
 
   const {
     currentStepIndex,
@@ -118,6 +120,13 @@ export const useSteps = ({ form, hotelId }: UseStepsProps) => {
     form,
     steps
   });
+
+  // Log states for debugging
+  useEffect(() => {
+    console.log("Current step index:", currentStepIndex);
+    console.log("Steps length:", steps.length);
+    console.log("Steps validity:", stepsValidity);
+  }, [currentStepIndex, steps.length, stepsValidity]);
 
   return {
     steps,

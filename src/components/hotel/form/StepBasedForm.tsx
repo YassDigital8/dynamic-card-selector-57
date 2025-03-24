@@ -47,6 +47,18 @@ const StepBasedForm: React.FC<StepBasedFormProps> = ({
     }
   }, [goToStep, onGoToStepChange]);
 
+  // Safety check: If steps are not yet loaded, render a loading state
+  if (!steps || steps.length === 0 || currentStepIndex === undefined || currentStepIndex < 0) {
+    return <div className="p-4 text-center">Loading form steps...</div>;
+  }
+
+  // Additional safety check for the current step
+  const currentStep = steps[currentStepIndex];
+  if (!currentStep) {
+    console.error(`Invalid step index: ${currentStepIndex}, total steps: ${steps.length}`);
+    return <div className="p-4 text-center text-red-500">Error loading form. Please try again.</div>;
+  }
+
   return (
     <div className="space-y-8">
       <StepTabs
@@ -59,10 +71,10 @@ const StepBasedForm: React.FC<StepBasedFormProps> = ({
 
       <StepContent
         currentStepIndex={currentStepIndex}
-        stepLabel={steps[currentStepIndex].label}
-        showStepLabel={false} // Set to false to hide the repeated step label
+        stepLabel={currentStep.label}
+        showStepLabel={false}
       >
-        {steps[currentStepIndex].component}
+        {currentStep.component}
       </StepContent>
 
       <StepNavigation
