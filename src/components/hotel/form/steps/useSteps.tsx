@@ -117,37 +117,45 @@ export const useSteps = ({ form, hotelId }: UseStepsProps) => {
     });
   }, [steps.length]);
 
+  // Function to validate a specific step
+  const validateStep = (step: Step, formValues: FormValues, index: number): boolean => {
+    // If using custom validation
+    if (step.customValidation) {
+      return step.customValidation(formValues);
+    }
+    
+    // If no validation fields specified and no custom validation, step is always valid
+    if (!step.validationFields || step.validationFields.length === 0) {
+      return true;
+    }
+    
+    // Check if all required fields for this step have values
+    return step.validationFields.every(field => {
+      const fieldValue = field.includes('.') 
+        ? form.getValues(field as any) 
+        : form.getValues()[field as keyof FormValues];
+        
+      if (fieldValue === undefined || fieldValue === null || fieldValue === '') {
+        return false;
+      }
+      
+      return true;
+    });
+  };
+
   // Update step validity whenever form values change
   useEffect(() => {
     const subscription = form.watch((formValues) => {
+      const formData = form.getValues();
+      
+      // Validate all visited steps
       const newStepsValidity = steps.map((step, index) => {
-        // If the step hasn't been visited yet, don't validate it
+        // If the step hasn't been visited yet or comes after current step, don't validate it
         if (!visitedSteps[index]) {
           return false;
         }
         
-        // If using custom validation
-        if (step.customValidation) {
-          return step.customValidation(form.getValues());
-        }
-        
-        // If no validation fields specified and no custom validation, step is always valid
-        if (!step.validationFields || step.validationFields.length === 0) {
-          return true;
-        }
-        
-        // Check if all required fields for this step have values
-        return step.validationFields.every(field => {
-          const fieldValue = field.includes('.') 
-            ? form.getValues(field as any) 
-            : form.getValues()[field as keyof FormValues];
-            
-          if (fieldValue === undefined || fieldValue === null || fieldValue === '') {
-            return false;
-          }
-          
-          return true;
-        });
+        return validateStep(step, formData, index);
       });
       
       setStepsValidity(newStepsValidity);
@@ -175,12 +183,26 @@ export const useSteps = ({ form, hotelId }: UseStepsProps) => {
   };
 
   const goToStep = (index: number) => {
-    // Mark this step as visited
+    // Mark this step and all steps before it as visited
     setVisitedSteps(prev => {
       const newVisited = [...prev];
-      newVisited[index] = true;
+      // Mark all steps up to and including the target step as visited
+      for (let i = 0; i <= index; i++) {
+        newVisited[i] = true;
+      }
       return newVisited;
     });
+    
+    // Immediately validate all visited steps to update status indicators
+    const formData = form.getValues();
+    const newStepsValidity = steps.map((step, stepIndex) => {
+      if (stepIndex <= index) {
+        return validateStep(step, formData, stepIndex);
+      }
+      return stepsValidity[stepIndex];
+    });
+    
+    setStepsValidity(newStepsValidity);
     setCurrentStepIndex(index);
   };
 
