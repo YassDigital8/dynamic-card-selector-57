@@ -28,7 +28,9 @@ const StepTabs: React.FC<StepTabsProps> = ({
           const isActive = index === currentStepIndex;
           const isVisited = visitedSteps[index];
           const isCompleted = isVisited && stepsValidity[index];
-          const hasError = isVisited && !stepsValidity[index];
+          // Only show error state if the step has been visited (but not active)
+          // and doesn't pass validation
+          const hasError = isVisited && !isActive && !stepsValidity[index];
           
           return (
             <button

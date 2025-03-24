@@ -18,9 +18,8 @@ export const useStepNavigation = ({ form, steps }: UseStepNavigationProps) => {
   useEffect(() => {
     // Initialize all as false
     const initialVisitedSteps = Array(steps.length).fill(false);
-    // Mark first step (Basic Info) and second step (Amenities) as visited by default
+    // Mark only the first step (Basic Info) as visited by default
     initialVisitedSteps[0] = true;
-    initialVisitedSteps[1] = true;
     setVisitedSteps(initialVisitedSteps);
   }, [steps.length]);
 
@@ -33,9 +32,9 @@ export const useStepNavigation = ({ form, steps }: UseStepNavigationProps) => {
   // Validate initially visited steps
   useEffect(() => {
     if (visitedSteps.some(visited => visited)) {
-      validateSteps(1); // Validate up to amenities step
+      validateSteps(0); // Only validate the first step initially
     }
-  }, [visitedSteps]);
+  }, [visitedSteps, validateSteps]);
 
   const goToNextStep = () => {
     if (currentStepIndex < steps.length - 1) {
