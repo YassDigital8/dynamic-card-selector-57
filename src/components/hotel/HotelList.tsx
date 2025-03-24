@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Hotel } from '@/models/HotelModel';
 import DeleteHotelDialog from './DeleteHotelDialog';
@@ -27,6 +27,17 @@ const HotelList: React.FC<HotelListProps> = ({
   const [hotelToDelete, setHotelToDelete] = useState<Hotel | null>(null);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [filters, setFilters] = useState({
+    pos: null as string | null,
+    country: null as string | null,
+    amenities: {
+      wifi: false,
+      restaurant: false,
+      gym: false,
+      swimmingPool: false
+    },
+    stars: null as number | null
+  });
 
   const handleDeleteClick = (hotel: Hotel) => {
     if (isEditing) return;
@@ -54,11 +65,33 @@ const HotelList: React.FC<HotelListProps> = ({
     }
   };
 
-  const filteredHotels = hotels.filter(hotel => 
-    hotel.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    hotel.country.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    hotel.governorate.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Apply all filters to hotels
+  const filteredHotels = hotels.filter(hotel => {
+    // Text search filter
+    const matchesSearch = 
+      hotel.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      hotel.country.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      hotel.governorate.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    if (!matchesSearch) return false;
+    
+    // POS filter
+    if (filters.pos && hotel.posKey !== filters.pos) return false;
+    
+    // Country filter
+    if (filters.country && hotel.country !== filters.country) return false;
+    
+    // Amenities filter
+    if (filters.amenities.wifi && !hotel.amenities.wifi) return false;
+    if (filters.amenities.restaurant && !hotel.amenities.restaurant) return false;
+    if (filters.amenities.gym && !hotel.amenities.gym) return false;
+    if (filters.amenities.swimmingPool && !hotel.amenities.swimmingPool) return false;
+    
+    // Star rating filter
+    if (filters.stars !== null && hotel.rating !== filters.stars) return false;
+    
+    return true;
+  });
 
   const springConfig = {
     type: "spring" as const,
@@ -101,7 +134,9 @@ const HotelList: React.FC<HotelListProps> = ({
         >
           <HotelSearch 
             searchTerm={searchTerm} 
-            onSearchChange={setSearchTerm} 
+            onSearchChange={setSearchTerm}
+            filters={filters}
+            onFilterChange={setFilters}
             disabled={isEditing}
           />
         </motion.div>
