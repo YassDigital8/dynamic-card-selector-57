@@ -45,40 +45,40 @@ const HotelCardFooter: React.FC<HotelCardFooterProps> = ({
   };
   
   return (
-    <div className="flex justify-center items-center mt-2 pt-2 border-t border-gray-100 dark:border-gray-800 gap-2">
+    <div className="flex mt-3 pt-3 border-t border-gray-100 dark:border-gray-800">
       <Button
-        variant="outline"
+        variant="ghost"
         size="sm"
-        className="flex-1 text-blue-600 hover:text-blue-800 hover:bg-blue-50 dark:text-blue-400 dark:hover:text-blue-300 dark:hover:bg-blue-950/40 h-8"
+        className="flex-1 text-blue-600 hover:text-blue-800 hover:bg-blue-50/50 dark:text-blue-400 dark:hover:text-blue-300 dark:hover:bg-blue-950/40"
         onClick={handleViewClick}
         disabled={isEditing || disabled}
       >
-        <Eye className="h-4 w-4 mr-1.5" />
+        <Eye className="h-4 w-4 mr-1" />
         <span>View</span>
       </Button>
       
       {!hideEditButton && (
         <Button
-          variant="outline"
+          variant="ghost"
           size="sm"
-          className="flex-1 text-amber-600 hover:text-amber-800 hover:bg-amber-50 dark:text-amber-400 dark:hover:text-amber-300 dark:hover:bg-amber-950/40 h-8"
+          className="flex-1 text-amber-600 hover:text-amber-800 hover:bg-amber-50/50 dark:text-amber-400 dark:hover:text-amber-300 dark:hover:bg-amber-950/40"
           onClick={handleEditClick}
           disabled={isEditing || disabled}
         >
-          <PenLine className="h-4 w-4 mr-1.5" />
-          <span>Edit</span>
+          <PenLine className="h-4 w-4 mr-1" />
+          <span className="text-amber-600 dark:text-amber-400">Edit</span>
         </Button>
       )}
       
       <Button
-        variant="outline"
+        variant="ghost"
         size="sm"
-        className="flex-1 text-red-600 hover:text-red-800 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-950/40 h-8"
+        className="flex-1 text-red-600 hover:text-red-800 hover:bg-red-50/50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-950/40"
         onClick={handleDeleteClick}
         disabled={isEditing || disabled}
       >
-        <Trash2 className="h-4 w-4 mr-1.5" />
-        <span>Delete</span>
+        <Trash2 className="h-4 w-4 mr-1" />
+        <span className="text-red-600 dark:text-red-400">Delete</span>
       </Button>
     </div>
   );
