@@ -3,7 +3,6 @@ import React, { useRef, useEffect, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
-import { Separator } from '@/components/ui/separator';
 
 interface Step {
   id: string;
@@ -105,35 +104,27 @@ const StepTabs: React.FC<StepTabsProps> = ({
           className="w-full flex mb-6 h-12 overflow-x-auto scrollbar-none p-0 md:p-1 mx-auto px-8 sm:px-10"
         >
           {steps.map((step, index) => (
-            <React.Fragment key={step.id}>
-              <TabsTrigger 
-                value={step.id}
-                className={`
-                  flex-1 min-w-[150px] h-10 px-4 mx-1 text-xs sm:text-sm md:text-base whitespace-nowrap transition-all duration-200
-                  ${index === currentStepIndex ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-medium border-b-2 border-blue-500 shadow-sm' : 'hover:bg-gray-50 dark:hover:bg-gray-800/20'}
-                  ${index < currentStepIndex ? 'text-gray-500 dark:text-gray-400' : ''}
-                `}
-              >
-                <div className="flex items-center justify-center space-x-1.5">
-                  <span className={`
-                    inline-flex items-center justify-center rounded-full w-5 h-5 text-xs
-                    ${index === currentStepIndex ? 'bg-blue-500 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}
-                    ${index < currentStepIndex ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400' : ''}
-                  `}>
-                    {index + 1}
-                  </span>
-                  <span className="hidden sm:inline">{step.label}</span>
-                  <span className="sm:hidden truncate max-w-[80px]">{step.label}</span>
-                </div>
-              </TabsTrigger>
-              
-              {/* Add a visual separator between the hotel list and hotel details sections */}
-              {index === Math.floor(steps.length / 2) - 1 && (
-                <div className="flex items-center px-1 mx-1">
-                  <Separator orientation="vertical" className="h-8 bg-blue-200 dark:bg-blue-800" />
-                </div>
-              )}
-            </React.Fragment>
+            <TabsTrigger 
+              key={step.id}
+              value={step.id}
+              className={`
+                flex-1 min-w-[150px] h-10 px-4 mx-1 text-xs sm:text-sm md:text-base whitespace-nowrap transition-all duration-200
+                ${index === currentStepIndex ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-medium border-b-2 border-blue-500 shadow-sm' : 'hover:bg-gray-50 dark:hover:bg-gray-800/20'}
+                ${index < currentStepIndex ? 'text-gray-500 dark:text-gray-400' : ''}
+              `}
+            >
+              <div className="flex items-center justify-center space-x-1.5">
+                <span className={`
+                  inline-flex items-center justify-center rounded-full w-5 h-5 text-xs
+                  ${index === currentStepIndex ? 'bg-blue-500 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}
+                  ${index < currentStepIndex ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400' : ''}
+                `}>
+                  {index + 1}
+                </span>
+                <span className="hidden sm:inline">{step.label}</span>
+                <span className="sm:hidden truncate max-w-[80px]">{step.label}</span>
+              </div>
+            </TabsTrigger>
           ))}
         </TabsList>
       </Tabs>
