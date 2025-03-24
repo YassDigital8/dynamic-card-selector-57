@@ -8,7 +8,7 @@ import StandardLayout from '@/components/layout/StandardLayout';
 const HotelAdd = () => {
   return (
     <StandardLayout>
-      <div className="container mx-auto py-6">
+      <div className="container mx-auto py-4">
         <BreadcrumbNav items={[
           { label: 'Hotel Network', href: '/hotel', icon: Building },
           { label: 'Add New Hotel', icon: Hotel }

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
@@ -9,20 +10,16 @@ import { useHotelNetwork } from '@/hooks/hotel';
 import { usePageSelectionViewModel } from '@/viewmodels/PageSelectionViewModel';
 import HotelForm from '../HotelForm';
 import HotelLoadingIndicator from '../HotelLoadingIndicator';
+import ContentBackButton from '../layout/content/ContentBackButton';
+
 const HotelAddPage: React.FC = () => {
   const navigate = useNavigate();
-  const {
-    toast
-  } = useToast();
-  const {
-    posOptions
-  } = usePageSelectionViewModel();
+  const { toast } = useToast();
+  const { posOptions } = usePageSelectionViewModel();
   const [selectedPOS, setSelectedPOS] = React.useState<string>('');
   const [isSubmitting, setIsSubmitting] = React.useState(false);
-  const {
-    addHotel,
-    isLoading
-  } = useHotelNetwork(selectedPOS);
+  const { addHotel, isLoading } = useHotelNetwork(selectedPOS);
+
   const handleSubmit = async (data: HotelFormData) => {
     setIsSubmitting(true);
     const hotelWithPOS = {
@@ -48,35 +45,45 @@ const HotelAddPage: React.FC = () => {
       });
     }
   };
+
   const handleCancel = () => {
     navigate('/hotel');
   };
+
   const getSelectedPOSName = () => {
     if (!selectedPOS || selectedPOS === 'all') return undefined;
     return posOptions.find(p => p.key.toLowerCase() === selectedPOS.toLowerCase())?.englishName;
   };
+
   if (isLoading) {
     return <HotelLoadingIndicator message="Loading..." />;
   }
-  return <div className="container mx-auto py-6">
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center">
-          <Button variant="ghost" size="sm" onClick={handleCancel} className="mr-2">
-            <ArrowLeft className="mr-1 h-4 w-4" />
-            Back to List
-          </Button>
-          <h1 className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-            Add New Hotel 
-            {selectedPOS && selectedPOS !== 'all' && getSelectedPOSName() ? ` (${getSelectedPOSName()})` : ''}
-          </h1>
-        </div>
-        
-        
+
+  return (
+    <div className="w-full max-w-6xl mx-auto">
+      {/* Back button */}
+      <ContentBackButton onBackToList={handleCancel} />
+      
+      {/* Page header with title */}
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+          Add New Hotel 
+          {selectedPOS && selectedPOS !== 'all' && getSelectedPOSName() 
+            ? ` (${getSelectedPOSName()})` 
+            : ''}
+        </h1>
       </div>
 
-      <Card className="p-6 border-blue-100 dark:border-blue-900 shadow-lg">
-        <HotelForm onSubmit={handleSubmit} isLoading={isSubmitting} showButtons={true} />
+      {/* Main content card */}
+      <Card className="p-6 border-indigo-100 dark:border-indigo-900 shadow-md">
+        <HotelForm 
+          onSubmit={handleSubmit} 
+          isLoading={isSubmitting} 
+          showButtons={true} 
+        />
       </Card>
-    </div>;
+    </div>
+  );
 };
+
 export default HotelAddPage;
