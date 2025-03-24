@@ -27,7 +27,7 @@ export const useStepValidation = ({ form, steps, visitedSteps }: UseStepValidati
     // If using custom validation
     if (step.customValidation) {
       const isValid = step.customValidation(formValues);
-      console.log(`Custom validation for step ${index} (${step.label}):`, isValid);
+      console.log(`Custom validation for step ${index} (${step.label}):`, isValid ? "VALID" : "INVALID");
       return isValid;
     }
     
@@ -49,7 +49,7 @@ export const useStepValidation = ({ form, steps, visitedSteps }: UseStepValidati
       return true;
     });
 
-    console.log(`Standard validation for step ${index} (${step.label}):`, isValid);
+    console.log(`Standard validation for step ${index} (${step.label}):`, isValid ? "VALID" : "INVALID");
     return isValid;
   }, [form]);
 
@@ -70,7 +70,9 @@ export const useStepValidation = ({ form, steps, visitedSteps }: UseStepValidati
         return false;
       }
       
-      return validateStep(step, formData, index);
+      const isValid = validateStep(step, formData, index);
+      console.log(`Step ${index} (${step.label}) validation result:`, isValid ? "VALID" : "INVALID");
+      return isValid;
     });
     
     console.log("Updated steps validity:", newStepsValidity);
@@ -106,7 +108,9 @@ export const useStepValidation = ({ form, steps, visitedSteps }: UseStepValidati
     
     const newStepsValidity = steps.map((step, stepIndex) => {
       if (stepIndex <= upToIndex && visitedSteps[stepIndex]) {
-        return validateStep(step, formData, stepIndex);
+        const isValid = validateStep(step, formData, stepIndex);
+        console.log(`Step ${stepIndex} (${step.label}) validation result:`, isValid ? "VALID" : "INVALID");
+        return isValid;
       }
       return stepsValidity[stepIndex] || false;
     });

@@ -14,6 +14,7 @@ export const useEnabledAmenities = ({ form }: AmenityHookProps) => {
   const hasEnabledAmenities = useCallback(() => {
     if (!amenities) return false;
     
+    // Get only boolean properties that are true (excluding image arrays)
     const enabledAmenities = Object.entries(amenities)
       .filter(([key, value]) => {
         // Only consider boolean properties (not image arrays)
@@ -26,5 +27,15 @@ export const useEnabledAmenities = ({ form }: AmenityHookProps) => {
     return enabledAmenities.length > 0;
   }, [amenities]);
 
-  return { hasEnabledAmenities, amenities };
+  return { 
+    hasEnabledAmenities, 
+    amenities,
+    // Add a direct count getter for clearer validation
+    getEnabledCount: () => {
+      if (!amenities) return 0;
+      return Object.entries(amenities)
+        .filter(([key, value]) => typeof value === 'boolean' && !key.includes('Images') && value === true)
+        .length;
+    }
+  };
 };

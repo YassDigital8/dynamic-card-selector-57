@@ -22,7 +22,7 @@ export const useAmenityStepManager = ({
   const { handleAddImage } = useAmenityAddImage({ form, selectedAmenity });
   const { handleAddMultipleImages } = useAmenityAddMultipleImages({ form, selectedAmenity });
   const { handleRemoveImage } = useAmenityRemoveImage({ form });
-  const { hasEnabledAmenities, amenities } = useEnabledAmenities({ form });
+  const { hasEnabledAmenities, amenities, getEnabledCount } = useEnabledAmenities({ form });
 
   // Force validation on mount and when amenities change
   useEffect(() => {
@@ -30,11 +30,12 @@ export const useAmenityStepManager = ({
     form.trigger('amenities');
     
     console.log('Amenities updated:', amenities);
-    const enabledCount = Object.entries(amenities || {})
-      .filter(([key, value]) => typeof value === 'boolean' && value === true)
-      .length;
+    const enabledCount = getEnabledCount();
     console.log('Any amenity enabled:', hasEnabledAmenities(), 'Count:', enabledCount);
-  }, [amenities, hasEnabledAmenities, form]);
+    
+    // Force a validation of the parent form to update step status
+    form.trigger();
+  }, [amenities, hasEnabledAmenities, form, getEnabledCount]);
 
   return {
     selectedAmenity,
@@ -44,6 +45,7 @@ export const useAmenityStepManager = ({
     handleAddMultipleImages,
     handleRemoveImage,
     handleCloseDialog,
-    hasEnabledAmenities
+    hasEnabledAmenities,
+    getEnabledCount
   };
 };

@@ -42,12 +42,16 @@ export const useSteps = ({ form, hotelId }: UseStepsProps) => {
           return false;
         }
         
-        // Log the entire amenities object for debugging
+        // Debug: log the entire amenities object
         console.log("Current amenities object:", formValues.amenities);
         
         // Get only boolean properties in the amenities object
         const amenityBooleans = Object.entries(formValues.amenities)
-          .filter(([key, value]) => typeof value === 'boolean');
+          .filter(([key, value]) => {
+            const isBoolean = typeof value === 'boolean';
+            const isNotImageField = !key.includes('Images');
+            return isBoolean && isNotImageField;
+          });
         
         console.log("Amenity boolean entries:", amenityBooleans);
         
@@ -57,7 +61,7 @@ export const useSteps = ({ form, hotelId }: UseStepsProps) => {
           return value === true;
         });
         
-        console.log("Amenities validation result:", hasEnabledAmenity);
+        console.log("Amenities validation result:", hasEnabledAmenity ? "VALID" : "INVALID");
         return hasEnabledAmenity;
       }
     },

@@ -23,24 +23,27 @@ const AmenitiesStep: React.FC<AmenitiesStepProps> = ({ form, hotelId }) => {
     handleAddMultipleImages,
     handleRemoveImage,
     handleCloseDialog,
-    hasEnabledAmenities
+    hasEnabledAmenities,
+    getEnabledCount
   } = useAmenityStepManager({ form, hotelId });
 
   // Add debug effect to monitor validation state and ensure form revalidation
   useEffect(() => {
     // Initial validation
     const validateAmenities = () => {
+      // Force validation of the amenities field
       form.trigger('amenities');
       
-      const enabledCount = Object.entries(form.getValues('amenities') || {})
-        .filter(([key, val]) => typeof val === 'boolean' && !key.includes('Images') && val === true)
-        .length;
+      // Check enabled count directly from form values for consistency
+      const enabledCount = getEnabledCount();
         
       console.log("Enabled amenities in AmenitiesStep:", enabledCount);
       console.log("Step validation should pass:", enabledCount > 0);
       
-      // Force validation of the form
-      form.trigger();
+      // Force validation of the whole form to update step indicators
+      setTimeout(() => {
+        form.trigger();
+      }, 50);
     };
     
     // Validate on mount
@@ -54,7 +57,7 @@ const AmenitiesStep: React.FC<AmenitiesStepProps> = ({ form, hotelId }) => {
     });
     
     return () => subscription.unsubscribe();
-  }, [form]);
+  }, [form, getEnabledCount]);
 
   return (
     <div className="space-y-6">
