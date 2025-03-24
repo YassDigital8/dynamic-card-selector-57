@@ -8,6 +8,7 @@ import { formSchema } from './form/schemas';
 import { defaultValues } from './form/formDefaults';
 import StepBasedForm from './form/StepBasedForm';
 import { useFormProcessor } from './form/hooks/useFormProcessor';
+import { Toaster } from '@/components/ui/sonner';
 
 interface HotelFormProps {
   initialData?: Hotel;
@@ -64,18 +65,21 @@ const HotelForm = memo(({
   }, [form]);
 
   return (
-    <Form {...form}>
-      <form id="hotel-form" onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
-        <StepBasedForm 
-          form={form} 
-          hotelId={initialData?.id} 
-          onSubmit={form.handleSubmit(handleSubmit)}
-          isLoading={isLoading}
-          onStepsValidityChange={setStepsValidity}
-          onGoToStepChange={setGoToStepFn}
-        />
-      </form>
-    </Form>
+    <>
+      <Form {...form}>
+        <form id="hotel-form" onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
+          <StepBasedForm 
+            form={form} 
+            hotelId={initialData?.id} 
+            onSubmit={form.handleSubmit(handleSubmit)}
+            isLoading={isLoading}
+            onStepsValidityChange={setStepsValidity}
+            onGoToStepChange={setGoToStepFn}
+          />
+        </form>
+      </Form>
+      <Toaster />
+    </>
   );
 });
 

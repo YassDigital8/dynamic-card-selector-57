@@ -3,6 +3,7 @@ import { UseFormReturn } from 'react-hook-form';
 import { FormValues } from '../formSchema';
 import { HotelFormData } from '@/models/HotelModel';
 import { useToast } from '@/hooks/use-toast';
+import { AlertCircle } from 'lucide-react';
 
 interface UseFormProcessorProps {
   form: UseFormReturn<FormValues>;
@@ -31,9 +32,14 @@ export const useFormProcessor = ({
         
         // Show error toast about incomplete steps
         toast({
-          title: "Incomplete Form",
-          description: "Please complete all required steps before saving.",
           variant: "destructive",
+          title: "Incomplete Form",
+          description: (
+            <div className="flex items-center gap-2">
+              <AlertCircle className="h-4 w-4" />
+              <span>Please complete all required information before saving. Navigating to the first incomplete step.</span>
+            </div>
+          ),
         });
         
         // Navigate to the first invalid step
