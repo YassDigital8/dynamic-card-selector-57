@@ -35,8 +35,8 @@ export const useAmenityAddMultipleImages = ({
     
     // First, ensure the amenity is enabled
     if (!formValues.amenities?.[selectedAmenity as keyof typeof amenitiesValues]) {
-      // Enable the amenity in a type-safe way
-      form.setValue(`amenities.${selectedAmenity}`, true, { 
+      // Enable the amenity in a type-safe way using bracket notation and type assertion
+      form.setValue(`amenities.${selectedAmenity}` as any, true, { 
         shouldDirty: true,
         shouldTouch: true,
         shouldValidate: true
