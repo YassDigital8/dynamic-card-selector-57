@@ -6,7 +6,6 @@ import DeleteHotelDialog from './DeleteHotelDialog';
 import HotelCard from './HotelCard';
 import HotelListEmptyState from './HotelListEmptyState';
 import HotelSearch from './HotelSearch';
-import HotelViewToggle from './HotelViewToggle';
 
 interface HotelListProps {
   hotels: Hotel[];
@@ -28,7 +27,6 @@ const HotelList: React.FC<HotelListProps> = ({
   const [hotelToDelete, setHotelToDelete] = useState<Hotel | null>(null);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [gridView, setGridView] = useState(true); // Default to grid view for larger displays
 
   const handleDeleteClick = (hotel: Hotel) => {
     if (isEditing) return;
@@ -54,10 +52,6 @@ const HotelList: React.FC<HotelListProps> = ({
     if (!isEditing) {
       onEditHotel(hotel);
     }
-  };
-
-  const toggleView = () => {
-    setGridView(!gridView);
   };
 
   const filteredHotels = hotels.filter(hotel => 
@@ -96,15 +90,6 @@ const HotelList: React.FC<HotelListProps> = ({
         <h2 className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
           Hotels ({filteredHotels.length})
         </h2>
-        
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-gray-500">View:</span>
-          <HotelViewToggle 
-            isGridView={gridView} 
-            onToggleView={toggleView} 
-            disabled={isEditing}
-          />
-        </div>
       </motion.div>
       
       {hotels.length > 0 && (
@@ -139,7 +124,7 @@ const HotelList: React.FC<HotelListProps> = ({
         ) : (
           <motion.div 
             key="results"
-            className={`grid ${gridView ? 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5' : 'grid-cols-1'} gap-4 md:gap-6 ${isEditing ? 'opacity-70' : ''}`}
+            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6"
             variants={container}
             initial="hidden"
             animate="show"
@@ -153,7 +138,7 @@ const HotelList: React.FC<HotelListProps> = ({
                 onSelect={() => handleSelectHotel(hotel)}
                 onEdit={() => handleEditHotel(hotel)}
                 onDelete={() => handleDeleteClick(hotel)}
-                useGridView={gridView}
+                useGridView={true}
                 disabled={isEditing}
                 hideEditButton={false}
               />

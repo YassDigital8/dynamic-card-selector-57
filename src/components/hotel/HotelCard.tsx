@@ -17,7 +17,7 @@ interface HotelCardProps {
   onSelect: () => void;
   onEdit: () => void;
   onDelete: () => void;
-  useGridView?: boolean;
+  useGridView?: boolean; // Keep for backward compatibility
   disabled?: boolean;
   hideEditButton?: boolean;
 }
@@ -28,7 +28,7 @@ const HotelCard: React.FC<HotelCardProps> = ({
   onSelect,
   onEdit,
   onDelete,
-  useGridView = false,
+  useGridView = true, // Default to true, but keep prop for backward compatibility
   disabled = false,
   hideEditButton = false
 }) => {
@@ -76,10 +76,8 @@ const HotelCard: React.FC<HotelCardProps> = ({
     }
   };
 
-  // Determine height based on view mode and screen size
-  const cardHeight = useGridView 
-    ? "h-full" 
-    : "h-auto";
+  // Always use grid view height
+  const cardHeight = "h-full";
 
   return (
     <motion.div 
@@ -105,11 +103,10 @@ const HotelCard: React.FC<HotelCardProps> = ({
           : 'hover:border-indigo-200 dark:hover:border-indigo-800 border-gray-200'
         } ${disabled ? 'opacity-70' : 'border border-gray-200 dark:border-gray-700'} rounded-lg overflow-hidden`}
       >
-        <HotelCardHeader hotel={hotel} useGridView={useGridView} />
+        <HotelCardHeader hotel={hotel} useGridView={true} />
         
-        <CardContent className={`flex-1 ${useGridView ? 'p-3' : 'p-4'}`}>
+        <CardContent className="flex-1 p-3">
           <div className="space-y-3">
-            {!useGridView && <HotelLocationInfo hotel={hotel} />}
             <HotelCardAmenities amenities={hotel.amenities} />
           </div>
           
