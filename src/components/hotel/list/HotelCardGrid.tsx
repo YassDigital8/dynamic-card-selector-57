@@ -13,6 +13,7 @@ interface HotelCardGridProps {
   isEditing: boolean;
   hideEditButton?: boolean;
   springConfig: any;
+  viewMode?: 'grid' | 'list';
 }
 
 const HotelCardGrid: React.FC<HotelCardGridProps> = ({
@@ -23,7 +24,8 @@ const HotelCardGrid: React.FC<HotelCardGridProps> = ({
   onDeleteHotel,
   isEditing,
   hideEditButton = false,
-  springConfig
+  springConfig,
+  viewMode = 'grid'
 }) => {
   const container = {
     hidden: { opacity: 1 },
@@ -40,7 +42,11 @@ const HotelCardGrid: React.FC<HotelCardGridProps> = ({
   return (
     <motion.div 
       key="results"
-      className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6"
+      className={
+        viewMode === 'grid' 
+          ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6"
+          : "flex flex-col space-y-4"
+      }
       variants={container}
       initial="hidden"
       animate="show"
@@ -54,7 +60,7 @@ const HotelCardGrid: React.FC<HotelCardGridProps> = ({
           onSelect={() => onSelectHotel(hotel)}
           onEdit={() => onEditHotel(hotel)}
           onDelete={() => onDeleteHotel(hotel.id)}
-          useGridView={true}
+          useGridView={viewMode === 'grid'}
           disabled={isEditing}
           hideEditButton={hideEditButton}
         />
