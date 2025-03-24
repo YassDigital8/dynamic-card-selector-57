@@ -29,7 +29,7 @@ const HotelForm = memo(({
   
   const { handleSubmit } = useFormProcessor({ form, onSubmit });
 
-  // Make sure extraBedPrice is properly set when extraBed is enabled
+  // Make sure extraBedPolicy is properly set when extraBed is enabled
   useEffect(() => {
     const subscription = form.watch((value, { name }) => {
       if (name === 'amenities.extraBed' && form.getValues('amenities.extraBed')) {
