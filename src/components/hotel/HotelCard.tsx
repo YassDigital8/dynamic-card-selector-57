@@ -41,7 +41,7 @@ const HotelCard: React.FC<HotelCardProps> = ({
       y: 0
     },
     hover: { 
-      scale: disabled ? 1 : 1.02,
+      scale: disabled ? 1 : 1.03,
       boxShadow: disabled ? "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)" : "0 10px 15px -3px rgba(79, 70, 229, 0.15), 0 4px 6px -2px rgba(79, 70, 229, 0.1)",
       y: disabled ? 0 : -4,
       transition: {
@@ -76,9 +76,9 @@ const HotelCard: React.FC<HotelCardProps> = ({
     }
   };
 
-  // Determine height based on view mode
+  // Determine height based on view mode and screen size
   const cardHeight = useGridView 
-    ? "h-full min-h-[320px]" 
+    ? isMobile ? "h-full min-h-[300px]" : "h-full min-h-[380px]" 
     : "min-h-[160px]";
 
   return (

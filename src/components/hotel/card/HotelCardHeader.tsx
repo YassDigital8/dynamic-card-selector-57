@@ -32,7 +32,7 @@ const HotelCardHeader: React.FC<HotelCardHeaderProps> = ({ hotel, useGridView })
       <div className="relative w-full">
         <motion.div 
           layoutId={`hotel-image-container-${hotel.id}`}
-          className="w-full h-36 overflow-hidden"
+          className="w-full h-40 overflow-hidden"
           variants={imageVariants}
           initial="rest"
           whileHover="hover"
@@ -52,7 +52,7 @@ const HotelCardHeader: React.FC<HotelCardHeaderProps> = ({ hotel, useGridView })
         
         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
           <motion.div layoutId={`hotel-title-${hotel.id}`} className="flex items-center gap-2">
-            <CardTitle className="text-sm sm:text-base text-white truncate font-semibold">
+            <CardTitle className="text-sm sm:text-base md:text-lg text-white truncate font-semibold">
               {hotel.name}
             </CardTitle>
             
@@ -105,7 +105,7 @@ const HotelCardHeader: React.FC<HotelCardHeaderProps> = ({ hotel, useGridView })
         <div className="flex-1 min-w-0">
           <div className="flex flex-col">
             <motion.div layoutId={`hotel-title-${hotel.id}`} className="flex items-center gap-2">
-              <CardTitle className="text-sm sm:text-base text-indigo-700 dark:text-indigo-300 truncate font-semibold">
+              <CardTitle className="text-sm sm:text-base md:text-lg text-indigo-700 dark:text-indigo-300 truncate font-semibold">
                 {hotel.name}
               </CardTitle>
               

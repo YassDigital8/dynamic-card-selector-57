@@ -28,7 +28,7 @@ const HotelList: React.FC<HotelListProps> = ({
   const [hotelToDelete, setHotelToDelete] = useState<Hotel | null>(null);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [gridView, setGridView] = useState(false);
+  const [gridView, setGridView] = useState(true); // Default to grid view for larger displays
 
   const handleDeleteClick = (hotel: Hotel) => {
     if (isEditing) return;
@@ -86,7 +86,7 @@ const HotelList: React.FC<HotelListProps> = ({
   };
 
   return (
-    <div className="space-y-6 w-full p-4">
+    <div className="space-y-6 w-full p-4 md:p-6">
       <motion.div 
         initial={{ opacity: 0, y: -5 }}
         animate={{ opacity: 1, y: 0 }}
@@ -136,7 +136,7 @@ const HotelList: React.FC<HotelListProps> = ({
         ) : (
           <motion.div 
             key="results"
-            className={`grid ${gridView ? 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4' : 'grid-cols-1'} gap-4 ${isEditing ? 'opacity-70' : ''}`}
+            className={`grid ${gridView ? 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5' : 'grid-cols-1'} gap-4 md:gap-6 ${isEditing ? 'opacity-70' : ''}`}
             variants={container}
             initial="hidden"
             animate="show"

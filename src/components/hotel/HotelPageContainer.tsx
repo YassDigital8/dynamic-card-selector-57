@@ -1,6 +1,7 @@
 
-import React, { useState, useEffect } from 'react';
-import { HotelFormData } from '@/models/HotelModel';
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { Hotel } from '@/models/HotelModel';
 import { usePageSelectionViewModel } from '@/viewmodels/PageSelectionViewModel';
 import { useHotelNetwork, useHotelFilters } from '@/hooks/hotel';
 import { useHotelLoadingState } from '@/hooks/hotel/useHotelLoadingState';
@@ -52,22 +53,27 @@ const HotelPageContainer: React.FC = () => {
       onFilterChange={setFilters}
       onAddHotel={handleAddHotel}
     >
-      <div className="w-full p-2 sm:p-4">
-        <Card className="h-full overflow-hidden border-indigo-100 dark:border-indigo-900 shadow-md bg-white dark:bg-slate-900 rounded-xl">
+      <motion.div 
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ type: "spring", stiffness: 100, damping: 10 }}
+        className="w-full sm:p-1 md:p-2 lg:p-4"
+      >
+        <Card className="h-full overflow-hidden border-indigo-100 dark:border-indigo-900 shadow-lg bg-white dark:bg-slate-900 rounded-xl">
           <ScrollArea 
             className="h-[calc(100vh-130px)] sm:h-[calc(100vh-140px)] md:h-[calc(100vh-145px)] lg:h-[calc(100vh-150px)] overflow-y-auto"
           >
             <HotelList
               hotels={filteredHotels}
               selectedHotel={null}
-              onSelectHotel={() => {}}
-              onEditHotel={() => {}}
+              onSelectHotel={(hotel) => navigate(`/hotel/view/${hotel.id}`)}
+              onEditHotel={(hotel) => navigate(`/hotel/edit/${hotel.id}`)}
               onDeleteHotel={() => {}}
               isEditing={false}
             />
           </ScrollArea>
         </Card>
-      </div>
+      </motion.div>
     </PageContentWrapper>
   );
 };
