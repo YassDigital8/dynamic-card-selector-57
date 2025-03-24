@@ -9,3 +9,4 @@ export { default as POSFilter } from './filters/POSFilter';
 export { default as CountryFilter } from './filters/CountryFilter';
 export { default as AmenitiesFilter } from './filters/AmenitiesFilter';
 export { default as StarRatingFilter } from './filters/StarRatingFilter';
+export { default as ExtendedFeaturesFilter } from './filters/ExtendedFeaturesFilter';

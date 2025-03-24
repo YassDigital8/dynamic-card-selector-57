@@ -29,6 +29,11 @@ interface FilterState {
   country: string | null;
   amenities: AmenitiesFilter;
   stars: number | null;
+  extendedFeatures: {
+    extraBed: boolean;
+    bankTransfer: boolean;
+    hasGeolocation: boolean;
+  };
 }
 
 export const useHotelFiltering = (hotels: Hotel[]) => {
@@ -37,7 +42,12 @@ export const useHotelFiltering = (hotels: Hotel[]) => {
     pos: null,
     country: null,
     amenities: createEmptyAmenitiesFilter(),
-    stars: null
+    stars: null,
+    extendedFeatures: {
+      extraBed: false,
+      bankTransfer: false,
+      hasGeolocation: false
+    }
   });
 
   const handleSearchChange = useCallback((value: string) => {
@@ -74,6 +84,23 @@ export const useHotelFiltering = (hotels: Hotel[]) => {
       
       // Star rating filter
       if (filters.stars !== null && hotel.rating !== filters.stars) return false;
+      
+      // Extended features filters
+      if (filters.extendedFeatures.extraBed && 
+          (!hotel.extraBedPolicy || !hotel.amenities.extraBed)) {
+        return false;
+      }
+      
+      if (filters.extendedFeatures.bankTransfer && 
+          (!hotel.paymentMethods || !hotel.paymentMethods.some(method => 
+            method.id === 'bank-transfer' && method.enabled))) {
+        return false;
+      }
+      
+      if (filters.extendedFeatures.hasGeolocation && 
+          !hotel.geolocation) {
+        return false;
+      }
       
       return true;
     });

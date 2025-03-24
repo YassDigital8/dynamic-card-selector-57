@@ -8,7 +8,8 @@ import {
   CountryFilter,
   AmenitiesFilter,
   StarRatingFilter,
-  ClearFiltersButton
+  ClearFiltersButton,
+  ExtendedFeaturesFilter
 } from './search';
 
 interface HotelSearchProps {
@@ -19,6 +20,11 @@ interface HotelSearchProps {
     country: string | null;
     amenities: { [K in keyof HotelAmenities]: boolean };
     stars: number | null;
+    extendedFeatures: {
+      extraBed: boolean;
+      bankTransfer: boolean;
+      hasGeolocation: boolean;
+    };
   };
   onFilterChange: (filters: any) => void;
   disabled?: boolean;
@@ -57,6 +63,16 @@ const HotelSearch: React.FC<HotelSearchProps> = ({
   const handleStarChange = (stars: number | null) => {
     onFilterChange({ ...filters, stars });
   };
+
+  const handleExtendedFeatureChange = (feature: string, value: boolean) => {
+    onFilterChange({
+      ...filters,
+      extendedFeatures: {
+        ...filters.extendedFeatures,
+        [feature]: value
+      }
+    });
+  };
   
   const clearFilters = () => {
     // Create a new amenities object with all values set to false
@@ -71,7 +87,12 @@ const HotelSearch: React.FC<HotelSearchProps> = ({
       pos: null,
       country: null,
       amenities: resetAmenities,
-      stars: null
+      stars: null,
+      extendedFeatures: {
+        extraBed: false,
+        bankTransfer: false,
+        hasGeolocation: false
+      }
     });
   };
   
@@ -79,7 +100,8 @@ const HotelSearch: React.FC<HotelSearchProps> = ({
     (filters.pos ? 1 : 0) + 
     (filters.country ? 1 : 0) + 
     (filters.stars ? 1 : 0) +
-    Object.values(filters.amenities).filter(Boolean).length;
+    Object.values(filters.amenities).filter(Boolean).length +
+    Object.values(filters.extendedFeatures).filter(Boolean).length;
   
   return (
     <div className="flex flex-col gap-2 w-full bg-white dark:bg-slate-950">
@@ -114,6 +136,12 @@ const HotelSearch: React.FC<HotelSearchProps> = ({
           starRatings={starRatings}
           selectedStars={filters.stars}
           onStarChange={handleStarChange}
+          disabled={disabled}
+        />
+
+        <ExtendedFeaturesFilter
+          extendedFeatures={filters.extendedFeatures}
+          onFeatureChange={handleExtendedFeatureChange}
           disabled={disabled}
         />
         

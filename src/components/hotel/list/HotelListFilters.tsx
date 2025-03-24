@@ -12,6 +12,11 @@ interface HotelListFiltersProps {
     country: string | null;
     amenities: { [K in keyof HotelAmenities]: boolean };
     stars: number | null;
+    extendedFeatures: {
+      extraBed: boolean;
+      bankTransfer: boolean;
+      hasGeolocation: boolean;
+    };
   };
   onFilterChange: (filters: any) => void;
   disabled: boolean;
