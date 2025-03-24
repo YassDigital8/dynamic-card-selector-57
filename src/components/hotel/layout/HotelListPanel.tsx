@@ -41,7 +41,7 @@ const HotelListPanel: React.FC<HotelListPanelProps> = ({
 
   return (
     <div className="h-full w-full p-0">
-      <Card className="h-full w-full overflow-hidden border-0 shadow-none bg-white dark:bg-slate-900 rounded-none">
+      <Card className="h-full w-full overflow-hidden border-0 shadow-none bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm rounded-none">
         <ScrollArea 
           className="h-full w-full"
         >

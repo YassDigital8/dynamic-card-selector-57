@@ -31,6 +31,7 @@ const HotelList: React.FC<HotelListProps> = ({
 }) => {
   const [hotelToDelete, setHotelToDelete] = useState<Hotel | null>(null);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid'); // Add view mode toggle
   
   const {
     searchTerm,
@@ -78,7 +79,11 @@ const HotelList: React.FC<HotelListProps> = ({
 
   return (
     <div className="w-full h-full p-4 md:p-6">
-      <HotelListHeader count={filteredHotels.length} />
+      <HotelListHeader 
+        count={filteredHotels.length}
+        viewMode={viewMode}
+        onViewModeChange={setViewMode}
+      />
       
       {hotels.length > 0 && (
         <HotelListFilters 
@@ -105,6 +110,7 @@ const HotelList: React.FC<HotelListProps> = ({
             onDeleteHotel={handleDeleteClick}
             isEditing={isEditing}
             springConfig={springConfig}
+            viewMode={viewMode}
           />
         )}
       </AnimatePresence>
