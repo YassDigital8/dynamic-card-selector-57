@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { FormValues } from '../formSchema';
 import { ContractDocument } from '@/models/HotelModel';
 import { BasicInformation } from '../';
@@ -11,15 +11,8 @@ import ExtendedFeaturesSection from '../ExtendedFeaturesSection';
 import { PreviewSection } from '../preview';
 import { CommercialDealsView } from '../../details/commercial';
 import { UseFormReturn } from 'react-hook-form';
-
-export interface Step {
-  id: string;
-  label: string;
-  component: React.ReactNode;
-  icon?: React.ReactNode;
-  validationFields?: string[]; // Fields to validate for this step
-  customValidation?: (formValues: FormValues) => boolean; // Custom validation function
-}
+import { useStepNavigation } from './hooks/useStepNavigation';
+import { Step } from './types';
 
 interface UseStepsProps {
   form: UseFormReturn<FormValues>;
@@ -27,10 +20,6 @@ interface UseStepsProps {
 }
 
 export const useSteps = ({ form, hotelId }: UseStepsProps) => {
-  const [currentStepIndex, setCurrentStepIndex] = useState(0);
-  const [stepsValidity, setStepsValidity] = useState<boolean[]>([]);
-  const [visitedSteps, setVisitedSteps] = useState<boolean[]>([]);
-  
   // Add type assertion to ensure TypeScript treats the watched value as ContractDocument[]
   const contractDocuments = form.watch("contractDocuments") as ContractDocument[];
   
@@ -105,109 +94,19 @@ export const useSteps = ({ form, hotelId }: UseStepsProps) => {
     },
   ];
 
-  // Initialize steps validity and visited steps arrays
-  useEffect(() => {
-    setStepsValidity(Array(steps.length).fill(false));
-    setVisitedSteps(Array(steps.length).fill(false));
-    // Mark the first step as visited
-    setVisitedSteps(prev => {
-      const newVisited = [...prev];
-      newVisited[0] = true;
-      return newVisited;
-    });
-  }, [steps.length]);
-
-  // Function to validate a specific step
-  const validateStep = (step: Step, formValues: FormValues, index: number): boolean => {
-    // If using custom validation
-    if (step.customValidation) {
-      return step.customValidation(formValues);
-    }
-    
-    // If no validation fields specified and no custom validation, step is always valid
-    if (!step.validationFields || step.validationFields.length === 0) {
-      return true;
-    }
-    
-    // Check if all required fields for this step have values
-    return step.validationFields.every(field => {
-      const fieldValue = field.includes('.') 
-        ? form.getValues(field as any) 
-        : form.getValues()[field as keyof FormValues];
-        
-      if (fieldValue === undefined || fieldValue === null || fieldValue === '') {
-        return false;
-      }
-      
-      return true;
-    });
-  };
-
-  // Update step validity whenever form values change
-  useEffect(() => {
-    const subscription = form.watch((formValues) => {
-      const formData = form.getValues();
-      
-      // Validate all visited steps
-      const newStepsValidity = steps.map((step, index) => {
-        // If the step hasn't been visited yet or comes after current step, don't validate it
-        if (!visitedSteps[index]) {
-          return false;
-        }
-        
-        return validateStep(step, formData, index);
-      });
-      
-      setStepsValidity(newStepsValidity);
-    });
-    
-    return () => subscription.unsubscribe();
-  }, [form, steps, visitedSteps]);
-
-  const goToNextStep = () => {
-    if (currentStepIndex < steps.length - 1) {
-      // Mark the next step as visited
-      setVisitedSteps(prev => {
-        const newVisited = [...prev];
-        newVisited[currentStepIndex + 1] = true;
-        return newVisited;
-      });
-      setCurrentStepIndex(currentStepIndex + 1);
-    }
-  };
-
-  const goToPreviousStep = () => {
-    if (currentStepIndex > 0) {
-      setCurrentStepIndex(currentStepIndex - 1);
-    }
-  };
-
-  const goToStep = (index: number) => {
-    // Mark this step and all steps before it as visited
-    setVisitedSteps(prev => {
-      const newVisited = [...prev];
-      // Mark all steps up to and including the target step as visited
-      for (let i = 0; i <= index; i++) {
-        newVisited[i] = true;
-      }
-      return newVisited;
-    });
-    
-    // Immediately validate all visited steps to update status indicators
-    const formData = form.getValues();
-    const newStepsValidity = steps.map((step, stepIndex) => {
-      if (stepIndex <= index) {
-        return validateStep(step, formData, stepIndex);
-      }
-      return stepsValidity[stepIndex];
-    });
-    
-    setStepsValidity(newStepsValidity);
-    setCurrentStepIndex(index);
-  };
-
-  const isLastStep = currentStepIndex === steps.length - 1;
-  const isFirstStep = currentStepIndex === 0;
+  const {
+    currentStepIndex,
+    visitedSteps,
+    stepsValidity,
+    isLastStep,
+    isFirstStep,
+    goToNextStep,
+    goToPreviousStep,
+    goToStep
+  } = useStepNavigation({
+    form,
+    steps
+  });
 
   return {
     steps,
