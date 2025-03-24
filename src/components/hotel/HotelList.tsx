@@ -63,7 +63,9 @@ const HotelList: React.FC<HotelListProps> = ({
   const filteredHotels = hotels.filter(hotel => 
     hotel.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     hotel.country.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    hotel.governorate.toLowerCase().includes(searchTerm.toLowerCase())
+    hotel.governorate.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    hotel.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (hotel.address && hotel.address.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   const springConfig = {
@@ -85,16 +87,18 @@ const HotelList: React.FC<HotelListProps> = ({
     }
   };
 
+  const searchPlaceholder = searchTerm ? `${filteredHotels.length} hotels found` : '';
+
   return (
     <div className="w-full h-full p-4 md:p-6">
       <motion.div 
         initial={{ opacity: 0, y: -5 }}
         animate={{ opacity: 1, y: 0 }}
         transition={springConfig}
-        className="flex items-center justify-between mb-4"
+        className="flex items-center justify-between mb-6"
       >
         <h2 className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
-          Hotels ({filteredHotels.length})
+          Hotels ({filteredHotels.length}/{hotels.length})
         </h2>
         
         <div className="flex items-center gap-2">
@@ -112,13 +116,25 @@ const HotelList: React.FC<HotelListProps> = ({
           initial={{ opacity: 0, y: 5 }}
           animate={{ opacity: 1, y: 0 }}
           transition={springConfig}
-          className="mb-4 w-full"
+          className="mb-6 w-full"
         >
           <HotelSearch 
             searchTerm={searchTerm} 
             onSearchChange={setSearchTerm} 
             disabled={isEditing}
+            className="mb-2"
           />
+          {searchTerm && (
+            <motion.p 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-sm text-gray-500 ml-2"
+            >
+              {filteredHotels.length === 0 
+                ? "No hotels match your search" 
+                : `Found ${filteredHotels.length} hotel${filteredHotels.length !== 1 ? 's' : ''} matching "${searchTerm}"`}
+            </motion.p>
+          )}
         </motion.div>
       )}
       
@@ -135,11 +151,17 @@ const HotelList: React.FC<HotelListProps> = ({
             className="p-8 text-center border border-dashed border-indigo-200 dark:border-indigo-800 rounded-lg bg-indigo-50/50 dark:bg-indigo-900/20"
           >
             <p className="text-muted-foreground">No hotels match your search criteria</p>
+            <button 
+              onClick={() => setSearchTerm('')} 
+              className="mt-2 text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300 font-medium"
+            >
+              Clear search
+            </button>
           </motion.div>
         ) : (
           <motion.div 
             key="results"
-            className={`grid ${gridView ? 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5' : 'grid-cols-1'} gap-4 md:gap-6 ${isEditing ? 'opacity-70' : ''}`}
+            className={`grid ${gridView ? 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6' : 'grid-cols-1'} gap-4 md:gap-6 ${isEditing ? 'opacity-70' : ''}`}
             variants={container}
             initial="hidden"
             animate="show"
