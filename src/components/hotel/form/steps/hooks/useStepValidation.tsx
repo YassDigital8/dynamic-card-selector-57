@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { FormValues } from '../../formSchema';
 import { Step } from '../types';
@@ -66,7 +66,7 @@ export const useStepValidation = ({ form, steps, visitedSteps }: UseStepValidati
   }, [form, steps, visitedSteps]);
 
   // Function to validate multiple steps at once (used when jumping to a step)
-  const validateSteps = (upToIndex: number) => {
+  const validateSteps = useCallback((upToIndex: number) => {
     const formData = form.getValues();
     const newStepsValidity = steps.map((step, stepIndex) => {
       if (stepIndex <= upToIndex) {
@@ -77,7 +77,7 @@ export const useStepValidation = ({ form, steps, visitedSteps }: UseStepValidati
     
     setStepsValidity(newStepsValidity);
     return newStepsValidity;
-  };
+  }, [form, steps, stepsValidity]);
 
   return {
     stepsValidity,

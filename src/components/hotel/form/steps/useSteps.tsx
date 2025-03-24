@@ -42,9 +42,11 @@ export const useSteps = ({ form, hotelId }: UseStepsProps) => {
         const amenityKeys = Object.keys(formValues.amenities);
         for (const key of amenityKeys) {
           // Skip image arrays and only check boolean properties
-          const value = formValues.amenities[key as keyof typeof formValues.amenities];
-          if (typeof value === 'boolean' && value === true) {
-            return true;
+          if (!key.includes('Images')) {
+            const value = formValues.amenities[key as keyof typeof formValues.amenities];
+            if (typeof value === 'boolean' && value === true) {
+              return true;
+            }
           }
         }
         return false;
