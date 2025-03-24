@@ -50,6 +50,9 @@ const StepBasedForm: React.FC<StepBasedFormProps> = ({
     }
   }, [goToStep, onGoToStepChange]);
 
+  // Get the validity of the current step
+  const isCurrentStepValid = stepsValidity[currentStepIndex] || false;
+
   // Safety check: If steps are not yet loaded, render a loading state
   if (!steps || steps.length === 0 || currentStepIndex === undefined || currentStepIndex < 0) {
     return <div className="p-4 text-center">Loading form steps...</div>;
@@ -87,6 +90,7 @@ const StepBasedForm: React.FC<StepBasedFormProps> = ({
         onNext={goToNextStep}
         onSubmit={onSubmit}
         isLoading={isLoading}
+        isCurrentStepValid={isCurrentStepValid}
       />
       
       {/* Add Toaster to ensure notifications are displayed */}

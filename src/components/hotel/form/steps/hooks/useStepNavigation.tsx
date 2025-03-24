@@ -59,8 +59,17 @@ export const useStepNavigation = ({ form, steps }: UseStepNavigationProps) => {
     return () => subscription.unsubscribe();
   }, [form, visitedSteps, validateSteps, steps]);
 
+  // Modified to check if current step is valid before allowing navigation
   const goToNextStep = useCallback(() => {
     if (currentStepIndex < steps.length - 1) {
+      // Check if current step is valid before proceeding
+      const isCurrentStepValid = stepsValidity[currentStepIndex];
+      
+      if (!isCurrentStepValid) {
+        console.log(`Cannot proceed: Step ${currentStepIndex} (${steps[currentStepIndex]?.label}) is not valid`);
+        return;
+      }
+      
       // Mark the next step as visited
       setVisitedSteps(prev => {
         if (!prev || prev.length === 0) {
@@ -81,7 +90,7 @@ export const useStepNavigation = ({ form, steps }: UseStepNavigationProps) => {
         validateSteps(currentStepIndex + 1);
       }, 10);
     }
-  }, [currentStepIndex, steps.length, validateSteps]);
+  }, [currentStepIndex, steps, stepsValidity, validateSteps]);
 
   const goToPreviousStep = useCallback(() => {
     if (currentStepIndex > 0) {
@@ -90,8 +99,20 @@ export const useStepNavigation = ({ form, steps }: UseStepNavigationProps) => {
     }
   }, [currentStepIndex]);
 
+  // Modified to check if attempting to jump past invalid steps
   const goToStep = useCallback((index: number) => {
     if (steps && steps.length > 0 && index >= 0 && index < steps.length) {
+      // Check if any steps between current and target are invalid
+      if (index > currentStepIndex) {
+        // Check if all steps up to this point are valid
+        for (let i = 0; i <= currentStepIndex; i++) {
+          if (!stepsValidity[i]) {
+            console.log(`Cannot jump to step ${index}: Step ${i} (${steps[i]?.label}) is not valid`);
+            return;
+          }
+        }
+      }
+      
       // Mark this step and all steps before it as visited
       setVisitedSteps(prev => {
         if (!prev || prev.length === 0) {
@@ -114,7 +135,7 @@ export const useStepNavigation = ({ form, steps }: UseStepNavigationProps) => {
     } else {
       console.error(`Invalid step index: ${index}. Valid range is 0-${(steps && steps.length > 0) ? steps.length - 1 : 'undefined'}`);
     }
-  }, [validateSteps, steps]);
+  }, [validateSteps, steps, currentStepIndex, stepsValidity]);
 
   const isLastStep = currentStepIndex === (steps ? steps.length - 1 : 0);
   const isFirstStep = currentStepIndex === 0;
