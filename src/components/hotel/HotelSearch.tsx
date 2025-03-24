@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { usePageSelectionViewModel } from '@/viewmodels/PageSelectionViewModel';
+import { HotelAmenities } from '@/models/HotelModel';
 import {
   SearchInput,
   POSFilter,
@@ -16,12 +17,7 @@ interface HotelSearchProps {
   filters: {
     pos: string | null;
     country: string | null;
-    amenities: {
-      wifi: boolean;
-      restaurant: boolean;
-      gym: boolean;
-      swimmingPool: boolean;
-    };
+    amenities: { [K in keyof HotelAmenities]: boolean };
     stars: number | null;
   };
   onFilterChange: (filters: any) => void;
@@ -63,15 +59,18 @@ const HotelSearch: React.FC<HotelSearchProps> = ({
   };
   
   const clearFilters = () => {
+    // Create a new amenities object with all values set to false
+    const resetAmenities: { [K in keyof HotelAmenities]: boolean } = {} as any;
+    
+    // Set all amenities to false
+    Object.keys(filters.amenities).forEach(key => {
+      resetAmenities[key as keyof HotelAmenities] = false;
+    });
+    
     onFilterChange({
       pos: null,
       country: null,
-      amenities: {
-        wifi: false,
-        restaurant: false,
-        gym: false,
-        swimmingPool: false
-      },
+      amenities: resetAmenities,
       stars: null
     });
   };

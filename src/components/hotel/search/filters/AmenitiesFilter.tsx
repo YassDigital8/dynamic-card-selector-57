@@ -4,16 +4,11 @@ import { Wifi } from 'lucide-react';
 import FilterButton from '../FilterButton';
 import FilterGroup from '../FilterGroup';
 import CheckboxFilter from '../CheckboxFilter';
+import { amenitiesList } from '@/components/hotel/form/amenities/constants';
+import { HotelAmenities } from '@/models/HotelModel';
 
-interface AmenitiesProps {
-  wifi: boolean;
-  restaurant: boolean;
-  gym: boolean;
-  swimmingPool: boolean;
-}
-
-interface AmenitiesFilterProps {
-  amenities: AmenitiesProps;
+type AmenitiesFilterProps = {
+  amenities: { [K in keyof HotelAmenities]: boolean };
   onAmenityChange: (amenity: string, value: boolean) => void;
   disabled?: boolean;
 }
@@ -34,30 +29,26 @@ const AmenitiesFilter: React.FC<AmenitiesFilterProps> = ({
       disabled={disabled}
     >
       <FilterGroup title="Amenities">
-        <CheckboxFilter
-          id="amenity-wifi"
-          label="WiFi"
-          checked={amenities.wifi}
-          onCheckedChange={(checked) => onAmenityChange('wifi', checked)}
-        />
-        <CheckboxFilter
-          id="amenity-restaurant"
-          label="Restaurant"
-          checked={amenities.restaurant}
-          onCheckedChange={(checked) => onAmenityChange('restaurant', checked)}
-        />
-        <CheckboxFilter
-          id="amenity-gym"
-          label="Gym"
-          checked={amenities.gym}
-          onCheckedChange={(checked) => onAmenityChange('gym', checked)}
-        />
-        <CheckboxFilter
-          id="amenity-pool"
-          label="Swimming Pool"
-          checked={amenities.swimmingPool}
-          onCheckedChange={(checked) => onAmenityChange('swimmingPool', checked)}
-        />
+        <div className="max-h-60 overflow-y-auto pr-2">
+          {amenitiesList.map((amenity) => {
+            const amenityKey = amenity.name.split('.')[1] as keyof typeof amenities;
+            
+            return (
+              <CheckboxFilter
+                key={amenity.name}
+                id={`amenity-${amenityKey}`}
+                label={
+                  <div className="flex items-center gap-1.5">
+                    <amenity.icon className="h-3.5 w-3.5 text-indigo-500" />
+                    <span>{amenity.label}</span>
+                  </div>
+                }
+                checked={amenities[amenityKey] || false}
+                onCheckedChange={(checked) => onAmenityChange(amenityKey, checked)}
+              />
+            );
+          })}
+        </div>
       </FilterGroup>
     </FilterButton>
   );

@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
+import { HotelAmenities } from '@/models/HotelModel';
 import HotelSearch from '../HotelSearch';
 
 interface HotelListFiltersProps {
@@ -9,12 +10,7 @@ interface HotelListFiltersProps {
   filters: {
     pos: string | null;
     country: string | null;
-    amenities: {
-      wifi: boolean;
-      restaurant: boolean;
-      gym: boolean;
-      swimmingPool: boolean;
-    };
+    amenities: { [K in keyof HotelAmenities]: boolean };
     stars: number | null;
   };
   onFilterChange: (filters: any) => void;

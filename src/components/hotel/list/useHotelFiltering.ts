@@ -1,16 +1,33 @@
 
 import { useState, useCallback, useMemo } from 'react';
-import { Hotel } from '@/models/HotelModel';
+import { Hotel, HotelAmenities } from '@/models/HotelModel';
+
+// Create a type that has all amenities as booleans
+type AmenitiesFilter = {
+  [K in keyof HotelAmenities]: boolean;
+};
+
+// Initialize with all amenities set to false
+const createEmptyAmenitiesFilter = (): AmenitiesFilter => {
+  return {
+    airConditioning: false,
+    bar: false,
+    gym: false,
+    parking: false,
+    spa: false,
+    restaurant: false,
+    breakfast: false,
+    wifi: false,
+    swimmingPool: false,
+    petsAllowed: false,
+    extraBed: false
+  };
+};
 
 interface FilterState {
   pos: string | null;
   country: string | null;
-  amenities: {
-    wifi: boolean;
-    restaurant: boolean;
-    gym: boolean;
-    swimmingPool: boolean;
-  };
+  amenities: AmenitiesFilter;
   stars: number | null;
 }
 
@@ -19,12 +36,7 @@ export const useHotelFiltering = (hotels: Hotel[]) => {
   const [filters, setFilters] = useState<FilterState>({
     pos: null,
     country: null,
-    amenities: {
-      wifi: false,
-      restaurant: false,
-      gym: false,
-      swimmingPool: false
-    },
+    amenities: createEmptyAmenitiesFilter(),
     stars: null
   });
 
@@ -53,10 +65,12 @@ export const useHotelFiltering = (hotels: Hotel[]) => {
       if (filters.country && hotel.country !== filters.country) return false;
       
       // Amenities filter
-      if (filters.amenities.wifi && !hotel.amenities.wifi) return false;
-      if (filters.amenities.restaurant && !hotel.amenities.restaurant) return false;
-      if (filters.amenities.gym && !hotel.amenities.gym) return false;
-      if (filters.amenities.swimmingPool && !hotel.amenities.swimmingPool) return false;
+      const amenityKeys = Object.keys(filters.amenities) as Array<keyof HotelAmenities>;
+      for (const key of amenityKeys) {
+        if (filters.amenities[key] && !hotel.amenities[key]) {
+          return false;
+        }
+      }
       
       // Star rating filter
       if (filters.stars !== null && hotel.rating !== filters.stars) return false;
