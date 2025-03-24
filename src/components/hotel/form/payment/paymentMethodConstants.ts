@@ -40,7 +40,7 @@ export const PAYMENT_METHODS = {
 };
 
 // Default payment methods to initialize the form with consistent IDs
-// Ensure each payment method has a unique ID
+// Ensure each payment method has a unique ID by removing duplicates
 export const DEFAULT_PAYMENT_METHODS = [
   { id: 'cash', name: 'Cash', enabled: false },
   { id: 'credit-card', name: 'Credit Card', enabled: false },

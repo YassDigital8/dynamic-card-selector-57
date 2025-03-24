@@ -24,7 +24,20 @@ const PaymentMethodsSection: React.FC = () => {
   React.useEffect(() => {
     if (fields.length === 0) {
       console.log("Initializing payment methods with defaults");
+      
+      // Use a Set to track unique method IDs
+      const addedMethodIds = new Set<string>();
+      
       DEFAULT_PAYMENT_METHODS.forEach(method => {
+        // Skip if this method ID has already been added
+        if (addedMethodIds.has(method.id)) {
+          console.log(`Skipping duplicate payment method: ${method.id}`);
+          return;
+        }
+        
+        // Add this method ID to our tracking set
+        addedMethodIds.add(method.id);
+        
         if (method.id === 'bank-transfer') {
           console.log("Adding bank transfer method with account details");
           append({
