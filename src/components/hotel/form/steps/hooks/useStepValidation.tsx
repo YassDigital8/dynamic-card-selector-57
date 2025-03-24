@@ -51,19 +51,20 @@ export const useStepValidation = ({ form, steps, visitedSteps }: UseStepValidati
       
       // Validate all visited steps
       const newStepsValidity = steps.map((step, index) => {
-        // If the step hasn't been visited yet, don't validate it
-        if (!visitedSteps[index]) {
-          return false;
+        // Always validate the first few steps regardless of visit status
+        // This ensures proper display in the UI
+        if (index <= 1 || visitedSteps[index]) {
+          return validateStep(step, formData, index);
         }
         
-        return validateStep(step, formData, index);
+        return stepsValidity[index];
       });
       
       setStepsValidity(newStepsValidity);
     });
     
     return () => subscription.unsubscribe();
-  }, [form, steps, visitedSteps]);
+  }, [form, steps, visitedSteps, stepsValidity]);
 
   // Function to validate multiple steps at once (used when jumping to a step)
   const validateSteps = (upToIndex: number) => {

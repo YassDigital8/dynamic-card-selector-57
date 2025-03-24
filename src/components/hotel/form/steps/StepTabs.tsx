@@ -1,7 +1,9 @@
+
 import React from 'react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { Step } from './types';
+import { Check, X } from 'lucide-react';
 
 interface StepTabsProps {
   steps: Step[];
@@ -28,7 +30,7 @@ const StepTabs: React.FC<StepTabsProps> = ({
           const isVisited = visitedSteps[index];
           
           // A step is completed if it's been visited and all validation criteria are met
-          const isCompleted = isVisited && stepsValidity[index];
+          const isCompleted = stepsValidity[index];
           
           // A step has an error if it's been visited but doesn't meet validation criteria
           const hasError = isVisited && !stepsValidity[index];
@@ -57,35 +59,9 @@ const StepTabs: React.FC<StepTabsProps> = ({
                 whileTap={{ scale: 0.95 }}
               >
                 {isCompleted ? (
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
+                  <Check className="w-4 h-4" />
                 ) : hasError ? (
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
+                  <X className="w-4 h-4" />
                 ) : (
                   index + 1
                 )}
