@@ -11,7 +11,8 @@ import {
   Wifi,
   Waves,
   PawPrint,
-  BedDouble
+  BedDouble,
+  Bus
 } from 'lucide-react';
 import { HotelAmenities } from '@/models/HotelModel';
 
@@ -43,6 +44,7 @@ export const AmenityIcon: React.FC<AmenityIconProps> = ({
     wifi: <Wifi className="h-4 w-4 text-indigo-500" />,
     swimmingPool: <Waves className="h-4 w-4 text-cyan-500" />,
     petsAllowed: <PawPrint className="h-4 w-4 text-orange-500" />,
+    shuttleBus: <Bus className="h-4 w-4 text-green-600" />,
     extraBed: <BedDouble className="h-4 w-4 text-violet-500" />
   };
 

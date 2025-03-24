@@ -1,5 +1,5 @@
 
-import { AirVent, Utensils, Coffee, Wifi, PawPrint, HotelIcon, Bath, BedDouble, Waves, Dumbbell, GlassWater } from 'lucide-react';
+import { AirVent, Utensils, Coffee, Wifi, PawPrint, HotelIcon, Bath, BedDouble, Waves, Dumbbell, GlassWater, Bus } from 'lucide-react';
 
 // Amenities that can have images
 export const amenitiesWithImages = {
@@ -23,5 +23,6 @@ export const amenitiesList = [
   { name: "amenities.wifi", label: "WiFi", icon: Wifi },
   { name: "amenities.swimmingPool", label: "Swimming Pool", icon: Waves, hasImages: true, imageField: "amenities.swimmingPoolImages" },
   { name: "amenities.petsAllowed", label: "Pets Allowed", icon: PawPrint },
+  { name: "amenities.shuttleBus", label: "Shuttle Bus Service", icon: Bus },
   { name: "amenities.extraBed", label: "Extra Bed", icon: BedDouble }
 ];

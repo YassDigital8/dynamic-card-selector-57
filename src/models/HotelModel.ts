@@ -1,3 +1,4 @@
+
 export interface RoomType {
   id: string;
   name: string;
@@ -46,6 +47,7 @@ export interface HotelAmenities {
   wifi: boolean;
   swimmingPool: boolean;
   petsAllowed: boolean;
+  shuttleBus: boolean;
   extraBed: boolean;
   // Add image fields for the specified amenities
   barImages?: AmenityImage[];

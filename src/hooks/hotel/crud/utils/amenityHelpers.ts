@@ -17,6 +17,7 @@ export const createDefaultAmenities = (): HotelAmenities => {
     wifi: false,
     swimmingPool: false,
     petsAllowed: false,
+    shuttleBus: false,
     extraBed: false,
     // Initialize empty image arrays for amenities that support images
     barImages: [] as unknown as AmenityImage[],

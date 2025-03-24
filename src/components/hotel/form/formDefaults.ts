@@ -20,6 +20,7 @@ export const defaultValues: Partial<FormValues> = {
     wifi: false,
     swimmingPool: false,
     petsAllowed: false,
+    shuttleBus: false,
     extraBed: false,
     barImages: [],
     gymImages: [],

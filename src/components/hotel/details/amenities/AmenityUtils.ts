@@ -13,6 +13,7 @@ export const amenityDisplayNames: Record<keyof HotelAmenities, string> = {
   wifi: 'Wi-Fi',
   swimmingPool: 'Swimming Pool',
   petsAllowed: 'Pets Allowed',
+  shuttleBus: 'Shuttle Bus Service',
   extraBed: 'Extra Bed',
   barImages: 'Bar Images',
   gymImages: 'Gym Images',

@@ -163,6 +163,7 @@ export const formSchema = z.object({
     wifi: z.boolean().default(false),
     swimmingPool: z.boolean().default(false),
     petsAllowed: z.boolean().default(false),
+    shuttleBus: z.boolean().default(false),
     extraBed: z.boolean().default(false),
     barImages: z.array(amenityImageSchema).optional(),
     gymImages: z.array(amenityImageSchema).optional(),
