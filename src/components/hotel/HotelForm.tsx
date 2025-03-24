@@ -28,7 +28,16 @@ const HotelForm = memo(({
     mode: 'onChange',
   });
   
-  const { handleSubmit } = useFormProcessor({ form, onSubmit });
+  // We'll store these from the StepBasedForm using a ref
+  const [stepsValidity, setStepsValidity] = React.useState<boolean[]>([]);
+  const [goToStepFn, setGoToStepFn] = React.useState<((index: number) => void) | undefined>();
+  
+  const { handleSubmit } = useFormProcessor({ 
+    form, 
+    onSubmit,
+    stepsValidity,
+    goToStep: goToStepFn
+  });
 
   // Make sure extraBedPolicy is properly set when extraBed is enabled
   useEffect(() => {
@@ -57,6 +66,8 @@ const HotelForm = memo(({
           hotelId={initialData?.id} 
           onSubmit={form.handleSubmit(handleSubmit)}
           isLoading={isLoading}
+          onStepsValidityChange={setStepsValidity}
+          onGoToStepChange={setGoToStepFn}
         />
       </form>
     </Form>

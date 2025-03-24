@@ -11,6 +11,7 @@ import { usePageSelectionViewModel } from '@/viewmodels/PageSelectionViewModel';
 import HotelForm from '../HotelForm';
 import HotelLoadingIndicator from '../HotelLoadingIndicator';
 import ContentBackButton from '../layout/content/ContentBackButton';
+import { Toaster } from '@/components/ui/toaster';
 
 const HotelAddPage: React.FC = () => {
   const navigate = useNavigate();
@@ -82,6 +83,9 @@ const HotelAddPage: React.FC = () => {
           showButtons={true} 
         />
       </Card>
+      
+      {/* Make sure we have a Toaster component to display notifications */}
+      <Toaster />
     </div>
   );
 };

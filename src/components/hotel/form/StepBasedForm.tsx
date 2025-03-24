@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { FormValues } from './formSchema';
 import { StepTabs, StepContent, StepNavigation, useSteps } from './steps';
@@ -9,13 +9,17 @@ interface StepBasedFormProps {
   hotelId?: string;
   onSubmit: () => void;
   isLoading: boolean;
+  onStepsValidityChange?: (validity: boolean[]) => void;
+  onGoToStepChange?: (goToStep: (index: number) => void) => void;
 }
 
 const StepBasedForm: React.FC<StepBasedFormProps> = ({ 
   form, 
   hotelId, 
   onSubmit,
-  isLoading
+  isLoading,
+  onStepsValidityChange,
+  onGoToStepChange
 }) => {
   const { 
     steps, 
@@ -28,6 +32,20 @@ const StepBasedForm: React.FC<StepBasedFormProps> = ({
     stepsValidity,
     visitedSteps
   } = useSteps({ form, hotelId });
+
+  // Pass step validation status to parent component when it changes
+  useEffect(() => {
+    if (onStepsValidityChange) {
+      onStepsValidityChange(stepsValidity);
+    }
+  }, [stepsValidity, onStepsValidityChange]);
+
+  // Pass goToStep function to parent
+  useEffect(() => {
+    if (onGoToStepChange) {
+      onGoToStepChange(goToStep);
+    }
+  }, [goToStep, onGoToStepChange]);
 
   return (
     <div className="space-y-8">
