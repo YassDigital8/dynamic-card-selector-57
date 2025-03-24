@@ -1,8 +1,7 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { Step } from './useSteps';
+import { Step } from './types';
 
 interface StepTabsProps {
   steps: Step[];
