@@ -23,13 +23,11 @@ const StepNavigation: React.FC<StepNavigationProps> = ({
 }) => {
   const form = useFormContext();
   
-  // Function to validate current step before proceeding
+  // Always allow navigation, but trigger validation to update errors
   const handleNext = async () => {
-    // Get errors before proceeding to check if step is valid
-    const result = await form.trigger();
-    if (result) {
-      onNext();
-    }
+    // Still trigger validation to display errors, but proceed anyway
+    await form.trigger();
+    onNext();
   };
   
   return (
