@@ -28,7 +28,7 @@ const HotelForm = memo(({
     mode: 'onChange',
   });
   
-  // We'll store these from the StepBasedForm using state
+  // Store step validation state and navigation function
   const [stepsValidity, setStepsValidity] = React.useState<boolean[]>([]);
   const [goToStepFn, setGoToStepFn] = React.useState<((index: number) => void) | undefined>();
   

@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { FormValues } from '../formSchema';
 import { ContractDocument } from '@/models/HotelModel';
@@ -43,13 +42,10 @@ export const useSteps = ({ form, hotelId }: UseStepsProps) => {
         const amenityBooleans = Object.entries(formValues.amenities)
           .filter(([key, value]) => typeof value === 'boolean');
         
-        // DEBUG: Log the boolean amenities found
-        console.log("Amenity booleans:", amenityBooleans);
-        
         // Check if at least one amenity is enabled (true)
         const hasEnabledAmenity = amenityBooleans.some(([_, value]) => value === true);
         
-        console.log("Has enabled amenity:", hasEnabledAmenity);
+        console.log("Amenities validation:", hasEnabledAmenity);
         return hasEnabledAmenity;
       }
     },
@@ -123,9 +119,11 @@ export const useSteps = ({ form, hotelId }: UseStepsProps) => {
 
   // Log states for debugging
   useEffect(() => {
-    console.log("Current step index:", currentStepIndex);
-    console.log("Steps length:", steps.length);
-    console.log("Steps validity:", stepsValidity);
+    console.log("Steps status:", {
+      currentIndex: currentStepIndex,
+      totalSteps: steps.length,
+      validity: stepsValidity
+    });
   }, [currentStepIndex, steps.length, stepsValidity]);
 
   return {

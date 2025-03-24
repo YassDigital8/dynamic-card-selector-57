@@ -2,9 +2,7 @@
 import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { FormValues } from './formSchema';
-import { AmenityImageUploadDialog, amenitiesWithImages } from './amenities';
-import { useAmenityImages } from './amenities/useAmenityImages';
-import AmenityList from './amenities/AmenityList';
+import AmenitiesStep from './amenities/AmenitiesStep';
 
 interface AmenitiesSectionProps {
   form: UseFormReturn<FormValues>;
@@ -12,38 +10,7 @@ interface AmenitiesSectionProps {
 }
 
 const AmenitiesSection: React.FC<AmenitiesSectionProps> = ({ form, hotelId }) => {
-  const {
-    selectedAmenity,
-    isImageDialogOpen,
-    openImageDialog,
-    handleAddImage,
-    handleAddMultipleImages,
-    handleRemoveImage,
-    handleCloseDialog
-  } = useAmenityImages({ form, hotelId });
-
-  return (
-    <div className="space-y-6 col-span-2">
-      <AmenityList 
-        form={form}
-        onAddImage={openImageDialog}
-        onRemoveImage={handleRemoveImage}
-      />
-      
-      {/* Image Upload Dialog */}
-      {selectedAmenity && (
-        <AmenityImageUploadDialog
-          isOpen={isImageDialogOpen}
-          onClose={handleCloseDialog}
-          onAddImage={handleAddImage}
-          amenityLabel={amenitiesWithImages[selectedAmenity]}
-          hotelId={hotelId}
-          multiSelect={true}
-          onSelectMultiple={handleAddMultipleImages}
-        />
-      )}
-    </div>
-  );
+  return <AmenitiesStep form={form} hotelId={hotelId} />;
 };
 
 export default AmenitiesSection;
