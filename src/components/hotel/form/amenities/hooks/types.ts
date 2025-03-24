@@ -25,6 +25,7 @@ export interface AmenityStepManagerReturn {
   handleRemoveImage: (amenityKey: string, index: number) => void;
   handleCloseDialog: () => void;
   hasEnabledAmenities: () => boolean;
+  getEnabledCount: () => number; // Added this property to the interface
 }
 
 export interface AmenityListItemType {
