@@ -76,6 +76,11 @@ const HotelCard: React.FC<HotelCardProps> = ({
     }
   };
 
+  // Determine height based on view mode
+  const cardHeight = useGridView 
+    ? "h-full min-h-[320px]" 
+    : "min-h-[160px]";
+
   return (
     <motion.div 
       layoutId={`hotel-card-${hotel.id}`}
@@ -94,7 +99,7 @@ const HotelCard: React.FC<HotelCardProps> = ({
       }}
     >
       <Card 
-        className={`transition-all will-change-transform flex flex-col min-h-[160px] ${
+        className={`transition-all will-change-transform flex flex-col ${cardHeight} ${
           isSelected 
           ? 'border-indigo-400 dark:border-indigo-500 shadow-md bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-900/40 dark:to-indigo-800/40' 
           : 'hover:border-indigo-200 dark:hover:border-indigo-800'

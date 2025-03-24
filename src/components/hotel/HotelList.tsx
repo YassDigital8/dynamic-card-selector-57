@@ -6,6 +6,7 @@ import DeleteHotelDialog from './DeleteHotelDialog';
 import HotelCard from './HotelCard';
 import HotelListEmptyState from './HotelListEmptyState';
 import HotelSearch from './HotelSearch';
+import HotelViewToggle from './HotelViewToggle';
 
 interface HotelListProps {
   hotels: Hotel[];
@@ -27,6 +28,7 @@ const HotelList: React.FC<HotelListProps> = ({
   const [hotelToDelete, setHotelToDelete] = useState<Hotel | null>(null);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [gridView, setGridView] = useState(false);
 
   const handleDeleteClick = (hotel: Hotel) => {
     if (isEditing) return;
@@ -52,6 +54,10 @@ const HotelList: React.FC<HotelListProps> = ({
     if (!isEditing) {
       onEditHotel(hotel);
     }
+  };
+
+  const toggleView = () => {
+    setGridView(!gridView);
   };
 
   const filteredHotels = hotels.filter(hotel => 
@@ -90,6 +96,12 @@ const HotelList: React.FC<HotelListProps> = ({
         <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-blue-600 dark:from-indigo-400 dark:to-blue-400">
           Hotels ({filteredHotels.length})
         </h2>
+        
+        <HotelViewToggle 
+          isGridView={gridView} 
+          onToggleView={toggleView} 
+          disabled={isEditing}
+        />
       </motion.div>
       
       {hotels.length > 0 && (
@@ -124,7 +136,7 @@ const HotelList: React.FC<HotelListProps> = ({
         ) : (
           <motion.div 
             key="results"
-            className={`grid grid-cols-1 gap-4 ${isEditing ? 'opacity-70' : ''}`}
+            className={`grid ${gridView ? 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4' : 'grid-cols-1'} gap-4 ${isEditing ? 'opacity-70' : ''}`}
             variants={container}
             initial="hidden"
             animate="show"
@@ -138,7 +150,7 @@ const HotelList: React.FC<HotelListProps> = ({
                 onSelect={() => handleSelectHotel(hotel)}
                 onEdit={() => handleEditHotel(hotel)}
                 onDelete={() => handleDeleteClick(hotel)}
-                useGridView={false}
+                useGridView={gridView}
                 disabled={isEditing}
                 hideEditButton={false}
               />

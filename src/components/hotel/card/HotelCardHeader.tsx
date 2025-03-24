@@ -26,6 +26,60 @@ const HotelCardHeader: React.FC<HotelCardHeaderProps> = ({ hotel, useGridView })
     }
   };
   
+  // For grid view, make the image larger and full width
+  if (useGridView) {
+    return (
+      <div className="relative w-full">
+        <motion.div 
+          layoutId={`hotel-image-container-${hotel.id}`}
+          className="w-full h-36 overflow-hidden"
+          variants={imageVariants}
+          initial="rest"
+          whileHover="hover"
+        >
+          <motion.img 
+            src={getHotelAvatar(hotel.name)} 
+            alt={hotel.name} 
+            className="w-full h-full object-cover transition-transform duration-700 ease-in-out"
+            initial={{ scale: 1.2 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 0.7 }}
+            onError={(e) => {
+              e.currentTarget.src = 'https://placehold.co/600x400/indigo/white?text=Hotel';
+            }}
+          />
+        </motion.div>
+        
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
+          <motion.div layoutId={`hotel-title-${hotel.id}`} className="flex items-center gap-2">
+            <CardTitle className="text-sm sm:text-base text-white truncate font-semibold">
+              {hotel.name}
+            </CardTitle>
+            
+            <motion.div layoutId={`hotel-flag-${hotel.id}`} className="flex-shrink-0">
+              <div className="flex items-center">
+                <Flag className="h-3.5 w-3.5 text-indigo-300" />
+                <span className="text-xs text-indigo-200 ml-1">{hotel.posKey}</span>
+              </div>
+            </motion.div>
+          </motion.div>
+          
+          {/* Display star rating if available */}
+          {typeof hotel.rating === 'number' && hotel.rating > 0 && (
+            <motion.div layoutId={`hotel-rating-${hotel.id}`} className="mt-1.5">
+              <StarRating rating={hotel.rating} size="sm" />
+            </motion.div>
+          )}
+          
+          <motion.div className="mt-1 text-xs text-gray-300" layoutId={`hotel-country-${hotel.id}`}>
+            {hotel.country}
+          </motion.div>
+        </div>
+      </div>
+    );
+  }
+  
+  // Original design for list view
   return (
     <CardHeader className="p-3 pb-0 flex-shrink-0">
       <div className="flex flex-row items-start gap-3">
