@@ -105,7 +105,7 @@ const HotelCard: React.FC<HotelCardProps> = ({
       >
         <HotelCardHeader hotel={hotel} useGridView={true} />
         
-        <CardContent className="flex-1 p-3 pb-1">
+        <CardContent className="flex-1 flex flex-col justify-between p-3 pb-1">
           <div className="space-y-1.5">
             <HotelCardAmenities amenities={hotel.amenities} />
           </div>
