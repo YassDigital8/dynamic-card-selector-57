@@ -7,7 +7,6 @@ import CheckboxFilter from '../CheckboxFilter';
 interface ExtendedFeaturesFilterProps {
   extendedFeatures: {
     bankTransfer: boolean;
-    hasGeolocation: boolean;
   };
   onFeatureChange: (feature: string, value: boolean) => void;
   disabled?: boolean;
@@ -23,7 +22,7 @@ const ExtendedFeaturesFilter: React.FC<ExtendedFeaturesFilterProps> = ({
   return (
     <FilterButton
       icon={<CreditCard className="h-4 w-4" />}
-      label="Payment & Location"
+      label="Payment Options"
       activeValue={activeCount > 0 ? activeCount : null}
       badgeContent={activeCount}
       disabled={disabled}
@@ -34,12 +33,6 @@ const ExtendedFeaturesFilter: React.FC<ExtendedFeaturesFilterProps> = ({
           label="Bank Transfer"
           checked={extendedFeatures.bankTransfer}
           onCheckedChange={(checked) => onFeatureChange('bankTransfer', checked)}
-        />
-        <CheckboxFilter
-          id="geolocation-filter"
-          label="Has Geolocation"
-          checked={extendedFeatures.hasGeolocation}
-          onCheckedChange={(checked) => onFeatureChange('hasGeolocation', checked)}
         />
       </div>
     </FilterButton>

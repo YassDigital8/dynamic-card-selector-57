@@ -25,7 +25,7 @@ const ExtendedFeaturesSection: React.FC = () => {
   return (
     <Card className="col-span-1 md:col-span-2">
       <CardHeader>
-        <CardTitle className="text-xl">Extended Features</CardTitle>
+        <CardTitle className="text-xl">Payment Options</CardTitle>
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="payment" className="space-y-4">

@@ -32,7 +32,6 @@ interface FilterState {
   extendedFeatures: {
     extraBed: boolean;
     bankTransfer: boolean;
-    hasGeolocation: boolean;
   };
 }
 
@@ -45,8 +44,7 @@ export const useHotelFiltering = (hotels: Hotel[]) => {
     stars: null,
     extendedFeatures: {
       extraBed: false,
-      bankTransfer: false,
-      hasGeolocation: false
+      bankTransfer: false
     }
   });
 
@@ -94,11 +92,6 @@ export const useHotelFiltering = (hotels: Hotel[]) => {
       if (filters.extendedFeatures.bankTransfer && 
           (!hotel.paymentMethods || !hotel.paymentMethods.some(method => 
             method.id === 'bank-transfer' && method.enabled))) {
-        return false;
-      }
-      
-      if (filters.extendedFeatures.hasGeolocation && 
-          !hotel.geolocation) {
         return false;
       }
       

@@ -31,7 +31,6 @@ interface FilterState {
   stars: number | null;
   extendedFeatures: {
     bankTransfer: boolean;
-    hasGeolocation: boolean;
   };
 }
 
@@ -43,8 +42,7 @@ export const useHotelFiltering = (hotels: Hotel[]) => {
     amenities: createEmptyAmenitiesFilter(),
     stars: null,
     extendedFeatures: {
-      bankTransfer: false,
-      hasGeolocation: false
+      bankTransfer: false
     }
   });
 
@@ -83,23 +81,10 @@ export const useHotelFiltering = (hotels: Hotel[]) => {
       // Star rating filter
       if (filters.stars !== null && hotel.rating !== filters.stars) return false;
       
-      // Extended features filters
-      if (filters.amenities.extraBed) {
-        // Check if any room types have extra beds enabled
-        const hasRoomWithExtraBed = hotel.roomTypes.some(room => room.allowExtraBed);
-        if (!hasRoomWithExtraBed) {
-          return false;
-        }
-      }
-      
+      // Payment method filter
       if (filters.extendedFeatures.bankTransfer && 
           (!hotel.paymentMethods || !hotel.paymentMethods.some(method => 
             method.id === 'bank-transfer' && method.enabled))) {
-        return false;
-      }
-      
-      if (filters.extendedFeatures.hasGeolocation && 
-          !hotel.geolocation) {
         return false;
       }
       
