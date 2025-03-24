@@ -1,7 +1,8 @@
 
 import React from 'react';
+import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, Save } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Save, Loader2 } from 'lucide-react';
 
 interface StepNavigationProps {
   isFirstStep: boolean;
@@ -12,50 +13,64 @@ interface StepNavigationProps {
   isLoading: boolean;
 }
 
-const StepNavigation: React.FC<StepNavigationProps> = ({ 
-  isFirstStep, 
-  isLastStep, 
-  onPrevious, 
-  onNext, 
-  onSubmit, 
-  isLoading 
+const StepNavigation: React.FC<StepNavigationProps> = ({
+  isFirstStep,
+  isLastStep,
+  onPrevious,
+  onNext,
+  onSubmit,
+  isLoading
 }) => {
   return (
-    <div className="flex justify-between pt-4">
+    <motion.div 
+      className="flex justify-between mt-8 pt-4 border-t border-gray-100 dark:border-gray-800"
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.2 }}
+    >
       <Button
         type="button"
         variant="outline"
         onClick={onPrevious}
-        disabled={isFirstStep}
-        className="border-blue-200 dark:border-blue-800"
+        disabled={isFirstStep || isLoading}
+        className="flex items-center gap-1 border-gray-200 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800"
       >
-        <ChevronLeft className="mr-2 h-4 w-4" />
+        <ArrowLeft className="w-4 h-4" />
         Previous
       </Button>
       
-      <div className="flex gap-2">
+      <div className="flex items-center gap-2">
         {isLastStep ? (
-          <Button 
-            type="button" 
+          <Button
+            type="button"
             onClick={onSubmit}
             disabled={isLoading}
-            className="bg-blue-600 hover:bg-blue-700"
+            className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md hover:shadow-lg transition-all duration-200 dark:from-blue-600 dark:to-indigo-700"
           >
-            <Save className="mr-2 h-4 w-4" />
-            {isLoading ? "Saving..." : "Save Hotel"}
+            {isLoading ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              <>
+                <Save className="w-4 h-4 mr-1" />
+                Save Hotel
+              </>
+            )}
           </Button>
         ) : (
-          <Button 
-            type="button" 
+          <Button
+            type="button"
             onClick={onNext}
-            className="bg-blue-600 hover:bg-blue-700"
+            className="bg-blue-600 hover:bg-blue-700 text-white"
           >
-            Next
-            <ChevronRight className="ml-2 h-4 w-4" />
+            Next Step
+            <ArrowRight className="w-4 h-4 ml-1" />
           </Button>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 };
 

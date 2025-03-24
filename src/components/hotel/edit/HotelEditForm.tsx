@@ -74,27 +74,32 @@ const HotelEditForm: React.FC<HotelEditFormProps> = ({
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.3 }}
     >
-      <Card className="p-6 border-blue-100 dark:border-blue-900 shadow-lg">
-        <div className="flex justify-between items-center mb-6">
+      <Card className="p-6 bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 border-blue-100 dark:border-blue-900 shadow-lg rounded-xl overflow-hidden">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 pb-4 border-b border-gray-100 dark:border-gray-800">
           <EditFormHeader 
             hotelName={selectedHotel.name}
             customLogo={customLogo}
             onLogoClick={handleLogoClick}
             initials={initials}
           />
-          <EditFormButtons
-            isLoading={isLoading}
-            onCancel={onCancel}
-            onDelete={onDelete}
-          />
+          <div className="hidden md:block">
+            <EditFormButtons
+              isLoading={isLoading}
+              onCancel={onCancel}
+              onDelete={onDelete}
+            />
+          </div>
         </div>
         
-        <HotelForm
-          initialData={{...selectedHotel, logoUrl: customLogo}}
-          onSubmit={handleSubmit}
-          isLoading={isLoading}
-          showButtons={false}
-        />
+        <div className="relative">
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-50/30 to-indigo-50/30 dark:from-blue-900/10 dark:to-indigo-900/10 rounded-lg -z-10" aria-hidden="true"></div>
+          <HotelForm
+            initialData={{...selectedHotel, logoUrl: customLogo}}
+            onSubmit={handleSubmit}
+            isLoading={isLoading}
+            showButtons={false}
+          />
+        </div>
         
         <div className="mt-6 flex justify-end">
           <EditFormButtons

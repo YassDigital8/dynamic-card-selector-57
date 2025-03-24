@@ -1,13 +1,8 @@
 
-import React, { useRef, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
-
-interface Step {
-  id: string;
-  label: string;
-}
+import React from 'react';
+import { motion } from 'framer-motion';
+import { cn } from '@/lib/utils';
+import { Step } from './useSteps';
 
 interface StepTabsProps {
   steps: Step[];
@@ -15,129 +10,79 @@ interface StepTabsProps {
   onStepChange: (index: number) => void;
 }
 
-const StepTabs: React.FC<StepTabsProps> = ({ 
-  steps, 
-  currentStepIndex, 
-  onStepChange 
+const StepTabs: React.FC<StepTabsProps> = ({
+  steps,
+  currentStepIndex,
+  onStepChange
 }) => {
-  const tabsListRef = useRef<HTMLDivElement>(null);
-
-  // Ensure first tab is visible on mount and resize
-  useEffect(() => {
-    const ensureFirstStepVisible = () => {
-      if (tabsListRef.current) {
-        // Reset scroll position to show the first tab
-        tabsListRef.current.scrollTo({ left: 0, behavior: 'auto' });
-      }
-    };
-
-    // Run immediately on mount
-    ensureFirstStepVisible();
-    
-    // Also run on window resize
-    window.addEventListener('resize', ensureFirstStepVisible);
-    
-    return () => {
-      window.removeEventListener('resize', ensureFirstStepVisible);
-    };
-  }, []);
-
-  // Center the active tab when changed
-  useEffect(() => {
-    if (tabsListRef.current) {
-      const activeTab = tabsListRef.current.querySelector('[data-state="active"]');
-      if (activeTab) {
-        const scrollContainer = tabsListRef.current;
-        const tabElement = activeTab as HTMLElement;
-        
-        // Calculate scroll position to center the tab
-        const scrollLeft = tabElement.offsetLeft - (scrollContainer.clientWidth - tabElement.offsetWidth) / 2;
-        
-        scrollContainer.scrollTo({
-          left: Math.max(0, scrollLeft),
-          behavior: 'smooth'
-        });
-      }
-    }
-  }, [currentStepIndex]);
-
-  const scrollTabsLeft = () => {
-    if (tabsListRef.current) {
-      tabsListRef.current.scrollTo({ left: 0, behavior: 'smooth' });
-    }
-  };
-
-  const scrollTabsRight = () => {
-    if (tabsListRef.current) {
-      const container = tabsListRef.current;
-      container.scrollTo({ 
-        left: container.scrollWidth, 
-        behavior: 'smooth' 
-      });
-    }
-  };
-
   return (
     <div className="relative">
-      <Button 
-        variant="ghost" 
-        size="sm" 
-        className="absolute left-0 top-1/2 -translate-y-1/2 z-10 h-8 w-8 p-0 rounded-full bg-background/80 backdrop-blur-sm hidden sm:flex items-center justify-center shadow-sm border"
-        onClick={scrollTabsLeft}
-      >
-        <ArrowLeft size={16} />
-        <span className="sr-only">Scroll to start</span>
-      </Button>
-      
-      <Tabs 
-        value={steps[currentStepIndex].id} 
-        className="w-full"
-        onValueChange={(value) => {
-          const stepIndex = steps.findIndex(step => step.id === value);
-          if (stepIndex !== -1) {
-            onStepChange(stepIndex);
-          }
-        }}
-      >
-        <TabsList 
-          ref={tabsListRef}
-          className="w-full flex mb-6 h-12 overflow-x-auto scrollbar-none p-0 md:p-1 mx-auto px-8 sm:px-10"
-        >
-          {steps.map((step, index) => (
-            <TabsTrigger 
+      <div className="absolute h-0.5 top-1/2 left-0 transform -translate-y-1/2 w-full bg-gray-200 dark:bg-gray-700 -z-10"></div>
+      <div className="flex justify-between">
+        {steps.map((step, index) => {
+          const isActive = index === currentStepIndex;
+          const isCompleted = index < currentStepIndex;
+          
+          return (
+            <button
               key={step.id}
-              value={step.id}
-              className={`
-                flex-1 min-w-[150px] h-10 px-4 mx-1 text-xs sm:text-sm md:text-base whitespace-nowrap transition-all duration-200
-                ${index === currentStepIndex ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-medium border-b-2 border-blue-500 shadow-sm' : 'hover:bg-gray-50 dark:hover:bg-gray-800/20'}
-                ${index < currentStepIndex ? 'text-gray-500 dark:text-gray-400' : ''}
-              `}
+              type="button"
+              onClick={() => onStepChange(index)}
+              className={cn(
+                "flex flex-col items-center space-y-1 relative"
+              )}
             >
-              <div className="flex items-center justify-center space-x-1.5">
-                <span className={`
-                  inline-flex items-center justify-center rounded-full w-5 h-5 text-xs
-                  ${index === currentStepIndex ? 'bg-blue-500 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}
-                  ${index < currentStepIndex ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400' : ''}
-                `}>
-                  {index + 1}
-                </span>
-                <span className="hidden sm:inline">{step.label}</span>
-                <span className="sm:hidden truncate max-w-[80px]">{step.label}</span>
-              </div>
-            </TabsTrigger>
-          ))}
-        </TabsList>
-      </Tabs>
-      
-      <Button 
-        variant="ghost" 
-        size="sm" 
-        className="absolute right-0 top-1/2 -translate-y-1/2 z-10 h-8 w-8 p-0 rounded-full bg-background/80 backdrop-blur-sm hidden sm:flex items-center justify-center shadow-sm border"
-        onClick={scrollTabsRight}
-      >
-        <ArrowRight size={16} />
-        <span className="sr-only">Scroll right</span>
-      </Button>
+              <motion.div
+                className={cn(
+                  "flex items-center justify-center rounded-full w-8 h-8 text-xs font-medium transition-colors z-10",
+                  isActive
+                    ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md"
+                    : isCompleted
+                    ? "bg-green-500 text-white"
+                    : "bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-400"
+                )}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                {isCompleted ? (
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                ) : (
+                  index + 1
+                )}
+              </motion.div>
+              <span
+                className={cn(
+                  "text-xs whitespace-nowrap",
+                  isActive
+                    ? "text-blue-600 font-medium dark:text-blue-400"
+                    : "text-gray-500 dark:text-gray-400"
+                )}
+              >
+                {step.label}
+              </span>
+              {isActive && (
+                <motion.div
+                  className="absolute -bottom-1 left-0 right-0 h-0.5 bg-blue-600 dark:bg-blue-400"
+                  layoutId="activeStep"
+                />
+              )}
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 };
