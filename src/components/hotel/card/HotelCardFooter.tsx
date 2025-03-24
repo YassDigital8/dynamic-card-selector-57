@@ -45,15 +45,15 @@ const HotelCardFooter: React.FC<HotelCardFooterProps> = ({
   };
   
   return (
-    <div className="flex justify-between items-center gap-1 mt-2 pt-2 border-t border-gray-100 dark:border-gray-800">
+    <div className="flex justify-between items-center gap-0.5 mt-2 pt-2 border-t border-gray-100 dark:border-gray-800">
       <Button
         variant="ghost"
         size="sm"
-        className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 h-7 px-1.5"
+        className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 h-6 px-1"
         onClick={handleViewClick}
         disabled={isEditing || disabled}
       >
-        <Eye className="h-3.5 w-3.5 mr-0.5" />
+        <Eye className="h-3 w-3 mr-0.5" />
         <span className="text-xs">View</span>
       </Button>
       
@@ -61,11 +61,11 @@ const HotelCardFooter: React.FC<HotelCardFooterProps> = ({
         <Button
           variant="ghost"
           size="sm"
-          className="text-amber-600 hover:text-amber-800 dark:text-amber-400 dark:hover:text-amber-300 h-7 px-1.5"
+          className="text-amber-600 hover:text-amber-800 dark:text-amber-400 dark:hover:text-amber-300 h-6 px-1"
           onClick={handleEditClick}
           disabled={isEditing || disabled}
         >
-          <PenLine className="h-3.5 w-3.5 mr-0.5" />
+          <PenLine className="h-3 w-3 mr-0.5" />
           <span className="text-xs">Edit</span>
         </Button>
       )}
@@ -73,11 +73,11 @@ const HotelCardFooter: React.FC<HotelCardFooterProps> = ({
       <Button
         variant="ghost"
         size="sm"
-        className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 h-7 px-1.5"
+        className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 h-6 px-1"
         onClick={handleDeleteClick}
         disabled={isEditing || disabled}
       >
-        <Trash2 className="h-3.5 w-3.5 mr-0.5" />
+        <Trash2 className="h-3 w-3 mr-0.5" />
         <span className="text-xs">Delete</span>
       </Button>
     </div>
