@@ -3,6 +3,7 @@ import React from 'react';
 import { FilterButton } from '../';
 import { CreditCard } from 'lucide-react';
 import CheckboxFilter from '../CheckboxFilter';
+import { DEFAULT_PAYMENT_METHODS } from '../../form/payment/paymentMethodConstants';
 
 interface ExtendedFeaturesFilterProps {
   extendedFeatures: {
@@ -28,12 +29,15 @@ const ExtendedFeaturesFilter: React.FC<ExtendedFeaturesFilterProps> = ({
       disabled={disabled}
     >
       <div className="flex flex-col gap-2 py-1">
-        <CheckboxFilter
-          id="bank-transfer-filter"
-          label="Bank Transfer"
-          checked={extendedFeatures.bankTransfer}
-          onCheckedChange={(checked) => onFeatureChange('bankTransfer', checked)}
-        />
+        {DEFAULT_PAYMENT_METHODS.map(method => (
+          <CheckboxFilter
+            key={method.id}
+            id={`${method.id}-filter`}
+            label={method.name}
+            checked={extendedFeatures[method.id.replace('-', '')] || false}
+            onCheckedChange={(checked) => onFeatureChange(method.id.replace('-', ''), checked)}
+          />
+        ))}
       </div>
     </FilterButton>
   );

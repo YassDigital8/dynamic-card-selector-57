@@ -1,6 +1,7 @@
 
 import { useState, useCallback, useMemo } from 'react';
 import { Hotel, HotelAmenities } from '@/models/HotelModel';
+import { DEFAULT_PAYMENT_METHODS } from '@/components/hotel/form/payment/paymentMethodConstants';
 
 // Create a type that has all amenities as booleans
 type AmenitiesFilter = {
@@ -24,14 +25,26 @@ const createEmptyAmenitiesFilter = (): AmenitiesFilter => {
   };
 };
 
+// Create payment methods filter type
+type PaymentMethodsFilter = {
+  [key: string]: boolean;
+};
+
+// Initialize with all payment methods set to false
+const createEmptyPaymentMethodsFilter = (): PaymentMethodsFilter => {
+  const filter: PaymentMethodsFilter = {};
+  DEFAULT_PAYMENT_METHODS.forEach(method => {
+    filter[method.id.replace('-', '')] = false;
+  });
+  return filter;
+};
+
 interface FilterState {
   pos: string | null;
   country: string | null;
   amenities: AmenitiesFilter;
   stars: number | null;
-  extendedFeatures: {
-    bankTransfer: boolean;
-  };
+  extendedFeatures: PaymentMethodsFilter;
 }
 
 export const useHotelFiltering = (hotels: Hotel[]) => {
@@ -41,9 +54,7 @@ export const useHotelFiltering = (hotels: Hotel[]) => {
     country: null,
     amenities: createEmptyAmenitiesFilter(),
     stars: null,
-    extendedFeatures: {
-      bankTransfer: false
-    }
+    extendedFeatures: createEmptyPaymentMethodsFilter()
   });
 
   const handleSearchChange = useCallback((value: string) => {
@@ -81,11 +92,18 @@ export const useHotelFiltering = (hotels: Hotel[]) => {
       // Star rating filter
       if (filters.stars !== null && hotel.rating !== filters.stars) return false;
       
-      // Payment method filter
-      if (filters.extendedFeatures.bankTransfer && 
-          (!hotel.paymentMethods || !hotel.paymentMethods.some(method => 
-            method.id === 'bank-transfer' && method.enabled))) {
-        return false;
+      // Payment methods filter
+      const paymentMethodKeys = Object.keys(filters.extendedFeatures);
+      for (const key of paymentMethodKeys) {
+        if (filters.extendedFeatures[key]) {
+          // Convert camelCase to kebab-case for matching with paymentMethods.id
+          const methodId = key.includes('-') ? key : key.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+          
+          if (!hotel.paymentMethods || !hotel.paymentMethods.some(method => 
+            method.id === methodId && method.enabled)) {
+            return false;
+          }
+        }
       }
       
       return true;

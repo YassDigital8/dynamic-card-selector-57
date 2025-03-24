@@ -11,6 +11,7 @@ import {
   ClearFiltersButton,
   ExtendedFeaturesFilter
 } from './search';
+import { DEFAULT_PAYMENT_METHODS } from './form/payment/paymentMethodConstants';
 
 interface HotelSearchProps {
   searchTerm: string;
@@ -21,7 +22,7 @@ interface HotelSearchProps {
     amenities: { [K in keyof HotelAmenities]: boolean };
     stars: number | null;
     extendedFeatures: {
-      bankTransfer: boolean;
+      [key: string]: boolean;
     };
   };
   onFilterChange: (filters: any) => void;
@@ -81,14 +82,18 @@ const HotelSearch: React.FC<HotelSearchProps> = ({
       resetAmenities[key as keyof HotelAmenities] = false;
     });
     
+    // Create empty payment methods filter
+    const resetPaymentMethods: { [key: string]: boolean } = {};
+    DEFAULT_PAYMENT_METHODS.forEach(method => {
+      resetPaymentMethods[method.id.replace('-', '')] = false;
+    });
+    
     onFilterChange({
       pos: null,
       country: null,
       amenities: resetAmenities,
       stars: null,
-      extendedFeatures: {
-        bankTransfer: false
-      }
+      extendedFeatures: resetPaymentMethods
     });
   };
   

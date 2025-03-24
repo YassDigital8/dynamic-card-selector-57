@@ -13,8 +13,7 @@ interface HotelListFiltersProps {
     amenities: { [K in keyof HotelAmenities]: boolean };
     stars: number | null;
     extendedFeatures: {
-      extraBed: boolean;
-      bankTransfer: boolean;
+      [key: string]: boolean;
     };
   };
   onFilterChange: (filters: any) => void;
