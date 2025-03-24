@@ -131,7 +131,7 @@ const HotelSearch: React.FC<HotelSearchProps> = ({
                       htmlFor={`pos-${pos.key}`} 
                       className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                     >
-                      {pos.name}
+                      {pos.englishName}
                     </label>
                   </div>
                 ))}
