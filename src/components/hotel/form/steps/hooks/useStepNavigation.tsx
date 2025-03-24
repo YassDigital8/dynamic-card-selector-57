@@ -16,11 +16,13 @@ export const useStepNavigation = ({ form, steps }: UseStepNavigationProps) => {
   
   // Initialize visited steps array
   useEffect(() => {
-    const initialVisitedSteps = Array(steps.length).fill(false);
-    // Mark the first two steps as visited for validation purposes
-    initialVisitedSteps[0] = true;
-    initialVisitedSteps[1] = true;
-    setVisitedSteps(initialVisitedSteps);
+    setVisitedSteps(Array(steps.length).fill(false));
+    // Mark the first step as visited
+    setVisitedSteps(prev => {
+      const newVisited = [...prev];
+      newVisited[0] = true;
+      return newVisited;
+    });
   }, [steps.length]);
 
   const { stepsValidity, validateSteps } = useStepValidation({

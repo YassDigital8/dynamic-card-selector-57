@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { FormValues } from '../formSchema';
 import { ContractDocument } from '@/models/HotelModel';
@@ -42,8 +41,6 @@ export const useSteps = ({ form, hotelId }: UseStepsProps) => {
         const amenityKeys = Object.keys(formValues.amenities);
         for (const key of amenityKeys) {
           // Only check boolean properties (exclude image arrays)
-          if (key.includes('Images')) continue;
-          
           const value = formValues.amenities[key as keyof typeof formValues.amenities];
           if (typeof value === 'boolean' && value === true) {
             return true;
