@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { FormValues } from '../formSchema';
 import { ContractDocument } from '@/models/HotelModel';
@@ -64,12 +63,6 @@ export const useSteps = ({ form, hotelId }: UseStepsProps) => {
       validationFields: [] // Extended features are optional
     },
     {
-      id: 'preview',
-      label: 'Preview',
-      component: <PreviewSection />,
-      validationFields: [] // Preview has no validation
-    },
-    {
       id: 'contract-commercial',
       label: 'Contract & Commercial',
       component: (
@@ -79,6 +72,12 @@ export const useSteps = ({ form, hotelId }: UseStepsProps) => {
         </div>
       ),
       validationFields: [] // Contract documents are optional
+    },
+    {
+      id: 'preview',
+      label: 'Preview',
+      component: <PreviewSection />,
+      validationFields: [] // Preview has no validation
     },
   ];
 
