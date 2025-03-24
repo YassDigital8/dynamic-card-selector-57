@@ -12,5 +12,13 @@ export const useFormNotification = () => {
     });
   };
   
-  return { showIncompleteFormError };
+  const showSuccessNotification = (title: string, description: string) => {
+    toast({
+      variant: "default",
+      title,
+      description
+    });
+  };
+  
+  return { showIncompleteFormError, showSuccessNotification };
 };

@@ -14,9 +14,11 @@ export const useEnabledAmenities = ({ form }: AmenityHookProps) => {
   const hasEnabledAmenities = useCallback(() => {
     if (!amenities) return false;
     
-    return Object.entries(amenities)
-      .filter(([key, value]) => typeof value === 'boolean')
-      .some(([_, value]) => value === true);
+    const enabledAmenities = Object.entries(amenities)
+      .filter(([key, value]) => typeof value === 'boolean' && value === true);
+    
+    console.log("Checking enabled amenities:", enabledAmenities);
+    return enabledAmenities.length > 0;
   }, [amenities]);
 
   return { hasEnabledAmenities, amenities };

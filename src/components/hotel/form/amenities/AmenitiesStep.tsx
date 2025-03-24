@@ -26,16 +26,27 @@ const AmenitiesStep: React.FC<AmenitiesStepProps> = ({ form, hotelId }) => {
     hasEnabledAmenities
   } = useAmenityStepManager({ form, hotelId });
 
-  // Add debug effect to monitor validation state
+  // Add debug effect to monitor validation state and ensure form revalidation
   useEffect(() => {
-    const amenities = form.getValues('amenities');
-    if (amenities) {
-      const enabledAmenities = Object.entries(amenities)
-        .filter(([key, value]) => typeof value === 'boolean' && value === true);
-      
-      console.log("Enabled amenities in AmenitiesStep:", enabledAmenities.length ? enabledAmenities.map(([key]) => key) : 'none');
-      console.log("Step validation should pass:", enabledAmenities.length > 0);
-    }
+    // Initial validation
+    form.trigger('amenities');
+    
+    const subscription = form.watch((value) => {
+      if (value.amenities) {
+        const enabledAmenities = Object.entries(value.amenities)
+          .filter(([key, val]) => typeof val === 'boolean' && val === true)
+          .map(([key]) => key);
+          
+        console.log("Enabled amenities in AmenitiesStep:", 
+          enabledAmenities.length ? enabledAmenities : 'none');
+        console.log("Step validation should pass:", enabledAmenities.length > 0);
+        
+        // Force validation of the form
+        form.trigger();
+      }
+    });
+    
+    return () => subscription.unsubscribe();
   }, [form]);
 
   return (
@@ -65,7 +76,7 @@ const AmenitiesStep: React.FC<AmenitiesStepProps> = ({ form, hotelId }) => {
               isOpen={isImageDialogOpen}
               onClose={handleCloseDialog}
               onAddImage={handleAddImage}
-              amenityLabel={selectedAmenity.label}
+              amenityLabel={selectedAmenity}
               hotelId={hotelId}
               multiSelect={true}
               onSelectMultiple={handleAddMultipleImages}

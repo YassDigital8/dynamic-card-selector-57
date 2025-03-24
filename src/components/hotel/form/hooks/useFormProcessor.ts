@@ -10,7 +10,7 @@ export const useFormProcessor = ({
   goToStep
 }: FormProcessorProps) => {
   const { validateFormSteps } = useFormValidation();
-  const { showIncompleteFormError } = useFormNotification();
+  const { showIncompleteFormError, showSuccessNotification } = useFormNotification();
   
   const handleSubmit = (data: any) => {
     console.log("Handling form submission. Steps validity:", stepsValidity);
@@ -29,6 +29,10 @@ export const useFormProcessor = ({
     
     // If all steps are valid, or if we don't have validation info, proceed with submission
     console.log('Form data before submission:', data);
+    
+    // Show success notification
+    showSuccessNotification("Form Ready for Submission", "Your hotel information is complete and ready to be submitted.");
+    
     onSubmit(data);
   };
 
