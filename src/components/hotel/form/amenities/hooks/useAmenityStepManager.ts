@@ -26,17 +26,24 @@ export const useAmenityStepManager = ({
 
   // Force validation on mount and when amenities change, but prevent excessive re-validation
   useEffect(() => {
-    // Avoid excessive validation by debouncing or using a flag
+    // Use a flag to track if we're in a validation process
+    let isValidating = false;
+    
     const timeoutId = setTimeout(() => {
-      form.trigger('amenities');
-      
-      console.log('Amenities updated:', amenities);
-      const enabledCount = getEnabledCount();
-      console.log('Any amenity enabled:', hasEnabledAmenities(), 'Count:', enabledCount);
-      
-      // Only trigger the parent form if we need to update step status
-      if (form.formState.isValid !== (enabledCount > 0)) {
-        form.trigger();
+      if (!isValidating) {
+        isValidating = true;
+        
+        form.trigger('amenities').finally(() => {
+          isValidating = false;
+        });
+        
+        const enabledCount = getEnabledCount();
+        console.log('Any amenity enabled:', hasEnabledAmenities(), 'Count:', enabledCount);
+        
+        // Only trigger the parent form if we need to update step status
+        if (form.formState.isValid !== (enabledCount > 0)) {
+          form.trigger();
+        }
       }
     }, 100);
     

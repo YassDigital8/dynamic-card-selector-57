@@ -1,37 +1,24 @@
 
-import { FileInfo } from '@/models/FileModel';
-import { FileMetadataValues } from '@/hooks/upload/useFileMetadata';
-import { AmenityImage } from '@/models/HotelModel';
 import { UseFormReturn } from 'react-hook-form';
 import { FormValues } from '../../formSchema';
-import { LucideIcon } from 'lucide-react';
+import { FileInfo } from '@/models/FileModel';
 
-// Types for amenities with images
-export type AmenityKeyType = string;
+// List of amenities that can have images
+export type AmenityWithImages = 'bar' | 'gym' | 'spa' | 'restaurant' | 'breakfast' | 'swimmingPool';
 
-// Common props for amenity hooks
 export interface AmenityHookProps {
   form: UseFormReturn<FormValues>;
   hotelId?: string;
 }
 
-// Return type for the useAmenityStepManager hook
 export interface AmenityStepManagerReturn {
-  selectedAmenity: string;
+  selectedAmenity: AmenityWithImages | null;
   isImageDialogOpen: boolean;
-  openImageDialog: (amenityKey: string) => void;
-  handleAddImage: (imageUrl: string, metadata?: FileMetadataValues) => void;
+  openImageDialog: (amenityName: string) => void;
+  handleAddImage: (imageUrl: string, metadata?: any) => void;
   handleAddMultipleImages: (files: FileInfo[]) => void;
   handleRemoveImage: (amenityKey: string, index: number) => void;
   handleCloseDialog: () => void;
   hasEnabledAmenities: () => boolean;
-  getEnabledCount: () => number; // Added this property to the interface
-}
-
-export interface AmenityListItemType {
-  name: string;
-  label: string;
-  icon: LucideIcon;
-  hasImages?: boolean;
-  imageField?: string;
+  getEnabledCount: () => number;
 }
