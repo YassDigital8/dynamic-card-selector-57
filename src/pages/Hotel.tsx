@@ -1,7 +1,7 @@
 
 import React from 'react';
 import StandardLayout from '@/components/layout/StandardLayout';
-import { HotelPage } from '@/components/hotel/HotelPage';
+import HotelPage from '@/components/hotel/HotelPage';
 import { BreadcrumbNav } from '@/components/ui/breadcrumb-nav';
 import { Building } from 'lucide-react';
 
