@@ -101,27 +101,24 @@ const HotelCard: React.FC<HotelCardProps> = ({
           isSelected 
           ? 'border-indigo-400 dark:border-indigo-500 shadow-md bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-900/40 dark:to-indigo-800/40' 
           : 'hover:border-indigo-200 dark:hover:border-indigo-800 border-gray-200'
-        } ${disabled ? 'opacity-70' : 'border border-gray-200 dark:border-gray-700'} overflow-hidden`}
-        style={{ borderRadius: '0.75rem' }}
+        } ${disabled ? 'opacity-70' : 'border border-gray-200 dark:border-gray-700'} rounded-lg overflow-hidden`}
       >
         <HotelCardHeader hotel={hotel} useGridView={true} />
         
-        <CardContent className="flex-1 flex flex-col justify-between p-3 pb-0">
+        <CardContent className="flex-1 flex flex-col justify-between p-3 pb-1">
           <div className="space-y-1.5">
             <HotelCardAmenities amenities={hotel.amenities} />
           </div>
           
-          <div className="mt-auto">
-            <HotelCardFooter 
-              hotel={hotel} 
-              onSelect={onSelect} 
-              onEdit={onEdit} 
-              onDelete={onDelete}
-              isEditing={disabled}
-              disabled={disabled}
-              hideEditButton={hideEditButton}
-            />
-          </div>
+          <HotelCardFooter 
+            hotel={hotel} 
+            onSelect={onSelect} 
+            onEdit={onEdit} 
+            onDelete={onDelete}
+            isEditing={disabled}
+            disabled={disabled}
+            hideEditButton={hideEditButton}
+          />
         </CardContent>
       </Card>
     </motion.div>

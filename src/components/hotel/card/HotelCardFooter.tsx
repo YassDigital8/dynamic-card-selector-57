@@ -45,7 +45,7 @@ const HotelCardFooter: React.FC<HotelCardFooterProps> = ({
   };
   
   return (
-    <div className="flex justify-evenly items-center gap-1 mt-1 pt-1.5 border-t border-gray-100 dark:border-gray-800">
+    <div className="flex justify-evenly items-center gap-1 mt-2 pt-2 border-t border-gray-100 dark:border-gray-800">
       <Button
         variant="ghost"
         size="icon"
