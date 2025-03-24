@@ -18,6 +18,7 @@ export interface Step {
   component: React.ReactNode;
   icon?: React.ReactNode;
   validationFields?: string[]; // Fields to validate for this step
+  customValidation?: (formValues: FormValues) => boolean; // Custom validation function
 }
 
 interface UseStepsProps {
@@ -44,25 +45,39 @@ export const useSteps = ({ form, hotelId }: UseStepsProps) => {
       id: 'amenities',
       label: 'Amenities',
       component: <AmenitiesSection form={form} hotelId={hotelId} />,
-      validationFields: ['amenities']
+      // Custom validation to check if at least one amenity is enabled
+      customValidation: (formValues: FormValues) => {
+        const amenities = formValues.amenities;
+        return Object.values(amenities).some(value => 
+          typeof value === 'boolean' && value === true
+        );
+      }
     },
     {
       id: 'room-types',
       label: 'Room Types',
       component: <RoomTypesSection form={form} />,
-      validationFields: []  // Room types are optional
+      // Custom validation to check if at least one room type is added
+      customValidation: (formValues: FormValues) => {
+        return formValues.roomTypes && formValues.roomTypes.length > 0;
+      }
     },
     {
       id: 'contact',
       label: 'Contact & Social Media',
       component: <ContactDetailsSection />,
-      validationFields: [] // Contact details are optional
+      // Custom validation to check if at least one contact detail and one social media are added
+      customValidation: (formValues: FormValues) => {
+        const hasContact = formValues.contactDetails && formValues.contactDetails.length > 0;
+        const hasSocialMedia = formValues.socialMedia && formValues.socialMedia.length > 0;
+        return hasContact && hasSocialMedia;
+      }
     },
     {
       id: 'payment-options',
       label: 'Payment Options',
       component: <ExtendedFeaturesSection />,
-      validationFields: [] // Extended features are optional
+      validationFields: [] // Payment options are optional
     },
     {
       id: 'contract-commercial',
@@ -97,10 +112,21 @@ export const useSteps = ({ form, hotelId }: UseStepsProps) => {
 
   // Update step validity whenever form values change
   useEffect(() => {
-    const subscription = form.watch(() => {
+    const subscription = form.watch((formValues) => {
       const newStepsValidity = steps.map((step, index) => {
+        // If the step hasn't been visited yet, don't validate it
+        if (!visitedSteps[index]) {
+          return false;
+        }
+        
+        // If using custom validation
+        if (step.customValidation) {
+          return step.customValidation(form.getValues());
+        }
+        
+        // If no validation fields specified and no custom validation, step is always valid
         if (!step.validationFields || step.validationFields.length === 0) {
-          return true; // If no validation fields specified, step is always valid
+          return true;
         }
         
         // Check if all required fields for this step have values
@@ -121,7 +147,7 @@ export const useSteps = ({ form, hotelId }: UseStepsProps) => {
     });
     
     return () => subscription.unsubscribe();
-  }, [form, steps]);
+  }, [form, steps, visitedSteps]);
 
   const goToNextStep = () => {
     if (currentStepIndex < steps.length - 1) {

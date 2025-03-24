@@ -27,16 +27,12 @@ const StepTabs: React.FC<StepTabsProps> = ({
           const isActive = index === currentStepIndex;
           // Only show completion status for steps that have been visited
           const isVisited = visitedSteps[index];
-          const hasRequiredFields = step.validationFields && step.validationFields.length > 0;
           
-          // A step is completed if it's been visited, has validation fields, and all fields are valid
+          // A step is completed if it's been visited and all validation criteria are met
           const isCompleted = isVisited && stepsValidity[index];
           
-          // A step has an error if it's been visited, has validation fields, and not all fields are valid
-          const hasError = isVisited && hasRequiredFields && !stepsValidity[index];
-          
-          // A step is neutral if it hasn't been visited or doesn't have required fields
-          const isNeutral = !isVisited || !hasRequiredFields;
+          // A step has an error if it's been visited but doesn't meet validation criteria
+          const hasError = isVisited && !stepsValidity[index];
           
           return (
             <button
