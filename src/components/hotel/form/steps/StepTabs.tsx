@@ -1,6 +1,8 @@
+
 import React from 'react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { Check } from 'lucide-react';
 import { Step } from './types';
 
 interface StepTabsProps {
@@ -8,7 +10,7 @@ interface StepTabsProps {
   currentStepIndex: number;
   onStepChange: (index: number) => void;
   stepsValidity: boolean[];
-  visitedSteps: boolean[]; // Add this new prop
+  visitedSteps: boolean[];
 }
 
 const StepTabs: React.FC<StepTabsProps> = ({
@@ -24,13 +26,8 @@ const StepTabs: React.FC<StepTabsProps> = ({
       <div className="flex justify-between">
         {steps.map((step, index) => {
           const isActive = index === currentStepIndex;
-          // Only show completion status for steps that have been visited
           const isVisited = visitedSteps[index];
-          
-          // A step is completed if it's been visited and all validation criteria are met
           const isCompleted = isVisited && stepsValidity[index];
-          
-          // A step has an error if it's been visited but doesn't meet validation criteria
           const hasError = isVisited && !stepsValidity[index];
           
           return (
@@ -57,20 +54,7 @@ const StepTabs: React.FC<StepTabsProps> = ({
                 whileTap={{ scale: 0.95 }}
               >
                 {isCompleted ? (
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
+                  <Check className="w-4 h-4" />
                 ) : hasError ? (
                   <svg
                     className="w-4 h-4"
