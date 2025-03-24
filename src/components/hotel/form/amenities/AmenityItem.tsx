@@ -76,9 +76,11 @@ const AmenityItem: React.FC<AmenityItemProps> = ({
   return (
     <div className={cn(
       "space-y-3 rounded-lg border p-4",
-      amenityEnabled 
-        ? "border-blue-200 bg-blue-50/50 dark:border-blue-900 dark:bg-blue-950/10" 
-        : "border-gray-200 dark:border-gray-800"
+      isExtraBed 
+        ? "border-blue-200 bg-blue-50/70 dark:border-blue-900 dark:bg-blue-950/20" 
+        : amenityEnabled 
+          ? "border-blue-200 bg-blue-50/50 dark:border-blue-900 dark:bg-blue-950/10" 
+          : "border-gray-200 dark:border-gray-800"
     )}>
       {/* Main amenity toggle switch */}
       <div className="flex flex-row items-center justify-between space-y-0">
