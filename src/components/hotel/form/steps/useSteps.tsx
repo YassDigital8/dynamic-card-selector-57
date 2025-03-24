@@ -92,7 +92,10 @@ export const useSteps = ({ form, hotelId }: UseStepsProps) => {
           <CommercialDealsView contractDocuments={contractDocuments} />
         </div>
       ),
-      validationFields: [] // Contract documents are optional
+      // Updated validation to check if at least one contract document has been uploaded
+      customValidation: (formValues: FormValues) => {
+        return formValues.contractDocuments && formValues.contractDocuments.length > 0;
+      }
     },
     {
       id: 'preview',
