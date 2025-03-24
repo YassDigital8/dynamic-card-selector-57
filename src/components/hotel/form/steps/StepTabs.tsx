@@ -8,14 +8,16 @@ interface StepTabsProps {
   steps: Step[];
   currentStepIndex: number;
   onStepChange: (index: number) => void;
-  stepsValidity: boolean[]; // Add this new prop
+  stepsValidity: boolean[];
+  visitedSteps: boolean[]; // Add this new prop
 }
 
 const StepTabs: React.FC<StepTabsProps> = ({
   steps,
   currentStepIndex,
   onStepChange,
-  stepsValidity
+  stepsValidity,
+  visitedSteps
 }) => {
   return (
     <div className="relative">
@@ -23,8 +25,18 @@ const StepTabs: React.FC<StepTabsProps> = ({
       <div className="flex justify-between">
         {steps.map((step, index) => {
           const isActive = index === currentStepIndex;
-          const isCompleted = index < currentStepIndex && stepsValidity[index];
-          const hasError = index < currentStepIndex && !stepsValidity[index];
+          // Only show completion status for steps that have been visited
+          const isVisited = visitedSteps[index];
+          const hasRequiredFields = step.validationFields && step.validationFields.length > 0;
+          
+          // A step is completed if it's been visited, has validation fields, and all fields are valid
+          const isCompleted = isVisited && stepsValidity[index];
+          
+          // A step has an error if it's been visited, has validation fields, and not all fields are valid
+          const hasError = isVisited && hasRequiredFields && !stepsValidity[index];
+          
+          // A step is neutral if it hasn't been visited or doesn't have required fields
+          const isNeutral = !isVisited || !hasRequiredFields;
           
           return (
             <button

@@ -25,7 +25,8 @@ const StepBasedForm: React.FC<StepBasedFormProps> = ({
     goToNextStep,
     goToPreviousStep,
     goToStep,
-    stepsValidity
+    stepsValidity,
+    visitedSteps
   } = useSteps({ form, hotelId });
 
   return (
@@ -35,6 +36,7 @@ const StepBasedForm: React.FC<StepBasedFormProps> = ({
         currentStepIndex={currentStepIndex}
         onStepChange={goToStep}
         stepsValidity={stepsValidity}
+        visitedSteps={visitedSteps}
       />
 
       <StepContent

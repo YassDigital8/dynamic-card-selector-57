@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { FormValues } from '../formSchema';
 import { ContractDocument } from '@/models/HotelModel';
@@ -27,6 +28,7 @@ interface UseStepsProps {
 export const useSteps = ({ form, hotelId }: UseStepsProps) => {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [stepsValidity, setStepsValidity] = useState<boolean[]>([]);
+  const [visitedSteps, setVisitedSteps] = useState<boolean[]>([]);
   
   // Add type assertion to ensure TypeScript treats the watched value as ContractDocument[]
   const contractDocuments = form.watch("contractDocuments") as ContractDocument[];
@@ -81,9 +83,16 @@ export const useSteps = ({ form, hotelId }: UseStepsProps) => {
     },
   ];
 
-  // Initialize steps validity array
+  // Initialize steps validity and visited steps arrays
   useEffect(() => {
     setStepsValidity(Array(steps.length).fill(false));
+    setVisitedSteps(Array(steps.length).fill(false));
+    // Mark the first step as visited
+    setVisitedSteps(prev => {
+      const newVisited = [...prev];
+      newVisited[0] = true;
+      return newVisited;
+    });
   }, [steps.length]);
 
   // Update step validity whenever form values change
@@ -116,6 +125,12 @@ export const useSteps = ({ form, hotelId }: UseStepsProps) => {
 
   const goToNextStep = () => {
     if (currentStepIndex < steps.length - 1) {
+      // Mark the next step as visited
+      setVisitedSteps(prev => {
+        const newVisited = [...prev];
+        newVisited[currentStepIndex + 1] = true;
+        return newVisited;
+      });
       setCurrentStepIndex(currentStepIndex + 1);
     }
   };
@@ -127,6 +142,12 @@ export const useSteps = ({ form, hotelId }: UseStepsProps) => {
   };
 
   const goToStep = (index: number) => {
+    // Mark this step as visited
+    setVisitedSteps(prev => {
+      const newVisited = [...prev];
+      newVisited[index] = true;
+      return newVisited;
+    });
     setCurrentStepIndex(index);
   };
 
@@ -141,6 +162,7 @@ export const useSteps = ({ form, hotelId }: UseStepsProps) => {
     goToNextStep,
     goToPreviousStep,
     goToStep,
-    stepsValidity
+    stepsValidity,
+    visitedSteps
   };
 };
