@@ -7,7 +7,7 @@ import { DEFAULT_PAYMENT_METHODS } from '../../form/payment/paymentMethodConstan
 
 interface ExtendedFeaturesFilterProps {
   extendedFeatures: {
-    bankTransfer: boolean;
+    [key: string]: boolean;
   };
   onFeatureChange: (feature: string, value: boolean) => void;
   disabled?: boolean;
