@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Slider } from '@/components/ui/slider';
 import { AmenityImage } from '@/models/HotelModel';
 import { Button } from '@/components/ui/button';
-import { Trash2, PlusCircle, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Trash2, PlusCircle, ChevronLeft, ChevronRight, Image } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface AmenityImagesCarouselProps {
@@ -30,9 +30,9 @@ const AmenityImagesCarousel: React.FC<AmenityImagesCarouselProps> = ({
           variant="outline" 
           size="sm" 
           onClick={onAddImage}
-          className="w-full border-dashed border-gray-300 hover:border-blue-400 hover:bg-blue-50"
+          className="w-full border-dashed border-gray-300 hover:border-indigo-400 hover:bg-indigo-50 group transition-colors"
         >
-          <PlusCircle className="h-4 w-4 mr-2" />
+          <Image className="h-4 w-4 mr-2 group-hover:text-indigo-500" />
           Add Images
         </Button>
       </div>
@@ -49,12 +49,15 @@ const AmenityImagesCarousel: React.FC<AmenityImagesCarouselProps> = ({
 
   return (
     <div className="mt-2 space-y-2">
-      <div className="relative h-28 rounded-md overflow-hidden border border-gray-200">
+      <div className="relative h-32 rounded-md overflow-hidden border border-gray-200 group">
         <img 
           src={images[currentIndex].url} 
           alt={images[currentIndex].description || `Amenity image ${currentIndex + 1}`}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover transition-opacity duration-200"
         />
+        
+        {/* Overlay for hovering */}
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-200"></div>
         
         {/* Navigation arrows */}
         {images.length > 1 && (
@@ -63,19 +66,23 @@ const AmenityImagesCarousel: React.FC<AmenityImagesCarouselProps> = ({
               type="button"
               variant="secondary"
               size="icon"
-              className="absolute left-1 top-1/2 -translate-y-1/2 h-6 w-6 rounded-full bg-white/80 hover:bg-white"
+              className="absolute left-2 top-1/2 -translate-y-1/2 h-7 w-7 rounded-full bg-white/80 
+                        hover:bg-white opacity-0 group-hover:opacity-100 transition-opacity duration-200
+                        shadow-sm"
               onClick={handlePrevious}
             >
-              <ChevronLeft className="h-3 w-3" />
+              <ChevronLeft className="h-4 w-4" />
             </Button>
             <Button
               type="button"
               variant="secondary"
               size="icon"
-              className="absolute right-1 top-1/2 -translate-y-1/2 h-6 w-6 rounded-full bg-white/80 hover:bg-white"
+              className="absolute right-2 top-1/2 -translate-y-1/2 h-7 w-7 rounded-full bg-white/80 
+                        hover:bg-white opacity-0 group-hover:opacity-100 transition-opacity duration-200
+                        shadow-sm"
               onClick={handleNext}
             >
-              <ChevronRight className="h-3 w-3" />
+              <ChevronRight className="h-4 w-4" />
             </Button>
           </>
         )}
@@ -87,13 +94,12 @@ const AmenityImagesCarousel: React.FC<AmenityImagesCarouselProps> = ({
             variant="destructive"
             size="icon"
             className={cn(
-              "absolute top-1 right-1 h-6 w-6 opacity-80 hover:opacity-100",
-              "bg-red-500/80 hover:bg-red-600 rounded-full",
-              images.length > 1 ? "right-8" : "right-1"
+              "absolute top-2 right-2 h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity duration-200",
+              "bg-red-500/90 hover:bg-red-600 rounded-full shadow-sm"
             )}
             onClick={() => onRemoveImage(amenityKey, currentIndex)}
           >
-            <Trash2 className="h-3 w-3" />
+            <Trash2 className="h-4 w-4" />
           </Button>
         )}
       </div>
@@ -101,7 +107,7 @@ const AmenityImagesCarousel: React.FC<AmenityImagesCarouselProps> = ({
       {/* Image counter and slider */}
       {images.length > 1 && (
         <div className="flex items-center gap-2">
-          <span className="text-xs text-gray-500">
+          <span className="text-xs text-gray-500 min-w-[36px]">
             {currentIndex + 1}/{images.length}
           </span>
           <Slider
@@ -119,9 +125,9 @@ const AmenityImagesCarousel: React.FC<AmenityImagesCarouselProps> = ({
         variant="outline" 
         size="sm" 
         onClick={onAddImage}
-        className="w-full border-dashed border-gray-300 hover:border-blue-400 hover:bg-blue-50"
+        className="w-full border-dashed border-gray-300 hover:border-indigo-400 hover:bg-indigo-50 group transition-colors"
       >
-        <PlusCircle className="h-4 w-4 mr-2" />
+        <PlusCircle className="h-4 w-4 mr-2 group-hover:text-indigo-500" />
         Add More Images
       </Button>
     </div>

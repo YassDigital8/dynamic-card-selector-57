@@ -1,11 +1,11 @@
 
 import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
-import { AmenityListItem } from './AmenityListItem';
 import { FormField } from '@/components/ui/form';
 import { amenitiesList, amenitiesWithImages } from './constants';
 import { FormValues } from '../formSchema';
 import { AmenityImage } from '@/models/HotelModel';
+import AmenityItem from './AmenityItem';
 
 interface AmenityListProps {
   form: UseFormReturn<FormValues>;
@@ -19,7 +19,7 @@ const AmenityList: React.FC<AmenityListProps> = ({
   onRemoveImage
 }) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       {amenitiesList.map((amenity) => {
         // Get the key from the name (e.g., "amenities.bar" -> "bar")
         const amenityKey = amenity.name.split('.')[1];
@@ -37,22 +37,15 @@ const AmenityList: React.FC<AmenityListProps> = ({
               const images = form.watch(imagesFieldName as any) || [];
               
               return (
-                <AmenityListItem
-                  name={amenityName}
+                <AmenityItem
+                  name={amenityKey}
                   label={amenity.label}
-                  isImageSupported={supportsImages}
-                  images={images as AmenityImage[]}
-                  onAddImage={supportsImages ? onAddImage : undefined}
+                  icon={amenity.icon}
+                  hasImages={supportsImages}
+                  imageField={supportsImages ? `${amenityKey}Images` : undefined}
+                  form={form}
+                  onAddImage={supportsImages ? () => onAddImage?.(amenityName) : undefined}
                   onRemoveImage={supportsImages ? onRemoveImage : undefined}
-                  checked={field.value || false}
-                  onChange={(checked) => {
-                    field.onChange(checked);
-                    // Trigger validation when an amenity is checked
-                    setTimeout(() => {
-                      form.trigger('amenities');
-                      form.trigger();
-                    }, 10);
-                  }}
                 />
               );
             }}
