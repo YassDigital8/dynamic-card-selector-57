@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { UseFormReturn, useWatch } from 'react-hook-form';
 import { FormValues } from '../formSchema';
@@ -7,7 +8,7 @@ import {
   FormControl,
   FormLabel,
 } from '@/components/ui/form';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Switch } from '@/components/ui/switch';
 import { LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import AmenityImagesSection from './AmenityImagesSection';
@@ -58,20 +59,19 @@ const AmenityItem: React.FC<AmenityItemProps> = ({
   // Check if the current amenity is extra bed
   const isExtraBed = name === 'extraBed';
 
-  // Handle radio button change
-  const handleRadioChange = (value: string) => {
-    const enabled = value === 'enabled';
-    console.log(`Setting amenity ${name} to:`, enabled);
+  // Handle switch toggle
+  const handleSwitchChange = (checked: boolean) => {
+    console.log(`Setting amenity ${name} to:`, checked);
     
     // Update the form value
-    form.setValue(`amenities.${name}` as any, enabled, { 
+    form.setValue(`amenities.${name}` as any, checked, { 
       shouldValidate: true,
       shouldDirty: true,
       shouldTouch: true
     });
     
     // For extraBed, also set up the policy
-    if (isExtraBed && enabled && !form.getValues('extraBedPolicy')) {
+    if (isExtraBed && checked && !form.getValues('extraBedPolicy')) {
       form.setValue('extraBedPolicy', {
         pricePerNight: 0,
         availableForRoomTypes: [],
@@ -115,16 +115,16 @@ const AmenityItem: React.FC<AmenityItemProps> = ({
 
   return (
     <div className={cn(
-      "space-y-3 rounded-lg border p-4 transition-all duration-200",
+      "flex flex-col gap-3 rounded-lg border p-4 transition-all duration-200 hover:border-gray-300 dark:hover:border-gray-700",
       isExtraBed 
-        ? "border-blue-200 bg-blue-50/70 dark:border-blue-900 dark:bg-blue-950/20" 
+        ? "border-blue-200 bg-blue-50/30 dark:border-blue-900 dark:bg-blue-950/10" 
         : amenityEnabled 
-          ? "border-indigo-200 bg-indigo-50/50 dark:border-indigo-900 dark:bg-indigo-950/10 shadow-sm" 
-          : "border-gray-200 dark:border-gray-800 hover:border-gray-300"
+          ? "border-indigo-200 bg-indigo-50/30 dark:border-indigo-900 dark:bg-indigo-950/10" 
+          : "border-gray-200 dark:border-gray-800"
     )}>
-      {/* Main amenity toggle with radio buttons */}
-      <div className="flex flex-row items-center justify-between space-y-0">
-        <div className="flex items-center space-x-3">
+      {/* Main amenity toggle with switch */}
+      <div className="flex flex-row items-center justify-between">
+        <div className="flex items-center gap-3">
           <div className={cn(
             "flex items-center justify-center w-9 h-9 rounded-full",
             amenityEnabled 
@@ -133,41 +133,30 @@ const AmenityItem: React.FC<AmenityItemProps> = ({
           )}>
             <Icon className="h-5 w-5" />
           </div>
-          <div className="flex flex-col">
-            <FormLabel className="font-medium cursor-pointer text-base">{label}</FormLabel>
-            
-            {/* Display extra bed price if this is the extra bed amenity and it's enabled */}
-            {isExtraBed && amenityEnabled && (
-              <ExtraBedPrice price={extraBedPrice} />
-            )}
-          </div>
+          <FormLabel className="font-medium cursor-pointer text-base">{label}</FormLabel>
         </div>
         
         <FormField
           control={form.control}
           name={`amenities.${name}` as any}
           render={({ field }) => (
-            <FormItem className="flex flex-1 max-w-32 items-center space-y-0 m-0">
+            <FormItem className="flex items-center space-x-2 m-0">
               <FormControl>
-                <RadioGroup
-                  value={field.value ? 'enabled' : 'disabled'}
-                  onValueChange={handleRadioChange}
-                  className="flex space-x-4"
-                >
-                  <div className="flex items-center space-x-1">
-                    <RadioGroupItem value="enabled" id={`${name}-enabled`} />
-                    <FormLabel htmlFor={`${name}-enabled`} className="text-sm">On</FormLabel>
-                  </div>
-                  <div className="flex items-center space-x-1">
-                    <RadioGroupItem value="disabled" id={`${name}-disabled`} />
-                    <FormLabel htmlFor={`${name}-disabled`} className="text-sm">Off</FormLabel>
-                  </div>
-                </RadioGroup>
+                <Switch
+                  checked={field.value}
+                  onCheckedChange={handleSwitchChange}
+                  className="data-[state=checked]:bg-indigo-600"
+                />
               </FormControl>
             </FormItem>
           )}
         />
       </div>
+      
+      {/* Display extra bed price if this is the extra bed amenity and it's enabled */}
+      {isExtraBed && amenityEnabled && (
+        <ExtraBedPrice price={extraBedPrice} />
+      )}
 
       {/* Images section (only shows if this amenity has images and is enabled) */}
       <AmenityImagesSection 
@@ -176,7 +165,7 @@ const AmenityItem: React.FC<AmenityItemProps> = ({
         imageField={imageField}
         images={Array.isArray(images) ? images : []}
         name={name}
-        onAddImage={onAddImage}
+        onAddImage={onAddImage ? () => onAddImage(`amenities.${name}`) : undefined}
         onRemoveImage={onRemoveImage}
       />
     </div>
