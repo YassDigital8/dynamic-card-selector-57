@@ -17,7 +17,7 @@ export const useEnabledAmenities = ({ form }: AmenityHookProps) => {
     // Get only boolean properties that are true (excluding image arrays)
     return Object.entries(amenities)
       .filter(([key, value]) => {
-        // Only consider boolean properties (not image arrays)
+        // Only consider boolean properties that are true (not image arrays)
         return typeof value === 'boolean' && !key.includes('Images') && value === true;
       });
   }, [amenities]);

@@ -33,6 +33,7 @@ export const useAmenityStepManager = ({
       if (!isValidating) {
         isValidating = true;
         
+        // Force validation of amenities field to check if any are enabled
         form.trigger('amenities').finally(() => {
           isValidating = false;
         });
@@ -40,8 +41,8 @@ export const useAmenityStepManager = ({
         const enabledCount = getEnabledCount();
         console.log('Any amenity enabled:', hasEnabledAmenities(), 'Count:', enabledCount);
         
-        // Only trigger the parent form if we need to update step status
-        if (form.formState.isValid !== (enabledCount > 0)) {
+        // Trigger the parent form to update step status when amenity status changes
+        if (enabledCount > 0) {
           form.trigger();
         }
       }
