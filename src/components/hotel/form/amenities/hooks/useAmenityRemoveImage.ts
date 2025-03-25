@@ -1,6 +1,6 @@
 
 import { useCallback } from 'react';
-import { AmenityHookProps, AmenityWithImages } from './types';
+import { AmenityHookProps, AmenityWithImages, AmenityKeyType } from './types';
 import { useToast } from '@/hooks/use-toast';
 import { amenitiesWithImages } from '../constants';
 
@@ -31,7 +31,7 @@ export const useAmenityRemoveImage = ({ form }: AmenityHookProps) => {
     
     toast({
       title: "Image removed",
-      description: `Image was removed from ${amenitiesWithImages[amenityName as AmenityWithImages]}. Don't forget to save your changes.`,
+      description: `Image was removed from ${amenitiesWithImages[amenityName as AmenityKeyType]}. Don't forget to save your changes.`,
       variant: "default",
     });
   }, [form, toast]);
