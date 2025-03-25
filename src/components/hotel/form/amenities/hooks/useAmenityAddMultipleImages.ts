@@ -5,7 +5,9 @@ import { useToast } from '@/hooks/use-toast';
 import { FileInfo } from '@/models/FileModel';
 import { amenitiesWithImages } from '../constants';
 
-interface UseAmenityAddMultipleImagesProps extends AmenityHookProps {
+interface UseAmenityAddMultipleImagesProps {
+  form: AmenityHookProps['form'];
+  hotelId?: string;
   selectedAmenity: string;
 }
 

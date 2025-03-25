@@ -6,7 +6,9 @@ import { AmenityImage } from '@/models/HotelModel';
 import { FileMetadataValues } from '@/hooks/upload/useFileMetadata';
 import { amenitiesWithImages } from '../constants';
 
-interface UseAmenityAddImageProps extends AmenityHookProps {
+interface UseAmenityAddImageProps {
+  form: AmenityHookProps['form'];
+  hotelId?: string;
   selectedAmenity: string;
 }
 

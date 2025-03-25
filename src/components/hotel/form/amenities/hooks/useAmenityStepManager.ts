@@ -19,11 +19,8 @@ export const useAmenityStepManager = ({
     handleCloseDialog 
   } = useAmenityDialogState();
   
-  // Cast the selectedAmenity as AmenityWithImages for type compatibility
-  const typedSelectedAmenity = selectedAmenity as AmenityWithImages;
-  
-  const { handleAddImage } = useAmenityAddImage({ form, selectedAmenity: typedSelectedAmenity });
-  const { handleAddMultipleImages } = useAmenityAddMultipleImages({ form, selectedAmenity: typedSelectedAmenity });
+  const { handleAddImage } = useAmenityAddImage({ form, selectedAmenity });
+  const { handleAddMultipleImages } = useAmenityAddMultipleImages({ form, selectedAmenity });
   const { handleRemoveImage } = useAmenityRemoveImage({ form });
   const { hasEnabledAmenities, amenities, getEnabledCount } = useEnabledAmenities({ form });
 
@@ -52,6 +49,9 @@ export const useAmenityStepManager = ({
     
     return () => clearTimeout(timeoutId);
   }, [amenities, hasEnabledAmenities, form, getEnabledCount]);
+
+  // Cast the selectedAmenity as AmenityWithImages for type compatibility
+  const typedSelectedAmenity = selectedAmenity as AmenityWithImages;
 
   return {
     selectedAmenity: typedSelectedAmenity,
