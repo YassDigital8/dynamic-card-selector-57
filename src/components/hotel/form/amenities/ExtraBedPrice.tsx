@@ -11,12 +11,12 @@ interface ExtraBedPriceProps {
 
 const ExtraBedPrice: React.FC<ExtraBedPriceProps> = ({ price = 0 }) => {
   const form = useFormContext<FormValues>();
-  const [inputValue, setInputValue] = useState(price.toString());
+  const [inputValue, setInputValue] = useState<string>(price === 0 ? '' : price.toString());
   
   // Update local state when price prop changes
   useEffect(() => {
     if (price !== undefined) {
-      setInputValue(price.toString());
+      setInputValue(price === 0 ? '' : price.toString());
     }
   }, [price]);
   
@@ -49,10 +49,11 @@ const ExtraBedPrice: React.FC<ExtraBedPriceProps> = ({ price = 0 }) => {
           className="pl-7 h-8 py-1"
           min={0}
           step="0.01"
+          placeholder="0.00"
           onBlur={() => {
             // On blur, ensure we have a valid number (at least 0)
             if (inputValue === '' || isNaN(parseFloat(inputValue))) {
-              setInputValue('0');
+              setInputValue('');
               form.setValue('extraBedPolicy.pricePerNight', 0, {
                 shouldValidate: true,
                 shouldDirty: true

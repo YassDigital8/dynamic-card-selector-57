@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { FormValues } from './formSchema';
 import { FileInfo } from '@/models/FileModel';
@@ -75,13 +75,15 @@ const RoomTypesSection: React.FC<RoomTypesSectionProps> = ({ form }) => {
     setIsImageDialogOpen(true);
   };
 
-  // Initialize new room type with empty extra bed values
+  // Initialize new room type with default values
   const addNewRoomType = () => {
     const currentRoomTypes = form.getValues('roomTypes');
+    const newIndex = currentRoomTypes.length;
+    
     form.setValue('roomTypes', [
       ...currentRoomTypes,
       { 
-        name: '', 
+        name: `Room Type ${newIndex + 1}`, // Give it a default name
         maxAdults: 2, 
         maxChildren: 0, 
         images: [],
@@ -91,12 +93,18 @@ const RoomTypesSection: React.FC<RoomTypesSectionProps> = ({ form }) => {
       }
     ]);
     
-    // Scroll to the new room type after a short delay
+    // Set focus to the new room type
     setTimeout(() => {
       const roomCards = document.querySelectorAll('.room-type-card');
       if (roomCards.length > 0) {
         const lastCard = roomCards[roomCards.length - 1];
         lastCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        
+        // Try to focus the first input in the new card
+        const firstInput = lastCard.querySelector('input');
+        if (firstInput) {
+          firstInput.focus();
+        }
       }
     }, 100);
   };

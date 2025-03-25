@@ -1,9 +1,10 @@
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { FormValues } from '../formSchema';
 import { Separator } from '@/components/ui/separator';
 import { BasicInfoFields, ExtraBedFields } from './components';
+import { useRoomTypeForm } from './hooks/useRoomTypeForm';
 
 interface RoomTypeFormProps {
   form: UseFormReturn<FormValues>;
@@ -11,14 +12,8 @@ interface RoomTypeFormProps {
 }
 
 const RoomTypeForm: React.FC<RoomTypeFormProps> = ({ form, index }) => {
-  const [hasExtraBed, setHasExtraBed] = useState(false);
+  const { hasExtraBed } = useRoomTypeForm({ form, index });
   
-  // Check if the amenities.extraBed is enabled
-  useEffect(() => {
-    const extraBedEnabled = form.getValues('amenities.extraBed');
-    setHasExtraBed(extraBedEnabled);
-  }, [form]);
-
   return (
     <div className="space-y-6">
       {/* Basic Information */}

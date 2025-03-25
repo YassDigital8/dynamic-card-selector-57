@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FormField, FormItem, FormControl, FormLabel, FormMessage } from '@/components/ui/form';
 import { useFormContext } from 'react-hook-form';
 import { FormValues } from '../../formSchema';
@@ -14,7 +14,16 @@ const ExtraBedPriceInput: React.FC = () => {
       control={form.control}
       name="extraBedPolicy.pricePerNight"
       render={({ field }) => {
-        const [inputValue, setInputValue] = useState(field.value?.toString() || '0');
+        const [inputValue, setInputValue] = useState<string>(
+          field.value === 0 ? '' : field.value?.toString() || ''
+        );
+        
+        // Update input value when field value changes
+        useEffect(() => {
+          if (field.value !== undefined) {
+            setInputValue(field.value === 0 ? '' : field.value.toString());
+          }
+        }, [field.value]);
         
         return (
           <FormItem>
@@ -41,10 +50,11 @@ const ExtraBedPriceInput: React.FC = () => {
                   onBlur={() => {
                     // On blur, ensure we have a valid number (at least 0)
                     if (inputValue === '' || isNaN(parseFloat(inputValue))) {
-                      setInputValue('0');
+                      setInputValue('');
                       field.onChange(0);
                     }
                   }}
+                  placeholder="0.00"
                   className="pl-10"
                 />
               </FormControl>
