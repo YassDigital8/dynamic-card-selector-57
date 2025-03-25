@@ -9,7 +9,6 @@ import {
   FormLabel,
 } from '@/components/ui/form';
 import { Checkbox } from '@/components/ui/checkbox';
-import { DollarSign } from 'lucide-react';
 import { LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import AmenityImagesSection from './AmenityImagesSection';
@@ -84,7 +83,7 @@ const AmenityItem: React.FC<AmenityItemProps> = ({
     // Force validation immediately after state changes
     setTimeout(() => {
       // Explicitly trigger validation for amenities step
-      form.trigger();
+      form.trigger('amenities');
       
       // For debugging, log the amenities values after the state change
       const amenities = form.getValues('amenities');
@@ -92,9 +91,12 @@ const AmenityItem: React.FC<AmenityItemProps> = ({
       
       // Log a count of enabled amenities for validation debugging
       const enabledCount = Object.entries(amenities)
-        .filter(([key, value]) => typeof value === 'boolean' && value === true)
+        .filter(([key, value]) => typeof value === 'boolean' && !key.includes('Images') && value === true)
         .length;
       console.log(`Enabled amenities count: ${enabledCount}`);
+      
+      // Also trigger form validation to update the UI
+      form.trigger();
     }, 10);
   };
 

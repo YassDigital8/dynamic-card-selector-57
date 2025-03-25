@@ -28,25 +28,30 @@ const AmenitiesStep: React.FC<AmenitiesStepProps> = memo(({ form, hotelId }) => 
     getEnabledCount
   } = useAmenityStepManager({ form, hotelId });
 
-  // Add debug effect with a flag to prevent infinite loops
+  // Validate on mount and when the enabled count changes
   useEffect(() => {
     let isValidating = false;
     
-    // Only validate if we're not already validating
-    if (!isValidating) {
-      isValidating = true;
-      
-      // Force validation of the amenities field
-      form.trigger('amenities').finally(() => {
-        isValidating = false;
-      });
-      
-      // Check enabled count directly from form values for consistency
-      const enabledCount = getEnabledCount();
+    const timeoutId = setTimeout(() => {
+      if (!isValidating) {
+        isValidating = true;
         
-      console.log("Enabled amenities in AmenitiesStep:", enabledCount);
-      console.log("Step validation should pass:", enabledCount > 0);
-    }
+        // Force validation of the amenities field
+        form.trigger('amenities').finally(() => {
+          isValidating = false;
+          
+          // Also trigger the parent form to update step status
+          form.trigger();
+        });
+        
+        // Check enabled count directly from form values for consistency
+        const enabledCount = getEnabledCount();
+        console.log("Enabled amenities in AmenitiesStep:", enabledCount);
+        console.log("Step validation should pass:", enabledCount > 0);
+      }
+    }, 100);
+    
+    return () => clearTimeout(timeoutId);
   }, [form, getEnabledCount]);
 
   return (

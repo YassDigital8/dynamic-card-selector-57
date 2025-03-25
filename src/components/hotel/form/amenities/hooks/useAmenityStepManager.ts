@@ -24,7 +24,7 @@ export const useAmenityStepManager = ({
   const { handleRemoveImage } = useAmenityRemoveImage({ form });
   const { hasEnabledAmenities, amenities, getEnabledCount } = useEnabledAmenities({ form });
 
-  // Force validation on mount and when amenities change, but prevent excessive re-validation
+  // Force validation on mount and when amenities change
   useEffect(() => {
     // Use a flag to track if we're in a validation process
     let isValidating = false;

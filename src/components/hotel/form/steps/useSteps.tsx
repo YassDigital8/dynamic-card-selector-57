@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { FormValues } from '../formSchema';
 import { ContractDocument } from '@/models/HotelModel';
@@ -124,7 +125,7 @@ export const useSteps = ({ form, hotelId }: UseStepsProps) => {
     steps
   });
 
-  // Log states for debugging - with debounce to prevent excessive logging
+  // Log states for debugging
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       console.log("Steps status:", {

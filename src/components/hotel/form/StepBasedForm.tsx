@@ -52,6 +52,10 @@ const StepBasedForm: React.FC<StepBasedFormProps> = ({
 
   // Get the validity of the current step
   const isCurrentStepValid = stepsValidity[currentStepIndex] || false;
+  
+  useEffect(() => {
+    console.log(`Current step ${currentStepIndex} validity:`, isCurrentStepValid ? "VALID" : "INVALID");
+  }, [currentStepIndex, isCurrentStepValid]);
 
   // Safety check: If steps are not yet loaded, render a loading state
   if (!steps || steps.length === 0 || currentStepIndex === undefined || currentStepIndex < 0) {

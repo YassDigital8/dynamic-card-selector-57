@@ -4,7 +4,7 @@ import { useWatch } from 'react-hook-form';
 import { AmenityHookProps } from './types';
 
 export const useEnabledAmenities = ({ form }: AmenityHookProps) => {
-  // Watch the form's amenities to detect changes - use memo to prevent excessive recalculations
+  // Watch the form's amenities to detect changes
   const amenities = useWatch({
     control: form.control,
     name: 'amenities'
@@ -22,7 +22,7 @@ export const useEnabledAmenities = ({ form }: AmenityHookProps) => {
       });
   }, [amenities]);
   
-  // Check if any amenity is enabled - implemented as a memoized callback
+  // Check if any amenity is enabled
   const hasEnabledAmenities = useCallback(() => {
     return enabledAmenities.length > 0;
   }, [enabledAmenities]);
