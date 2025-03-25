@@ -1,5 +1,5 @@
 
-import React, { useEffect, memo } from 'react';
+import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { FormValues } from '../formSchema';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,8 +14,7 @@ interface AmenitiesStepProps {
   hotelId?: string;
 }
 
-// Use memo to prevent excessive re-renders
-const AmenitiesStep: React.FC<AmenitiesStepProps> = memo(({ form, hotelId }) => {
+const AmenitiesStep: React.FC<AmenitiesStepProps> = ({ form, hotelId }) => {
   const {
     selectedAmenity,
     isImageDialogOpen,
@@ -24,30 +23,8 @@ const AmenitiesStep: React.FC<AmenitiesStepProps> = memo(({ form, hotelId }) => 
     handleAddMultipleImages,
     handleRemoveImage,
     handleCloseDialog,
-    hasEnabledAmenities,
-    getEnabledCount
+    hasEnabledAmenities
   } = useAmenityStepManager({ form, hotelId });
-
-  // Add debug effect with a flag to prevent infinite loops
-  useEffect(() => {
-    let isValidating = false;
-    
-    // Only validate if we're not already validating
-    if (!isValidating) {
-      isValidating = true;
-      
-      // Force validation of the amenities field
-      form.trigger('amenities').finally(() => {
-        isValidating = false;
-      });
-      
-      // Check enabled count directly from form values for consistency
-      const enabledCount = getEnabledCount();
-        
-      console.log("Enabled amenities in AmenitiesStep:", enabledCount);
-      console.log("Step validation should pass:", enabledCount > 0);
-    }
-  }, [form, getEnabledCount]);
 
   return (
     <div className="space-y-6">
@@ -60,7 +37,6 @@ const AmenitiesStep: React.FC<AmenitiesStepProps> = memo(({ form, hotelId }) => 
             <InfoIcon className="h-4 w-4 text-blue-500" />
             <AlertDescription>
               Select the amenities available at your hotel. For some amenities, you can add images to showcase them.
-              <strong className="block mt-1 text-amber-600">You must enable at least one amenity to proceed.</strong>
             </AlertDescription>
           </Alert>
 
@@ -76,7 +52,7 @@ const AmenitiesStep: React.FC<AmenitiesStepProps> = memo(({ form, hotelId }) => 
               isOpen={isImageDialogOpen}
               onClose={handleCloseDialog}
               onAddImage={handleAddImage}
-              amenityLabel={selectedAmenity}
+              amenityLabel={selectedAmenity.label}
               hotelId={hotelId}
               multiSelect={true}
               onSelectMultiple={handleAddMultipleImages}
@@ -86,8 +62,6 @@ const AmenitiesStep: React.FC<AmenitiesStepProps> = memo(({ form, hotelId }) => 
       </Card>
     </div>
   );
-});
-
-AmenitiesStep.displayName = 'AmenitiesStep';
+};
 
 export default AmenitiesStep;

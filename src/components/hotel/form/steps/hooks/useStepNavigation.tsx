@@ -11,7 +11,7 @@ interface UseStepNavigationProps {
 }
 
 export const useStepNavigation = ({ form, steps }: UseStepNavigationProps) => {
-  const [currentStepIndex, setCurrentStepIndex] = useState<number>(0); // Initialize to first step
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [visitedSteps, setVisitedSteps] = useState<boolean[]>([]);
   
   // Initialize visited steps array when steps are available
@@ -35,10 +35,10 @@ export const useStepNavigation = ({ form, steps }: UseStepNavigationProps) => {
 
   // Validate initially visited steps
   useEffect(() => {
-    if (visitedSteps && visitedSteps.some(visited => visited) && steps && steps.length > 0) {
+    if (visitedSteps && visitedSteps.some(visited => visited)) {
       validateSteps(0); // Only validate the first step initially
     }
-  }, [visitedSteps, validateSteps, steps]);
+  }, [visitedSteps, validateSteps]);
 
   // Force revalidation of steps when form values change
   useEffect(() => {
@@ -91,7 +91,7 @@ export const useStepNavigation = ({ form, steps }: UseStepNavigationProps) => {
   }, [currentStepIndex]);
 
   const goToStep = useCallback((index: number) => {
-    if (steps && steps.length > 0 && index >= 0 && index < steps.length) {
+    if (index >= 0 && index < steps.length) {
       // Mark this step and all steps before it as visited
       setVisitedSteps(prev => {
         if (!prev || prev.length === 0) {
@@ -112,11 +112,11 @@ export const useStepNavigation = ({ form, steps }: UseStepNavigationProps) => {
       validateSteps(index);
       setCurrentStepIndex(index);
     } else {
-      console.error(`Invalid step index: ${index}. Valid range is 0-${(steps && steps.length > 0) ? steps.length - 1 : 'undefined'}`);
+      console.error(`Invalid step index: ${index}. Valid range is 0-${steps.length - 1}`);
     }
-  }, [validateSteps, steps]);
+  }, [validateSteps, steps.length]);
 
-  const isLastStep = currentStepIndex === (steps ? steps.length - 1 : 0);
+  const isLastStep = currentStepIndex === steps.length - 1;
   const isFirstStep = currentStepIndex === 0;
 
   return {

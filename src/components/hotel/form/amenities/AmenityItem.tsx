@@ -8,7 +8,7 @@ import {
   FormControl,
   FormLabel,
 } from '@/components/ui/form';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Switch } from '@/components/ui/switch';
 import { DollarSign } from 'lucide-react';
 import { LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -85,16 +85,7 @@ const AmenityItem: React.FC<AmenityItemProps> = ({
     setTimeout(() => {
       // Explicitly trigger validation for amenities step
       form.trigger();
-      
-      // For debugging, log the amenities values after the state change
-      const amenities = form.getValues('amenities');
-      console.log("Form amenities after toggle:", amenities);
-      
-      // Log a count of enabled amenities for validation debugging
-      const enabledCount = Object.entries(amenities)
-        .filter(([key, value]) => typeof value === 'boolean' && value === true)
-        .length;
-      console.log(`Enabled amenities count: ${enabledCount}`);
+      console.log("Form values after toggle:", form.getValues());
     }, 10);
   };
 
@@ -110,6 +101,13 @@ const AmenityItem: React.FC<AmenityItemProps> = ({
       }, { shouldValidate: true });
     }
   }, [isExtraBed, amenityEnabled, form]);
+
+  // Debug effect for amenities
+  useEffect(() => {
+    if (amenityEnabled) {
+      console.log(`Amenity ${name} is enabled:`, amenityEnabled);
+    }
+  }, [amenityEnabled, name]);
 
   return (
     <div className={cn(
@@ -141,10 +139,9 @@ const AmenityItem: React.FC<AmenityItemProps> = ({
           render={({ field }) => (
             <FormItem className="flex flex-row items-center space-y-0 m-0">
               <FormControl>
-                <Checkbox
+                <Switch
                   checked={field.value}
                   onCheckedChange={handleToggleChange}
-                  className="data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500"
                 />
               </FormControl>
             </FormItem>

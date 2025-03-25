@@ -34,27 +34,18 @@ export const useSteps = ({ form, hotelId }: UseStepsProps) => {
       id: 'amenities',
       label: 'Amenities',
       component: <AmenitiesSection form={form} hotelId={hotelId} />,
-      // Enhanced validation to check if at least one amenity is enabled
+      // Simplified custom validation to check if at least one amenity is enabled
       customValidation: (formValues: FormValues) => {
-        if (!formValues.amenities) {
-          console.log("Amenities validation failed: No amenities object found");
-          return false;
-        }
+        if (!formValues.amenities) return false;
         
         // Get only boolean properties in the amenities object
         const amenityBooleans = Object.entries(formValues.amenities)
-          .filter(([key, value]) => {
-            const isBoolean = typeof value === 'boolean';
-            const isNotImageField = !key.includes('Images');
-            return isBoolean && isNotImageField;
-          });
+          .filter(([key, value]) => typeof value === 'boolean');
         
         // Check if at least one amenity is enabled (true)
         const hasEnabledAmenity = amenityBooleans.some(([_, value]) => value === true);
         
-        console.log("Amenities validation result:", hasEnabledAmenity ? "VALID" : "INVALID", 
-                   "Enabled count:", amenityBooleans.filter(([_, value]) => value === true).length);
-                   
+        console.log("Amenities validation:", hasEnabledAmenity);
         return hasEnabledAmenity;
       }
     },
@@ -126,17 +117,13 @@ export const useSteps = ({ form, hotelId }: UseStepsProps) => {
     steps
   });
 
-  // Log states for debugging - with debounce to prevent excessive logging
+  // Log states for debugging
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      console.log("Steps status:", {
-        currentIndex: currentStepIndex,
-        totalSteps: steps.length,
-        validity: stepsValidity
-      });
-    }, 250);
-    
-    return () => clearTimeout(timeoutId);
+    console.log("Steps status:", {
+      currentIndex: currentStepIndex,
+      totalSteps: steps.length,
+      validity: stepsValidity
+    });
   }, [currentStepIndex, steps.length, stepsValidity]);
 
   return {
