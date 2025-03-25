@@ -11,15 +11,13 @@ interface UseStepNavigationProps {
 }
 
 export const useStepNavigation = ({ form, steps }: UseStepNavigationProps) => {
-  const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const [currentStepIndex, setCurrentStepIndex] = useState<number>(0);
   const [visitedSteps, setVisitedSteps] = useState<boolean[]>([]);
   
-  // Initialize visited steps array when steps are available
+  // Initialize visited steps array
   useEffect(() => {
     if (steps && steps.length > 0) {
-      // Initialize all as false
       const initialVisitedSteps = Array(steps.length).fill(false);
-      // Mark only the first step (Basic Info) as visited by default
       initialVisitedSteps[0] = true;
       setVisitedSteps(initialVisitedSteps);
       
@@ -35,15 +33,14 @@ export const useStepNavigation = ({ form, steps }: UseStepNavigationProps) => {
 
   // Validate initially visited steps
   useEffect(() => {
-    if (visitedSteps && visitedSteps.some(visited => visited)) {
-      validateSteps(0); // Only validate the first step initially
+    if (visitedSteps && visitedSteps.some(visited => visited) && steps && steps.length > 0) {
+      validateSteps(0);
     }
-  }, [visitedSteps, validateSteps]);
+  }, [visitedSteps, validateSteps, steps]);
 
   // Force revalidation of steps when form values change
   useEffect(() => {
     const subscription = form.watch(() => {
-      // Validate all visited steps
       if (visitedSteps && steps && steps.length > 0) {
         const visitedIndices = visitedSteps
           .map((visited, index) => visited ? index : -1)
@@ -59,14 +56,19 @@ export const useStepNavigation = ({ form, steps }: UseStepNavigationProps) => {
     return () => subscription.unsubscribe();
   }, [form, visitedSteps, validateSteps, steps]);
 
+  // Navigation functions
   const goToNextStep = useCallback(() => {
     if (currentStepIndex < steps.length - 1) {
+      // Check if current step is valid before proceeding
+      const isCurrentStepValid = stepsValidity[currentStepIndex];
+      
+      if (!isCurrentStepValid) {
+        console.log(`Cannot proceed: Step ${currentStepIndex} (${steps[currentStepIndex]?.label}) is not valid`);
+        return;
+      }
+      
       // Mark the next step as visited
       setVisitedSteps(prev => {
-        if (!prev || prev.length === 0) {
-          return Array(steps.length).fill(false).map((_, i) => i <= currentStepIndex + 1);
-        }
-        
         const newVisited = [...prev];
         newVisited[currentStepIndex + 1] = true;
         return newVisited;
@@ -81,7 +83,7 @@ export const useStepNavigation = ({ form, steps }: UseStepNavigationProps) => {
         validateSteps(currentStepIndex + 1);
       }, 10);
     }
-  }, [currentStepIndex, steps.length, validateSteps]);
+  }, [currentStepIndex, steps, stepsValidity, validateSteps]);
 
   const goToPreviousStep = useCallback(() => {
     if (currentStepIndex > 0) {
@@ -91,15 +93,20 @@ export const useStepNavigation = ({ form, steps }: UseStepNavigationProps) => {
   }, [currentStepIndex]);
 
   const goToStep = useCallback((index: number) => {
-    if (index >= 0 && index < steps.length) {
+    if (steps && steps.length > 0 && index >= 0 && index < steps.length) {
+      // Check if any steps between current and target are invalid
+      if (index > currentStepIndex) {
+        for (let i = 0; i <= currentStepIndex; i++) {
+          if (!stepsValidity[i]) {
+            console.log(`Cannot jump to step ${index}: Step ${i} (${steps[i]?.label}) is not valid`);
+            return;
+          }
+        }
+      }
+      
       // Mark this step and all steps before it as visited
       setVisitedSteps(prev => {
-        if (!prev || prev.length === 0) {
-          return Array(steps.length).fill(false).map((_, i) => i <= index);
-        }
-        
         const newVisited = [...prev];
-        // Mark all steps up to and including the target step as visited
         for (let i = 0; i <= index; i++) {
           newVisited[i] = true;
         }
@@ -108,15 +115,14 @@ export const useStepNavigation = ({ form, steps }: UseStepNavigationProps) => {
       
       console.log(`Jumping to step: ${index}`);
       
-      // Immediately validate all visited steps to update status indicators
       validateSteps(index);
       setCurrentStepIndex(index);
     } else {
-      console.error(`Invalid step index: ${index}. Valid range is 0-${steps.length - 1}`);
+      console.error(`Invalid step index: ${index}. Valid range is 0-${(steps && steps.length > 0) ? steps.length - 1 : 'undefined'}`);
     }
-  }, [validateSteps, steps.length]);
+  }, [validateSteps, steps, currentStepIndex, stepsValidity]);
 
-  const isLastStep = currentStepIndex === steps.length - 1;
+  const isLastStep = currentStepIndex === (steps ? steps.length - 1 : 0);
   const isFirstStep = currentStepIndex === 0;
 
   return {

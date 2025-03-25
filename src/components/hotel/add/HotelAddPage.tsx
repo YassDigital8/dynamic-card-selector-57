@@ -1,8 +1,7 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { HotelFormData } from '@/models/HotelModel';
@@ -11,39 +10,51 @@ import { usePageSelectionViewModel } from '@/viewmodels/PageSelectionViewModel';
 import HotelForm from '../HotelForm';
 import HotelLoadingIndicator from '../HotelLoadingIndicator';
 import ContentBackButton from '../layout/content/ContentBackButton';
-import { Toaster } from '@/components/ui/toaster';
 
 const HotelAddPage: React.FC = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { posOptions } = usePageSelectionViewModel();
-  const [selectedPOS, setSelectedPOS] = React.useState<string>('');
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [selectedPOS, setSelectedPOS] = useState<string>('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { addHotel, isLoading } = useHotelNetwork(selectedPOS);
 
   const handleSubmit = async (data: HotelFormData) => {
     setIsSubmitting(true);
-    const hotelWithPOS = {
-      ...data,
-      posKey: selectedPOS === 'all' ? '' : selectedPOS
-    };
-    const result = addHotel(hotelWithPOS);
-    setIsSubmitting(false);
-    if (result && result.success && result.hotel) {
-      toast({
-        title: "Hotel Added",
-        description: "Your hotel has been added successfully.",
-        variant: "default"
-      });
+    try {
+      const hotelWithPOS = {
+        ...data,
+        posKey: selectedPOS === 'all' ? '' : selectedPOS
+      };
+      
+      console.log("Submitting hotel data:", hotelWithPOS);
+      const result = addHotel(hotelWithPOS);
+      
+      if (result && result.success && result.hotel) {
+        toast({
+          title: "Hotel Added Successfully",
+          description: `${result.hotel.name} has been added to your hotel network`,
+          variant: "default"
+        });
 
-      // Navigate to the hotel details page
-      navigate(`/hotel/edit/${result.hotel.id}`);
-    } else {
+        // Navigate to the hotel details page
+        navigate(`/hotel/edit/${result.hotel.id}`);
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to add hotel. Please try again.",
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      console.error("Error submitting hotel:", error);
       toast({
         title: "Error",
-        description: "Failed to add hotel. Please try again.",
+        description: "An unexpected error occurred. Please try again.",
         variant: "destructive"
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -83,9 +94,6 @@ const HotelAddPage: React.FC = () => {
           showButtons={true} 
         />
       </Card>
-      
-      {/* Make sure we have a Toaster component to display notifications */}
-      <Toaster />
     </div>
   );
 };

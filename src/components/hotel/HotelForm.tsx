@@ -7,7 +7,7 @@ import { Hotel, HotelFormData } from '@/models/HotelModel';
 import { formSchema } from './form/schemas';
 import { defaultValues } from './form/formDefaults';
 import StepBasedForm from './form/StepBasedForm';
-import { useFormProcessor } from './form/hooks/useFormProcessor';
+import { useFormProcessor } from './form/hooks';
 
 interface HotelFormProps {
   initialData?: Hotel;

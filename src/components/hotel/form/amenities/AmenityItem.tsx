@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { UseFormReturn, useWatch } from 'react-hook-form';
 import { FormValues } from '../formSchema';
@@ -8,8 +7,7 @@ import {
   FormControl,
   FormLabel,
 } from '@/components/ui/form';
-import { Switch } from '@/components/ui/switch';
-import { DollarSign } from 'lucide-react';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import AmenityImagesSection from './AmenityImagesSection';
@@ -60,19 +58,20 @@ const AmenityItem: React.FC<AmenityItemProps> = ({
   // Check if the current amenity is extra bed
   const isExtraBed = name === 'extraBed';
 
-  // Trigger validation when amenity is toggled
-  const handleToggleChange = (checked: boolean) => {
-    console.log(`Setting amenity ${name} to:`, checked);
+  // Handle radio button change
+  const handleRadioChange = (value: string) => {
+    const enabled = value === 'enabled';
+    console.log(`Setting amenity ${name} to:`, enabled);
     
     // Update the form value
-    form.setValue(`amenities.${name}` as any, checked, { 
+    form.setValue(`amenities.${name}` as any, enabled, { 
       shouldValidate: true,
       shouldDirty: true,
       shouldTouch: true
     });
     
     // For extraBed, also set up the policy
-    if (isExtraBed && checked && !form.getValues('extraBedPolicy')) {
+    if (isExtraBed && enabled && !form.getValues('extraBedPolicy')) {
       form.setValue('extraBedPolicy', {
         pricePerNight: 0,
         availableForRoomTypes: [],
@@ -84,8 +83,20 @@ const AmenityItem: React.FC<AmenityItemProps> = ({
     // Force validation immediately after state changes
     setTimeout(() => {
       // Explicitly trigger validation for amenities step
+      form.trigger('amenities');
+      
+      // For debugging, log the amenities values after the state change
+      const amenities = form.getValues('amenities');
+      console.log("Form amenities after toggle:", amenities);
+      
+      // Log a count of enabled amenities for validation debugging
+      const enabledCount = Object.entries(amenities)
+        .filter(([key, value]) => typeof value === 'boolean' && !key.includes('Images') && value === true)
+        .length;
+      console.log(`Enabled amenities count: ${enabledCount}`);
+      
+      // Also trigger form validation to update the UI
       form.trigger();
-      console.log("Form values after toggle:", form.getValues());
     }, 10);
   };
 
@@ -102,47 +113,56 @@ const AmenityItem: React.FC<AmenityItemProps> = ({
     }
   }, [isExtraBed, amenityEnabled, form]);
 
-  // Debug effect for amenities
-  useEffect(() => {
-    if (amenityEnabled) {
-      console.log(`Amenity ${name} is enabled:`, amenityEnabled);
-    }
-  }, [amenityEnabled, name]);
-
   return (
     <div className={cn(
-      "space-y-3 rounded-lg border p-4",
+      "space-y-3 rounded-lg border p-4 transition-all duration-200",
       isExtraBed 
         ? "border-blue-200 bg-blue-50/70 dark:border-blue-900 dark:bg-blue-950/20" 
         : amenityEnabled 
-          ? "border-blue-200 bg-blue-50/50 dark:border-blue-900 dark:bg-blue-950/10" 
-          : "border-gray-200 dark:border-gray-800"
+          ? "border-indigo-200 bg-indigo-50/50 dark:border-indigo-900 dark:bg-indigo-950/10 shadow-sm" 
+          : "border-gray-200 dark:border-gray-800 hover:border-gray-300"
     )}>
-      {/* Main amenity toggle switch */}
+      {/* Main amenity toggle with radio buttons */}
       <div className="flex flex-row items-center justify-between space-y-0">
-        <div className="flex items-center space-x-2">
-          <Icon className={cn(
-            "h-5 w-5",
-            amenityEnabled ? "text-blue-500" : "text-gray-400"
-          )} />
-          <FormLabel className="font-medium cursor-pointer">{label}</FormLabel>
-          
-          {/* Display extra bed price if this is the extra bed amenity and it's enabled */}
-          {isExtraBed && amenityEnabled && (
-            <ExtraBedPrice price={extraBedPrice} />
-          )}
+        <div className="flex items-center space-x-3">
+          <div className={cn(
+            "flex items-center justify-center w-9 h-9 rounded-full",
+            amenityEnabled 
+              ? "bg-indigo-100 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-400" 
+              : "bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400"
+          )}>
+            <Icon className="h-5 w-5" />
+          </div>
+          <div className="flex flex-col">
+            <FormLabel className="font-medium cursor-pointer text-base">{label}</FormLabel>
+            
+            {/* Display extra bed price if this is the extra bed amenity and it's enabled */}
+            {isExtraBed && amenityEnabled && (
+              <ExtraBedPrice price={extraBedPrice} />
+            )}
+          </div>
         </div>
         
         <FormField
           control={form.control}
           name={`amenities.${name}` as any}
           render={({ field }) => (
-            <FormItem className="flex flex-row items-center space-y-0 m-0">
+            <FormItem className="flex flex-1 max-w-32 items-center space-y-0 m-0">
               <FormControl>
-                <Switch
-                  checked={field.value}
-                  onCheckedChange={handleToggleChange}
-                />
+                <RadioGroup
+                  value={field.value ? 'enabled' : 'disabled'}
+                  onValueChange={handleRadioChange}
+                  className="flex space-x-4"
+                >
+                  <div className="flex items-center space-x-1">
+                    <RadioGroupItem value="enabled" id={`${name}-enabled`} />
+                    <FormLabel htmlFor={`${name}-enabled`} className="text-sm">On</FormLabel>
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    <RadioGroupItem value="disabled" id={`${name}-disabled`} />
+                    <FormLabel htmlFor={`${name}-disabled`} className="text-sm">Off</FormLabel>
+                  </div>
+                </RadioGroup>
               </FormControl>
             </FormItem>
           )}

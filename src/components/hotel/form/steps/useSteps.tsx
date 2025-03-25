@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { FormValues } from '../formSchema';
 import { ContractDocument } from '@/models/HotelModel';
@@ -34,18 +35,25 @@ export const useSteps = ({ form, hotelId }: UseStepsProps) => {
       id: 'amenities',
       label: 'Amenities',
       component: <AmenitiesSection form={form} hotelId={hotelId} />,
-      // Simplified custom validation to check if at least one amenity is enabled
+      // Modified validation to check only if at least one amenity is enabled (boolean true)
       customValidation: (formValues: FormValues) => {
-        if (!formValues.amenities) return false;
+        if (!formValues.amenities) {
+          console.log("Amenities validation failed: No amenities object found");
+          return false;
+        }
         
-        // Get only boolean properties in the amenities object
+        // Get only boolean properties in the amenities object, excluding image arrays
         const amenityBooleans = Object.entries(formValues.amenities)
-          .filter(([key, value]) => typeof value === 'boolean');
+          .filter(([key, value]) => {
+            return typeof value === 'boolean' && !key.includes('Images');
+          });
         
         // Check if at least one amenity is enabled (true)
         const hasEnabledAmenity = amenityBooleans.some(([_, value]) => value === true);
         
-        console.log("Amenities validation:", hasEnabledAmenity);
+        console.log("Amenities validation result:", hasEnabledAmenity ? "VALID" : "INVALID", 
+                   "Enabled count:", amenityBooleans.filter(([_, value]) => value === true).length);
+                   
         return hasEnabledAmenity;
       }
     },
@@ -119,11 +127,15 @@ export const useSteps = ({ form, hotelId }: UseStepsProps) => {
 
   // Log states for debugging
   useEffect(() => {
-    console.log("Steps status:", {
-      currentIndex: currentStepIndex,
-      totalSteps: steps.length,
-      validity: stepsValidity
-    });
+    const timeoutId = setTimeout(() => {
+      console.log("Steps status:", {
+        currentIndex: currentStepIndex,
+        totalSteps: steps.length,
+        validity: stepsValidity
+      });
+    }, 250);
+    
+    return () => clearTimeout(timeoutId);
   }, [currentStepIndex, steps.length, stepsValidity]);
 
   return {
