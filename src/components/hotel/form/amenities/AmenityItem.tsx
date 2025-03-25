@@ -8,7 +8,7 @@ import {
   FormControl,
   FormLabel,
 } from '@/components/ui/form';
-import { Slider } from '@/components/ui/slider';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import AmenityImagesSection from './AmenityImagesSection';
@@ -59,9 +59,9 @@ const AmenityItem: React.FC<AmenityItemProps> = ({
   // Check if the current amenity is extra bed
   const isExtraBed = name === 'extraBed';
 
-  // Trigger validation when amenity is toggled
-  const handleSliderChange = (value: number[]) => {
-    const enabled = value[0] > 50;
+  // Handle radio button change
+  const handleRadioChange = (value: string) => {
+    const enabled = value === 'enabled';
     console.log(`Setting amenity ${name} to:`, enabled);
     
     // Update the form value
@@ -123,7 +123,7 @@ const AmenityItem: React.FC<AmenityItemProps> = ({
           ? "border-indigo-200 bg-indigo-50/50 dark:border-indigo-900 dark:bg-indigo-950/10 shadow-sm" 
           : "border-gray-200 dark:border-gray-800 hover:border-gray-300"
     )}>
-      {/* Main amenity toggle with slider */}
+      {/* Main amenity toggle with radio buttons */}
       <div className="flex flex-row items-center justify-between space-y-0">
         <div className="flex items-center space-x-3">
           <div className={cn(
@@ -150,14 +150,20 @@ const AmenityItem: React.FC<AmenityItemProps> = ({
           render={({ field }) => (
             <FormItem className="flex flex-1 max-w-32 items-center space-y-0 m-0">
               <FormControl>
-                <Slider
-                  value={[field.value ? 100 : 0]}
-                  min={0}
-                  max={100}
-                  step={100}
-                  className="w-full"
-                  onValueChange={handleSliderChange}
-                />
+                <RadioGroup
+                  value={field.value ? 'enabled' : 'disabled'}
+                  onValueChange={handleRadioChange}
+                  className="flex space-x-4"
+                >
+                  <div className="flex items-center space-x-1">
+                    <RadioGroupItem value="enabled" id={`${name}-enabled`} />
+                    <FormLabel htmlFor={`${name}-enabled`} className="text-sm">On</FormLabel>
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    <RadioGroupItem value="disabled" id={`${name}-disabled`} />
+                    <FormLabel htmlFor={`${name}-disabled`} className="text-sm">Off</FormLabel>
+                  </div>
+                </RadioGroup>
               </FormControl>
             </FormItem>
           )}
