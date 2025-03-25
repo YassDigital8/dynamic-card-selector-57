@@ -25,4 +25,5 @@ export interface AmenityStepManagerReturn {
   handleCloseDialog: () => void;
   hasEnabledAmenities: () => boolean;
   getEnabledCount: () => number;
+  enabledAmenities: Array<[string, boolean]>;
 }

@@ -25,8 +25,7 @@ const AmenitiesStep: React.FC<AmenitiesStepProps> = memo(({ form, hotelId }) => 
     handleRemoveImage,
     handleCloseDialog,
     hasEnabledAmenities,
-    getEnabledCount,
-    enabledAmenities
+    getEnabledCount
   } = useAmenityStepManager({ form, hotelId });
 
   // Validate as soon as the component is mounted
@@ -46,11 +45,11 @@ const AmenitiesStep: React.FC<AmenitiesStepProps> = memo(({ form, hotelId }) => 
 
   // Validate whenever an amenity is enabled/disabled
   useEffect(() => {
-    console.log("Amenities enabled:", enabledAmenities);
+    console.log("Amenities count changed:", getEnabledCount());
     form.trigger('amenities').then(() => {
       form.trigger();
     });
-  }, [enabledAmenities, form]);
+  }, [getEnabledCount, form]);
 
   return (
     <div className="space-y-6">

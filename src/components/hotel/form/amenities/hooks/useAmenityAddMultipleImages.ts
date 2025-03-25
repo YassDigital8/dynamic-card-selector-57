@@ -3,8 +3,8 @@ import { useCallback } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { FileInfo } from '@/models/FileModel';
 import { useToast } from '@/hooks/use-toast';
-import { amenitiesWithImages } from './constants';
-import { FormValues } from '../formSchema';
+import { amenitiesWithImages } from '../constants';
+import { FormValues } from '../../formSchema';
 
 interface UseAmenityAddMultipleImagesProps {
   form: UseFormReturn<FormValues>;

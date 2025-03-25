@@ -4,8 +4,8 @@ import { UseFormReturn } from 'react-hook-form';
 import { AmenityImage } from '@/models/HotelModel';
 import { FileMetadataValues } from '@/hooks/upload/useFileMetadata';
 import { useToast } from '@/hooks/use-toast';
-import { amenitiesWithImages } from './constants';
-import { FormValues } from '../formSchema';
+import { amenitiesWithImages } from '../constants';
+import { FormValues } from '../../formSchema';
 
 interface UseAmenityAddImageProps {
   form: UseFormReturn<FormValues>;

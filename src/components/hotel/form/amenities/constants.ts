@@ -14,14 +14,14 @@ export const amenitiesWithImages = {
 // Array of amenities for easier mapping
 export const amenitiesList = [
   { name: "amenities.airConditioning", label: "Air Conditioning", icon: AirVent },
-  { name: "amenities.bar", label: "Bar", icon: GlassWater, hasImages: true, imageField: "amenities.barImages" },
-  { name: "amenities.gym", label: "Gym", icon: Dumbbell, hasImages: true, imageField: "amenities.gymImages" },
+  { name: "amenities.bar", label: "Bar", icon: GlassWater },
+  { name: "amenities.gym", label: "Gym", icon: Dumbbell },
   { name: "amenities.parking", label: "Parking", icon: HotelIcon },
-  { name: "amenities.spa", label: "Spa", icon: Bath, hasImages: true, imageField: "amenities.spaImages" },
-  { name: "amenities.restaurant", label: "Restaurant", icon: Utensils, hasImages: true, imageField: "amenities.restaurantImages" },
-  { name: "amenities.breakfast", label: "Breakfast", icon: Coffee, hasImages: true, imageField: "amenities.breakfastImages" },
+  { name: "amenities.spa", label: "Spa", icon: Bath },
+  { name: "amenities.restaurant", label: "Restaurant", icon: Utensils },
+  { name: "amenities.breakfast", label: "Breakfast", icon: Coffee },
   { name: "amenities.wifi", label: "WiFi", icon: Wifi },
-  { name: "amenities.swimmingPool", label: "Swimming Pool", icon: Waves, hasImages: true, imageField: "amenities.swimmingPoolImages" },
+  { name: "amenities.swimmingPool", label: "Swimming Pool", icon: Waves },
   { name: "amenities.petsAllowed", label: "Pets Allowed", icon: PawPrint },
   { name: "amenities.shuttleBus", label: "Shuttle Bus Service", icon: Bus },
   { name: "amenities.extraBed", label: "Extra Bed", icon: BedDouble }
