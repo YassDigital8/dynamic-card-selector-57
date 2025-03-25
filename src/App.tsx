@@ -1,11 +1,9 @@
-
 import React, { memo } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import AdminLayout from "./components/layout/AdminLayout";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
@@ -13,7 +11,7 @@ import Gallery from "./pages/Gallery";
 import Hotel from "./pages/Hotel";
 import HotelAdd from "./pages/HotelAdd";
 import HotelEdit from "./pages/HotelEdit";
-import HotelView from "./pages/HotelView"; // Import the new HotelView page
+import HotelView from "./pages/HotelView";
 import Users from "./pages/Users";
 import useAuthentication from "./hooks/useAuthentication";
 
@@ -24,14 +22,11 @@ const initializeTheme = () => {
   if (savedTheme === 'dark') {
     document.documentElement.classList.add('dark');
   } else if (savedTheme === 'light' || !savedTheme) {
-    // Default to light theme
     document.documentElement.classList.remove('dark');
-    // If no theme was saved, set it to light
     if (!savedTheme) {
       localStorage.setItem('theme', 'light');
     }
   } else if (savedTheme === 'system') {
-    // Check system preference
     const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     if (systemPrefersDark) {
       document.documentElement.classList.add('dark');
@@ -40,7 +35,6 @@ const initializeTheme = () => {
     }
   }
   
-  // Set application title
   document.title = "Cham Wings Admin Portal";
 };
 
@@ -78,12 +72,9 @@ ProtectedRoute.displayName = 'ProtectedRoute';
 initializeTheme();
 
 const App = () => {
-  // Define routes directly without useMemo to avoid potential issues
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <Toaster />
-        <Sonner />
         <BrowserRouter>
           <Routes>
             {/* Public routes */}
@@ -132,7 +123,6 @@ const App = () => {
                 <HotelEdit />
               </ProtectedRoute>
             } />
-            {/* Add new route for viewing hotel details */}
             <Route path="/hotel/view/:hotelId" element={
               <ProtectedRoute>
                 <HotelView />
@@ -147,6 +137,8 @@ const App = () => {
             } />
           </Routes>
         </BrowserRouter>
+        <Toaster />
+        <Sonner />
       </TooltipProvider>
     </QueryClientProvider>
   );

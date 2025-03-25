@@ -3,7 +3,6 @@ import React, { useEffect } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { FormValues } from './formSchema';
 import { StepTabs, StepContent, StepNavigation, useSteps } from './steps';
-import { Toaster } from '@/components/ui/toaster';
 
 interface StepBasedFormProps {
   form: UseFormReturn<FormValues>;
@@ -96,9 +95,6 @@ const StepBasedForm: React.FC<StepBasedFormProps> = ({
         isLoading={isLoading}
         isCurrentStepValid={isCurrentStepValid}
       />
-      
-      {/* Add Toaster to ensure notifications are displayed */}
-      <Toaster />
     </div>
   );
 };
