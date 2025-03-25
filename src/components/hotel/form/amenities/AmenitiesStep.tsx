@@ -59,8 +59,8 @@ const AmenitiesStep: React.FC<AmenitiesStepProps> = memo(({ form, hotelId }) => 
           <Alert className="mb-6 bg-blue-50 dark:bg-blue-950/20">
             <InfoIcon className="h-4 w-4 text-blue-500" />
             <AlertDescription>
-              Select the amenities available at your hotel. For some amenities, you can add images to showcase them.
-              <strong className="block mt-1 text-amber-600">You must enable at least one amenity to proceed.</strong>
+              Select the amenities available at your hotel. For some amenities, you can add images to showcase them but it's not required.
+              <strong className="block mt-1 text-amber-600">You must select at least one amenity to proceed.</strong>
             </AlertDescription>
           </Alert>
 

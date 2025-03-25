@@ -12,6 +12,7 @@ export type AmenityKeyType = AmenityWithImages | string;
 export interface AmenityHookProps {
   form: UseFormReturn<FormValues>;
   hotelId?: string;
+  selectedAmenity?: AmenityWithImages;
 }
 
 export interface AmenityStepManagerReturn {
