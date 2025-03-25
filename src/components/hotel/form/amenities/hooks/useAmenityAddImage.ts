@@ -21,7 +21,9 @@ export const useAmenityAddImage = ({ form, selectedAmenity }: UseAmenityAddImage
       return;
     }
     
+    // Use an explicitly defined type for the field name to avoid TypeScript errors
     const imageFieldName = `amenities.${selectedAmenity}Images`;
+    
     // Ensure we get the current state of the images array
     const currentImages = form.getValues(imageFieldName as any) || [];
     
@@ -36,10 +38,11 @@ export const useAmenityAddImage = ({ form, selectedAmenity }: UseAmenityAddImage
     
     console.log(`Adding image to ${selectedAmenity}:`, newImage);
     
-    // First, ensure the amenity is enabled
-    if (!form.getValues(`amenities.${selectedAmenity}`)) {
+    // First, ensure the amenity is enabled - use a valid type cast for the field name
+    const amenityField = `amenities.${selectedAmenity}`;
+    if (!form.getValues(amenityField as any)) {
       console.log(`Enabling ${selectedAmenity} since an image is being added`);
-      form.setValue(`amenities.${selectedAmenity}`, true, { 
+      form.setValue(amenityField as any, true, { 
         shouldDirty: true,
         shouldTouch: true,
         shouldValidate: true

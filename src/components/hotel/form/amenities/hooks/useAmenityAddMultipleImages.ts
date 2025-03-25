@@ -20,16 +20,19 @@ export const useAmenityAddMultipleImages = ({ form, selectedAmenity }: UseAmenit
       return;
     }
     
+    // Use an explicitly defined type for the field name to avoid TypeScript errors
     const imageFieldName = `amenities.${selectedAmenity}Images`;
+    
     // Ensure we get the current state of the images array
     const currentImages = form.getValues(imageFieldName as any) || [];
     
     console.log(`Adding ${files.length} images to ${selectedAmenity}`);
     
     // First, ensure the amenity is enabled
-    if (!form.getValues(`amenities.${selectedAmenity}`)) {
+    const amenityField = `amenities.${selectedAmenity}`;
+    if (!form.getValues(amenityField as any)) {
       console.log(`Enabling ${selectedAmenity} since images are being added`);
-      form.setValue(`amenities.${selectedAmenity}`, true, { 
+      form.setValue(amenityField as any, true, { 
         shouldDirty: true,
         shouldTouch: true,
         shouldValidate: true

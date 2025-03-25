@@ -25,7 +25,7 @@ const AmenityList: React.FC<AmenityListProps> = ({
         const amenityKey = amenity.name.split('.')[1];
         const amenityName = `amenities.${amenityKey}`;
         const imagesFieldName = `amenities.${amenityKey}Images`;
-        const supportsImages = amenityKey in amenitiesWithImages;
+        const supportsImages = Object.keys(amenitiesWithImages).includes(amenityKey);
         
         return (
           <FormField
