@@ -6,6 +6,9 @@ import { FileInfo } from '@/models/FileModel';
 // List of amenities that can have images
 export type AmenityWithImages = 'bar' | 'gym' | 'spa' | 'restaurant' | 'breakfast' | 'swimmingPool';
 
+// Type for any amenity key
+export type AmenityKeyType = AmenityWithImages | string;
+
 export interface AmenityHookProps {
   form: UseFormReturn<FormValues>;
   hotelId?: string;

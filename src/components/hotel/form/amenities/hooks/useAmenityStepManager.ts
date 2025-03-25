@@ -1,6 +1,6 @@
 
 import { useEffect } from 'react';
-import { AmenityHookProps, AmenityStepManagerReturn } from './types';
+import { AmenityHookProps, AmenityStepManagerReturn, AmenityWithImages } from './types';
 import { useAmenityDialogState } from './useAmenityDialogState';
 import { useAmenityAddImage } from './useAmenityAddImage';
 import { useAmenityAddMultipleImages } from './useAmenityAddMultipleImages';
@@ -19,8 +19,11 @@ export const useAmenityStepManager = ({
     handleCloseDialog 
   } = useAmenityDialogState();
   
-  const { handleAddImage } = useAmenityAddImage({ form, selectedAmenity });
-  const { handleAddMultipleImages } = useAmenityAddMultipleImages({ form, selectedAmenity });
+  // Cast the selectedAmenity as AmenityWithImages for type compatibility
+  const typedSelectedAmenity = selectedAmenity as AmenityWithImages;
+  
+  const { handleAddImage } = useAmenityAddImage({ form, selectedAmenity: typedSelectedAmenity });
+  const { handleAddMultipleImages } = useAmenityAddMultipleImages({ form, selectedAmenity: typedSelectedAmenity });
   const { handleRemoveImage } = useAmenityRemoveImage({ form });
   const { hasEnabledAmenities, amenities, getEnabledCount } = useEnabledAmenities({ form });
 
@@ -51,7 +54,7 @@ export const useAmenityStepManager = ({
   }, [amenities, hasEnabledAmenities, form, getEnabledCount]);
 
   return {
-    selectedAmenity,
+    selectedAmenity: typedSelectedAmenity,
     isImageDialogOpen,
     openImageDialog,
     handleAddImage,
