@@ -8,7 +8,7 @@ import {
   FormControl,
   FormLabel,
 } from '@/components/ui/form';
-import { Switch } from '@/components/ui/switch';
+import { Slider } from '@/components/ui/slider';
 import { LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import AmenityImagesSection from './AmenityImagesSection';
@@ -60,18 +60,19 @@ const AmenityItem: React.FC<AmenityItemProps> = ({
   const isExtraBed = name === 'extraBed';
 
   // Trigger validation when amenity is toggled
-  const handleToggleChange = (checked: boolean) => {
-    console.log(`Setting amenity ${name} to:`, checked);
+  const handleSliderChange = (value: number[]) => {
+    const enabled = value[0] > 50;
+    console.log(`Setting amenity ${name} to:`, enabled);
     
     // Update the form value
-    form.setValue(`amenities.${name}` as any, checked, { 
+    form.setValue(`amenities.${name}` as any, enabled, { 
       shouldValidate: true,
       shouldDirty: true,
       shouldTouch: true
     });
     
     // For extraBed, also set up the policy
-    if (isExtraBed && checked && !form.getValues('extraBedPolicy')) {
+    if (isExtraBed && enabled && !form.getValues('extraBedPolicy')) {
       form.setValue('extraBedPolicy', {
         pricePerNight: 0,
         availableForRoomTypes: [],
@@ -122,7 +123,7 @@ const AmenityItem: React.FC<AmenityItemProps> = ({
           ? "border-indigo-200 bg-indigo-50/50 dark:border-indigo-900 dark:bg-indigo-950/10 shadow-sm" 
           : "border-gray-200 dark:border-gray-800 hover:border-gray-300"
     )}>
-      {/* Main amenity toggle switch */}
+      {/* Main amenity toggle with slider */}
       <div className="flex flex-row items-center justify-between space-y-0">
         <div className="flex items-center space-x-3">
           <div className={cn(
@@ -147,15 +148,15 @@ const AmenityItem: React.FC<AmenityItemProps> = ({
           control={form.control}
           name={`amenities.${name}` as any}
           render={({ field }) => (
-            <FormItem className="flex flex-row items-center space-y-0 m-0">
+            <FormItem className="flex flex-1 max-w-32 items-center space-y-0 m-0">
               <FormControl>
-                <Switch
-                  checked={field.value}
-                  onCheckedChange={handleToggleChange}
-                  className={cn(
-                    "data-[state=checked]:bg-indigo-600",
-                    isExtraBed && "data-[state=checked]:bg-blue-600"
-                  )}
+                <Slider
+                  value={[field.value ? 100 : 0]}
+                  min={0}
+                  max={100}
+                  step={100}
+                  className="w-full"
+                  onValueChange={handleSliderChange}
                 />
               </FormControl>
             </FormItem>

@@ -19,7 +19,7 @@ const AmenityList: React.FC<AmenityListProps> = ({
   onRemoveImage
 }) => {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {amenitiesList.map((amenity) => {
         // Get the key from the name (e.g., "amenities.bar" -> "bar")
         const amenityKey = amenity.name.split('.')[1];
