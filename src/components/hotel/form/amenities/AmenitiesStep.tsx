@@ -25,34 +25,32 @@ const AmenitiesStep: React.FC<AmenitiesStepProps> = memo(({ form, hotelId }) => 
     handleRemoveImage,
     handleCloseDialog,
     hasEnabledAmenities,
-    getEnabledCount
+    getEnabledCount,
+    enabledAmenities
   } = useAmenityStepManager({ form, hotelId });
 
-  // Validate on mount and when the enabled count changes
+  // Validate as soon as the component is mounted
   useEffect(() => {
-    let isValidating = false;
+    const validateTimer = setTimeout(() => {
+      // Force validation of the amenities field
+      form.trigger('amenities').then(() => {
+        // Trigger the parent form validation
+        form.trigger();
+      });
+      
+      console.log("Initial amenities validation triggered");
+    }, 200);
     
-    const timeoutId = setTimeout(() => {
-      if (!isValidating) {
-        isValidating = true;
-        
-        // Force validation of the amenities field
-        form.trigger('amenities').finally(() => {
-          isValidating = false;
-          
-          // Also trigger the parent form to update step status
-          form.trigger();
-        });
-        
-        // Check enabled count directly from form values for consistency
-        const enabledCount = getEnabledCount();
-        console.log("Enabled amenities in AmenitiesStep:", enabledCount);
-        console.log("Step validation should pass:", enabledCount > 0);
-      }
-    }, 100);
-    
-    return () => clearTimeout(timeoutId);
-  }, [form, getEnabledCount]);
+    return () => clearTimeout(validateTimer);
+  }, [form]);
+
+  // Validate whenever an amenity is enabled/disabled
+  useEffect(() => {
+    console.log("Amenities enabled:", enabledAmenities);
+    form.trigger('amenities').then(() => {
+      form.trigger();
+    });
+  }, [enabledAmenities, form]);
 
   return (
     <div className="space-y-6">
@@ -64,7 +62,7 @@ const AmenitiesStep: React.FC<AmenitiesStepProps> = memo(({ form, hotelId }) => 
           <Alert className="mb-6 bg-blue-50 dark:bg-blue-950/20">
             <InfoIcon className="h-4 w-4 text-blue-500" />
             <AlertDescription>
-              Select the amenities available at your hotel. For some amenities, you can add images to showcase them but it's not required.
+              Select the amenities available at your hotel. For some amenities, you can add images to showcase them.
               <strong className="block mt-1 text-amber-600">You must select at least one amenity to proceed.</strong>
             </AlertDescription>
           </Alert>

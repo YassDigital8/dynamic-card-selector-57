@@ -27,12 +27,13 @@ const StepNavigation: React.FC<StepNavigationProps> = ({
   
   // Modified to check form validity before proceeding
   const handleNext = async () => {
-    // Only proceed if the current step is valid
     if (isCurrentStepValid) {
       console.log("Current step is valid, proceeding to next step");
       onNext();
     } else {
       console.log("Cannot proceed: current step is invalid");
+      // Trigger validation to show errors
+      await form.trigger();
     }
   };
   

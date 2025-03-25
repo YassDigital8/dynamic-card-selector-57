@@ -1,5 +1,5 @@
 
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useWatch } from 'react-hook-form';
 import { AmenityHookProps } from './types';
 
@@ -32,9 +32,20 @@ export const useEnabledAmenities = ({ form }: AmenityHookProps) => {
     return enabledAmenities.length;
   }, [enabledAmenities]);
 
+  // Force validation when amenities change
+  useEffect(() => {
+    // Trigger validation if we have any enabled amenities
+    if (enabledAmenities.length > 0) {
+      console.log("Amenities enabled, triggering validation:", enabledAmenities);
+      form.trigger('amenities');
+      form.trigger(); // Trigger full form validation
+    }
+  }, [enabledAmenities, form]);
+
   return { 
     hasEnabledAmenities, 
     amenities,
-    getEnabledCount
+    getEnabledCount,
+    enabledAmenities
   };
 };
