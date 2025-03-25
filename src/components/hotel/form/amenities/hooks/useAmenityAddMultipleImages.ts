@@ -1,75 +1,78 @@
 
 import { useCallback } from 'react';
-import { UseFormReturn } from 'react-hook-form';
-import { FileInfo } from '@/models/FileModel';
+import { AmenityHookProps } from './types';
 import { useToast } from '@/hooks/use-toast';
+import { FileInfo } from '@/models/FileModel';
 import { amenitiesWithImages } from '../constants';
-import { FormValues } from '../../formSchema';
 
-interface UseAmenityAddMultipleImagesProps {
-  form: UseFormReturn<FormValues>;
-  selectedAmenity: string | null;
+interface UseAmenityAddMultipleImagesProps extends AmenityHookProps {
+  selectedAmenity: string;
 }
 
-export const useAmenityAddMultipleImages = ({ form, selectedAmenity }: UseAmenityAddMultipleImagesProps) => {
+export const useAmenityAddMultipleImages = ({ 
+  form, 
+  selectedAmenity 
+}: UseAmenityAddMultipleImagesProps) => {
   const { toast } = useToast();
   
   const handleAddMultipleImages = useCallback((files: FileInfo[]) => {
     if (!selectedAmenity || files.length === 0) {
-      console.log('Missing selectedAmenity or files:', { selectedAmenity, fileCount: files.length });
+      console.log('Missing selectedAmenity or files');
       return;
     }
     
-    // Use an explicitly defined type for the field name to avoid TypeScript errors
-    const imageFieldName = `amenities.${selectedAmenity}Images`;
+    // Format this as a valid field path that TypeScript can understand
+    const imageFieldPath = `amenities.${selectedAmenity}Images`;
     
-    // Ensure we get the current state of the images array
-    const currentImages = form.getValues(imageFieldName as any) || [];
+    // Get the current images using getValues with a proper type assertion
+    const formValues = form.getValues();
+    const amenitiesValues = formValues.amenities || {};
+    
+    // Access images in a type-safe way
+    const currentImages = amenitiesValues[`${selectedAmenity}Images` as keyof typeof amenitiesValues] || [];
     
     console.log(`Adding ${files.length} images to ${selectedAmenity}`);
     
     // First, ensure the amenity is enabled
-    const amenityField = `amenities.${selectedAmenity}`;
-    if (!form.getValues(amenityField as any)) {
-      console.log(`Enabling ${selectedAmenity} since images are being added`);
-      form.setValue(amenityField as any, true, { 
+    if (!formValues.amenities?.[selectedAmenity as keyof typeof amenitiesValues]) {
+      // Enable the amenity in a type-safe way using bracket notation and type assertion
+      form.setValue(`amenities.${selectedAmenity}` as any, true, { 
         shouldDirty: true,
         shouldTouch: true,
         shouldValidate: true
       });
     }
     
+    // Find the proper display label for the toast
+    const amenityLabel = amenitiesWithImages[selectedAmenity] || selectedAmenity;
+    
     const newImages = files.map((file, index) => ({
       url: file.url,
-      description: file.metadata?.altText || `${amenitiesWithImages[selectedAmenity as keyof typeof amenitiesWithImages]} image ${index + 1}`,
+      description: file.metadata?.altText || `${amenityLabel} image ${index + 1}`,
       title: file.metadata?.title || file.name,
       caption: file.metadata?.caption || '',
       id: `${selectedAmenity}-${Date.now()}-${index}-${Math.random().toString(36).substr(2, 9)}`,
       metadata: file.metadata
     }));
     
-    // Create a new array with the existing images plus the new ones
     const updatedImages = Array.isArray(currentImages) 
       ? [...currentImages, ...newImages] 
       : [...newImages];
     
-    // Set the images array with proper dirty flag to mark the form as changed
-    form.setValue(imageFieldName as any, updatedImages, {
+    // Use a type assertion to handle the dynamic path
+    form.setValue(imageFieldPath as any, updatedImages, {
       shouldDirty: true,
       shouldTouch: true,
       shouldValidate: true
     });
     
     // Force form validation
-    setTimeout(() => {
-      form.trigger('amenities');
-      form.trigger();
-    }, 10);
+    form.trigger();
     
-    // Notify user
     toast({
       title: "Images added",
-      description: `${files.length} images were added to ${amenitiesWithImages[selectedAmenity as keyof typeof amenitiesWithImages]}`,
+      description: `${files.length} images were added to ${amenityLabel}. Don't forget to save your changes.`,
+      variant: "default",
     });
   }, [form, selectedAmenity, toast]);
 

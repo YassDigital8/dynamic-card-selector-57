@@ -7,9 +7,9 @@ import { cn } from "@/lib/utils"
 const Slider = React.forwardRef<
   React.ElementRef<typeof SliderPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof SliderPrimitive.Root>
->(({ className, ...props }, ref) => {
+>(({ className, defaultValue, ...props }, ref) => {
   // Determine if the slider is in the "on" position
-  const isOn = props.value ? props.value[0] > 50 : false;
+  const isOn = defaultValue ? defaultValue[0] > 50 : false;
   
   return (
     <SliderPrimitive.Root
@@ -18,6 +18,7 @@ const Slider = React.forwardRef<
         "relative flex w-full touch-none select-none items-center",
         className
       )}
+      defaultValue={defaultValue}
       {...props}
     >
       <SliderPrimitive.Track className={cn(

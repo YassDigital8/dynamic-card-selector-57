@@ -1,10 +1,10 @@
 
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useWatch } from 'react-hook-form';
 import { AmenityHookProps } from './types';
 
 export const useEnabledAmenities = ({ form }: AmenityHookProps) => {
-  // Watch the form's amenities to detect changes
+  // Watch the form's amenities to detect changes - use memo to prevent excessive recalculations
   const amenities = useWatch({
     control: form.control,
     name: 'amenities'
@@ -17,12 +17,12 @@ export const useEnabledAmenities = ({ form }: AmenityHookProps) => {
     // Get only boolean properties that are true (excluding image arrays)
     return Object.entries(amenities)
       .filter(([key, value]) => {
-        // Only consider boolean properties that are true (not image arrays)
+        // Only consider boolean properties (not image arrays)
         return typeof value === 'boolean' && !key.includes('Images') && value === true;
-      }) as Array<[string, boolean]>; // Explicitly cast to the correct type
+      });
   }, [amenities]);
   
-  // Check if any amenity is enabled
+  // Check if any amenity is enabled - implemented as a memoized callback
   const hasEnabledAmenities = useCallback(() => {
     return enabledAmenities.length > 0;
   }, [enabledAmenities]);
@@ -32,20 +32,9 @@ export const useEnabledAmenities = ({ form }: AmenityHookProps) => {
     return enabledAmenities.length;
   }, [enabledAmenities]);
 
-  // Force validation when amenities change
-  useEffect(() => {
-    // Trigger validation if we have any enabled amenities
-    if (enabledAmenities.length > 0) {
-      console.log("Amenities enabled, triggering validation:", enabledAmenities);
-      form.trigger('amenities');
-      form.trigger(); // Trigger full form validation
-    }
-  }, [enabledAmenities, form]);
-
   return { 
     hasEnabledAmenities, 
     amenities,
-    getEnabledCount,
-    enabledAmenities
+    getEnabledCount
   };
 };

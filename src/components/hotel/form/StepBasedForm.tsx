@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { FormValues } from './formSchema';
 import { StepTabs, StepContent, StepNavigation, useSteps } from './steps';
+import { Toaster } from '@/components/ui/toaster';
 
 interface StepBasedFormProps {
   form: UseFormReturn<FormValues>;
@@ -49,13 +50,6 @@ const StepBasedForm: React.FC<StepBasedFormProps> = ({
     }
   }, [goToStep, onGoToStepChange]);
 
-  // Get the validity of the current step
-  const isCurrentStepValid = stepsValidity[currentStepIndex] || false;
-  
-  useEffect(() => {
-    console.log(`Current step ${currentStepIndex} validity:`, isCurrentStepValid ? "VALID" : "INVALID");
-  }, [currentStepIndex, isCurrentStepValid]);
-
   // Safety check: If steps are not yet loaded, render a loading state
   if (!steps || steps.length === 0 || currentStepIndex === undefined || currentStepIndex < 0) {
     return <div className="p-4 text-center">Loading form steps...</div>;
@@ -93,8 +87,10 @@ const StepBasedForm: React.FC<StepBasedFormProps> = ({
         onNext={goToNextStep}
         onSubmit={onSubmit}
         isLoading={isLoading}
-        isCurrentStepValid={isCurrentStepValid}
       />
+      
+      {/* Add Toaster to ensure notifications are displayed */}
+      <Toaster />
     </div>
   );
 };

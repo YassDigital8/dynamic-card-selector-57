@@ -2,6 +2,7 @@
 import React, { memo, useMemo, useCallback, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
+import HotelDetails from './HotelDetails';
 import { Hotel } from '@/models/HotelModel';
 import { useIsMobile, useScreenSize } from '@/hooks/use-mobile';
 import { 
@@ -12,12 +13,9 @@ import {
   CarouselPrevious,
   CarouselIndicators 
 } from '@/components/ui/carousel';
-import {
-  CarouselItemDetail,
-  CarouselItemGallery,
-  CarouselItemCommercial,
-  CarouselItemAvailability
-} from './details/carousel';
+import HotelGallery from './details/HotelGallery';
+import CommercialDealsView from './details/commercial/CommercialDealsView';
+import { FileText, Calendar, Users } from 'lucide-react';
 
 interface HotelDetailsWrapperProps {
   hotel: Hotel;
@@ -105,6 +103,9 @@ const HotelDetailsWrapper: React.FC<HotelDetailsWrapperProps> = memo(({
     ? hotel.updatedAt.getTime() 
     : String(hotel.updatedAt)}`;
 
+  // Check if contract documents exist
+  const hasContractDocuments = hotel.contractDocuments && hotel.contractDocuments.length > 0;
+
   return (
     <motion.div
       key={detailsKey}
@@ -117,37 +118,68 @@ const HotelDetailsWrapper: React.FC<HotelDetailsWrapperProps> = memo(({
         <Carousel className="w-full relative">
           <CarouselContent>
             <CarouselItem>
-              <CarouselItemDetail 
-                hotel={hotel}
-                onEdit={onEdit}
-                onBack={onBack}
-                onLogoChange={handleLogoChange}
-                isEditing={isEditing}
-                containerVariants={containerVariants}
-                itemVariants={itemVariants}
-              />
+              <motion.div 
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                className="px-0.5 sm:px-2"
+              >
+                <HotelDetails 
+                  hotel={hotel} 
+                  onEdit={onEdit} 
+                  onBack={onBack} 
+                  onLogoChange={handleLogoChange}
+                  isEditing={isEditing}
+                />
+              </motion.div>
             </CarouselItem>
-            
             <CarouselItem>
-              <CarouselItemGallery 
-                hotel={hotel}
-                itemVariants={itemVariants}
-              />
+              <div className="h-full flex items-center justify-center p-3 sm:p-6">
+                <motion.div
+                  variants={itemVariants}
+                  className="space-y-4 w-full"
+                >
+                  <HotelGallery 
+                    key={`gallery-${hotel.id}-${typeof hotel.updatedAt === 'object' && hotel.updatedAt instanceof Date 
+                      ? hotel.updatedAt.getTime() 
+                      : String(hotel.updatedAt)}`} 
+                    hotel={hotel} 
+                  />
+                </motion.div>
+              </div>
             </CarouselItem>
             
             {/* Commercial Deals View (Contract Documents) */}
             <CarouselItem>
-              <CarouselItemCommercial 
-                contractDocuments={hotel.contractDocuments}
-                itemVariants={itemVariants}
-              />
+              <div className="h-full flex items-center justify-center p-3 sm:p-6">
+                <motion.div
+                  variants={itemVariants}
+                  className="space-y-4 w-full"
+                >
+                  <CommercialDealsView 
+                    contractDocuments={hotel.contractDocuments} 
+                  />
+                </motion.div>
+              </div>
             </CarouselItem>
             
             <CarouselItem>
-              <CarouselItemAvailability 
-                itemVariants={itemVariants}
-                springConfig={springConfig}
-              />
+              <div className="h-full flex items-center justify-center p-3 sm:p-6">
+                <motion.div
+                  variants={itemVariants}
+                  className="space-y-4 text-center"
+                >
+                  <h3 className="text-xl sm:text-2xl font-bold text-indigo-600 dark:text-indigo-400">Room Availability</h3>
+                  <motion.div 
+                    className="bg-indigo-50 dark:bg-indigo-900/30 p-4 sm:p-8 rounded-xl"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3, ...springConfig }}
+                  >
+                    <p className="text-sm sm:text-base text-muted-foreground">Room availability information will be displayed here in future updates.</p>
+                  </motion.div>
+                </motion.div>
+              </div>
             </CarouselItem>
           </CarouselContent>
           

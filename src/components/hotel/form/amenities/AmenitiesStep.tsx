@@ -28,41 +28,39 @@ const AmenitiesStep: React.FC<AmenitiesStepProps> = memo(({ form, hotelId }) => 
     getEnabledCount
   } = useAmenityStepManager({ form, hotelId });
 
-  // Validate as soon as the component is mounted
+  // Add debug effect with a flag to prevent infinite loops
   useEffect(() => {
-    const validateTimer = setTimeout(() => {
+    let isValidating = false;
+    
+    // Only validate if we're not already validating
+    if (!isValidating) {
+      isValidating = true;
+      
       // Force validation of the amenities field
-      form.trigger('amenities').then(() => {
-        // Trigger the parent form validation
-        form.trigger();
+      form.trigger('amenities').finally(() => {
+        isValidating = false;
       });
       
-      console.log("Initial amenities validation triggered");
-    }, 200);
-    
-    return () => clearTimeout(validateTimer);
-  }, [form]);
-
-  // Validate whenever an amenity is enabled/disabled
-  useEffect(() => {
-    console.log("Amenities count changed:", getEnabledCount());
-    form.trigger('amenities').then(() => {
-      form.trigger();
-    });
-  }, [getEnabledCount, form]);
+      // Check enabled count directly from form values for consistency
+      const enabledCount = getEnabledCount();
+        
+      console.log("Enabled amenities in AmenitiesStep:", enabledCount);
+      console.log("Step validation should pass:", enabledCount > 0);
+    }
+  }, [form, getEnabledCount]);
 
   return (
     <div className="space-y-6">
-      <Card className="border border-indigo-100 dark:border-indigo-900/50 shadow-sm">
-        <CardHeader className="pb-3 border-b border-indigo-100 dark:border-indigo-900/50">
-          <CardTitle className="text-xl text-indigo-700 dark:text-indigo-400">Hotel Amenities</CardTitle>
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-xl">Hotel Amenities</CardTitle>
         </CardHeader>
-        <CardContent className="pt-6">
-          <Alert className="mb-6 bg-blue-50 dark:bg-blue-950/20 border-l-4 border-blue-500">
-            <InfoIcon className="h-4 w-4 text-blue-600" />
+        <CardContent>
+          <Alert className="mb-6 bg-blue-50 dark:bg-blue-950/20">
+            <InfoIcon className="h-4 w-4 text-blue-500" />
             <AlertDescription>
-              Slide to enable the amenities available at your hotel. For some amenities, you can add images to showcase them.
-              <strong className="block mt-1 text-amber-600 dark:text-amber-500">You must select at least one amenity to proceed.</strong>
+              Select the amenities available at your hotel. For some amenities, you can add images to showcase them.
+              <strong className="block mt-1 text-amber-600">You must enable at least one amenity to proceed.</strong>
             </AlertDescription>
           </Alert>
 

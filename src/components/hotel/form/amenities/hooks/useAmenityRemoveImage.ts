@@ -1,6 +1,6 @@
 
 import { useCallback } from 'react';
-import { AmenityHookProps, AmenityWithImages, AmenityKeyType } from './types';
+import { AmenityHookProps, AmenityKeyType } from './types';
 import { useToast } from '@/hooks/use-toast';
 import { amenitiesWithImages } from '../constants';
 

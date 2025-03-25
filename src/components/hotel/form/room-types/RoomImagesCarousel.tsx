@@ -1,70 +1,73 @@
 
 import React from 'react';
-import {
+import { 
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from "@/components/ui/carousel";
+  CarouselIndicators
+} from '@/components/ui/carousel';
+import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Trash2 } from 'lucide-react';
 
 interface RoomImagesCarouselProps {
   images: string[];
+  className?: string;
   onDeleteImage?: (imageUrl: string) => void;
-  className?: string; // Add className prop to fix build error
 }
 
 const RoomImagesCarousel: React.FC<RoomImagesCarouselProps> = ({ 
-  images, 
-  onDeleteImage,
-  className 
+  images,
+  className,
+  onDeleteImage
 }) => {
   if (!images || images.length === 0) {
     return null;
   }
 
   return (
-    <div className={className || "relative"}>
-      <Carousel className="w-full">
-        <CarouselContent>
-          {images.map((image, index) => (
-            <CarouselItem key={index} className="basis-full lg:basis-full">
-              <div className="relative aspect-video overflow-hidden rounded-md group">
-                <img 
-                  src={image} 
-                  alt={`Room view ${index + 1}`}
-                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                />
-                
-                {onDeleteImage && (
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onDeleteImage(image);
-                      }}
-                      className="bg-red-600/80 hover:bg-red-700"
-                    >
-                      <Trash2 className="h-4 w-4 mr-1" /> Remove
-                    </Button>
-                  </div>
-                )}
-                
-                <div className="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded">
-                  {index + 1} / {images.length}
+    <Carousel className={cn("w-full relative", className)}>
+      <CarouselContent>
+        {images.map((image, index) => (
+          <CarouselItem key={index} className="flex justify-center">
+            <div className="relative w-full">
+              <img 
+                src={image} 
+                alt={`Room image ${index + 1}`} 
+                className="w-full h-48 object-cover"
+              />
+              {onDeleteImage && (
+                <div className="absolute top-2 right-2">
+                  <Button 
+                    variant="destructive" 
+                    size="sm" 
+                    className="h-7 w-7 p-0 rounded-full opacity-90 hover:opacity-100" 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onDeleteImage(image);
+                    }}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
                 </div>
-              </div>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-        <CarouselPrevious className="left-2" />
-        <CarouselNext className="right-2" />
-      </Carousel>
-    </div>
+              )}
+            </div>
+          </CarouselItem>
+        ))}
+      </CarouselContent>
+      
+      {images.length > 1 && (
+        <>
+          <CarouselPrevious className="h-8 w-8 -left-3 sm:left-1 bg-white/80 border-gray-200 hover:bg-white"/>
+          <CarouselNext className="h-8 w-8 -right-3 sm:right-1 bg-white/80 border-gray-200 hover:bg-white"/>
+          <div className="absolute bottom-1 left-0 right-0">
+            <CarouselIndicators className="gap-1" />
+          </div>
+        </>
+      )}
+    </Carousel>
   );
 };
 

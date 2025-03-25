@@ -11,7 +11,6 @@ interface StepNavigationProps {
   onNext: () => void;
   onSubmit: () => void;
   isLoading: boolean;
-  isCurrentStepValid?: boolean;
 }
 
 const StepNavigation: React.FC<StepNavigationProps> = ({ 
@@ -20,21 +19,15 @@ const StepNavigation: React.FC<StepNavigationProps> = ({
   onPrevious, 
   onNext, 
   onSubmit,
-  isLoading,
-  isCurrentStepValid = false
+  isLoading 
 }) => {
   const form = useFormContext();
   
-  // Modified to check form validity before proceeding
+  // Always allow navigation, but trigger validation to update errors
   const handleNext = async () => {
-    if (isCurrentStepValid) {
-      console.log("Current step is valid, proceeding to next step");
-      onNext();
-    } else {
-      console.log("Cannot proceed: current step is invalid");
-      // Trigger validation to show errors
-      await form.trigger();
-    }
+    // Still trigger validation to display errors, but proceed anyway
+    await form.trigger();
+    onNext();
   };
   
   return (
@@ -55,7 +48,7 @@ const StepNavigation: React.FC<StepNavigationProps> = ({
           <Button 
             type="button" 
             onClick={onSubmit}
-            disabled={isLoading || !isCurrentStepValid}
+            disabled={isLoading}
             className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
           >
             <Check className="mr-2 h-4 w-4" />
@@ -65,10 +58,8 @@ const StepNavigation: React.FC<StepNavigationProps> = ({
           <Button 
             type="button" 
             onClick={handleNext}
-            disabled={isLoading || !isCurrentStepValid}
-            className={`bg-gradient-to-r ${isCurrentStepValid 
-              ? 'from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700' 
-              : 'from-gray-400 to-gray-500 cursor-not-allowed'}`}
+            disabled={isLoading}
+            className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
           >
             Next Step
             <ArrowRight className="ml-2 h-4 w-4" />

@@ -1,19 +1,15 @@
 
 import React, { useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
+import { Button } from '@/components/ui/button';
 import { FormValues } from './formSchema';
 import { FileInfo } from '@/models/FileModel';
 import { FileMetadataValues } from '@/hooks/upload/useFileMetadata';
 import { 
+  RoomTypeCard, 
   RoomTypeImageUploadDialog,
   useGalleryFiles
 } from './room-types';
-import { 
-  EmptyRoomTypeState, 
-  RoomTypeHeader, 
-  RoomTypeList,
-  AddRoomTypeButton
-} from './room-types/components';
 
 interface RoomTypesSectionProps {
   form: UseFormReturn<FormValues>;
@@ -23,7 +19,6 @@ const RoomTypesSection: React.FC<RoomTypesSectionProps> = ({ form }) => {
   const [isImageDialogOpen, setIsImageDialogOpen] = useState(false);
   const [currentRoomTypeIndex, setCurrentRoomTypeIndex] = useState(0);
   const { galleryFiles } = useGalleryFiles();
-  const roomTypes = form.watch('roomTypes') || [];
 
   const getCurrentRoomName = () => {
     const name = form.getValues(`roomTypes.${currentRoomTypeIndex}.name`);
@@ -82,7 +77,7 @@ const RoomTypesSection: React.FC<RoomTypesSectionProps> = ({ form }) => {
       ...currentRoomTypes,
       { 
         name: '', 
-        maxAdults: 2, 
+        maxAdults: 1, 
         maxChildren: 0, 
         images: [],
         allowExtraBed: false,
@@ -90,38 +85,30 @@ const RoomTypesSection: React.FC<RoomTypesSectionProps> = ({ form }) => {
         extraBedPrice: 0
       }
     ]);
-    
-    // Scroll to the new room type after a short delay
-    setTimeout(() => {
-      const roomCards = document.querySelectorAll('.room-type-card');
-      if (roomCards.length > 0) {
-        const lastCard = roomCards[roomCards.length - 1];
-        lastCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-    }, 100);
-  };
-
-  const handleRemoveRoomType = (index: number) => {
-    const currentRoomTypes = form.getValues('roomTypes');
-    form.setValue('roomTypes', currentRoomTypes.filter((_, i) => i !== index));
   };
 
   return (
     <div className="space-y-6 col-span-2">
-      <RoomTypeHeader onAddRoomType={addNewRoomType} />
-      
-      {roomTypes.length === 0 ? (
-        <EmptyRoomTypeState />
-      ) : (
-        <RoomTypeList 
-          roomTypes={roomTypes}
+      <h3 className="text-lg font-medium text-foreground">Room Types</h3>
+      {form.watch('roomTypes').map((roomType, index) => (
+        <RoomTypeCard 
+          key={index}
+          index={index}
           form={form}
-          onRemoveRoomType={handleRemoveRoomType}
-          onOpenGallery={openImageDialog}
+          onRemove={() => {
+            const currentRoomTypes = form.getValues('roomTypes');
+            form.setValue('roomTypes', currentRoomTypes.filter((_, i) => i !== index));
+          }}
+          onOpenGallery={() => openImageDialog(index)}
         />
-      )}
-      
-      <AddRoomTypeButton onAddRoomType={addNewRoomType} />
+      ))}
+      <Button
+        type="button"
+        variant="outline"
+        onClick={addNewRoomType}
+      >
+        Add Room Type
+      </Button>
 
       {/* Universal Image Upload Dialog for Room Types */}
       <RoomTypeImageUploadDialog 

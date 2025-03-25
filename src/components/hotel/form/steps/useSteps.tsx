@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { FormValues } from '../formSchema';
 import { ContractDocument } from '@/models/HotelModel';
@@ -35,17 +34,19 @@ export const useSteps = ({ form, hotelId }: UseStepsProps) => {
       id: 'amenities',
       label: 'Amenities',
       component: <AmenitiesSection form={form} hotelId={hotelId} />,
-      // Modified validation to check only if at least one amenity is enabled (boolean true)
+      // Enhanced validation to check if at least one amenity is enabled
       customValidation: (formValues: FormValues) => {
         if (!formValues.amenities) {
           console.log("Amenities validation failed: No amenities object found");
           return false;
         }
         
-        // Get only boolean properties in the amenities object, excluding image arrays
+        // Get only boolean properties in the amenities object
         const amenityBooleans = Object.entries(formValues.amenities)
           .filter(([key, value]) => {
-            return typeof value === 'boolean' && !key.includes('Images');
+            const isBoolean = typeof value === 'boolean';
+            const isNotImageField = !key.includes('Images');
+            return isBoolean && isNotImageField;
           });
         
         // Check if at least one amenity is enabled (true)
@@ -125,7 +126,7 @@ export const useSteps = ({ form, hotelId }: UseStepsProps) => {
     steps
   });
 
-  // Log states for debugging
+  // Log states for debugging - with debounce to prevent excessive logging
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       console.log("Steps status:", {

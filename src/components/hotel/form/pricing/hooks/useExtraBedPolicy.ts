@@ -1,39 +1,38 @@
+
+import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { FormValues } from '../../formSchema';
-import { useEffect } from 'react';
 
 export const useExtraBedPolicy = () => {
   const form = useFormContext<FormValues>();
+  const amenities = form.watch('amenities') || {};
+  const extraBedEnabled = amenities.extraBed || false;
   
-  // Watch the extraBed amenity toggle
-  const extraBedEnabled = useWatch({
-    control: form.control,
-    name: 'amenities.extraBed',
-    defaultValue: false
-  });
-  
-  // Watch the extraBed price to keep it in sync
-  const extraBedPrice = useWatch({
+  // Watch for price changes to force updates
+  const pricePerNight = useWatch({
     control: form.control,
     name: 'extraBedPolicy.pricePerNight',
     defaultValue: 0
   });
-  
-  // Update the pricing field when the extraBed is toggled on
+
+  // Initialize extra bed policy if not present
   useEffect(() => {
-    if (extraBedEnabled && !form.getValues('extraBedPolicy')) {
-      // Initialize extra bed policy with default values
+    if (!form.getValues('extraBedPolicy') && extraBedEnabled) {
       form.setValue('extraBedPolicy', {
-        pricePerNight: 0, // This allows modifying - not fixed anymore
+        pricePerNight: 0,
         availableForRoomTypes: [],
         maxExtraBedsPerRoom: 1,
         notes: ''
       }, { shouldValidate: true });
     }
-  }, [extraBedEnabled, form]);
-  
-  return {
-    extraBedEnabled,
-    extraBedPrice
-  };
+  }, [form, extraBedEnabled]);
+
+  // Log when the price changes to debug
+  useEffect(() => {
+    if (extraBedEnabled) {
+      console.log('Extra bed price updated:', pricePerNight);
+    }
+  }, [extraBedEnabled, pricePerNight]);
+
+  return { extraBedEnabled, pricePerNight };
 };
