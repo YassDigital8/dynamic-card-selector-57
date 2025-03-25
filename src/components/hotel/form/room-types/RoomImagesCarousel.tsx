@@ -13,15 +13,20 @@ import { Trash2 } from 'lucide-react';
 interface RoomImagesCarouselProps {
   images: string[];
   onDeleteImage?: (imageUrl: string) => void;
+  className?: string; // Add className prop to fix build error
 }
 
-const RoomImagesCarousel: React.FC<RoomImagesCarouselProps> = ({ images, onDeleteImage }) => {
+const RoomImagesCarousel: React.FC<RoomImagesCarouselProps> = ({ 
+  images, 
+  onDeleteImage,
+  className 
+}) => {
   if (!images || images.length === 0) {
     return null;
   }
 
   return (
-    <div className="relative">
+    <div className={className || "relative"}>
       <Carousel className="w-full">
         <CarouselContent>
           {images.map((image, index) => (
