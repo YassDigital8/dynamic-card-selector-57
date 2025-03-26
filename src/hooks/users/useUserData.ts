@@ -17,6 +17,11 @@ interface ApiUser {
 
 // Helper function to validate a role string is a valid UserPrivilege
 const validateUserPrivilege = (role: string): UserPrivilege => {
+  // Handle SuperAdmin case specially
+  if (role === 'SuperAdmin') {
+    return 'SuperAdmin';
+  }
+  
   const validPrivileges: UserPrivilege[] = ['Super Admin', 'Admin', 'Manager', 'Supervisor', 'Officer'];
   
   // Check if the role is a valid UserPrivilege
@@ -32,28 +37,47 @@ const validateUserPrivilege = (role: string): UserPrivilege => {
 const mapApiUserToUser = (apiUser: ApiUser): User => {
   const name = `${apiUser.firstName} ${apiUser.lastName || ''}`.trim();
   
-  // Default role - take the first role or default to Officer
-  const rolePrefix = apiUser.roles.length > 0 
-    ? apiUser.roles[0].split('-')[0] 
-    : '';
+  // Check if the user is a SuperAdmin
+  const isSuperAdmin = apiUser.roles.includes('SuperAdmin');
   
-  const defaultRole = validateUserPrivilege(rolePrefix);
+  // Default role - handle SuperAdmin or take the first role or default to Officer
+  let defaultRole: UserPrivilege = 'Officer';
+  
+  if (isSuperAdmin) {
+    defaultRole = 'SuperAdmin';
+  } else if (apiUser.roles.length > 0) {
+    const rolePrefix = apiUser.roles[0].split('-')[0];
+    defaultRole = validateUserPrivilege(rolePrefix);
+  }
   
   // Map module roles from the API roles array
-  const moduleRoles = apiUser.roles.map(role => {
-    const [moduleId, roleLevel] = role.split('-');
-    const mappedModuleId = moduleId.toLowerCase() as ModuleType;
-    
-    // Convert role level to a valid UserPrivilege type
-    const validRole = validateUserPrivilege(roleLevel || 'Officer');
-    
-    return {
-      moduleId: mappedModuleId,
-      role: validRole
-    };
-  }).filter(mr => 
-    ['hotels', 'users', 'gallery', 'cms'].includes(mr.moduleId)
-  );
+  let moduleRoles: ModuleRole[] = [];
+  
+  // If user is SuperAdmin, set SuperAdmin role for all modules
+  if (isSuperAdmin) {
+    moduleRoles = ['hotels', 'users', 'gallery', 'cms'].map(moduleId => ({
+      moduleId: moduleId as ModuleType,
+      role: 'SuperAdmin'
+    }));
+  } else {
+    // Process regular role mapping
+    moduleRoles = apiUser.roles
+      .map(role => {
+        const [moduleId, roleLevel] = role.split('-');
+        const mappedModuleId = moduleId.toLowerCase() as ModuleType;
+        
+        // Convert role level to a valid UserPrivilege type
+        const validRole = validateUserPrivilege(roleLevel || 'Officer');
+        
+        return {
+          moduleId: mappedModuleId,
+          role: validRole
+        };
+      })
+      .filter(mr => 
+        ['hotels', 'users', 'gallery', 'cms'].includes(mr.moduleId)
+      );
+  }
   
   return {
     id: apiUser.code,

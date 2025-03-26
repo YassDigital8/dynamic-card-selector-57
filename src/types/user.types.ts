@@ -1,5 +1,5 @@
 
-export type UserPrivilege = 'Super Admin' | 'Admin' | 'Manager' | 'Supervisor' | 'Officer';
+export type UserPrivilege = 'Super Admin' | 'Admin' | 'Manager' | 'Supervisor' | 'Officer' | 'SuperAdmin';
 
 export type ModuleType = 'hotels' | 'users' | 'gallery' | 'settings' | 'reports' | 'cms';
 

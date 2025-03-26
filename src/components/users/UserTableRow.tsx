@@ -25,6 +25,11 @@ const UserTableRow: React.FC<UserTableRowProps> = ({
 }) => {
   // Helper function to get user's role for a specific module
   const getUserModuleRole = (moduleId: ModuleType): UserPrivilege => {
+    // If user is SuperAdmin, return SuperAdmin for all modules
+    if (user.role === 'SuperAdmin') {
+      return 'SuperAdmin';
+    }
+    
     if (!user.moduleRoles) {
       return user.role;
     }
