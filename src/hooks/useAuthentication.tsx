@@ -33,16 +33,16 @@ export const useAuthentication = () => {
       authState.setLoading(true);
       authState.setError(null);
       
+      // Check if we have a token in localStorage
+      const storedToken = localStorage.getItem('authToken');
+      
+      if (!storedToken) {
+        console.log("No authentication token found");
+        authState.setLoading(false);
+        return;
+      }
+      
       try {
-        // Check if we have a token in localStorage
-        const storedToken = localStorage.getItem('authToken');
-        
-        if (!storedToken) {
-          console.log("No authentication token found");
-          authState.setLoading(false);
-          return;
-        }
-        
         console.log("Validating stored authentication token...");
         
         // Get stored user info if available
@@ -58,6 +58,7 @@ export const useAuthentication = () => {
         demoModeState.checkForDemoMode(storedToken);
         
         console.log("Authentication successful with stored token");
+        
       } catch (error) {
         console.error('Authentication validation error:', error);
         
@@ -80,7 +81,7 @@ export const useAuthentication = () => {
     };
 
     checkAuthentication();
-  }, []);
+  }, [toast, authState, demoModeState]);
 
   const login = async (credentials: LoginCredentials) => {
     authState.setLoading(true);

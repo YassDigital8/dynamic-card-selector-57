@@ -7,22 +7,6 @@ let isDemoMode = false;
 export const loginUser = async (credentials: LoginCredentials): Promise<AuthResponse> => {
   console.log('Attempting to authenticate with:', credentials.email);
   
-  // Check if we're in demo mode from the start
-  if (isDemoMode || credentials.email === 'demo@example.com') {
-    console.log('Using demo mode for authentication');
-    isDemoMode = true;
-    
-    // Return a demo user
-    return {
-      token: 'demo-mode-token',
-      email: credentials.email || 'demo@example.com',
-      firstName: 'Demo User',
-      role: 'Demo Admin',
-      success: true,
-      message: 'Demo mode activated'
-    };
-  }
-  
   // First try the staging URL
   const authEndpoint = 'https://staging.sa3d.online:7182/api/Authentication/login';
   console.log('Using authentication endpoint:', authEndpoint);
@@ -51,6 +35,9 @@ export const loginUser = async (credentials: LoginCredentials): Promise<AuthResp
       throw new Error('Invalid authentication response: no token received');
     }
     
+    // Reset demo mode flag on successful login
+    isDemoMode = false;
+    
     return authData;
   } catch (fetchError) {
     // Convert the fetch error to a more specific error
@@ -64,7 +51,7 @@ export const loginUser = async (credentials: LoginCredentials): Promise<AuthResp
         token: 'demo-mode-token',
         email: credentials.email || 'demo@example.com',
         firstName: 'Demo User',
-        role: 'Demo Admin',
+        role: 'Demo Admin', // Add a demo role
         success: true,
         message: 'Demo mode activated due to SSL certificate issues'
       };

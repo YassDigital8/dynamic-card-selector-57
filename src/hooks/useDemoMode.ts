@@ -1,16 +1,11 @@
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { isInDemoMode, enableDemoMode } from '@/services/authService';
 
 export const useDemoMode = () => {
-  const [demoMode, setDemoMode] = useState<boolean>(false);
+  const [demoMode, setDemoMode] = useState<boolean>(isInDemoMode());
   const { toast } = useToast();
-
-  // Check if we're in demo mode on initial load
-  useEffect(() => {
-    setDemoMode(isInDemoMode());
-  }, []);
 
   const activateDemoMode = () => {
     enableDemoMode();
@@ -18,8 +13,8 @@ export const useDemoMode = () => {
     
     toast({
       title: "Demo Mode Activated",
-      description: "You're now in demo mode with limited functionality",
-      variant: "default"
+      description: "Due to connection issues, you're now in demo mode with limited functionality",
+      variant: "destructive"
     });
   };
 
@@ -31,8 +26,8 @@ export const useDemoMode = () => {
       
       toast({
         title: "Demo Mode Active",
-        description: "You are using the application in demo mode",
-        variant: "default"
+        description: "You are using the application in demo mode due to connection issues",
+        variant: "destructive"
       });
     }
     
