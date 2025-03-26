@@ -7,19 +7,21 @@ import {
   SelectTrigger, 
   SelectValue 
 } from '@/components/ui/select';
-import { Shield, Lock } from 'lucide-react';
+import { Shield, Lock, Award } from 'lucide-react';
 import { UserPrivilege } from '@/types/user.types';
 
 interface UserModuleRoleSelectProps {
   currentRole: UserPrivilege;
   privileges: UserPrivilege[];
   onRoleChange: (value: UserPrivilege) => void;
+  onPromoteToSuperAdmin?: () => void;
 }
 
 const UserModuleRoleSelect: React.FC<UserModuleRoleSelectProps> = ({
   currentRole,
   privileges,
-  onRoleChange
+  onRoleChange,
+  onPromoteToSuperAdmin
 }) => {
   // Check if the user is a SuperAdmin
   const isSuperAdmin = currentRole === 'SuperAdmin';
@@ -36,29 +38,45 @@ const UserModuleRoleSelect: React.FC<UserModuleRoleSelectProps> = ({
     );
   }
   
-  // For normal roles, filter out SuperAdmin from the available privileges
-  // as it should only be applied globally, not per module
-  const availablePrivileges = privileges.filter(role => role !== 'SuperAdmin');
+  // For normal roles, filter out SuperAdmin and Super Admin from the available privileges
+  // as they should only be applied via special promotion
+  const availablePrivileges = privileges.filter(role => 
+    role !== 'SuperAdmin' && role !== 'Super Admin'
+  );
   
   return (
-    <Select
-      value={currentRole}
-      onValueChange={(value: UserPrivilege) => onRoleChange(value)}
-    >
-      <SelectTrigger className="w-[110px]">
-        <SelectValue placeholder="Select role" />
-      </SelectTrigger>
-      <SelectContent>
-        {availablePrivileges.map((role) => (
-          <SelectItem key={role} value={role}>
-            <div className="flex items-center">
-              <Shield className="mr-2 h-4 w-4" />
-              <span>{role}</span>
-            </div>
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
+    <div className="flex flex-col space-y-1">
+      <Select
+        value={currentRole}
+        onValueChange={(value: UserPrivilege) => onRoleChange(value)}
+      >
+        <SelectTrigger className="w-[110px]">
+          <SelectValue placeholder="Select role" />
+        </SelectTrigger>
+        <SelectContent>
+          {availablePrivileges.map((role) => (
+            <SelectItem key={role} value={role}>
+              <div className="flex items-center">
+                <Shield className="mr-2 h-4 w-4" />
+                <span>{role}</span>
+              </div>
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      
+      {/* Only show promote button if callback is provided and user is not already SuperAdmin */}
+      {onPromoteToSuperAdmin && !isSuperAdmin && (
+        <button 
+          onClick={onPromoteToSuperAdmin}
+          className="text-xs text-amber-600 hover:text-amber-800 flex items-center"
+          title="Promote to Super Admin"
+        >
+          <Award className="h-3 w-3 mr-1" />
+          <span>Promote</span>
+        </button>
+      )}
+    </div>
   );
 };
 

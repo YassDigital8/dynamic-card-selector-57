@@ -42,6 +42,10 @@ const UserTableRow: React.FC<UserTableRowProps> = ({
     onUpdateRole(user.id, role);
   };
 
+  const handlePromoteToSuperAdmin = (moduleId: ModuleType) => () => {
+    onUpdateRole(user.id, 'SuperAdmin');
+  };
+
   return (
     <TableRow>
       <TableCell>
@@ -74,6 +78,7 @@ const UserTableRow: React.FC<UserTableRowProps> = ({
           currentRole={getUserModuleRole('hotels')}
           privileges={privileges}
           onRoleChange={handleRoleChange('hotels')}
+          onPromoteToSuperAdmin={handlePromoteToSuperAdmin('hotels')}
         />
       </TableCell>
       <TableCell className="text-center px-2">
@@ -81,6 +86,7 @@ const UserTableRow: React.FC<UserTableRowProps> = ({
           currentRole={getUserModuleRole('users')}
           privileges={privileges}
           onRoleChange={handleRoleChange('users')}
+          onPromoteToSuperAdmin={handlePromoteToSuperAdmin('users')}
         />
       </TableCell>
       <TableCell className="text-center px-2">
@@ -88,6 +94,7 @@ const UserTableRow: React.FC<UserTableRowProps> = ({
           currentRole={getUserModuleRole('gallery')}
           privileges={privileges}
           onRoleChange={handleRoleChange('gallery')}
+          onPromoteToSuperAdmin={handlePromoteToSuperAdmin('gallery')}
         />
       </TableCell>
       <TableCell className="text-center px-2">
@@ -95,6 +102,7 @@ const UserTableRow: React.FC<UserTableRowProps> = ({
           currentRole={getUserModuleRole('cms')}
           privileges={privileges}
           onRoleChange={handleRoleChange('cms')}
+          onPromoteToSuperAdmin={handlePromoteToSuperAdmin('cms')}
         />
       </TableCell>
     </TableRow>
