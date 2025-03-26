@@ -36,6 +36,10 @@ const UserModuleRoleSelect: React.FC<UserModuleRoleSelectProps> = ({
     );
   }
   
+  // For normal roles, filter out SuperAdmin from the available privileges
+  // as it should only be applied globally, not per module
+  const availablePrivileges = privileges.filter(role => role !== 'SuperAdmin');
+  
   return (
     <Select
       value={currentRole}
@@ -45,7 +49,7 @@ const UserModuleRoleSelect: React.FC<UserModuleRoleSelectProps> = ({
         <SelectValue placeholder="Select role" />
       </SelectTrigger>
       <SelectContent>
-        {privileges.map((role) => (
+        {availablePrivileges.map((role) => (
           <SelectItem key={role} value={role}>
             <div className="flex items-center">
               <Shield className="mr-2 h-4 w-4" />
