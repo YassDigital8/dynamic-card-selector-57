@@ -3,7 +3,7 @@ import React from 'react';
 import { format } from 'date-fns';
 import { TableRow, TableCell } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { User as UserIcon } from 'lucide-react';
+import { User as UserIcon, Award } from 'lucide-react';
 import { User, UserPrivilege, ModuleType } from '@/types/user.types';
 import UserStatusBadge from './UserStatusBadge';
 import UserModuleRoleSelect from './UserModuleRoleSelect';
@@ -42,9 +42,12 @@ const UserTableRow: React.FC<UserTableRowProps> = ({
     onUpdateRole(user.id, role);
   };
 
-  const handlePromoteToSuperAdmin = (moduleId: ModuleType) => () => {
+  const handlePromoteToSuperAdmin = () => {
     onUpdateRole(user.id, 'SuperAdmin');
   };
+
+  // Check if the user is already a SuperAdmin
+  const isSuperAdmin = user.role === 'SuperAdmin';
 
   return (
     <TableRow>
@@ -78,7 +81,6 @@ const UserTableRow: React.FC<UserTableRowProps> = ({
           currentRole={getUserModuleRole('hotels')}
           privileges={privileges}
           onRoleChange={handleRoleChange('hotels')}
-          onPromoteToSuperAdmin={handlePromoteToSuperAdmin('hotels')}
         />
       </TableCell>
       <TableCell className="text-center px-2">
@@ -86,7 +88,6 @@ const UserTableRow: React.FC<UserTableRowProps> = ({
           currentRole={getUserModuleRole('users')}
           privileges={privileges}
           onRoleChange={handleRoleChange('users')}
-          onPromoteToSuperAdmin={handlePromoteToSuperAdmin('users')}
         />
       </TableCell>
       <TableCell className="text-center px-2">
@@ -94,7 +95,6 @@ const UserTableRow: React.FC<UserTableRowProps> = ({
           currentRole={getUserModuleRole('gallery')}
           privileges={privileges}
           onRoleChange={handleRoleChange('gallery')}
-          onPromoteToSuperAdmin={handlePromoteToSuperAdmin('gallery')}
         />
       </TableCell>
       <TableCell className="text-center px-2">
@@ -102,8 +102,26 @@ const UserTableRow: React.FC<UserTableRowProps> = ({
           currentRole={getUserModuleRole('cms')}
           privileges={privileges}
           onRoleChange={handleRoleChange('cms')}
-          onPromoteToSuperAdmin={handlePromoteToSuperAdmin('cms')}
         />
+      </TableCell>
+      
+      {/* Add a dedicated cell for the Promote to Super Admin button */}
+      <TableCell className="text-center px-2">
+        {isSuperAdmin ? (
+          <div className="text-xs text-amber-600 flex items-center justify-center">
+            <Award className="h-3 w-3 mr-1" />
+            <span>Super Admin</span>
+          </div>
+        ) : (
+          <button 
+            onClick={handlePromoteToSuperAdmin}
+            className="text-xs text-amber-600 hover:text-amber-800 flex items-center"
+            title="Promote to Super Admin"
+          >
+            <Award className="h-3 w-3 mr-1" />
+            <span>Promote</span>
+          </button>
+        )}
       </TableCell>
     </TableRow>
   );
