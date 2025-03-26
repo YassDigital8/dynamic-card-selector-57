@@ -2,7 +2,7 @@
 import { useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { User } from '@/types/user.types';
-import { toggleUserStatus, deleteUser } from '@/services/userService';
+import { deleteUser } from '@/services/userService';
 
 export const useStatusActions = (
   users: User[],
@@ -13,21 +13,45 @@ export const useStatusActions = (
 ) => {
   const { toast } = useToast();
 
-  const handleToggleStatus = useCallback((userId: string) => {
+  const handleToggleStatus = useCallback(async (userId: string) => {
     setIsLoading(true);
     try {
-      const updatedUser = toggleUserStatus(userId);
-      if (updatedUser) {
-        setUsers(prev => prev.map(user => user.id === userId ? updatedUser : user));
-        if (selectedUser?.id === userId) {
-          setSelectedUser(updatedUser);
-        }
-        toast({
-          title: "Status updated",
-          description: `User status set to ${updatedUser.isActive ? 'active' : 'inactive'}`,
-        });
+      // Find current user to get current status
+      const currentUser = users.find(user => user.id === userId);
+      if (!currentUser) {
+        throw new Error("User not found");
       }
+      
+      // Make API call to change user status
+      const response = await fetch(`https://92.112.184.210:7182/api/Authentication/ChangeUserAccountStatus/${userId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
+      }
+      
+      // Update the user in the state with toggled status
+      const updatedUser = {
+        ...currentUser,
+        isActive: !currentUser.isActive
+      };
+      
+      setUsers(prev => prev.map(user => user.id === userId ? updatedUser : user));
+      
+      if (selectedUser?.id === userId) {
+        setSelectedUser(updatedUser);
+      }
+      
+      toast({
+        title: "Status updated",
+        description: `User status set to ${updatedUser.isActive ? 'active' : 'inactive'}`,
+      });
     } catch (error) {
+      console.error("Error updating user status:", error);
       toast({
         title: "Error",
         description: "Failed to update user status",
@@ -36,7 +60,7 @@ export const useStatusActions = (
     } finally {
       setIsLoading(false);
     }
-  }, [toast, selectedUser, setUsers, setSelectedUser, setIsLoading]);
+  }, [toast, selectedUser, setUsers, setSelectedUser, setIsLoading, users]);
 
   const handleDeleteUser = useCallback((userId: string) => {
     setIsLoading(true);
