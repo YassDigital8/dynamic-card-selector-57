@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { motion } from 'framer-motion';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
 
@@ -13,18 +12,7 @@ const ErrorAlert = ({ error, title = "Error" }: ErrorAlertProps) => {
   if (!error) return null;
   
   return (
-    <motion.div variants={{
-      hidden: { opacity: 0, y: 20 },
-      visible: { 
-        opacity: 1, 
-        y: 0,
-        transition: { 
-          type: "spring", 
-          stiffness: 300, 
-          damping: 24 
-        }
-      }
-    }} className="mb-6">
+    <div className="mb-6 animate-fade-in">
       <Alert variant="destructive">
         <AlertCircle className="h-4 w-4" />
         <AlertTitle>{title}</AlertTitle>
@@ -32,7 +20,7 @@ const ErrorAlert = ({ error, title = "Error" }: ErrorAlertProps) => {
           {error}
         </AlertDescription>
       </Alert>
-    </motion.div>
+    </div>
   );
 };
 
