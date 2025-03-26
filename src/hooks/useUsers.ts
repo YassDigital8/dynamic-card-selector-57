@@ -1,3 +1,4 @@
+
 import { useState, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { 
@@ -174,7 +175,7 @@ export const useUsers = () => {
       const fullUserData = {
         name: `${userData.firstName} ${userData.lastName}`,
         email: userData.email,
-        role: 'Officer',
+        role: 'Officer' as UserPrivilege, // Fix: Cast string to UserPrivilege type
         department: userData.department,
         isActive: true,
       };
