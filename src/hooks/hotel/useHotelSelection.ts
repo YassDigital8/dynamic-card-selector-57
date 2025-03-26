@@ -1,5 +1,5 @@
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { Hotel, HotelFormData } from '@/models/HotelModel';
 
 export const useHotelSelection = (
@@ -12,6 +12,9 @@ export const useHotelSelection = (
   const [isExpanded, setIsExpanded] = useState(true);
   const [isSelectingNewHotel, setIsSelectingNewHotel] = useState(false);
   const [forceRefresh, setForceRefresh] = useState(0); // Counter to force refresh
+  
+  // Use ref to prevent infinite re-renders when logging
+  const prevHotelIdRef = useRef<string | null>(null);
 
   const handleSelectHotel = useCallback((hotel: Hotel) => {
     console.log('Selecting hotel:', hotel.id);
@@ -68,10 +71,14 @@ export const useHotelSelection = (
   
   const handleCancelEdit = useCallback(() => setIsEditing(false), []);
 
-  // Log when selected hotel changes for debugging
+  // Log when selected hotel changes for debugging, but use a ref to prevent infinite re-renders
   useEffect(() => {
-    if (selectedHotel) {
-      console.log('Selected hotel updated:', selectedHotel.id, 'Refresh count:', forceRefresh);
+    const currentHotelId = selectedHotel?.id || null;
+    if (currentHotelId !== prevHotelIdRef.current) {
+      prevHotelIdRef.current = currentHotelId;
+      if (selectedHotel) {
+        console.log('Selected hotel updated:', selectedHotel.id, 'Refresh count:', forceRefresh);
+      }
     }
   }, [selectedHotel, forceRefresh]);
 

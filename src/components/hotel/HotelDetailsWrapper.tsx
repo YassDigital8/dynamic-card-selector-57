@@ -1,5 +1,5 @@
 
-import React, { memo, useMemo, useCallback, useEffect } from 'react';
+import React, { memo, useMemo, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import { Hotel } from '@/models/HotelModel';
@@ -37,19 +37,7 @@ const HotelDetailsWrapper: React.FC<HotelDetailsWrapperProps> = memo(({
   const isMobile = useIsMobile();
   const { width } = useScreenSize();
   
-  // Log when hotel data updates for debugging
-  useEffect(() => {
-    console.log('HotelDetailsWrapper received updated hotel data:', hotel.id);
-    console.log('Hotel amenities:', Object.keys(hotel.amenities).filter(k => k.includes('Images')));
-    
-    // Log image counts for better debugging
-    Object.entries(hotel.amenities).forEach(([key, value]) => {
-      if (key.includes('Images') && Array.isArray(value)) {
-        console.log(`${key} has ${value.length} images`);
-      }
-    });
-  }, [hotel]);
-  
+  // Memoize the handleLogoChange function to prevent unnecessary re-renders
   const handleLogoChange = useCallback((hotelId: string, logo: string | null) => {
     if (onUpdateHotel) {
       onUpdateHotel(hotelId, { logoUrl: logo || undefined });
@@ -100,14 +88,14 @@ const HotelDetailsWrapper: React.FC<HotelDetailsWrapperProps> = memo(({
     }
   }), [springConfig]);
 
-  // Generate a unique key for the motion div that safely handles different updatedAt types
-  const detailsKey = `hotel-card-container-${hotel.id}-${typeof hotel.updatedAt === 'object' && hotel.updatedAt instanceof Date 
-    ? hotel.updatedAt.getTime() 
-    : String(hotel.updatedAt)}`;
+  // Generate a stable key that doesn't cause re-renders with each updatedAt change
+  const hotelDetailsKey = useMemo(() => 
+    `hotel-details-${hotel.id}`,
+  [hotel.id]);
 
   return (
     <motion.div
-      key={detailsKey}
+      key={hotelDetailsKey}
       initial="hidden"
       animate="visible"
       variants={cardVariants}

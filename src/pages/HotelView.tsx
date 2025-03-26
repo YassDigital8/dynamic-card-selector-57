@@ -16,8 +16,9 @@ const HotelView = () => {
   const { toast } = useToast();
   const { allHotels } = useHotelNetwork();
   
+  // Fixed query to prevent infinite re-renders by using a stable query key
   const { data: hotel, isLoading } = useQuery({
-    queryKey: ['hotel', hotelId, allHotels],
+    queryKey: ['hotel', hotelId],
     queryFn: () => {
       const foundHotel = allHotels.find(hotel => hotel.id === hotelId);
       if (!foundHotel) {
@@ -70,12 +71,6 @@ const HotelView = () => {
   }
   
   if (!hotel) {
-    toast({
-      title: "Error",
-      description: "Failed to load hotel details. Please try again.",
-      variant: "destructive",
-    });
-    
     return (
       <StandardLayout>
         <div className="container mx-auto py-6">

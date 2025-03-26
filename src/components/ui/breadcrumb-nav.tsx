@@ -1,22 +1,13 @@
 
-import * as React from "react";
-import { ChevronRight, Home } from "lucide-react";
-import { Link } from "react-router-dom";
-import { cn } from "@/lib/utils";
-import { useIsMobile } from "@/hooks/use-mobile";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { ChevronRight, HomeIcon, LucideIcon } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
-export interface BreadcrumbItem {
+interface BreadcrumbItem {
   label: string;
   href?: string;
-  icon?: React.ComponentType<{ className?: string }>;
+  icon?: LucideIcon;
 }
 
 interface BreadcrumbNavProps {
@@ -24,57 +15,36 @@ interface BreadcrumbNavProps {
   className?: string;
 }
 
-export function BreadcrumbNav({ items, className }: BreadcrumbNavProps) {
-  const isMobile = useIsMobile();
-  
+export const BreadcrumbNav = ({ items, className }: BreadcrumbNavProps) => {
   return (
-    <Breadcrumb className={cn(`mb-${isMobile ? '3' : '6'}`, className)}>
-      <BreadcrumbList className={`text-xs ${isMobile ? '' : 'md:text-sm'}`}>
-        <BreadcrumbItem>
-          <BreadcrumbLink asChild>
-            <Link to="/" className="flex items-center gap-1 hover:text-primary">
-              <Home className={`h-${isMobile ? '3' : '4'} w-${isMobile ? '3' : '4'}`} />
-              <span className={isMobile ? "sr-only" : "hidden sm:inline"}>Home</span>
+    <div className={cn("flex items-center text-sm text-gray-500 dark:text-gray-400 mb-4", className)}>
+      <Link
+        to="/"
+        className="flex items-center hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+      >
+        <HomeIcon className="h-4 w-4 mr-1" />
+        <span className="hidden sm:inline">Home</span>
+      </Link>
+
+      {items.map((item, i) => (
+        <React.Fragment key={`${item.label}-${i}`}>
+          <ChevronRight className="h-4 w-4 mx-2 text-gray-400 dark:text-gray-600" />
+          {item.href ? (
+            <Link
+              to={item.href}
+              className="flex items-center hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+            >
+              {item.icon && <item.icon className="h-4 w-4 mr-1" />}
+              <span>{item.label}</span>
             </Link>
-          </BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator>
-          <ChevronRight className="h-3 w-3 text-muted-foreground" />
-        </BreadcrumbSeparator>
-        
-        {items.map((item, index) => {
-          const isLastItem = index === items.length - 1;
-          
-          return (
-            <React.Fragment key={item.label}>
-              <BreadcrumbItem>
-                {isLastItem ? (
-                  <BreadcrumbPage className="flex items-center gap-1 text-xs md:text-sm">
-                    {item.icon && <item.icon className={`h-${isMobile ? '3' : '4'} w-${isMobile ? '3' : '4'}`} />}
-                    <span>{item.label}</span>
-                  </BreadcrumbPage>
-                ) : (
-                  <BreadcrumbLink asChild>
-                    <Link 
-                      to={item.href || "#"} 
-                      className="flex items-center gap-1 hover:text-primary text-xs md:text-sm"
-                    >
-                      {item.icon && <item.icon className={`h-${isMobile ? '3' : '4'} w-${isMobile ? '3' : '4'}`} />}
-                      <span>{item.label}</span>
-                    </Link>
-                  </BreadcrumbLink>
-                )}
-              </BreadcrumbItem>
-              
-              {!isLastItem && (
-                <BreadcrumbSeparator>
-                  <ChevronRight className="h-3 w-3 text-muted-foreground" />
-                </BreadcrumbSeparator>
-              )}
-            </React.Fragment>
-          );
-        })}
-      </BreadcrumbList>
-    </Breadcrumb>
+          ) : (
+            <div className="flex items-center text-gray-800 dark:text-gray-200 font-medium">
+              {item.icon && <item.icon className="h-4 w-4 mr-1" />}
+              <span>{item.label}</span>
+            </div>
+          )}
+        </React.Fragment>
+      ))}
+    </div>
   );
-}
+};

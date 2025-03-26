@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import HotelDetailsWrapper from '../../HotelDetailsWrapper';
 import { Hotel } from '@/models/HotelModel';
@@ -21,10 +21,10 @@ const DetailsContent: React.FC<DetailsContentProps> = ({
   isEditing,
   contentVariants
 }) => {
-  // Generate a unique key that doesn't rely on getTime()
-  const hotelDetailsKey = `hotel-details-${hotel.id}-${typeof hotel.updatedAt === 'object' && hotel.updatedAt instanceof Date 
-    ? hotel.updatedAt.getTime() 
-    : String(hotel.updatedAt)}`;
+  // Generate a stable key that doesn't cause re-renders with each updatedAt change
+  const hotelDetailsKey = useMemo(() => 
+    `hotel-details-${hotel.id}`,
+  [hotel.id]);
   
   return (
     <motion.div
