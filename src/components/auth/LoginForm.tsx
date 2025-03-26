@@ -16,7 +16,7 @@ import { enableDemoMode } from '@/services/authService';
 // Define the schema for the login form
 const loginSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
+  password: z.string().min(1, 'Password is required'),
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
@@ -114,6 +114,7 @@ const LoginForm = () => {
               variant="outline" 
               className="mt-2 bg-amber-50 border-amber-200 text-amber-700 hover:bg-amber-100"
               onClick={handleEnterDemoMode}
+              type="button"
             >
               Enter Demo Mode
             </Button>
@@ -122,12 +123,12 @@ const LoginForm = () => {
       )}
       
       <div className="space-y-2">
-        <Label htmlFor="email" required>Email</Label>
+        <Label htmlFor="email">Email</Label>
         <Input
           id="email"
           type="email"
           placeholder="your.email@example.com"
-          error={!!errors.email}
+          className={errors.email ? "border-red-500" : ""}
           {...register('email')}
         />
         {errors.email && (
@@ -136,12 +137,12 @@ const LoginForm = () => {
       </div>
       
       <div className="space-y-2">
-        <Label htmlFor="password" required>Password</Label>
+        <Label htmlFor="password">Password</Label>
         <Input
           id="password"
           type="password"
           placeholder="••••••••"
-          error={!!errors.password}
+          className={errors.password ? "border-red-500" : ""}
           {...register('password')}
         />
         {errors.password && (
@@ -160,18 +161,16 @@ const LoginForm = () => {
         )}
       </Button>
       
-      {isCertificateError(loginError) && (
-        <div className="mt-4 text-sm text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 p-3 rounded border border-amber-200 dark:border-amber-800">
-          <p className="font-medium mb-1">SSL Certificate Warning</p>
-          <p className="mb-2">The server is using a self-signed or invalid SSL certificate. This is common in development or staging environments.</p>
-          <p>Options to resolve this:</p>
-          <ul className="list-disc pl-5 mt-1 space-y-1">
-            <li>Visit <a href="https://staging.sa3d.online:7182" target="_blank" rel="noopener noreferrer" className="underline font-medium">https://staging.sa3d.online:7182</a> directly in your browser and accept the certificate</li>
-            <li>Use the "Enter Demo Mode" button to continue with limited functionality</li>
-            <li>Contact your system administrator to fix the certificate issue</li>
-          </ul>
-        </div>
-      )}
+      <div className="mt-4 text-center">
+        <Button
+          type="button"
+          variant="outline"
+          className="w-full"
+          onClick={handleEnterDemoMode}
+        >
+          Enter Demo Mode
+        </Button>
+      </div>
     </form>
   );
 };

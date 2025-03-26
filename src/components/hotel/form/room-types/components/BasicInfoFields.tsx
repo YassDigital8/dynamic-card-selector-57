@@ -1,94 +1,84 @@
 
 import React from 'react';
-import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
 import { UseFormReturn } from 'react-hook-form';
 import { FormValues } from '../../formSchema';
+import { 
+  FormField, 
+  FormItem, 
+  FormLabel, 
+  FormControl, 
+  FormMessage 
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 
 interface BasicInfoFieldsProps {
   form: UseFormReturn<FormValues>;
   index: number;
 }
 
-const BasicInfoFields: React.FC<BasicInfoFieldsProps> = ({ form, index }) => {
+export const BasicInfoFields: React.FC<BasicInfoFieldsProps> = ({ form, index }) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="space-y-4">
+      <h3 className="text-lg font-medium">Basic Information</h3>
+      
       {/* Room Type Name */}
       <FormField
         control={form.control}
         name={`roomTypes.${index}.name`}
         render={({ field }) => (
           <FormItem>
-            <FormLabel required>Room Type Name</FormLabel>
+            <FormLabel>Room Type Name</FormLabel>
             <FormControl>
               <Input 
                 {...field} 
-                placeholder="e.g., Standard Double" 
-                autoFocus={index > 0}
-                className="w-full"
+                placeholder="Standard Room, Presidential Suite, etc."
+                autoFocus
               />
             </FormControl>
             <FormMessage />
           </FormItem>
         )}
       />
-
+      
+      {/* Room Price */}
+      <FormField
+        control={form.control}
+        name={`roomTypes.${index}.price`}
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Base Price</FormLabel>
+            <FormControl>
+              <Input 
+                {...field} 
+                type="number"
+                placeholder="Enter base price per night"
+                onChange={(e) => {
+                  const value = e.target.value;
+                  field.onChange(value === '' ? '' : Number(value));
+                }}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      
       {/* Max Adults */}
       <FormField
         control={form.control}
         name={`roomTypes.${index}.maxAdults`}
         render={({ field }) => (
           <FormItem>
-            <FormLabel required>Max Adults</FormLabel>
+            <FormLabel>Max Adults</FormLabel>
             <FormControl>
               <Input 
+                {...field} 
                 type="number" 
-                {...field} 
-                onChange={(e) => field.onChange(parseInt(e.target.value) || 1)}
-                min={1}
-                value={field.value || 1}
-                className="w-full"
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-
-      {/* Max Children */}
-      <FormField
-        control={form.control}
-        name={`roomTypes.${index}.maxChildren`}
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Max Children</FormLabel>
-            <FormControl>
-              <Input 
-                type="number" 
-                {...field} 
-                onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
-                min={0}
-                value={field.value || 0}
-                className="w-full"
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-
-      {/* Description (optional) */}
-      <FormField
-        control={form.control}
-        name={`roomTypes.${index}.description`}
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Description</FormLabel>
-            <FormControl>
-              <Input 
-                {...field} 
-                placeholder="Optional room description" 
-                className="w-full"
+                placeholder="Maximum number of adults"
+                onChange={(e) => {
+                  const value = e.target.value;
+                  field.onChange(value === '' ? '' : Number(value));
+                }}
               />
             </FormControl>
             <FormMessage />
