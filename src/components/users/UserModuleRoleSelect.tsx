@@ -30,7 +30,7 @@ const UserModuleRoleSelect: React.FC<UserModuleRoleSelectProps> = ({
       <div className="w-[110px] h-10 flex items-center justify-between rounded-md border border-yellow-500 bg-yellow-50 px-3 text-sm font-medium text-yellow-800">
         <div className="flex items-center">
           <Lock className="mr-2 h-4 w-4 text-yellow-500" />
-          <span>SuperAdmin</span>
+          <span>SA</span>
         </div>
       </div>
     );
