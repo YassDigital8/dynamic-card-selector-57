@@ -55,16 +55,7 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({
   });
 
   const onSubmit = (data: UserFormValues) => {
-    // Combine first and last name for compatibility with existing code
-    const userData = {
-      ...data,
-      name: `${data.firstName} ${data.lastName}`,
-      // Set default values for removed fields to maintain compatibility
-      role: 'Officer',
-      isActive: true,
-    };
-    
-    onAddUser(userData);
+    onAddUser(data);
     form.reset();
     onOpenChange(false);
   };

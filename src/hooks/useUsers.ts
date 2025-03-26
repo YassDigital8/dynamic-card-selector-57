@@ -142,36 +142,56 @@ export const useUsers = () => {
     }
   }, [toast, selectedUser]);
 
-  const handleAddUser = useCallback((userData: { 
+  const handleAddUser = useCallback(async (userData: { 
     firstName: string;
     lastName: string;
     email: string;
     department?: string;
-    name?: string;
-    role?: UserPrivilege;
-    isActive?: boolean;
   }) => {
     setIsLoading(true);
+    
     try {
-      const fullUserData = {
-        name: userData.name || `${userData.firstName} ${userData.lastName}`,
+      const requestData = {
+        firstName: userData.firstName,
+        lastName: userData.lastName,
         email: userData.email,
-        role: userData.role || 'Officer',
+        department: userData.department || "",
+        isActive: true
+      };
+      
+      const response = await fetch('https://92.112.184.210:7182/api/Authentication/AddNewUser', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestData),
+      });
+      
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
+      }
+      
+      const fullUserData = {
+        name: `${userData.firstName} ${userData.lastName}`,
+        email: userData.email,
+        role: 'Officer',
         department: userData.department,
-        isActive: userData.isActive !== undefined ? userData.isActive : true,
+        isActive: true,
       };
       
       const newUser = addUser(fullUserData);
       setUsers(prev => [...prev, newUser]);
+      
       toast({
         title: "User added",
         description: "New user has been successfully added",
       });
       return newUser;
     } catch (error) {
+      console.error("Error adding user:", error);
       toast({
         title: "Error",
-        description: "Failed to add user",
+        description: "Failed to add user. Please try again.",
         variant: "destructive",
       });
       return null;
