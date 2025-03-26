@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Loader2, AlertCircle, ShieldAlert } from 'lucide-react';
+import { Loader2, AlertCircle, ShieldAlert, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -24,6 +24,7 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
+  const [responseLog, setResponseLog] = useState<string | null>(null);
   const { toast } = useToast();
   const { login, demoMode } = useAuthentication();
   const navigate = useNavigate();
@@ -43,6 +44,7 @@ const LoginForm = () => {
   const onSubmit = async (data: LoginFormValues) => {
     setIsLoading(true);
     setLoginError(null);
+    setResponseLog(null);
     
     try {
       console.log('Attempting to authenticate with:', data.email);
@@ -51,6 +53,9 @@ const LoginForm = () => {
         email: data.email,
         password: data.password
       });
+      
+      // Log the response
+      setResponseLog(JSON.stringify(authResult, null, 2));
       
       console.log('Login successful, navigating to home page');
       
@@ -171,6 +176,18 @@ const LoginForm = () => {
           Enter Demo Mode
         </Button>
       </div>
+
+      {responseLog && (
+        <Alert variant="info" className="mt-4">
+          <Info className="h-4 w-4" />
+          <AlertTitle>Authentication Response</AlertTitle>
+          <AlertDescription>
+            <pre className="text-xs mt-2 bg-gray-100 dark:bg-gray-800 p-3 rounded overflow-auto max-h-60">
+              {responseLog}
+            </pre>
+          </AlertDescription>
+        </Alert>
+      )}
     </form>
   );
 };

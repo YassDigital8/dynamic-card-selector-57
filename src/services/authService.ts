@@ -40,18 +40,19 @@ export const loginUser = async (credentials: LoginCredentials): Promise<AuthResp
       }),
     });
     
+    // Get the response data
+    const responseData = await response.json();
+    console.log('Auth API response:', responseData);
+    
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || `Authentication failed: ${response.status}`);
+      throw new Error(responseData.message || `Authentication failed: ${response.status}`);
     }
     
-    const authData: AuthResponse = await response.json();
-    
-    if (!authData.token) {
+    if (!responseData.token) {
       throw new Error('Invalid authentication response: no token received');
     }
     
-    return authData;
+    return responseData;
   } catch (fetchError) {
     // Convert the fetch error to a more specific error
     if (fetchError instanceof TypeError && fetchError.message.includes('Failed to fetch')) {
