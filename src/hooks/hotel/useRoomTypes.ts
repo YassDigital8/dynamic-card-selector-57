@@ -16,9 +16,24 @@ export const useRoomTypes = () => {
       id: Date.now().toString()
     };
     
+    // Create a proper HotelFormData object from the existing hotel
     return updateHotel(hotelId, {
-      ...currentHotel,
-      roomTypes: [...currentRoomTypes, newRoomType]
+      name: currentHotel.name,
+      country: currentHotel.country,
+      governorate: currentHotel.governorate,
+      streetAddress: currentHotel.streetAddress,
+      posKey: currentHotel.posKey,
+      rating: currentHotel.rating,
+      amenities: currentHotel.amenities,
+      roomTypes: [...currentRoomTypes, newRoomType],
+      // Include other optional properties if they exist
+      logoUrl: currentHotel.logoUrl,
+      contactDetails: currentHotel.contactDetails,
+      socialMedia: currentHotel.socialMedia,
+      contractDocuments: currentHotel.contractDocuments,
+      geolocation: currentHotel.geolocation,
+      paymentMethods: currentHotel.paymentMethods,
+      extraBedPolicy: currentHotel.extraBedPolicy
     });
   };
 
@@ -32,9 +47,24 @@ export const useRoomTypes = () => {
       rt.id === roomTypeId ? { ...rt, ...updatedData } : rt
     );
     
+    // Create a proper HotelFormData object from the existing hotel
     return updateHotel(hotelId, {
-      ...currentHotel,
-      roomTypes: updatedRoomTypes
+      name: currentHotel.name,
+      country: currentHotel.country,
+      governorate: currentHotel.governorate,
+      streetAddress: currentHotel.streetAddress,
+      posKey: currentHotel.posKey,
+      rating: currentHotel.rating,
+      amenities: currentHotel.amenities,
+      roomTypes: updatedRoomTypes,
+      // Include other optional properties if they exist
+      logoUrl: currentHotel.logoUrl,
+      contactDetails: currentHotel.contactDetails,
+      socialMedia: currentHotel.socialMedia,
+      contractDocuments: currentHotel.contractDocuments,
+      geolocation: currentHotel.geolocation,
+      paymentMethods: currentHotel.paymentMethods,
+      extraBedPolicy: currentHotel.extraBedPolicy
     });
   };
 
@@ -46,9 +76,24 @@ export const useRoomTypes = () => {
     
     const updatedRoomTypes = currentRoomTypes.filter(rt => rt.id !== roomTypeId);
     
+    // Create a proper HotelFormData object from the existing hotel
     return updateHotel(hotelId, {
-      ...currentHotel,
-      roomTypes: updatedRoomTypes
+      name: currentHotel.name,
+      country: currentHotel.country,
+      governorate: currentHotel.governorate,
+      streetAddress: currentHotel.streetAddress,
+      posKey: currentHotel.posKey,
+      rating: currentHotel.rating,
+      amenities: currentHotel.amenities,
+      roomTypes: updatedRoomTypes,
+      // Include other optional properties if they exist
+      logoUrl: currentHotel.logoUrl,
+      contactDetails: currentHotel.contactDetails,
+      socialMedia: currentHotel.socialMedia,
+      contractDocuments: currentHotel.contractDocuments,
+      geolocation: currentHotel.geolocation,
+      paymentMethods: currentHotel.paymentMethods,
+      extraBedPolicy: currentHotel.extraBedPolicy
     });
   };
 

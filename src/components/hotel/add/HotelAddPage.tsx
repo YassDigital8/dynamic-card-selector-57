@@ -31,14 +31,17 @@ const HotelAddPage: React.FC = () => {
       const result = addHotel(hotelWithPOS);
       
       if (result && result.success) {
+        // Type guard to check if hotel property exists
+        const hotelName = 'hotel' in result && result.hotel ? result.hotel.name : 'Hotel';
+        
         toast({
           title: "Hotel Added Successfully",
-          description: result.hotel ? `${result.hotel.name} has been added to your hotel network` : "Hotel has been added",
+          description: `${hotelName} has been added to your hotel network`,
           variant: "default"
         });
 
         // Navigate to the hotel details page if we have a hotel id
-        if (result.hotel) {
+        if ('hotel' in result && result.hotel) {
           navigate(`/hotel/edit/${result.hotel.id}`);
         } else {
           navigate('/hotel'); // Fallback to hotel list
