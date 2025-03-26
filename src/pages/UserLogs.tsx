@@ -2,7 +2,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { BreadcrumbNav } from '@/components/ui/breadcrumb-nav';
-import { Users as UsersIcon, ListFilter } from 'lucide-react';
+import { Users as UsersIcon, ClipboardList } from 'lucide-react';
 import StandardLayout from '@/components/layout/StandardLayout';
 import { useUserLogs } from '@/hooks/users/logs/useUserLogs';
 import { LogFiltersBar, LogsTable, LogDetailsDialog } from '@/components/users/logs';
@@ -17,7 +17,7 @@ const UserLogs: React.FC = () => {
     },
     {
       label: 'Activity Logs',
-      icon: ListFilter
+      icon: ClipboardList
     }
   ];
 
