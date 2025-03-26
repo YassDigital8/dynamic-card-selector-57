@@ -11,7 +11,7 @@ import {
   HelpCircle,
   PlusCircle,
   ListFilter,
-  ActivitySquare
+  ClipboardList
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -70,7 +70,7 @@ const AdminSidebar: React.FC = () => {
         },
         {
           label: 'Activity Logs',
-          icon: ActivitySquare,
+          icon: ClipboardList,
           href: '/user-logs'
         }
       ]
