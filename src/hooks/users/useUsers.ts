@@ -20,7 +20,8 @@ export const useUsers = () => {
     handleUpdateModuleRole,
     handleToggleStatus,
     handleDeleteUser,
-    handleAddUser
+    handleAddUser,
+    handlePromoteToSuperAdmin
   } = useUserActions(users, setUsers, selectedUser, setSelectedUser, setIsLoading);
 
   return {
@@ -34,6 +35,7 @@ export const useUsers = () => {
     handleToggleStatus,
     handleDeleteUser,
     handleAddUser,
+    handlePromoteToSuperAdmin,
     userPrivileges,
     modulePermissions
   };

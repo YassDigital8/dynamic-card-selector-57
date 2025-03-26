@@ -180,12 +180,13 @@ export const useUserActions = (
   const handlePromoteToSuperAdmin = useCallback(async (userId: string) => {
     setIsLoading(true);
     try {
-      // Make the API call to promote user to SuperAdmin
+      // Make the API call to promote user to SuperAdmin with the required body
       const response = await fetch(`https://92.112.184.210:7182/api/Authentication/AssignServiceRoleToUser/${userId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
+        body: JSON.stringify("SuperAdmin"), // Send "SuperAdmin" as the request body
       });
       
       if (!response.ok) {
