@@ -1,15 +1,8 @@
 
 import React from 'react';
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardHeader, 
-  CardTitle 
-} from '@/components/ui/card';
-import UsersTable from './UsersTable';
-import { User, UserPrivilege } from '@/types/user.types';
 import { motion } from 'framer-motion';
+import UsersTable from './UsersTable';
+import { User, UserPrivilege, ModuleType } from '@/types/user.types';
 
 interface UsersContentProps {
   users: User[];
@@ -17,6 +10,7 @@ interface UsersContentProps {
   isLoading: boolean;
   onSelectUser: (user: User) => void;
   onUpdateRole: (userId: string, role: UserPrivilege) => void;
+  onUpdateModuleRole: (userId: string, moduleId: ModuleType, role: UserPrivilege) => void;
   onToggleStatus: (userId: string) => void;
   onDeleteUser: (userId: string) => void;
   onPromoteToSuperAdmin: (userId: string) => void;
@@ -28,40 +22,29 @@ const UsersContent: React.FC<UsersContentProps> = ({
   isLoading,
   onSelectUser,
   onUpdateRole,
+  onUpdateModuleRole,
   onToggleStatus,
   onDeleteUser,
   onPromoteToSuperAdmin
 }) => {
   return (
-    <motion.div
+    <motion.div 
+      className="w-full" 
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, delay: 0.1 }}
+      transition={{ duration: 0.3 }}
     >
-      <Card className="shadow-sm">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-2xl font-bold tracking-tight">Users</CardTitle>
-          <CardDescription className="text-muted-foreground">
-            {users.length === 0 
-              ? "No users found" 
-              : users.length === 1 
-                ? "1 user found" 
-                : `${users.length} users found`}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <UsersTable
-            users={users}
-            privileges={userPrivileges}
-            onSelectUser={onSelectUser}
-            onUpdateRole={onUpdateRole}
-            onToggleStatus={onToggleStatus}
-            onDeleteUser={onDeleteUser}
-            onPromoteToSuperAdmin={onPromoteToSuperAdmin}
-            isLoading={isLoading}
-          />
-        </CardContent>
-      </Card>
+      <UsersTable 
+        users={users}
+        privileges={userPrivileges}
+        isLoading={isLoading}
+        onSelectUser={onSelectUser}
+        onUpdateRole={onUpdateRole}
+        onUpdateModuleRole={onUpdateModuleRole}
+        onToggleStatus={onToggleStatus}
+        onDeleteUser={onDeleteUser}
+        onPromoteToSuperAdmin={onPromoteToSuperAdmin}
+      />
     </motion.div>
   );
 };
