@@ -1,7 +1,7 @@
 
 import { useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { User } from '@/types/user.types';
+import { User, UserPrivilege } from '@/types/user.types';
 import { updateUserRole } from '@/services/userService';
 
 export const useAdminActions = (
@@ -29,13 +29,31 @@ export const useAdminActions = (
         throw new Error(`API error: ${response.status}`);
       }
       
-      // Update the user in our local state
-      const updatedUser = updateUserRole(userId, 'SuperAdmin');
-      if (updatedUser) {
+      // API call was successful, now update the UI:
+      // Find the user to update in our current state
+      const userToUpdate = users.find(user => user.id === userId);
+      
+      if (userToUpdate) {
+        // Create an updated user object with Super Admin privileges
+        const updatedUser: User = {
+          ...userToUpdate,
+          // Set the main role to SuperAdmin
+          role: 'SuperAdmin' as UserPrivilege,
+          // Update all module roles to SuperAdmin
+          moduleRoles: ['hotels', 'users', 'gallery', 'cms'].map(moduleId => ({
+            moduleId: moduleId as any,
+            role: 'SuperAdmin' as UserPrivilege
+          }))
+        };
+        
+        // Update the users array with the modified user
         setUsers(prev => prev.map(user => user.id === userId ? updatedUser : user));
+        
+        // Update selected user if needed
         if (selectedUser?.id === userId) {
           setSelectedUser(updatedUser);
         }
+        
         toast({
           title: "User promoted",
           description: "User has been promoted to Super Admin",
@@ -51,7 +69,7 @@ export const useAdminActions = (
     } finally {
       setIsLoading(false);
     }
-  }, [toast, selectedUser, setUsers, setSelectedUser, setIsLoading]);
+  }, [toast, selectedUser, setUsers, setSelectedUser, setIsLoading, users]);
 
   return {
     handlePromoteToSuperAdmin
