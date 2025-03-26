@@ -30,15 +30,19 @@ const HotelAddPage: React.FC = () => {
       console.log("Submitting hotel data:", hotelWithPOS);
       const result = addHotel(hotelWithPOS);
       
-      if (result && result.success && result.hotel) {
+      if (result && result.success) {
         toast({
           title: "Hotel Added Successfully",
-          description: `${result.hotel.name} has been added to your hotel network`,
+          description: result.hotel ? `${result.hotel.name} has been added to your hotel network` : "Hotel has been added",
           variant: "default"
         });
 
-        // Navigate to the hotel details page
-        navigate(`/hotel/edit/${result.hotel.id}`);
+        // Navigate to the hotel details page if we have a hotel id
+        if (result.hotel) {
+          navigate(`/hotel/edit/${result.hotel.id}`);
+        } else {
+          navigate('/hotel'); // Fallback to hotel list
+        }
       } else {
         toast({
           title: "Error",

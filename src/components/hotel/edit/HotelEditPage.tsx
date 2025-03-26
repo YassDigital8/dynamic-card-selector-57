@@ -65,6 +65,7 @@ const HotelEditPage: React.FC<HotelEditPageProps> = ({ hotelId }) => {
         variant: "default",
       });
       
+      // Only update current hotel if we have a hotel property in the result
       if (result.hotel) {
         setCurrentHotel(result.hotel);
       }
