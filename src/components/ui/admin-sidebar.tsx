@@ -10,7 +10,8 @@ import {
   Settings,
   HelpCircle,
   PlusCircle,
-  ListFilter
+  ListFilter,
+  ActivitySquare
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -60,7 +61,19 @@ const AdminSidebar: React.FC = () => {
     { 
       label: 'Users', 
       icon: Users, 
-      href: '/users' 
+      href: '/users',
+      subItems: [
+        {
+          label: 'User Management',
+          icon: Users,
+          href: '/users'
+        },
+        {
+          label: 'Activity Logs',
+          icon: ActivitySquare,
+          href: '/user-logs'
+        }
+      ]
     },
     { 
       label: 'Settings', 

@@ -1,3 +1,4 @@
+
 import React, { memo } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -13,6 +14,7 @@ import HotelAdd from "./pages/HotelAdd";
 import HotelEdit from "./pages/HotelEdit";
 import HotelView from "./pages/HotelView";
 import Users from "./pages/Users";
+import UserLogs from "./pages/UserLogs";
 import useAuthentication from "./hooks/useAuthentication";
 
 // Initialize theme from localStorage or default to light
@@ -94,6 +96,11 @@ const App = () => {
             <Route path="/users" element={
               <ProtectedRoute>
                 <Users />
+              </ProtectedRoute>
+            } />
+            <Route path="/user-logs" element={
+              <ProtectedRoute>
+                <UserLogs />
               </ProtectedRoute>
             } />
             <Route path="/settings" element={
