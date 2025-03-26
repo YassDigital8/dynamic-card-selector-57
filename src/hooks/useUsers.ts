@@ -1,4 +1,3 @@
-
 import { useState, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { 
@@ -143,10 +142,26 @@ export const useUsers = () => {
     }
   }, [toast, selectedUser]);
 
-  const handleAddUser = useCallback((userData: Omit<User, 'id' | 'createdAt' | 'updatedAt'>) => {
+  const handleAddUser = useCallback((userData: { 
+    firstName: string;
+    lastName: string;
+    email: string;
+    department?: string;
+    name?: string;
+    role?: UserPrivilege;
+    isActive?: boolean;
+  }) => {
     setIsLoading(true);
     try {
-      const newUser = addUser(userData);
+      const fullUserData = {
+        name: userData.name || `${userData.firstName} ${userData.lastName}`,
+        email: userData.email,
+        role: userData.role || 'Officer',
+        department: userData.department,
+        isActive: userData.isActive !== undefined ? userData.isActive : true,
+      };
+      
+      const newUser = addUser(fullUserData);
       setUsers(prev => [...prev, newUser]);
       toast({
         title: "User added",
