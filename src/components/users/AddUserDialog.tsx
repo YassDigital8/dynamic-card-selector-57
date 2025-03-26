@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   Dialog,
@@ -21,6 +21,8 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { AlertCircle } from 'lucide-react';
 
 const userFormSchema = z.object({
   firstName: z.string().min(2, { message: 'First name must be at least 2 characters.' }),
@@ -34,7 +36,7 @@ type UserFormValues = z.infer<typeof userFormSchema>;
 interface AddUserDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onAddUser: (userData: UserFormValues) => void;
+  onAddUser: (userData: UserFormValues) => Promise<any>;
   privileges: any[]; // Keep this to maintain compatibility with existing code
 }
 
@@ -44,6 +46,9 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({
   onAddUser,
   privileges, // Not used anymore but kept for compatibility
 }) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   const form = useForm<UserFormValues>({
     resolver: zodResolver(userFormSchema),
     defaultValues: {
@@ -54,11 +59,30 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({
     },
   });
 
-  const onSubmit = (data: UserFormValues) => {
-    onAddUser(data);
-    form.reset();
-    onOpenChange(false);
+  const onSubmit = async (data: UserFormValues) => {
+    setIsSubmitting(true);
+    setError(null);
+    
+    try {
+      const result = await onAddUser(data);
+      
+      if (result) {
+        form.reset();
+        onOpenChange(false);
+      }
+    } catch (err) {
+      setError('An unexpected error occurred. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+
+  // Reset error when dialog opens/closes
+  React.useEffect(() => {
+    if (open) {
+      setError(null);
+    }
+  }, [open]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -66,6 +90,15 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({
         <DialogHeader>
           <DialogTitle>Add New User</DialogTitle>
         </DialogHeader>
+        
+        {error && (
+          <Alert variant="destructive" className="my-2">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+        
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
@@ -138,11 +171,13 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({
 
             <DialogFooter>
               <DialogClose asChild>
-                <Button type="button" variant="outline">
+                <Button type="button" variant="outline" disabled={isSubmitting}>
                   Cancel
                 </Button>
               </DialogClose>
-              <Button type="submit">Add User</Button>
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? 'Adding...' : 'Add User'}
+              </Button>
             </DialogFooter>
           </form>
         </Form>

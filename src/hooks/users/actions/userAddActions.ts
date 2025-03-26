@@ -39,6 +39,29 @@ export const useUserAddActions = (
         throw new Error(`API error: ${response.status}`);
       }
       
+      // Parse the response to check for specific error messages
+      const responseData = await response.json();
+      
+      // Check if the API returned an error message about existing email
+      if (responseData.message && responseData.message.includes("Email is already exist")) {
+        toast({
+          title: "Error",
+          description: "A user with this email already exists.",
+          variant: "destructive",
+        });
+        return null;
+      }
+      
+      // If we didn't get a success indicator from the API, treat as an error
+      if (responseData.isAuthenticated === false) {
+        toast({
+          title: "Error",
+          description: responseData.message || "Failed to add user.",
+          variant: "destructive",
+        });
+        return null;
+      }
+      
       const fullUserData = {
         name: `${userData.firstName} ${userData.lastName}`,
         email: userData.email,
