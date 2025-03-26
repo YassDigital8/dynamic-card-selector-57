@@ -15,7 +15,6 @@ const UsersPage: React.FC = () => {
     isLoading,
     fetchUsers,
     handleUpdateRole,
-    handleUpdateModuleRole,
     handleToggleStatus,
     handleDeleteUser,
     handleAddUser,
@@ -79,7 +78,6 @@ const UsersPage: React.FC = () => {
         isLoading={isLoading}
         onSelectUser={() => {}} // Empty function since we no longer need to select users
         onUpdateRole={handleUpdateRole}
-        onUpdateModuleRole={handleUpdateModuleRole}
         onToggleStatus={handleToggleStatus}
         onDeleteUser={handleDeleteUser}
         onPromoteToSuperAdmin={handlePromoteToSuperAdmin}

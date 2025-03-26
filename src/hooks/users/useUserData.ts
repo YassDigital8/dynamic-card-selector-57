@@ -26,10 +26,12 @@ export const useUserData = () => {
       console.error("Error fetching users:", error);
       toast({
         title: "Error",
-        description: "Failed to load users. Please try again later.",
+        description: "Failed to load users",
         variant: "destructive",
       });
-      // No fallback to mock data anymore
+      // If API fails, fall back to mock data for demo purposes
+      const fallbackUsers = require('@/services/users/mockData').mockUsers;
+      setUsers(fallbackUsers);
     } finally {
       setIsLoading(false);
     }

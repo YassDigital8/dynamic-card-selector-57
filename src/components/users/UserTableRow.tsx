@@ -13,7 +13,6 @@ interface UserTableRowProps {
   privileges: UserPrivilege[];
   onSelectUser: (user: User) => void;
   onUpdateRole: (userId: string, role: UserPrivilege) => void;
-  onUpdateModuleRole: (userId: string, moduleId: ModuleType, role: UserPrivilege) => void;
   onToggleStatus: (userId: string) => void;
   onPromoteToSuperAdmin: (userId: string) => void;
 }
@@ -23,7 +22,6 @@ const UserTableRow: React.FC<UserTableRowProps> = ({
   privileges,
   onSelectUser,
   onUpdateRole,
-  onUpdateModuleRole,
   onToggleStatus,
   onPromoteToSuperAdmin
 }) => {
@@ -42,8 +40,8 @@ const UserTableRow: React.FC<UserTableRowProps> = ({
     return moduleRole ? moduleRole.role : user.role;
   };
 
-  const handleModuleRoleChange = (moduleId: ModuleType) => (role: UserPrivilege) => {
-    onUpdateModuleRole(user.id, moduleId, role);
+  const handleRoleChange = (moduleId: ModuleType) => (role: UserPrivilege) => {
+    onUpdateRole(user.id, role);
   };
 
   // Check if the user is already a SuperAdmin
@@ -80,28 +78,28 @@ const UserTableRow: React.FC<UserTableRowProps> = ({
         <UserModuleRoleSelect
           currentRole={getUserModuleRole('hotels')}
           privileges={privileges}
-          onRoleChange={handleModuleRoleChange('hotels')}
+          onRoleChange={handleRoleChange('hotels')}
         />
       </TableCell>
       <TableCell className="text-center px-2">
         <UserModuleRoleSelect
           currentRole={getUserModuleRole('users')}
           privileges={privileges}
-          onRoleChange={handleModuleRoleChange('users')}
+          onRoleChange={handleRoleChange('users')}
         />
       </TableCell>
       <TableCell className="text-center px-2">
         <UserModuleRoleSelect
           currentRole={getUserModuleRole('gallery')}
           privileges={privileges}
-          onRoleChange={handleModuleRoleChange('gallery')}
+          onRoleChange={handleRoleChange('gallery')}
         />
       </TableCell>
       <TableCell className="text-center px-2">
         <UserModuleRoleSelect
           currentRole={getUserModuleRole('cms')}
           privileges={privileges}
-          onRoleChange={handleModuleRoleChange('cms')}
+          onRoleChange={handleRoleChange('cms')}
         />
       </TableCell>
       
