@@ -24,10 +24,10 @@ const UserModuleRoleSelect: React.FC<UserModuleRoleSelectProps> = ({
   // Check if the user is a SuperAdmin
   const isSuperAdmin = currentRole === 'SuperAdmin';
   
-  // If the user is a SuperAdmin, show a locked label with distinctive styling
+  // If the user is a SuperAdmin, show a locked label styled to match dropdown dimensions
   if (isSuperAdmin) {
     return (
-      <div className="w-[110px] flex items-center justify-between px-3 py-2 rounded-md border border-yellow-500 bg-yellow-50 text-sm font-medium text-yellow-800">
+      <div className="w-[110px] h-10 flex items-center justify-between rounded-md border border-yellow-500 bg-yellow-50 px-3 text-sm font-medium text-yellow-800">
         <div className="flex items-center">
           <Lock className="mr-2 h-4 w-4 text-yellow-500" />
           <span>SuperAdmin</span>
