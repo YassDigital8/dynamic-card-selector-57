@@ -1,7 +1,7 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { User, ModuleType } from '@/types/user.types';
+import { User, ModuleType, UserPrivilege } from '@/types/user.types';
 import { userPrivileges, modulePermissions } from '@/services/userService';
 
 interface ApiUser {
@@ -15,22 +15,41 @@ interface ApiUser {
   roles: string[];
 }
 
+// Helper function to validate a role string is a valid UserPrivilege
+const validateUserPrivilege = (role: string): UserPrivilege => {
+  const validPrivileges: UserPrivilege[] = ['Super Admin', 'Admin', 'Manager', 'Supervisor', 'Officer'];
+  
+  // Check if the role is a valid UserPrivilege
+  if (validPrivileges.includes(role as UserPrivilege)) {
+    return role as UserPrivilege;
+  }
+  
+  // Default to 'Officer' if not valid
+  return 'Officer';
+};
+
 // Function to convert API user to our User type
 const mapApiUserToUser = (apiUser: ApiUser): User => {
   const name = `${apiUser.firstName} ${apiUser.lastName || ''}`.trim();
   
   // Default role - take the first role or default to Officer
-  const defaultRole = apiUser.roles.length > 0 
-    ? apiUser.roles[0].split('-')[0] as any
-    : 'Officer';
+  const rolePrefix = apiUser.roles.length > 0 
+    ? apiUser.roles[0].split('-')[0] 
+    : '';
+  
+  const defaultRole = validateUserPrivilege(rolePrefix);
   
   // Map module roles from the API roles array
   const moduleRoles = apiUser.roles.map(role => {
-    const [module, level] = role.split('-');
-    const moduleId = module.toLowerCase() as ModuleType;
+    const [moduleId, roleLevel] = role.split('-');
+    const mappedModuleId = moduleId.toLowerCase() as ModuleType;
+    
+    // Convert role level to a valid UserPrivilege type
+    const validRole = validateUserPrivilege(roleLevel || 'Officer');
+    
     return {
-      moduleId,
-      role: level || 'Officer'
+      moduleId: mappedModuleId,
+      role: validRole
     };
   }).filter(mr => 
     ['hotels', 'users', 'gallery', 'cms'].includes(mr.moduleId)
