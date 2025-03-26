@@ -6,7 +6,7 @@ import {
   TableRow, 
   TableCell 
 } from '@/components/ui/table';
-import { User, UserPrivilege } from '@/types/user.types';
+import { User, UserPrivilege, ModuleType } from '@/types/user.types';
 import UsersTableHeader from './UsersTableHeader';
 import UserTableRow from './UserTableRow';
 
@@ -15,6 +15,7 @@ interface UsersTableProps {
   privileges: UserPrivilege[];
   onSelectUser: (user: User) => void;
   onUpdateRole: (userId: string, role: UserPrivilege) => void;
+  onUpdateModuleRole: (userId: string, moduleId: ModuleType, role: UserPrivilege) => void;
   onToggleStatus: (userId: string) => void;
   onDeleteUser: (userId: string) => void;
   onPromoteToSuperAdmin: (userId: string) => void;
@@ -26,6 +27,7 @@ const UsersTable: React.FC<UsersTableProps> = ({
   privileges,
   onSelectUser,
   onUpdateRole,
+  onUpdateModuleRole,
   onToggleStatus,
   onDeleteUser,
   onPromoteToSuperAdmin,
@@ -56,6 +58,7 @@ const UsersTable: React.FC<UsersTableProps> = ({
                 privileges={privileges}
                 onSelectUser={onSelectUser}
                 onUpdateRole={onUpdateRole}
+                onUpdateModuleRole={onUpdateModuleRole}
                 onToggleStatus={onToggleStatus}
                 onPromoteToSuperAdmin={onPromoteToSuperAdmin}
               />
