@@ -1,6 +1,6 @@
 
 import { toast } from '@/hooks/use-toast';
-import { User } from '@/types/user.types';
+import { User, UserPrivilege } from '@/types/user.types';
 
 interface ApiUser {
   code: string;
@@ -14,17 +14,17 @@ interface ApiUser {
 }
 
 // Helper function to validate a role string is a valid UserPrivilege
-export const validateUserPrivilege = (role: string) => {
+export const validateUserPrivilege = (role: string): UserPrivilege => {
   // Handle SuperAdmin case specially
   if (role === 'SuperAdmin') {
-    return 'SuperAdmin';
+    return 'SuperAdmin' as UserPrivilege;
   }
   
-  const validPrivileges = ['Super Admin', 'Admin', 'Manager', 'Supervisor', 'Officer'];
+  const validPrivileges: UserPrivilege[] = ['Super Admin', 'Admin', 'Manager', 'Supervisor', 'Officer'];
   
   // Check if the role is a valid UserPrivilege
-  if (validPrivileges.includes(role)) {
-    return role;
+  if (validPrivileges.includes(role as UserPrivilege)) {
+    return role as UserPrivilege;
   }
   
   // Default to 'Officer' if not valid
@@ -39,10 +39,10 @@ export const mapApiUserToUser = (apiUser: ApiUser): User => {
   const isSuperAdmin = apiUser.roles.includes('SuperAdmin');
   
   // Default role - handle SuperAdmin or take the first role or default to Officer
-  let defaultRole = 'Officer';
+  let defaultRole: UserPrivilege = 'Officer';
   
   if (isSuperAdmin) {
-    defaultRole = 'SuperAdmin';
+    defaultRole = 'SuperAdmin' as UserPrivilege;
   } else if (apiUser.roles.length > 0) {
     const rolePrefix = apiUser.roles[0].split('-')[0];
     defaultRole = validateUserPrivilege(rolePrefix);
@@ -55,7 +55,7 @@ export const mapApiUserToUser = (apiUser: ApiUser): User => {
   if (isSuperAdmin) {
     moduleRoles = ['hotels', 'users', 'gallery', 'cms'].map(moduleId => ({
       moduleId,
-      role: 'SuperAdmin'
+      role: 'SuperAdmin' as UserPrivilege
     }));
   } else {
     // Process regular role mapping
