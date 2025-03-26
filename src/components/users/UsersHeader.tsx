@@ -3,7 +3,6 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { UserPlus, RefreshCw } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { ThemeToggle } from '@/components/ui/theme-toggle';
 import useAuthentication from '@/hooks/useAuthentication';
 import ApiStatusIndicator from '@/components/ui/api-status-indicator';
 import LogoutButton from '@/components/auth/LogoutButton';
@@ -45,7 +44,6 @@ const UsersHeader: React.FC<UsersHeaderProps> = ({ onRefresh, onAddUser, isLoadi
         )}
         
         <div className="flex items-center space-x-3">
-          <ThemeToggle />
           <Button 
             onClick={onRefresh} 
             variant="outline"
