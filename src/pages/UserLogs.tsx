@@ -5,9 +5,7 @@ import { BreadcrumbNav } from '@/components/ui/breadcrumb-nav';
 import { Users as UsersIcon, ListFilter } from 'lucide-react';
 import StandardLayout from '@/components/layout/StandardLayout';
 import { useUserLogs } from '@/hooks/users/logs/useUserLogs';
-import LogsTable from '@/components/users/logs/LogsTable';
-import LogFiltersBar from '@/components/users/logs/LogFiltersBar';
-import LogDetailsDialog from '@/components/users/logs/LogDetailsDialog';
+import { LogFiltersBar, LogsTable, LogDetailsDialog } from '@/components/users/logs';
 
 const UserLogs: React.FC = () => {
   // Define breadcrumb items for the Users Logs page
