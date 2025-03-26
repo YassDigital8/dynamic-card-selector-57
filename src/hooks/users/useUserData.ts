@@ -4,7 +4,6 @@ import { useToast } from '@/hooks/use-toast';
 import { fetchAllUsers } from './api/userApi';
 import { useUserState } from './state/useUserState';
 import { getUserPrivileges, getModulePermissions } from './data/userPrivilegeData';
-import { mockUsers } from '@/services/users/mockData';
 
 export const useUserData = () => {
   const { users, setUsers, selectedUser, setSelectedUser, isLoading, setIsLoading } = useUserState();
@@ -27,11 +26,10 @@ export const useUserData = () => {
       console.error("Error fetching users:", error);
       toast({
         title: "Error",
-        description: "Failed to load users. Using mock data instead.",
+        description: "Failed to load users. Please try again later.",
         variant: "destructive",
       });
-      // If API fails, fall back to mock data for demo purposes
-      setUsers(mockUsers);
+      // No fallback to mock data anymore
     } finally {
       setIsLoading(false);
     }
