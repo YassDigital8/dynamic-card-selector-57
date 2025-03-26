@@ -58,7 +58,7 @@ export const useRoleActions = (
       const roleBody = `${serviceName}-${newRole}`;
       
       // Make the API call to update the module-specific role
-      const response = await fetch(`http://92.112.184.210:7182/api/Authentication/AssignServiceRoleToUser/${userId}`, {
+      const response = await fetch(`https://92.112.184.210:7182/api/Authentication/AssignServiceRoleToUser/${userId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
