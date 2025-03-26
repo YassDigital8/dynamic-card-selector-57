@@ -61,14 +61,33 @@ export const mapApiUserToUser = (apiUser: ApiUser): User => {
     // Process regular role mapping
     moduleRoles = apiUser.roles
       .map(role => {
-        const [moduleId, roleLevel] = role.split('-');
-        const mappedModuleId = moduleId.toLowerCase();
+        const parts = role.split('-');
+        
+        // Handle service name mapping
+        let moduleId: string;
+        const serviceName = parts[0];
+        
+        // Map service names to our internal module IDs
+        if (serviceName === 'Hotel') {
+          moduleId = 'hotels';
+        } else if (serviceName === 'Authntication') { // Using exact spelling from API
+          moduleId = 'users';
+        } else if (serviceName === 'Gallery') {
+          moduleId = 'gallery';
+        } else if (serviceName === 'CMS') {
+          moduleId = 'cms';
+        } else {
+          moduleId = serviceName.toLowerCase();
+        }
+
+        // Get the role part (after the hyphen)
+        const roleLevel = parts.length > 1 ? parts[1] : 'Officer';
         
         // Convert role level to a valid UserPrivilege type
         const validRole = validateUserPrivilege(roleLevel || 'Officer');
         
         return {
-          moduleId: mappedModuleId,
+          moduleId: moduleId,
           role: validRole
         };
       })

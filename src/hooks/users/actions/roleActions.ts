@@ -44,7 +44,7 @@ export const useRoleActions = (
     // Map our internal module names to the API-expected service names
     const moduleToServiceMap: Record<ModuleType, string> = {
       'hotels': 'Hotel',
-      'users': 'Authntication', // Note: This is the spelling used in the API
+      'users': 'Authntication', // Note: This is the spelling used in the API (fixed from Authentication)
       'gallery': 'Gallery',
       'cms': 'CMS',
       'settings': 'Settings',
