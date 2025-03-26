@@ -19,6 +19,7 @@ interface UsersContentProps {
   onUpdateRole: (userId: string, role: UserPrivilege) => void;
   onToggleStatus: (userId: string) => void;
   onDeleteUser: (userId: string) => void;
+  onPromoteToSuperAdmin: (userId: string) => void;
 }
 
 const UsersContent: React.FC<UsersContentProps> = ({
@@ -28,7 +29,8 @@ const UsersContent: React.FC<UsersContentProps> = ({
   onSelectUser,
   onUpdateRole,
   onToggleStatus,
-  onDeleteUser
+  onDeleteUser,
+  onPromoteToSuperAdmin
 }) => {
   return (
     <motion.div
@@ -55,6 +57,7 @@ const UsersContent: React.FC<UsersContentProps> = ({
             onUpdateRole={onUpdateRole}
             onToggleStatus={onToggleStatus}
             onDeleteUser={onDeleteUser}
+            onPromoteToSuperAdmin={onPromoteToSuperAdmin}
             isLoading={isLoading}
           />
         </CardContent>

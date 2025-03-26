@@ -177,11 +177,51 @@ export const useUserActions = (
     }
   }, [toast, setUsers, setIsLoading]);
 
+  const handlePromoteToSuperAdmin = useCallback(async (userId: string) => {
+    setIsLoading(true);
+    try {
+      // Make the API call to promote user to SuperAdmin
+      const response = await fetch(`https://92.112.184.210:7182/api/Authentication/AssignServiceRoleToUser/${userId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
+      }
+      
+      // Update the user in our local state
+      const updatedUser = updateUserRole(userId, 'SuperAdmin');
+      if (updatedUser) {
+        setUsers(prev => prev.map(user => user.id === userId ? updatedUser : user));
+        if (selectedUser?.id === userId) {
+          setSelectedUser(updatedUser);
+        }
+        toast({
+          title: "User promoted",
+          description: "User has been promoted to Super Admin",
+        });
+      }
+    } catch (error) {
+      console.error("Error promoting user:", error);
+      toast({
+        title: "Error",
+        description: "Failed to promote user to Super Admin",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }, [toast, selectedUser, setUsers, setSelectedUser, setIsLoading]);
+
   return {
     handleUpdateRole,
     handleUpdateModuleRole,
     handleToggleStatus,
     handleDeleteUser,
-    handleAddUser
+    handleAddUser,
+    handlePromoteToSuperAdmin
   };
 };

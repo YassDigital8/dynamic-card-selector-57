@@ -14,6 +14,7 @@ interface UserTableRowProps {
   onSelectUser: (user: User) => void;
   onUpdateRole: (userId: string, role: UserPrivilege) => void;
   onToggleStatus: (userId: string) => void;
+  onPromoteToSuperAdmin: (userId: string) => void;
 }
 
 const UserTableRow: React.FC<UserTableRowProps> = ({
@@ -21,7 +22,8 @@ const UserTableRow: React.FC<UserTableRowProps> = ({
   privileges,
   onSelectUser,
   onUpdateRole,
-  onToggleStatus
+  onToggleStatus,
+  onPromoteToSuperAdmin
 }) => {
   // Helper function to get user's role for a specific module
   const getUserModuleRole = (moduleId: ModuleType): UserPrivilege => {
@@ -40,10 +42,6 @@ const UserTableRow: React.FC<UserTableRowProps> = ({
 
   const handleRoleChange = (moduleId: ModuleType) => (role: UserPrivilege) => {
     onUpdateRole(user.id, role);
-  };
-
-  const handlePromoteToSuperAdmin = () => {
-    onUpdateRole(user.id, 'SuperAdmin');
   };
 
   // Check if the user is already a SuperAdmin
@@ -114,7 +112,7 @@ const UserTableRow: React.FC<UserTableRowProps> = ({
           </div>
         ) : (
           <button 
-            onClick={handlePromoteToSuperAdmin}
+            onClick={() => onPromoteToSuperAdmin(user.id)}
             className="text-xs text-amber-600 hover:text-amber-800 flex items-center"
             title="Promote to Super Admin"
           >

@@ -18,6 +18,7 @@ const UsersPage: React.FC = () => {
     handleToggleStatus,
     handleDeleteUser,
     handleAddUser,
+    handlePromoteToSuperAdmin,
     userPrivileges,
   } = useUsers();
 
@@ -79,6 +80,7 @@ const UsersPage: React.FC = () => {
         onUpdateRole={handleUpdateRole}
         onToggleStatus={handleToggleStatus}
         onDeleteUser={handleDeleteUser}
+        onPromoteToSuperAdmin={handlePromoteToSuperAdmin}
       />
 
       <AddUserDialog

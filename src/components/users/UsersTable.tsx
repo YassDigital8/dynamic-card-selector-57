@@ -17,6 +17,7 @@ interface UsersTableProps {
   onUpdateRole: (userId: string, role: UserPrivilege) => void;
   onToggleStatus: (userId: string) => void;
   onDeleteUser: (userId: string) => void;
+  onPromoteToSuperAdmin: (userId: string) => void;
   isLoading: boolean;
 }
 
@@ -27,6 +28,7 @@ const UsersTable: React.FC<UsersTableProps> = ({
   onUpdateRole,
   onToggleStatus,
   onDeleteUser,
+  onPromoteToSuperAdmin,
   isLoading
 }) => {
   return (
@@ -55,6 +57,7 @@ const UsersTable: React.FC<UsersTableProps> = ({
                 onSelectUser={onSelectUser}
                 onUpdateRole={onUpdateRole}
                 onToggleStatus={onToggleStatus}
+                onPromoteToSuperAdmin={onPromoteToSuperAdmin}
               />
             ))
           )}
