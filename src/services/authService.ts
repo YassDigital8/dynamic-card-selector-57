@@ -40,12 +40,28 @@ export const loginUser = async (credentials: LoginCredentials): Promise<AuthResp
       }),
     });
     
-    // Get the response data
-    const responseData = await response.json();
-    console.log('Auth API response:', responseData);
+    // Always capture the raw response text first
+    const responseText = await response.text();
+    console.log('Raw API response:', responseText);
+    
+    // Try to parse as JSON if possible
+    let responseData;
+    try {
+      responseData = JSON.parse(responseText);
+      console.log('Parsed API response:', responseData);
+    } catch (e) {
+      // If not valid JSON, use the raw text
+      console.log('Response is not valid JSON, using raw text');
+      responseData = { message: responseText };
+    }
     
     if (!response.ok) {
-      throw new Error(responseData.message || `Authentication failed: ${response.status}`);
+      // For error responses, include the status code and response data
+      const errorMessage = typeof responseData === 'string' 
+        ? responseData 
+        : responseData.message || `Authentication failed: ${response.status}`;
+      
+      throw new Error(errorMessage);
     }
     
     if (!responseData.token) {

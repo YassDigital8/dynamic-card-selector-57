@@ -25,6 +25,7 @@ const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
   const [responseLog, setResponseLog] = useState<string | null>(null);
+  const [apiErrorMessage, setApiErrorMessage] = useState<string | null>(null);
   const { toast } = useToast();
   const { login, demoMode } = useAuthentication();
   const navigate = useNavigate();
@@ -45,6 +46,7 @@ const LoginForm = () => {
     setIsLoading(true);
     setLoginError(null);
     setResponseLog(null);
+    setApiErrorMessage(null);
     
     try {
       console.log('Attempting to authenticate with:', data.email);
@@ -70,6 +72,9 @@ const LoginForm = () => {
         errorMessage = 'Network error: The authentication server is not accessible. This might be due to an SSL certificate issue.';
       } else if (error instanceof Error) {
         errorMessage = error.message;
+        
+        // Set the API error message specifically
+        setApiErrorMessage(error.message);
       } else {
         errorMessage = 'Unknown error occurred during login';
       }
@@ -124,6 +129,16 @@ const LoginForm = () => {
               Enter Demo Mode
             </Button>
           )}
+        </Alert>
+      )}
+      
+      {apiErrorMessage && (
+        <Alert variant="error" className="mb-4">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>API Response</AlertTitle>
+          <AlertDescription className="font-medium">
+            {apiErrorMessage}
+          </AlertDescription>
         </Alert>
       )}
       
