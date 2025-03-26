@@ -4,7 +4,7 @@ import AddUserDialog from './AddUserDialog';
 import UsersHeader from './UsersHeader';
 import UsersContent from './UsersContent';
 import UsersSearchBar from './UsersSearchBar';
-import useUsers from '@/hooks/useUsers';
+import { useUsers } from '@/hooks/users'; // Updated import
 import useUserDialog from './useUserDialog';
 import useSearchFilters from './useSearchFilters';
 import { motion } from 'framer-motion';
