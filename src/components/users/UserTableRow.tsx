@@ -24,13 +24,13 @@ const UserTableRow: React.FC<UserTableRowProps> = ({
   onToggleStatus
 }) => {
   // Helper function to get user's role for a specific module
-  const getUserModuleRole = (moduleId: ModuleType): UserPrivilege | null => {
-    if (!user.moduleRoles || user.moduleRoles.length === 0) {
-      return null;
+  const getUserModuleRole = (moduleId: ModuleType): UserPrivilege => {
+    if (!user.moduleRoles) {
+      return user.role;
     }
     
     const moduleRole = user.moduleRoles.find(mr => mr.moduleId === moduleId);
-    return moduleRole ? moduleRole.role : null;
+    return moduleRole ? moduleRole.role : user.role;
   };
 
   const handleRoleChange = (moduleId: ModuleType) => (role: UserPrivilege) => {
