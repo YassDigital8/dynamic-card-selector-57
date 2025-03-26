@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { TableHeader, TableRow, TableHead } from '@/components/ui/table';
-import { Hotel, Users, Image, Settings, FileText } from 'lucide-react';
+import { Hotel, Users, Image, FileText } from 'lucide-react';
 
 const UsersTableHeader: React.FC = () => {
   return (
@@ -26,11 +26,6 @@ const UsersTableHeader: React.FC = () => {
         <TableHead className="px-2">
           <div className="flex items-center justify-center">
             <Image className="h-4 w-4" />
-          </div>
-        </TableHead>
-        <TableHead className="px-2">
-          <div className="flex items-center justify-center">
-            <Settings className="h-4 w-4" />
           </div>
         </TableHead>
         <TableHead className="px-2">

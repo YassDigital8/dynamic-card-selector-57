@@ -58,10 +58,12 @@ const UserTableRow: React.FC<UserTableRowProps> = ({
       </TableCell>
       <TableCell>{user.department || 'N/A'}</TableCell>
       <TableCell>
-        {user.lastLogin ? format(user.lastLogin, 'MMM dd, yyyy h:mm a') : 'Never'}
+        {user.lastLogin && user.lastLogin.getFullYear() > 1 
+          ? format(user.lastLogin, 'MMM dd, yyyy h:mm a') 
+          : 'Never'}
       </TableCell>
       
-      {/* Module roles dropdowns */}
+      {/* Module roles dropdowns - only show the 4 specified modules */}
       <TableCell className="text-center px-2">
         <UserModuleRoleSelect
           currentRole={getUserModuleRole('hotels')}
@@ -85,16 +87,9 @@ const UserTableRow: React.FC<UserTableRowProps> = ({
       </TableCell>
       <TableCell className="text-center px-2">
         <UserModuleRoleSelect
-          currentRole={getUserModuleRole('settings')}
+          currentRole={getUserModuleRole('cms')}
           privileges={privileges}
-          onRoleChange={handleRoleChange('settings')}
-        />
-      </TableCell>
-      <TableCell className="text-center px-2">
-        <UserModuleRoleSelect
-          currentRole={getUserModuleRole('reports')}
-          privileges={privileges}
-          onRoleChange={handleRoleChange('reports')}
+          onRoleChange={handleRoleChange('cms')}
         />
       </TableCell>
     </TableRow>

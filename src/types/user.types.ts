@@ -1,7 +1,7 @@
 
 export type UserPrivilege = 'Super Admin' | 'Admin' | 'Manager' | 'Supervisor' | 'Officer';
 
-export type ModuleType = 'hotels' | 'users' | 'gallery' | 'settings' | 'reports';
+export type ModuleType = 'hotels' | 'users' | 'gallery' | 'settings' | 'reports' | 'cms';
 
 export interface ModulePermission {
   id: ModuleType;
