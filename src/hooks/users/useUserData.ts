@@ -33,34 +33,58 @@ const mapApiUserToUser = (apiUser: ApiUser): User => {
   const name = `${apiUser.firstName} ${apiUser.lastName || ''}`.trim();
   
   // Default role - take the first role or default to Officer
-  const rolePrefix = apiUser.roles.length > 0 
-    ? apiUser.roles[0].split('-')[0] 
-    : '';
-  
-  const defaultRole = validateUserPrivilege(rolePrefix);
+  let defaultRole: UserPrivilege = 'Officer';
   
   // Map module roles from the API roles array
-  const moduleRoles = apiUser.roles.map(role => {
-    const [moduleId, roleLevel] = role.split('-');
-    const mappedModuleId = moduleId.toLowerCase() as ModuleType;
-    
-    // Convert role level to a valid UserPrivilege type
-    const validRole = validateUserPrivilege(roleLevel || 'Officer');
-    
-    return {
-      moduleId: mappedModuleId,
-      role: validRole
-    };
-  }).filter(mr => 
-    ['hotels', 'users', 'gallery', 'cms'].includes(mr.moduleId)
-  );
+  const moduleRoles = apiUser.roles.length > 0 
+    ? apiUser.roles
+        .map(role => {
+          const parts = role.split('-');
+          if (parts.length < 2) return null;
+          
+          const [moduleId, roleLevel] = parts;
+          const mappedModuleId = moduleId.toLowerCase() as ModuleType;
+          
+          // Check if it's one of our valid module types
+          if (!['hotels', 'users', 'gallery', 'cms'].includes(mappedModuleId)) {
+            return null;
+          }
+          
+          // Convert role level to a valid UserPrivilege type
+          let validRole: UserPrivilege;
+          
+          // Special case for SuperAdmin
+          if (roleLevel === 'SuperAdmin') {
+            validRole = 'Super Admin';
+          } else if (roleLevel === 'Admin') {
+            validRole = 'Admin';
+          } else if (roleLevel === 'Manager') {
+            validRole = 'Manager';
+          } else if (roleLevel === 'Supervisor') {
+            validRole = 'Supervisor';
+          } else {
+            validRole = 'Officer';
+          }
+          
+          // If this is the first role, use it as the default
+          if (defaultRole === 'Officer' && validRole) {
+            defaultRole = validRole;
+          }
+          
+          return {
+            moduleId: mappedModuleId,
+            role: validRole
+          };
+        })
+        .filter(mr => mr !== null) as { moduleId: ModuleType; role: UserPrivilege }[]
+    : [];
   
   return {
     id: apiUser.code,
     name,
     email: apiUser.email,
     role: defaultRole,
-    moduleRoles,
+    moduleRoles: moduleRoles.length > 0 ? moduleRoles : undefined,
     createdAt: new Date(),
     updatedAt: new Date(),
     lastLogin: apiUser.lastLogIn ? new Date(apiUser.lastLogIn) : undefined,
