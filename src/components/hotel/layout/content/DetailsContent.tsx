@@ -13,7 +13,7 @@ interface DetailsContentProps {
   contentVariants: any;
 }
 
-const DetailsContent: React.FC<DetailsContentProps> = ({
+const DetailsContent: React.FC<DetailsContentProps> = React.memo(({
   hotel,
   onStartEdit,
   onBackToList,
@@ -44,6 +44,8 @@ const DetailsContent: React.FC<DetailsContentProps> = ({
       />
     </motion.div>
   );
-};
+});
+
+DetailsContent.displayName = 'DetailsContent';
 
 export default DetailsContent;

@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import HotelLoadingIndicator from '@/components/hotel/HotelLoadingIndicator';
@@ -16,9 +16,12 @@ const HotelView = () => {
   const { toast } = useToast();
   const { allHotels } = useHotelNetwork();
   
+  // Create a stable queryKey that doesn't change on every render
+  const queryKey = useMemo(() => ['hotel', hotelId], [hotelId]);
+  
   // Fixed query to prevent infinite re-renders by using a stable query key
   const { data: hotel, isLoading } = useQuery({
-    queryKey: ['hotel', hotelId],
+    queryKey: queryKey,
     queryFn: () => {
       const foundHotel = allHotels.find(hotel => hotel.id === hotelId);
       if (!foundHotel) {
@@ -29,8 +32,8 @@ const HotelView = () => {
     enabled: !!hotelId && !!allHotels.length,
   });
   
-  // Animation variants
-  const containerVariants = {
+  // Memoize animation variants to prevent re-renders
+  const containerVariants = useMemo(() => ({
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -39,9 +42,9 @@ const HotelView = () => {
         delayChildren: 0.05
       }
     }
-  };
+  }), []);
 
-  const itemVariants = {
+  const itemVariants = useMemo(() => ({
     hidden: { opacity: 0, y: 20 },
     visible: { 
       opacity: 1, 
@@ -52,7 +55,7 @@ const HotelView = () => {
         damping: 25
       }
     }
-  };
+  }), []);
   
   if (isLoading) {
     return (
