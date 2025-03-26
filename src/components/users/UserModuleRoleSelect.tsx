@@ -11,7 +11,7 @@ import { Shield } from 'lucide-react';
 import { UserPrivilege } from '@/types/user.types';
 
 interface UserModuleRoleSelectProps {
-  currentRole: UserPrivilege;
+  currentRole: UserPrivilege | null;
   privileges: UserPrivilege[];
   onRoleChange: (value: UserPrivilege) => void;
 }
@@ -21,6 +21,14 @@ const UserModuleRoleSelect: React.FC<UserModuleRoleSelectProps> = ({
   privileges,
   onRoleChange
 }) => {
+  if (currentRole === null) {
+    return (
+      <div className="text-gray-400 text-sm text-center">
+        —
+      </div>
+    );
+  }
+  
   return (
     <Select
       value={currentRole}
