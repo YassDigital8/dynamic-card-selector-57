@@ -5,6 +5,9 @@ import useHotelSelection from './useHotelSelection';
 import usePanelSizing from './usePanelSizing';
 import useHotelLoadingState from './useHotelLoadingState';
 
+// Export the API data fetching hooks
+export * from '../services/api';
+
 export {
   useHotelNetwork,
   useHotelFilters,
