@@ -93,7 +93,8 @@ export const mapApiUserToUser = (apiUser: ApiUser): User => {
 
 export const fetchAllUsers = async () => {
   try {
-    const response = await fetch('https://92.112.184.210:7182/api/Authentication/get-all-users', {
+    // Use HTTP instead of HTTPS for the API call
+    const response = await fetch('http://92.112.184.210:7182/api/Authentication/get-all-users', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
