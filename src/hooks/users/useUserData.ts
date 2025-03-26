@@ -1,7 +1,6 @@
-
 import { useState, useCallback, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { User, ModuleType, UserPrivilege } from '@/types/user.types';
+import { User, ModuleType, UserPrivilege, ModuleRole } from '@/types/user.types';
 import { userPrivileges, modulePermissions } from '@/services/userService';
 
 interface ApiUser {
