@@ -1,13 +1,12 @@
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { format } from 'date-fns';
 import { TableRow, TableCell } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { User as UserIcon, Shield } from 'lucide-react';
+import { User as UserIcon } from 'lucide-react';
 import { User, UserPrivilege, ModuleType } from '@/types/user.types';
 import UserStatusBadge from './UserStatusBadge';
 import UserModuleRoleSelect from './UserModuleRoleSelect';
-import { useToast } from '@/hooks/use-toast';
 
 interface UserTableRowProps {
   user: User;
@@ -24,77 +23,18 @@ const UserTableRow: React.FC<UserTableRowProps> = ({
   onUpdateRole,
   onToggleStatus
 }) => {
-  const { toast } = useToast();
-  const [isSuperAdmin, setIsSuperAdmin] = useState<boolean>(false);
-  
-  // Check if the user is a Super Admin
-  useEffect(() => {
-    if (user.moduleRoles) {
-      const allSuperAdmin = user.moduleRoles.every(mr => mr.role === 'Super Admin');
-      setIsSuperAdmin(allSuperAdmin && user.moduleRoles.length > 0);
-    } else {
-      setIsSuperAdmin(false);
-    }
-  }, [user]);
-
   // Helper function to get user's role for a specific module
-  const getUserModuleRole = (moduleId: ModuleType): UserPrivilege | '-' => {
+  const getUserModuleRole = (moduleId: ModuleType): UserPrivilege => {
     if (!user.moduleRoles) {
-      return '-';
+      return user.role;
     }
     
     const moduleRole = user.moduleRoles.find(mr => mr.moduleId === moduleId);
-    return moduleRole ? moduleRole.role : '-';
+    return moduleRole ? moduleRole.role : user.role;
   };
 
-  const handleRoleChange = (moduleId: ModuleType) => async (role: UserPrivilege) => {
-    try {
-      // If role is Super Admin, we need to set it for all modules
-      if (role === 'Super Admin') {
-        const response = await fetch(`https://92.112.184.210:7182/api/Authentication/AssignServiceRoleToUser/${user.id}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            role: 'SuperAdmin'
-          }),
-        });
-        
-        if (!response.ok) {
-          throw new Error('Failed to assign Super Admin role');
-        }
-        
-        // Update all modules to Super Admin locally
-        const updatedUser = {
-          ...user,
-          moduleRoles: ['hotels', 'users', 'gallery', 'cms'].map(module => ({
-            moduleId: module as ModuleType,
-            role: 'Super Admin' as UserPrivilege
-          }))
-        };
-        
-        // Call the onUpdateRole prop to update in parent component
-        onUpdateRole(user.id, 'Super Admin');
-        
-        toast({
-          title: "Role updated",
-          description: `${user.name} is now a Super Admin for all modules`,
-        });
-        
-        setIsSuperAdmin(true);
-      } else {
-        // Regular role update for a specific module
-        onUpdateRole(user.id, role);
-      }
-    } catch (error) {
-      console.error('Error updating role:', error);
-      toast({
-        title: "Error",
-        description: "Failed to update user role",
-        variant: "destructive",
-      });
-    }
+  const handleRoleChange = (moduleId: ModuleType) => (role: UserPrivilege) => {
+    onUpdateRole(user.id, role);
   };
 
   return (
@@ -129,7 +69,6 @@ const UserTableRow: React.FC<UserTableRowProps> = ({
           currentRole={getUserModuleRole('hotels')}
           privileges={privileges}
           onRoleChange={handleRoleChange('hotels')}
-          isSuperAdmin={isSuperAdmin}
         />
       </TableCell>
       <TableCell className="text-center px-2">
@@ -137,7 +76,6 @@ const UserTableRow: React.FC<UserTableRowProps> = ({
           currentRole={getUserModuleRole('users')}
           privileges={privileges}
           onRoleChange={handleRoleChange('users')}
-          isSuperAdmin={isSuperAdmin}
         />
       </TableCell>
       <TableCell className="text-center px-2">
@@ -145,7 +83,6 @@ const UserTableRow: React.FC<UserTableRowProps> = ({
           currentRole={getUserModuleRole('gallery')}
           privileges={privileges}
           onRoleChange={handleRoleChange('gallery')}
-          isSuperAdmin={isSuperAdmin}
         />
       </TableCell>
       <TableCell className="text-center px-2">
@@ -153,7 +90,6 @@ const UserTableRow: React.FC<UserTableRowProps> = ({
           currentRole={getUserModuleRole('cms')}
           privileges={privileges}
           onRoleChange={handleRoleChange('cms')}
-          isSuperAdmin={isSuperAdmin}
         />
       </TableCell>
     </TableRow>

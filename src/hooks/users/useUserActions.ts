@@ -1,3 +1,4 @@
+
 import { useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { User, UserPrivilege, ModuleType } from '@/types/user.types';
@@ -18,66 +19,19 @@ export const useUserActions = (
 ) => {
   const { toast } = useToast();
 
-  const handleUpdateRole = useCallback(async (userId: string, newRole: UserPrivilege) => {
+  const handleUpdateRole = useCallback((userId: string, newRole: UserPrivilege) => {
     setIsLoading(true);
     try {
-      // Check if it's a Super Admin role
-      if (newRole === 'Super Admin') {
-        try {
-          const response = await fetch(`https://92.112.184.210:7182/api/Authentication/AssignServiceRoleToUser/${userId}`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              role: 'SuperAdmin'
-            }),
-          });
-          
-          if (!response.ok) {
-            throw new Error('Failed to assign Super Admin role');
-          }
-          
-          // Update local state - set all modules to Super Admin
-          const updatedUser = {
-            ...users.find(u => u.id === userId),
-            moduleRoles: ['hotels', 'users', 'gallery', 'cms'].map(module => ({
-              moduleId: module as ModuleType,
-              role: 'Super Admin' as UserPrivilege
-            }))
-          } as User;
-          
-          setUsers(prev => prev.map(user => user.id === userId ? updatedUser : user));
-          
-          if (selectedUser?.id === userId) {
-            setSelectedUser(updatedUser);
-          }
-          
-          toast({
-            title: "Super Admin role assigned",
-            description: `User now has Super Admin privileges across all modules`,
-          });
-        } catch (error) {
-          console.error('Error assigning Super Admin role:', error);
-          toast({
-            title: "Error",
-            description: "Failed to assign Super Admin role",
-            variant: "destructive",
-          });
+      const updatedUser = updateUserRole(userId, newRole);
+      if (updatedUser) {
+        setUsers(prev => prev.map(user => user.id === userId ? updatedUser : user));
+        if (selectedUser?.id === userId) {
+          setSelectedUser(updatedUser);
         }
-      } else {
-        // Regular role update
-        const updatedUser = updateUserRole(userId, newRole);
-        if (updatedUser) {
-          setUsers(prev => prev.map(user => user.id === userId ? updatedUser : user));
-          if (selectedUser?.id === userId) {
-            setSelectedUser(updatedUser);
-          }
-          toast({
-            title: "Role updated",
-            description: `User's default role updated to ${newRole}`,
-          });
-        }
+        toast({
+          title: "Role updated",
+          description: `User's default role updated to ${newRole}`,
+        });
       }
     } catch (error) {
       toast({
@@ -88,16 +42,11 @@ export const useUserActions = (
     } finally {
       setIsLoading(false);
     }
-  }, [toast, selectedUser, setUsers, setSelectedUser, setIsLoading, users]);
+  }, [toast, selectedUser, setUsers, setSelectedUser, setIsLoading]);
 
-  const handleUpdateModuleRole = useCallback(async (userId: string, moduleId: ModuleType, newRole: UserPrivilege) => {
+  const handleUpdateModuleRole = useCallback((userId: string, moduleId: ModuleType, newRole: UserPrivilege) => {
     setIsLoading(true);
     try {
-      // If setting to Super Admin, use the special API endpoint
-      if (newRole === 'Super Admin') {
-        return handleUpdateRole(userId, newRole);
-      }
-      
       const updatedUser = updateUserModuleRole(userId, moduleId, newRole);
       if (updatedUser) {
         setUsers(prev => prev.map(user => user.id === userId ? updatedUser : user));
@@ -118,7 +67,7 @@ export const useUserActions = (
     } finally {
       setIsLoading(false);
     }
-  }, [toast, selectedUser, setUsers, setSelectedUser, setIsLoading, handleUpdateRole]);
+  }, [toast, selectedUser, setUsers, setSelectedUser, setIsLoading]);
 
   const handleToggleStatus = useCallback((userId: string) => {
     setIsLoading(true);
