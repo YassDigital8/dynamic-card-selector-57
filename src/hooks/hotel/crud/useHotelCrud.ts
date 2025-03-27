@@ -89,20 +89,24 @@ export const useHotelCrud = () => {
     console.log('Adding hotel with data:', hotelData);
     
     try {
-      const newHotel = await addMutation.mutateAsync(hotelData);
-      console.log('API response from adding hotel:', newHotel);
+      const result = await addMutation.mutateAsync(hotelData);
+      console.log('API response from adding hotel:', result);
       
       setIsLocalLoading(false);
       
-      if (!newHotel) {
-        return { success: false, error: 'Failed to add hotel' };
+      // Ensure we always return an object with success property
+      // and hotel property if successful
+      if (result) {
+        return {
+          success: true,
+          hotel: result
+        };
+      } else {
+        return { 
+          success: false, 
+          error: 'Failed to add hotel - no result returned from API'
+        };
       }
-      
-      // Return a response including the new hotel
-      return {
-        success: true,
-        hotel: newHotel
-      };
     } catch (error) {
       console.error('Error in addHotel:', error);
       setIsLocalLoading(false);
@@ -118,18 +122,22 @@ export const useHotelCrud = () => {
     setIsLocalLoading(true);
     
     try {
-      const updatedHotel = await updateMutation.mutateAsync({ id, data: hotelData });
+      const result = await updateMutation.mutateAsync({ id, data: hotelData });
       setIsLocalLoading(false);
       
-      if (!updatedHotel) {
-        return { success: false, error: 'Hotel not found or update failed' };
+      // Ensure we always return an object with success property
+      // and hotel property if successful
+      if (result) {
+        return {
+          success: true,
+          hotel: result
+        };
+      } else {
+        return { 
+          success: false, 
+          error: 'Hotel not found or update failed' 
+        };
       }
-      
-      // Return a response including the updated hotel
-      return {
-        success: true,
-        hotel: updatedHotel
-      };
     } catch (error) {
       console.error('Error in updateHotel:', error);
       setIsLocalLoading(false);
@@ -147,7 +155,7 @@ export const useHotelCrud = () => {
     try {
       const result = await deleteMutation.mutateAsync(id);
       setIsLocalLoading(false);
-      return { success: true, result };
+      return { success: result, result };
     } catch (error) {
       console.error('Error in deleteHotel:', error);
       setIsLocalLoading(false);
@@ -164,6 +172,7 @@ export const useHotelCrud = () => {
 
   return {
     hotels: isError ? defaultHotels : hotels,
+    allHotels: isError ? defaultHotels : hotels, // Added for consistency
     isLoading,
     addHotel,
     updateHotel,

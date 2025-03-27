@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft, Trash2, Building } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Hotel, HotelFormData } from '@/models/HotelModel';
-import { useHotelNetwork } from '@/hooks/hotel';
+import { useHotelNetwork } from '@/hooks/hotel/network';
 import HotelLoadingIndicator from '../HotelLoadingIndicator';
 import { HotelEditForm } from '../edit';
 import DeleteHotelDialog from '../DeleteHotelDialog';
@@ -66,7 +66,7 @@ const HotelEditPage: React.FC<HotelEditPageProps> = ({ hotelId }) => {
         });
         
         // Only update current hotel if we have a hotel property in the result
-        if (result.hotel) {
+        if ('hotel' in result && result.hotel) {
           setCurrentHotel(result.hotel);
         }
       } else {

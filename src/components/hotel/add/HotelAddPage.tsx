@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { HotelFormData } from '@/models/HotelModel';
-import { useHotelNetwork } from '@/hooks/hotel';
+import { useHotelNetwork } from '@/hooks/hotel/network';
 import { usePageSelectionViewModel } from '@/viewmodels/PageSelectionViewModel';
 import HotelForm from '../HotelForm';
 import HotelLoadingIndicator from '../HotelLoadingIndicator';
@@ -40,7 +40,7 @@ const HotelAddPage: React.FC = () => {
         });
 
         // Navigate to the hotel list or details page based on result
-        if (result.success && result.hotel) {
+        if (result.success && 'hotel' in result && result.hotel) {
           navigate(`/hotel/edit/${result.hotel.id}`);
         } else {
           navigate('/hotel'); // Fallback to hotel list

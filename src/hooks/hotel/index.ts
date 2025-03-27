@@ -1,14 +1,12 @@
 
-import useHotelNetwork from './useHotelNetwork';
+import { useHotelNetwork } from './network';
 import useHotelFilters from './useHotelFilters';
-import useHotelSelection from './useHotelSelection';
 import usePanelSizing from './usePanelSizing';
 import useHotelLoadingState from './useHotelLoadingState';
 
 export {
   useHotelNetwork,
   useHotelFilters,
-  useHotelSelection,
   usePanelSizing,
   useHotelLoadingState
 };
