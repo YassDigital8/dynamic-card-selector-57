@@ -33,17 +33,14 @@ const HotelAddPage: React.FC = () => {
       console.log("Hotel add result:", result);
       
       if (result && result.success) {
-        // Type guard to check if hotel property exists
-        const hotelName = result.hotel ? result.hotel.name : 'Hotel';
-        
         toast({
           title: "Hotel Added Successfully",
-          description: `${hotelName} has been added to your hotel network`,
+          description: "Your hotel has been added to the network",
           variant: "default"
         });
 
-        // Navigate to the hotel details page if we have a hotel id
-        if (result.hotel) {
+        // Navigate to the hotel list or details page based on result
+        if (result.success && result.hotel) {
           navigate(`/hotel/edit/${result.hotel.id}`);
         } else {
           navigate('/hotel'); // Fallback to hotel list
@@ -51,7 +48,7 @@ const HotelAddPage: React.FC = () => {
       } else {
         toast({
           title: "Error",
-          description: "Failed to add hotel. Please check the console for details.",
+          description: result?.error || "Failed to add hotel. Please try again.",
           variant: "destructive"
         });
       }

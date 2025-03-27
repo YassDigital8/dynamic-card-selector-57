@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Trash2, Building } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { HotelFormData } from '@/models/HotelModel';
+import { Hotel, HotelFormData } from '@/models/HotelModel';
 import { useHotelNetwork } from '@/hooks/hotel';
 import HotelLoadingIndicator from '../HotelLoadingIndicator';
 import { HotelEditForm } from '../edit';
@@ -29,7 +29,7 @@ const HotelEditPage: React.FC<HotelEditPageProps> = ({ hotelId }) => {
     deleteHotel 
   } = useHotelNetwork();
   
-  const [currentHotel, setCurrentHotel] = useState(
+  const [currentHotel, setCurrentHotel] = useState<Hotel | null>(
     allHotels.find(hotel => hotel.id === hotelId) || null
   );
 
@@ -55,45 +55,64 @@ const HotelEditPage: React.FC<HotelEditPageProps> = ({ hotelId }) => {
     if (!currentHotel) return;
     
     setIsSubmitting(true);
-    const result = updateHotel(currentHotel.id, data);
-    setIsSubmitting(false);
-    
-    if (result && result.success) {
-      toast({
-        title: "Hotel Updated",
-        description: "Your changes have been saved successfully.",
-        variant: "default",
-      });
+    try {
+      const result = await updateHotel(currentHotel.id, data);
       
-      // Only update current hotel if we have a hotel property in the result
-      if ('hotel' in result && result.hotel) {
-        setCurrentHotel(result.hotel);
+      if (result && result.success) {
+        toast({
+          title: "Hotel Updated",
+          description: "Your changes have been saved successfully.",
+          variant: "default",
+        });
+        
+        // Only update current hotel if we have a hotel property in the result
+        if (result.hotel) {
+          setCurrentHotel(result.hotel);
+        }
+      } else {
+        toast({
+          title: "Error",
+          description: result?.error || "Failed to update hotel. Please try again.",
+          variant: "destructive",
+        });
       }
-    } else {
+    } catch (error) {
+      console.error('Error updating hotel:', error);
       toast({
         title: "Error",
-        description: "Failed to update hotel. Please try again.",
+        description: error instanceof Error ? error.message : "An unexpected error occurred",
         variant: "destructive",
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!currentHotel) return;
     
-    const result = deleteHotel(currentHotel.id);
-    
-    if (result && result.success) {
-      toast({
-        title: "Hotel Deleted",
-        description: "Hotel has been deleted successfully.",
-        variant: "default",
-      });
-      navigate('/hotel');
-    } else {
+    try {
+      const result = await deleteHotel(currentHotel.id);
+      
+      if (result && result.success) {
+        toast({
+          title: "Hotel Deleted",
+          description: "Hotel has been deleted successfully.",
+          variant: "default",
+        });
+        navigate('/hotel');
+      } else {
+        toast({
+          title: "Error",
+          description: result?.error || "Failed to delete hotel. Please try again.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('Error deleting hotel:', error);
       toast({
         title: "Error",
-        description: "Failed to delete hotel. Please try again.",
+        description: error instanceof Error ? error.message : "An unexpected error occurred",
         variant: "destructive",
       });
     }
