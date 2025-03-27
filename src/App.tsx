@@ -1,4 +1,5 @@
-import React, { memo } from "react";
+
+import React, { memo, lazy, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -14,6 +15,9 @@ import HotelEdit from "./pages/HotelEdit";
 import HotelView from "./pages/HotelView";
 import Users from "./pages/Users";
 import useAuthentication from "./hooks/useAuthentication";
+
+// Lazy load the ComponentsShowcase page
+const ComponentsShowcase = lazy(() => import('./pages/ComponentsShowcase'));
 
 // Initialize theme from localStorage or default to light
 const initializeTheme = () => {
@@ -132,7 +136,11 @@ const App = () => {
             {/* New Components Showcase route */}
             <Route path="/components" element={
               <ProtectedRoute>
-                <React.lazy(() => import('./pages/ComponentsShowcase')) />
+                <Suspense fallback={<div className="flex h-screen w-screen items-center justify-center">
+                  <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+                </div>}>
+                  <ComponentsShowcase />
+                </Suspense>
               </ProtectedRoute>
             } />
             
