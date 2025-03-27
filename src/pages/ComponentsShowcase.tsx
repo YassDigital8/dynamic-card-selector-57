@@ -53,19 +53,19 @@ const ComponentsShowcase = () => {
         <div className="border rounded-md p-4">
           <SectionTitle title="Section Components" />
           
-          <div className="mb-8" onClick={() => showToast("AboutSection")} className="cursor-pointer">
+          <div className="mb-8 cursor-pointer" onClick={() => showToast("AboutSection")}>
             <AboutSection />
           </div>
           
-          <div className="mb-8" onClick={() => showToast("BenefitsSection")} className="cursor-pointer">
+          <div className="mb-8 cursor-pointer" onClick={() => showToast("BenefitsSection")}>
             <BenefitsSection />
           </div>
           
-          <div className="mb-8" onClick={() => showToast("ContactSection")} className="cursor-pointer">
+          <div className="mb-8 cursor-pointer" onClick={() => showToast("ContactSection")}>
             <ContactSection />
           </div>
           
-          <div onClick={() => showToast("NewsletterSection")} className="cursor-pointer">
+          <div className="cursor-pointer" onClick={() => showToast("NewsletterSection")}>
             <NewsletterSection />
           </div>
         </div>
@@ -74,7 +74,7 @@ const ComponentsShowcase = () => {
           <SectionTitle title="Card Components" />
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-            <div onClick={() => showToast("InfoCard")} className="cursor-pointer">
+            <div className="cursor-pointer" onClick={() => showToast("InfoCard")}>
               <InfoCard 
                 title="Our History"
                 description="Cham Wings Airlines has been made a milestone as the first private airline in Syria and has succeeded in building a remarkable experience."
@@ -82,7 +82,7 @@ const ComponentsShowcase = () => {
               />
             </div>
             
-            <div onClick={() => showToast("BenefitCard")} className="cursor-pointer">
+            <div className="cursor-pointer" onClick={() => showToast("BenefitCard")}>
               <BenefitCard 
                 title="Exclusive Benefits With The Loyalty Program"
                 imageSrc="/lovable-uploads/37575151-7391-42fc-ad6c-deea51f3e4b2.png"
@@ -94,7 +94,7 @@ const ComponentsShowcase = () => {
         <div className="border rounded-md p-4">
           <SectionTitle title="Common Components" />
           
-          <div className="mb-8" onClick={() => showToast("SectionTitle")} className="cursor-pointer">
+          <div className="mb-8 cursor-pointer" onClick={() => showToast("SectionTitle")}>
             <SectionTitle 
               title="This is a section title" 
               subtitle="With an optional subtitle that provides more context"
@@ -102,7 +102,7 @@ const ComponentsShowcase = () => {
             />
           </div>
           
-          <div onClick={() => showToast("LogoCloud")} className="cursor-pointer">
+          <div className="cursor-pointer" onClick={() => showToast("LogoCloud")}>
             <LogoCloud 
               title="Our Partners"
               logos={Array(6).fill({
@@ -116,7 +116,7 @@ const ComponentsShowcase = () => {
         <div className="border rounded-md p-4">
           <SectionTitle title="Footer Components" />
           
-          <div onClick={() => showToast("SiteFooter")} className="cursor-pointer">
+          <div className="cursor-pointer" onClick={() => showToast("SiteFooter")}>
             <SiteFooter />
           </div>
         </div>
