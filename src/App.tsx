@@ -129,6 +129,13 @@ const App = () => {
               </ProtectedRoute>
             } />
             
+            {/* New Components Showcase route */}
+            <Route path="/components" element={
+              <ProtectedRoute>
+                <React.lazy(() => import('./pages/ComponentsShowcase')) />
+              </ProtectedRoute>
+            } />
+            
             {/* Catch-all route - also protected */}
             <Route path="*" element={
               <ProtectedRoute>
