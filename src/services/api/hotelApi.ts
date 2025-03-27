@@ -1,4 +1,3 @@
-
 import { Hotel, HotelFormData } from '@/models/HotelModel';
 import { toast } from '@/hooks/use-toast';
 
@@ -261,30 +260,72 @@ const transformHotelToApiRequest = (hotel: HotelFormData): any => {
   
   // Add contact information if available
   if (hotel.contactDetails && hotel.contactDetails.length > 0) {
-    hotelRequest.contactInfo = hotel.contactDetails.map((contact, index) => ({
-      hotelId: 1, // This will be assigned by the server
-      category: 'contact',
-      contactType: contact.type,
-      isPrimary: index === 0, // First contact is primary
-      phoneNumber: contact.type === 'phone' ? contact.value : '',
-      email: contact.type === 'email' ? contact.value : '',
-      url: contact.type === 'website' ? contact.value : '',
-      responsiblePerson: contact.contactPerson || '',
-      responsiblePersonRole: contact.role || '',
-      displayLabel: contact.label || `Contact ${index + 1}`
-    }));
+    hotelRequest.contactInfo = hotel.contactDetails.map((contact, index) => {
+      // Create a base contact info object
+      const contactInfo: any = {
+        hotelId: 1, // This will be assigned by the server
+        category: 'contact',
+        contactType: contact.type,
+        isPrimary: index === 0, // First contact is primary
+        phoneNumber: '',
+        email: '',
+        url: '',
+        responsiblePerson: contact.personName || '',
+        responsiblePersonRole: contact.personRole || '',
+        displayLabel: `Contact ${index + 1}`
+      };
+      
+      // Set the appropriate field based on contact type
+      if (contact.type === 'phone' || contact.type === 'whatsapp') {
+        contactInfo.phoneNumber = contact.value;
+      } else if (contact.type === 'fax') {
+        contactInfo.phoneNumber = contact.value; // Using phoneNumber for fax as well
+      }
+      
+      return contactInfo;
+    });
+  }
+  
+  // Add social media as contacts if available
+  if (hotel.socialMedia && hotel.socialMedia.length > 0) {
+    const socialContacts = hotel.socialMedia.map((social, index) => {
+      const contactInfo: any = {
+        hotelId: 1,
+        category: 'socialMedia',
+        contactType: social.platform,
+        isPrimary: false,
+        phoneNumber: '',
+        email: '',
+        url: '',
+        responsiblePerson: '',
+        responsiblePersonRole: '',
+        displayLabel: social.label || `${social.platform} ${index + 1}`
+      };
+      
+      // Set the appropriate field based on platform
+      if (social.platform === 'email') {
+        contactInfo.email = social.url;
+      } else {
+        contactInfo.url = social.url;
+      }
+      
+      return contactInfo;
+    });
+    
+    // Add social media contacts to contactInfo array
+    hotelRequest.contactInfo = [...hotelRequest.contactInfo, ...socialContacts];
   }
   
   // Add room types if available
   if (hotel.roomTypes && hotel.roomTypes.length > 0) {
     hotelRequest.rooms = hotel.roomTypes.map(room => ({
       hotelId: 1, // This will be assigned by the server
-      category: room.category || 'single',
+      category: 'single', // Default to single since our model doesn't have category
       roomTypeName: room.name,
       description: room.description || '',
-      numberOfAdults: room.maxOccupancy?.adults || 2,
-      numberOfChildren: room.maxOccupancy?.children || 0,
-      price: room.rates?.defaultRate || 0
+      numberOfAdults: room.maxAdults || 2,
+      numberOfChildren: room.maxChildren || 0,
+      price: room.price || 0
     }));
   }
   
