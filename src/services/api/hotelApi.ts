@@ -1,3 +1,4 @@
+
 import { Hotel, HotelFormData } from '@/models/HotelModel';
 import { toast } from '@/hooks/use-toast';
 
@@ -62,12 +63,12 @@ const transformApiResponseToHotel = (apiHotel: any): Hotel => {
       parking: apiHotel.hasParking || false,
       spa: apiHotel.hasSPA || false,
       restaurant: apiHotel.hasRestaurant || false,
-      breakfast: false, // Not in API
+      breakfast: apiHotel.hasBreakfast || false,
       wifi: apiHotel.hasWifi || false,
       swimmingPool: apiHotel.hasPool || false,
       petsAllowed: apiHotel.arePetsAllowed || false,
-      shuttleBus: false, // Not in API
-      extraBed: false, // Not in API
+      shuttleBus: apiHotel.hasShuttle || false,
+      extraBed: apiHotel.hasExtraBed || false,
     },
     roomTypes: [],
     createdAt: new Date(),
@@ -78,6 +79,11 @@ const transformApiResponseToHotel = (apiHotel: any): Hotel => {
       platform: 'website',
       url: apiHotel.url || '',
     }],
+    extraBedPolicy: apiHotel.hasExtraBed && apiHotel.extraBedPrice ? {
+      pricePerNight: apiHotel.extraBedPrice,
+      availableForRoomTypes: [],
+      maxExtraBedsPerRoom: 1
+    } : undefined
   };
 };
 
@@ -106,13 +112,28 @@ export const createHotel = async (hotelData: HotelFormData): Promise<Hotel | nul
       body: JSON.stringify(apiHotel)
     });
     
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => null);
-      throw new Error(errorData?.message || `Failed to create hotel: ${response.status}`);
+    const responseText = await response.text();
+    console.log('API response text:', responseText);
+    
+    let responseData;
+    try {
+      responseData = responseText ? JSON.parse(responseText) : null;
+    } catch (e) {
+      console.error('Failed to parse API response:', e);
+      responseData = null;
     }
     
-    const hotel = await response.json();
-    return transformApiResponseToHotel(hotel);
+    if (!response.ok) {
+      throw new Error(responseData?.message || `Failed to create hotel: ${response.status}`);
+    }
+    
+    console.log('Hotel created successfully:', responseData);
+    
+    if (!responseData) {
+      throw new Error('No data returned from API');
+    }
+    
+    return transformApiResponseToHotel(responseData);
   } catch (error) {
     console.error('Error creating hotel:', error);
     toast({

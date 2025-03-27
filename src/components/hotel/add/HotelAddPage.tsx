@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
-import { ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { HotelFormData } from '@/models/HotelModel';
 import { useHotelNetwork } from '@/hooks/hotel';
@@ -29,11 +28,13 @@ const HotelAddPage: React.FC = () => {
       
       console.log("Submitting hotel data:", JSON.stringify(hotelWithPOS, null, 2));
       
-      const result = addHotel(hotelWithPOS);
+      const result = await addHotel(hotelWithPOS);
+      
+      console.log("Hotel add result:", result);
       
       if (result && result.success) {
         // Type guard to check if hotel property exists
-        const hotelName = 'hotel' in result && result.hotel ? result.hotel.name : 'Hotel';
+        const hotelName = result.hotel ? result.hotel.name : 'Hotel';
         
         toast({
           title: "Hotel Added Successfully",
@@ -42,7 +43,7 @@ const HotelAddPage: React.FC = () => {
         });
 
         // Navigate to the hotel details page if we have a hotel id
-        if ('hotel' in result && result.hotel) {
+        if (result.hotel) {
           navigate(`/hotel/edit/${result.hotel.id}`);
         } else {
           navigate('/hotel'); // Fallback to hotel list

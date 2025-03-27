@@ -39,7 +39,8 @@ export const useHotelCrud = () => {
   // Add hotel mutation
   const addMutation = useMutation({
     mutationFn: createHotel,
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log('Hotel added successfully:', data);
       queryClient.invalidateQueries({ queryKey: ['hotels'] });
       toast({
         title: "Success",
@@ -82,68 +83,79 @@ export const useHotelCrud = () => {
   });
   
   // Add hotel handler
-  const addHotel = useCallback((hotelData: HotelFormData) => {
+  const addHotel = useCallback(async (hotelData: HotelFormData) => {
     setIsLocalLoading(true);
     
     console.log('Adding hotel with data:', hotelData);
     
-    addMutation.mutate(hotelData, {
-      onSettled: () => {
-        setIsLocalLoading(false);
+    try {
+      const newHotel = await addMutation.mutateAsync(hotelData);
+      console.log('API response from adding hotel:', newHotel);
+      
+      setIsLocalLoading(false);
+      
+      if (!newHotel) {
+        return { success: false, error: 'Failed to add hotel' };
       }
-    });
-    
-    // Return a placeholder response - the UI will update when the query refreshes
-    return {
-      success: true,
-      hotel: {
-        ...hotelData,
-        id: 'temp-' + Date.now(),
-        createdAt: new Date(),
-        updatedAt: new Date()
-      } as Hotel
-    };
+      
+      // Return a response including the new hotel
+      return {
+        success: true,
+        hotel: newHotel
+      };
+    } catch (error) {
+      console.error('Error in addHotel:', error);
+      setIsLocalLoading(false);
+      return { 
+        success: false, 
+        error: error instanceof Error ? error.message : 'Unknown error occurred' 
+      };
+    }
   }, [addMutation]);
   
   // Update hotel handler
-  const updateHotel = useCallback((id: string, hotelData: HotelFormData) => {
+  const updateHotel = useCallback(async (id: string, hotelData: HotelFormData) => {
     setIsLocalLoading(true);
     
-    updateMutation.mutate({ id, data: hotelData }, {
-      onSettled: () => {
-        setIsLocalLoading(false);
+    try {
+      const updatedHotel = await updateMutation.mutateAsync({ id, data: hotelData });
+      setIsLocalLoading(false);
+      
+      if (!updatedHotel) {
+        return { success: false, error: 'Hotel not found or update failed' };
       }
-    });
-    
-    // Return a placeholder response - the UI will update when the query refreshes
-    const existingHotel = hotels.find(h => h.id === id);
-    if (!existingHotel) {
-      return { success: false, error: 'Hotel not found' };
+      
+      // Return a response including the updated hotel
+      return {
+        success: true,
+        hotel: updatedHotel
+      };
+    } catch (error) {
+      console.error('Error in updateHotel:', error);
+      setIsLocalLoading(false);
+      return { 
+        success: false, 
+        error: error instanceof Error ? error.message : 'Unknown error occurred' 
+      };
     }
-    
-    return {
-      success: true,
-      hotel: {
-        ...existingHotel,
-        ...hotelData,
-        id,
-        updatedAt: new Date()
-      }
-    };
-  }, [hotels, updateMutation]);
+  }, [updateMutation]);
   
   // Delete hotel handler
-  const deleteHotel = useCallback((id: string) => {
+  const deleteHotel = useCallback(async (id: string) => {
     setIsLocalLoading(true);
     
-    deleteMutation.mutate(id, {
-      onSettled: () => {
-        setIsLocalLoading(false);
-      }
-    });
-    
-    // Return a placeholder response - the UI will update when the query refreshes
-    return { success: true };
+    try {
+      const result = await deleteMutation.mutateAsync(id);
+      setIsLocalLoading(false);
+      return { success: true, result };
+    } catch (error) {
+      console.error('Error in deleteHotel:', error);
+      setIsLocalLoading(false);
+      return { 
+        success: false, 
+        error: error instanceof Error ? error.message : 'Unknown error occurred' 
+      };
+    }
   }, [deleteMutation]);
 
   // Combined loading state

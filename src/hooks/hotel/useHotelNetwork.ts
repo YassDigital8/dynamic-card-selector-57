@@ -1,11 +1,11 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Hotel, HotelFormData } from '@/models/HotelModel';
-import { useHotelCrud } from './useHotelCrud';
+import { useHotelCrud } from './crud';
 import { useRoomTypes } from './useRoomTypes';
 
 export const useHotelNetwork = (selectedPOS: string = '') => {
-  const { hotels, isLoading, addHotel, updateHotel, deleteHotel } = useHotelCrud();
+  const { hotels, isLoading, addHotel: addHotelCrud, updateHotel: updateHotelCrud, deleteHotel: deleteHotelCrud } = useHotelCrud();
   const { addRoomType, updateRoomType, deleteRoomType } = useRoomTypes();
   
   const [filteredHotels, setFilteredHotels] = useState<Hotel[]>([]);
@@ -58,9 +58,19 @@ export const useHotelNetwork = (selectedPOS: string = '') => {
   }, [selectedPOS, hotels, selectedHotel, isInitialized, isLoading]);
 
   // Handle hotel operations with updates to selected hotel
-  const handleAddHotel = useCallback((hotelData: HotelFormData) => {
+  const handleAddHotel = useCallback(async (hotelData: HotelFormData) => {
     try {
-      const result = addHotel(hotelData);
+      console.log('Starting hotel add process...', hotelData);
+      
+      // Add processing log to track the flow
+      console.log('Calling addHotelCrud with data:', {
+        ...hotelData,
+        posKey: hotelData.posKey || 'not set'
+      });
+      
+      const result = await addHotelCrud(hotelData);
+      
+      console.log('Add hotel result:', result);
       
       if (result.success && result.hotel) {
         // Select the newly added hotel
@@ -72,11 +82,11 @@ export const useHotelNetwork = (selectedPOS: string = '') => {
       console.error('Error adding hotel:', error);
       return { success: false, error };
     }
-  }, [addHotel]);
+  }, [addHotelCrud]);
 
-  const handleUpdateHotel = useCallback((id: string, hotelData: HotelFormData) => {
+  const handleUpdateHotel = useCallback(async (id: string, hotelData: HotelFormData) => {
     try {
-      const result = updateHotel(id, hotelData);
+      const result = await updateHotelCrud(id, hotelData);
       
       if (result.success && result.hotel) {
         // If we're updating the currently selected hotel, update that too
@@ -92,11 +102,11 @@ export const useHotelNetwork = (selectedPOS: string = '') => {
       setIsEditing(false);
       return { success: false, error };
     }
-  }, [updateHotel, selectedHotel]);
+  }, [updateHotelCrud, selectedHotel]);
 
-  const handleDeleteHotel = useCallback((id: string) => {
+  const handleDeleteHotel = useCallback(async (id: string) => {
     try {
-      const result = deleteHotel(id);
+      const result = await deleteHotelCrud(id);
       
       // If we're deleting the currently selected hotel, clear the selection
       if (result.success && selectedHotel && selectedHotel.id === id) {
@@ -108,7 +118,7 @@ export const useHotelNetwork = (selectedPOS: string = '') => {
       console.error('Error deleting hotel:', error);
       return { success: false, error };
     }
-  }, [deleteHotel, selectedHotel]);
+  }, [deleteHotelCrud, selectedHotel]);
 
   // Room type operations with the current hotel's room types
   const handleAddRoomType = useCallback((hotelId: string, roomTypeData: any) => {
