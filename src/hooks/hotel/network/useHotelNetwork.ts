@@ -26,7 +26,9 @@ export const useHotelNetwork = (selectedPOS: string = '') => {
   // Update selectedHotel after operations if needed
   const handleAddHotel = async (hotelData: HotelFormData) => {
     const result = await addHotel(hotelData);
-    if (result.success && result.hotel) {
+    
+    // Add type guard to safely check if hotel property exists
+    if (result.success && 'hotel' in result && result.hotel) {
       setSelectedHotel(result.hotel);
     }
     return result;
@@ -34,7 +36,9 @@ export const useHotelNetwork = (selectedPOS: string = '') => {
 
   const handleUpdateHotel = async (id: string, hotelData: HotelFormData) => {
     const result = await updateHotel(id, hotelData);
-    if (result.success && result.hotel) {
+    
+    // Add type guard to safely check if hotel property exists
+    if (result.success && 'hotel' in result && result.hotel) {
       // If we're updating the currently selected hotel, update that too
       if (selectedHotel && selectedHotel.id === id) {
         setSelectedHotel(result.hotel);
