@@ -45,6 +45,14 @@ export const useHotelCrud = () => {
         title: "Success",
         description: "Hotel added successfully",
       });
+    },
+    onError: (error) => {
+      console.error('Error in addMutation:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to add hotel",
+        variant: "destructive",
+      });
     }
   });
   
@@ -76,6 +84,8 @@ export const useHotelCrud = () => {
   // Add hotel handler
   const addHotel = useCallback((hotelData: HotelFormData) => {
     setIsLocalLoading(true);
+    
+    console.log('Adding hotel with data:', hotelData);
     
     addMutation.mutate(hotelData, {
       onSettled: () => {

@@ -96,6 +96,8 @@ export const createHotel = async (hotelData: HotelFormData): Promise<Hotel | nul
     // Transform our hotel model to match API expectations
     const apiHotel = transformHotelToApiRequest(hotelData);
     
+    console.log('Sending hotel data to API:', apiHotel);
+    
     const response = await fetch(`${API_BASE_URL}/Hotel`, {
       method: 'POST',
       headers: {
@@ -204,15 +206,19 @@ export const deleteHotel = async (id: string): Promise<boolean> => {
  * Transform our hotel model to match API expectations
  */
 const transformHotelToApiRequest = (hotel: HotelFormData): any => {
-  return {
+  // Start with standard hotel properties
+  const hotelRequest = {
     name: hotel.name,
-    country: hotel.country,
     pos: hotel.posKey,
+    country: hotel.country,
     governate: hotel.governorate,
+    streetAddress: hotel.streetAddress,
     url: hotel.socialMedia?.find(social => social.platform === 'website')?.url || '',
     logoUrl: hotel.logoUrl || '',
-    streetAddress: hotel.streetAddress,
+    status: 'open', // Default status
     rank: hotel.rating,
+    
+    // Amenities
     hasAirConditioning: hotel.amenities.airConditioning,
     hasBar: hotel.amenities.bar,
     hasGym: hotel.amenities.gym,
@@ -222,5 +228,67 @@ const transformHotelToApiRequest = (hotel: HotelFormData): any => {
     hasWifi: hotel.amenities.wifi,
     hasSPA: hotel.amenities.spa,
     arePetsAllowed: hotel.amenities.petsAllowed,
+    hasShuttle: hotel.amenities.shuttleBus,
+    hasBreakfast: hotel.amenities.breakfast,
+    hasExtraBed: hotel.amenities.extraBed,
+    extraBedPrice: hotel.extraBedPolicy?.pricePerNight || 0,
+    
+    // Default payment methods (can be updated when we have actual payment data)
+    cash: true,
+    creditCard: true,
+    debitCard: true,
+    bankTransfer: true,
+    payPal: false,
+    mobilePayment: false,
+    cryptoCurrency: false,
+    
+    // Bank account details - empty for now
+    accountName: '',
+    accountNumber: '',
+    bankName: '',
+    branchName: '',
+    swiftCode: '',
+    iban: '',
+    
+    // Additional info
+    additionalInfo: '',
+    
+    // Initialize empty arrays for gallery, contact info, and rooms
+    hotelGallery: [],
+    contactInfo: [],
+    rooms: []
   };
+  
+  // Add contact information if available
+  if (hotel.contactDetails && hotel.contactDetails.length > 0) {
+    hotelRequest.contactInfo = hotel.contactDetails.map((contact, index) => ({
+      hotelId: 1, // This will be assigned by the server
+      category: 'contact',
+      contactType: contact.type,
+      isPrimary: index === 0, // First contact is primary
+      phoneNumber: contact.type === 'phone' ? contact.value : '',
+      email: contact.type === 'email' ? contact.value : '',
+      url: contact.type === 'website' ? contact.value : '',
+      responsiblePerson: contact.contactPerson || '',
+      responsiblePersonRole: contact.role || '',
+      displayLabel: contact.label || `Contact ${index + 1}`
+    }));
+  }
+  
+  // Add room types if available
+  if (hotel.roomTypes && hotel.roomTypes.length > 0) {
+    hotelRequest.rooms = hotel.roomTypes.map(room => ({
+      hotelId: 1, // This will be assigned by the server
+      category: room.category || 'single',
+      roomTypeName: room.name,
+      description: room.description || '',
+      numberOfAdults: room.maxOccupancy?.adults || 2,
+      numberOfChildren: room.maxOccupancy?.children || 0,
+      price: room.rates?.defaultRate || 0
+    }));
+  }
+  
+  console.log('Transformed hotel data:', hotelRequest);
+  
+  return hotelRequest;
 };

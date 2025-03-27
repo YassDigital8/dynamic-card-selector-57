@@ -27,7 +27,8 @@ const HotelAddPage: React.FC = () => {
         posKey: selectedPOS === 'all' ? '' : selectedPOS
       };
       
-      console.log("Submitting hotel data:", hotelWithPOS);
+      console.log("Submitting hotel data:", JSON.stringify(hotelWithPOS, null, 2));
+      
       const result = addHotel(hotelWithPOS);
       
       if (result && result.success) {
@@ -49,7 +50,7 @@ const HotelAddPage: React.FC = () => {
       } else {
         toast({
           title: "Error",
-          description: "Failed to add hotel. Please try again.",
+          description: "Failed to add hotel. Please check the console for details.",
           variant: "destructive"
         });
       }
@@ -57,7 +58,7 @@ const HotelAddPage: React.FC = () => {
       console.error("Error submitting hotel:", error);
       toast({
         title: "Error",
-        description: "An unexpected error occurred. Please try again.",
+        description: error instanceof Error ? error.message : "An unexpected error occurred. Please try again.",
         variant: "destructive"
       });
     } finally {
