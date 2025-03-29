@@ -2,8 +2,8 @@
 import React from 'react';
 import { 
   Ticket, Drama, Music, Calendar, Star, Award, Trophy, 
-  MicOff, Mic, Camera, Health, Flag, Utensils, Car, Bell, 
-  Headphones, Film, Video, Gamepad
+  MicOff, Mic, Camera, Flag, Utensils, Car, Bell, 
+  Headphones, Film, Video, Gamepad, Heart
 } from 'lucide-react';
 import { EventType } from '@/models/EventModel';
 
@@ -59,7 +59,7 @@ const EventTypeIcon: React.FC<EventTypeIconProps> = ({
       case 'Gaming & Esports':
         return <Gamepad size={size} className={className} />;
       case 'Health and Wellness':
-        return <Health size={size} className={className} />;
+        return <Heart size={size} className={className} />;
       case 'Maritime Heritage':
         return <Flag size={size} className={className} />;
       default:
