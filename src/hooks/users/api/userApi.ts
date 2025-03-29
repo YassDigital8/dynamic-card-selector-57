@@ -1,7 +1,7 @@
-
 import { toast } from '@/hooks/use-toast';
 import { User, UserPrivilege } from '@/types/user.types';
 import { getAuthToken } from '@/services/api/config/apiConfig';
+import { createAuthHeaders } from '@/services/api/config/apiConfig';
 
 interface ApiUser {
   code: string;
@@ -117,21 +117,29 @@ export const fetchAllUsers = async () => {
     let token;
     try {
       token = getAuthToken();
+      console.log("Using auth token for user API request:", token.substring(0, 15) + "...");
     } catch (error) {
       console.error("Authentication token not found, using fallback data");
       throw new Error("Authentication token not found");
     }
 
+    // Using a common utility to create auth headers
+    const headers = createAuthHeaders();
+    console.log("Headers for user API request:", JSON.stringify(headers));
+
     const response = await fetch('https://92.112.184.210:7182/api/Authentication/get-all-users', {
       method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
+      headers,
     });
     
     if (!response.ok) {
-      throw new Error(`API error: ${response.status}`);
+      console.error(`API error: ${response.status} - ${response.statusText}`);
+      
+      // Try to get more information from the response
+      const errorText = await response.text();
+      console.error("API response:", errorText);
+      
+      throw new Error(`API error: ${response.status} - ${errorText}`);
     }
     
     const apiUsers: ApiUser[] = await response.json();

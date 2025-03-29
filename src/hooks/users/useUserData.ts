@@ -5,10 +5,12 @@ import { fetchAllUsers } from './api/userApi';
 import { useUserState } from './state/useUserState';
 import { getUserPrivileges, getModulePermissions } from './data/userPrivilegeData';
 import { mockUsers } from '@/services/users/mockData';
+import useAuthentication from '@/hooks/useAuthentication';
 
 export const useUserData = () => {
   const { users, setUsers, selectedUser, setSelectedUser, isLoading, setIsLoading } = useUserState();
   const { toast } = useToast();
+  const { authToken } = useAuthentication();
   
   const userPrivileges = getUserPrivileges();
   const modulePermissions = getModulePermissions();
@@ -16,6 +18,14 @@ export const useUserData = () => {
   const fetchUsers = useCallback(async () => {
     setIsLoading(true);
     try {
+      // Only attempt to fetch if there's an auth token
+      if (!authToken) {
+        console.log("No auth token available, using mock data");
+        setUsers(mockUsers);
+        return;
+      }
+
+      console.log("Attempting to fetch users with auth token");
       const mappedUsers = await fetchAllUsers();
       
       setUsers(mappedUsers);
@@ -35,7 +45,7 @@ export const useUserData = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [toast, setUsers, setIsLoading]);
+  }, [toast, setUsers, setIsLoading, authToken]);
 
   // Load users when component mounts
   useEffect(() => {
