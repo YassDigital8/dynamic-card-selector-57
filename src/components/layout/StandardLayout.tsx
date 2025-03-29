@@ -4,7 +4,7 @@ import { SidebarProvider, Sidebar, SidebarContent, SidebarHeader, SidebarFooter,
 import { Link, useLocation } from 'react-router-dom';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { Logo } from '@/components/ui/logo';
-import { LayoutDashboard, FileText, Image, Hotel, Users, Settings, HelpCircle, PlusCircle, ListFilter } from 'lucide-react';
+import { LayoutDashboard, FileText, Image, Hotel, Users, Settings, HelpCircle, PlusCircle, ListFilter, Ticket } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import LogoutButton from '@/components/auth/LogoutButton';
@@ -69,6 +69,11 @@ const StandardLayout: React.FC<StandardLayoutProps> = ({ children }) => {
           href: '/hotel/add'
         }
       ]
+    },
+    {
+      label: 'Events & Attractions',
+      icon: Ticket,
+      href: '/events'
     },
     { 
       label: 'Users', 

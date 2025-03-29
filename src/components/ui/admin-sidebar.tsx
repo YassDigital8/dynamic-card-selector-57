@@ -10,7 +10,8 @@ import {
   Settings,
   HelpCircle,
   PlusCircle,
-  ListFilter
+  ListFilter,
+  Ticket
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -56,6 +57,11 @@ const AdminSidebar: React.FC = () => {
           href: '/hotel/add'
         }
       ]
+    },
+    {
+      label: 'Events & Attractions',
+      icon: Ticket,
+      href: '/events'
     },
     { 
       label: 'Users', 
