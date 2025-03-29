@@ -24,13 +24,13 @@ export const useUserAddActions = (
         firstName: userData.firstName,
         lastName: userData.lastName,
         email: userData.email,
-        department: userData.department || "",
-        isActive: true
+        department: userData.department || ""
       };
       
       // Get auth headers using the common utility function
       const headers = createAuthHeaders();
       console.log(`Adding new user with headers:`, headers);
+      console.log(`Request data:`, JSON.stringify(requestData));
       
       const response = await fetch('https://92.112.184.210:7182/api/Authentication/AddNewUser', {
         method: 'POST',
@@ -38,14 +38,30 @@ export const useUserAddActions = (
         body: JSON.stringify(requestData),
       });
       
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error(`API error: ${response.status} - ${errorText}`);
-        throw new Error(`API error: ${response.status}`);
+      // Always get the response text regardless of status
+      const responseText = await response.text();
+      console.log(`API response (${response.status}):`, responseText);
+      
+      // Try to parse the response as JSON if possible
+      let responseData;
+      try {
+        responseData = JSON.parse(responseText);
+        console.log("Parsed response data:", responseData);
+      } catch (e) {
+        console.log("Response is not valid JSON");
+        responseData = { message: responseText };
       }
       
-      // Parse the response to check for specific error messages
-      const responseData = await response.json();
+      if (!response.ok) {
+        // Display specific error message in toast
+        toast({
+          title: `API Error (${response.status})`,
+          description: responseData.message || responseData.title || responseText.substring(0, 100),
+          variant: "destructive",
+        });
+        
+        return null;
+      }
       
       // Check if the API returned an error message about existing email
       if (responseData.message && responseData.message.includes("Email is already exist")) {
@@ -67,6 +83,12 @@ export const useUserAddActions = (
         return null;
       }
       
+      // Show success toast with response data
+      toast({
+        title: "User added",
+        description: `User successfully added with ${responseData?.userCode ? `ID: ${responseData.userCode}` : 'success'}`,
+      });
+      
       const fullUserData = {
         name: `${userData.firstName} ${userData.lastName}`,
         email: userData.email,
@@ -78,10 +100,6 @@ export const useUserAddActions = (
       const newUser = addUser(fullUserData);
       setUsers(prev => [...prev, newUser]);
       
-      toast({
-        title: "User added",
-        description: "New user has been successfully added",
-      });
       return newUser;
     } catch (error) {
       console.error("Error adding user:", error);
