@@ -9,8 +9,9 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { EventFormData, Event } from '@/models/EventModel';
+import { EventFormData, Event, EventType } from '@/models/EventModel';
 import { Save, X } from 'lucide-react';
+import { EventTypeIcon } from '@/components/events';
 
 // Create a schema for form validation
 const eventFormSchema = z.object({
@@ -24,6 +25,7 @@ const eventFormSchema = z.object({
   }),
   image: z.string().min(5, { message: "Image URL is required" }),
   category: z.string().min(2, { message: "Category is required" }),
+  eventType: z.string().optional(),
   rating: z.number().min(0).max(5),
   featured: z.boolean().optional(),
 });
@@ -52,6 +54,7 @@ const EventForm: React.FC<EventFormProps> = ({ initialData, onSubmit, onCancel, 
       },
       image: "/lovable-uploads/37575151-7391-42fc-ad6c-deea51f3e4b2.png",
       category: "",
+      eventType: undefined,
       rating: 4.5,
       featured: false,
     }
@@ -67,6 +70,36 @@ const EventForm: React.FC<EventFormProps> = ({ initialData, onSubmit, onCancel, 
     "Music",
     "Sports",
     "Exhibition"
+  ];
+
+  // Event types from our model
+  const eventTypes: EventType[] = [
+    'Shows and Theatrical Plays',
+    'Concerts',
+    'Nightlife',
+    'Comedy Events',
+    'Festivals',
+    'Arabic Events',
+    'Sports Events',
+    'Classical Events',
+    'Business Events',
+    'Instagrammable Places',
+    'Eid Events',
+    'Dining Experiences',
+    'Exhibitions',
+    'Art Events',
+    'Ramadan',
+    'Automotive',
+    'Brunches',
+    'Seminars',
+    'Conferences',
+    'Evening Tours',
+    'New Year Events',
+    'Night Tours',
+    'Morning Tours',
+    'Gaming & Esports',
+    'Health and Wellness',
+    'Maritime Heritage'
   ];
 
   return (
@@ -152,6 +185,37 @@ const EventForm: React.FC<EventFormProps> = ({ initialData, onSubmit, onCancel, 
                 )}
               />
             </div>
+
+            <FormField
+              control={form.control}
+              name="eventType"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Event Type</FormLabel>
+                  <Select 
+                    onValueChange={field.onChange} 
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select an event type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent className="max-h-[300px]">
+                      {eventTypes.map(type => (
+                        <SelectItem key={type} value={type} className="flex items-center gap-2">
+                          <div className="flex items-center gap-2">
+                            <EventTypeIcon eventType={type as EventType} className="text-muted-foreground" />
+                            <span>{type}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <FormField
               control={form.control}

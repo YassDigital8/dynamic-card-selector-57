@@ -14,6 +14,7 @@ export const demoEvents: Event[] = [
     },
     image: "/lovable-uploads/37575151-7391-42fc-ad6c-deea51f3e4b2.png",
     category: "Shopping",
+    eventType: "Festivals",
     rating: 4.8,
     featured: true,
     contactDetails: [
@@ -53,6 +54,7 @@ export const demoEvents: Event[] = [
     },
     image: "/lovable-uploads/37575151-7391-42fc-ad6c-deea51f3e4b2.png",
     category: "Cultural",
+    eventType: "Arabic Events",
     rating: 4.7,
     contactDetails: [
       {
@@ -97,6 +99,7 @@ export const demoEvents: Event[] = [
     },
     image: "/lovable-uploads/37575151-7391-42fc-ad6c-deea51f3e4b2.png",
     category: "Attraction",
+    eventType: "Morning Tours",
     rating: 4.9,
     featured: true,
     contactDetails: [
@@ -143,6 +146,7 @@ export const demoEvents: Event[] = [
     },
     image: "/lovable-uploads/37575151-7391-42fc-ad6c-deea51f3e4b2.png",
     category: "Adventure",
+    eventType: "Evening Tours",
     rating: 4.6,
     contactDetails: [
       {
@@ -175,5 +179,94 @@ export const demoEvents: Event[] = [
     ],
     createdAt: new Date("2023-09-15"),
     updatedAt: new Date("2024-02-01")
+  },
+  {
+    id: "5",
+    title: "Dubai Opera: La Traviata",
+    description: "Experience Verdi's masterpiece performed by the Royal Opera House company.",
+    date: "Apr 15 - Apr 20, 2024",
+    location: {
+      address: "Dubai Opera, Downtown Dubai",
+      city: "Dubai",
+      country: "UAE",
+    },
+    image: "/lovable-uploads/37575151-7391-42fc-ad6c-deea51f3e4b2.png",
+    category: "Cultural",
+    eventType: "Shows and Theatrical Plays",
+    rating: 4.9,
+    featured: true,
+    contactDetails: [
+      {
+        id: "c8",
+        type: "phone",
+        value: "+971 4 440 8888",
+        isPrimary: true
+      },
+      {
+        id: "c9",
+        type: "website",
+        value: "https://www.dubaiopera.com",
+      }
+    ],
+    ticketInfo: [
+      {
+        id: "t8",
+        name: "Orchestra",
+        price: 750,
+        description: "Best seats in the house",
+        available: true
+      },
+      {
+        id: "t9",
+        name: "Balcony",
+        price: 350,
+        description: "Upper level seating",
+        available: true
+      }
+    ],
+    createdAt: new Date("2024-01-10"),
+    updatedAt: new Date("2024-01-10")
+  },
+  {
+    id: "6",
+    title: "Coldplay World Tour: Dubai",
+    description: "Coldplay brings their Music of the Spheres World Tour to Dubai for an unforgettable experience.",
+    date: "May 5 - May 6, 2024",
+    location: {
+      address: "Coca-Cola Arena",
+      city: "Dubai",
+      country: "UAE",
+    },
+    image: "/lovable-uploads/37575151-7391-42fc-ad6c-deea51f3e4b2.png",
+    category: "Music",
+    eventType: "Concerts",
+    rating: 4.8,
+    featured: true,
+    contactDetails: [
+      {
+        id: "c10",
+        type: "website",
+        value: "https://www.coca-cola-arena.com",
+        isPrimary: true
+      }
+    ],
+    ticketInfo: [
+      {
+        id: "t10",
+        name: "Golden Circle",
+        price: 1200,
+        description: "Front stage standing",
+        available: false
+      },
+      {
+        id: "t11",
+        name: "Regular Standing",
+        price: 595,
+        description: "General admission",
+        available: true
+      }
+    ],
+    createdAt: new Date("2024-02-10"),
+    updatedAt: new Date("2024-02-15")
   }
 ];

@@ -6,6 +6,7 @@ import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, MapPin, Star, Ticket, Phone, Globe, Mail, ArrowLeft, Edit } from 'lucide-react';
 import { Event } from '@/models/EventModel';
+import { EventTypeIcon } from '@/components/events';
 
 interface EventDetailsProps {
   event: Event;
@@ -35,7 +36,15 @@ const EventDetails: React.FC<EventDetailsProps> = ({ event, onBack, onEdit }) =>
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-6">
-            <Badge className="w-fit mb-2">{event.category}</Badge>
+            <div className="flex flex-wrap gap-2 mb-2">
+              <Badge className="w-fit">{event.category}</Badge>
+              {event.eventType && (
+                <Badge variant="secondary" className="w-fit flex items-center gap-1.5">
+                  <EventTypeIcon eventType={event.eventType} size={14} />
+                  <span>{event.eventType}</span>
+                </Badge>
+              )}
+            </div>
             <h1 className="text-2xl font-bold text-white">{event.title}</h1>
             <div className="flex items-center gap-2 text-white mt-1">
               <Star className="h-4 w-4 fill-yellow-500 text-yellow-500" />

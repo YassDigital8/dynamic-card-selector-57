@@ -36,6 +36,34 @@ export interface TicketInfo {
   available: boolean;
 }
 
+export type EventType = 
+  | 'Shows and Theatrical Plays'
+  | 'Concerts'
+  | 'Nightlife'
+  | 'Comedy Events'
+  | 'Festivals'
+  | 'Arabic Events'
+  | 'Sports Events'
+  | 'Classical Events'
+  | 'Business Events'
+  | 'Instagrammable Places'
+  | 'Eid Events'
+  | 'Dining Experiences'
+  | 'Exhibitions'
+  | 'Art Events'
+  | 'Ramadan'
+  | 'Automotive'
+  | 'Brunches'
+  | 'Seminars'
+  | 'Conferences'
+  | 'Evening Tours'
+  | 'New Year Events'
+  | 'Night Tours'
+  | 'Morning Tours'
+  | 'Gaming & Esports'
+  | 'Health and Wellness'
+  | 'Maritime Heritage';
+
 export interface Event {
   id: string;
   title: string;
@@ -45,6 +73,7 @@ export interface Event {
   image: string;
   images?: EventImage[];
   category: string;
+  eventType?: EventType;
   rating: number;
   featured?: boolean;
   contactDetails?: EventContact[];

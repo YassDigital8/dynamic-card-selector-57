@@ -2,9 +2,10 @@
 import React from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Calendar, MapPin, Ticket, Star, ArrowUpRight, Edit, Trash2 } from 'lucide-react';
+import { Calendar, MapPin, Ticket, Star, Edit, Trash2 } from 'lucide-react';
 import { Event } from '@/models/EventModel';
 import { motion } from 'framer-motion';
+import { EventTypeIcon } from '@/components/events';
 
 interface EventCardProps {
   event: Event;
@@ -35,6 +36,12 @@ const EventCard: React.FC<EventCardProps> = ({ event, onSelect, onEdit, onDelete
           {event.featured && (
             <div className="absolute top-3 left-3 bg-amber-500 text-white py-1 px-2 rounded text-xs font-medium">
               Featured
+            </div>
+          )}
+          {event.eventType && (
+            <div className="absolute bottom-3 left-3 bg-primary/80 text-white py-1 px-2 rounded-full text-xs font-medium flex items-center gap-1.5">
+              <EventTypeIcon eventType={event.eventType} className="text-white" size={14} />
+              <span>{event.eventType}</span>
             </div>
           )}
         </div>
