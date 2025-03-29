@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { User, UserPrivilege, ModuleType } from '@/types/user.types';
 import { updateUserRole, updateUserModuleRole } from '@/services/userService';
+import { createAuthHeaders } from '@/services/api/config/apiConfig';
 
 export const useRoleActions = (
   users: User[],
@@ -57,16 +58,20 @@ export const useRoleActions = (
       // Format the request body as "ServiceName-Role" (e.g. "CMS-Admin")
       const roleBody = `${serviceName}-${newRole}`;
       
+      // Get auth headers using the common utility function
+      const headers = createAuthHeaders();
+      console.log(`Updating role for user ${userId} to ${roleBody} with headers:`, headers);
+      
       // Make the API call to update the module-specific role
       const response = await fetch(`https://92.112.184.210:7182/api/Authentication/AssignServiceRoleToUser/${userId}`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers,
         body: JSON.stringify(roleBody),
       });
       
       if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`API error: ${response.status} - ${errorText}`);
         throw new Error(`API error: ${response.status}`);
       }
       

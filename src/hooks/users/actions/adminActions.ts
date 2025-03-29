@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { User, UserPrivilege } from '@/types/user.types';
 import { updateUserRole } from '@/services/userService';
+import { createAuthHeaders } from '@/services/api/config/apiConfig';
 
 export const useAdminActions = (
   users: User[],
@@ -16,16 +17,20 @@ export const useAdminActions = (
   const handlePromoteToSuperAdmin = useCallback(async (userId: string) => {
     setIsLoading(true);
     try {
+      // Get auth headers using the common utility function
+      const headers = createAuthHeaders();
+      console.log(`Promoting user ${userId} to SuperAdmin with headers:`, headers);
+      
       // Make the API call to promote user to SuperAdmin with the required body
       const response = await fetch(`https://92.112.184.210:7182/api/Authentication/AssignServiceRoleToUser/${userId}`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers,
         body: JSON.stringify("SuperAdmin"), // Send "SuperAdmin" as the request body
       });
       
       if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`API error: ${response.status} - ${errorText}`);
         throw new Error(`API error: ${response.status}`);
       }
       
