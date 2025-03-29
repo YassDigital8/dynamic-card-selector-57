@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { User } from '@/types/user.types';
 import { addUser } from '@/services/userService';
+import { createAuthHeaders } from '@/services/api/config/apiConfig';
 
 export const useUserAddActions = (
   setUsers: React.Dispatch<React.SetStateAction<User[]>>,
@@ -27,11 +28,13 @@ export const useUserAddActions = (
         isActive: true
       };
       
+      // Get auth headers using the common utility function
+      const headers = createAuthHeaders();
+      console.log(`Adding new user with headers:`, headers);
+      
       const response = await fetch('https://92.112.184.210:7182/api/Authentication/AddNewUser', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers,
         body: JSON.stringify(requestData),
       });
       
