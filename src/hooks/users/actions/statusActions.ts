@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { User } from '@/types/user.types';
 import { deleteUser } from '@/services/userService';
+import { createAuthHeaders } from '@/services/api/config/apiConfig';
 
 export const useStatusActions = (
   users: User[],
@@ -22,15 +23,19 @@ export const useStatusActions = (
         throw new Error("User not found");
       }
       
-      // Make API call to change user status
+      // Get auth headers using the common utility function
+      const headers = createAuthHeaders();
+      console.log(`Toggling status for user ${userId} with headers:`, headers);
+      
+      // Make API call to change user status with proper authentication
       const response = await fetch(`https://92.112.184.210:7182/api/Authentication/ChangeUserAccountStatus/${userId}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers,
       });
       
       if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`API error: ${response.status} - ${errorText}`);
         throw new Error(`API error: ${response.status}`);
       }
       
