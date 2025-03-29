@@ -1,53 +1,207 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import StandardLayout from '@/components/layout/StandardLayout';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Calendar, MapPin, Ticket, Star, ArrowUpRight } from 'lucide-react';
+import { PlusCircle, Search } from 'lucide-react';
+import { useEventsAttractions } from '@/hooks/events/useEventsAttractions';
+import EventCard from '@/components/events/EventCard';
+import EventForm from '@/components/events/EventForm';
+import EventDetails from '@/components/events/EventDetails';
+import DeleteEventDialog from '@/components/events/DeleteEventDialog';
+import { Input } from '@/components/ui/input';
+import { Event, EventFormData } from '@/models/EventModel';
+import { motion } from 'framer-motion';
 
 const EventsAttractions = () => {
-  const demoEvents = [
-    {
-      id: 1,
-      title: "Dubai Shopping Festival",
-      description: "Annual event featuring discounts, entertainment, and activities across Dubai.",
-      date: "Jan 15 - Feb 29, 2024",
-      location: "Dubai, UAE",
-      image: "/lovable-uploads/37575151-7391-42fc-ad6c-deea51f3e4b2.png",
-      category: "Shopping",
-      rating: 4.8
-    },
-    {
-      id: 2,
-      title: "Syrian Cultural Festival",
-      description: "A celebration of Syrian culture, cuisine, music and traditions.",
-      date: "Mar 10 - Mar 15, 2024",
-      location: "Damascus, Syria",
-      image: "/lovable-uploads/37575151-7391-42fc-ad6c-deea51f3e4b2.png",
-      category: "Cultural",
-      rating: 4.7
-    },
-    {
-      id: 3,
-      title: "Burj Khalifa Tour",
-      description: "Visit the world's tallest building with panoramic views of Dubai.",
-      date: "Available daily",
-      location: "Dubai, UAE",
-      image: "/lovable-uploads/37575151-7391-42fc-ad6c-deea51f3e4b2.png",
-      category: "Attraction",
-      rating: 4.9
-    },
-    {
-      id: 4,
-      title: "Desert Safari Adventure",
-      description: "Experience dune bashing, camel riding and traditional entertainment.",
-      date: "Available daily",
-      location: "Dubai Desert, UAE",
-      image: "/lovable-uploads/37575151-7391-42fc-ad6c-deea51f3e4b2.png",
-      category: "Adventure",
-      rating: 4.6
+  const {
+    events,
+    selectedEvent,
+    isLoading,
+    isEditing,
+    setSelectedEvent,
+    setIsEditing,
+    addEvent,
+    updateEvent,
+    deleteEvent
+  } = useEventsAttractions();
+
+  const [showAddForm, setShowAddForm] = useState<boolean>(false);
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [eventToDelete, setEventToDelete] = useState<Event | null>(null);
+
+  // Handle search
+  const filteredEvents = events.filter(event => 
+    event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    event.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    event.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    event.location.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    event.location.country.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  // Handle form submission for adding a new event
+  const handleAddSubmit = async (data: EventFormData) => {
+    const result = await addEvent(data);
+    if (result.success && 'event' in result) {
+      setShowAddForm(false);
+      setSelectedEvent(result.event);
     }
-  ];
+  };
+
+  // Handle form submission for editing an event
+  const handleEditSubmit = async (data: EventFormData) => {
+    if (selectedEvent) {
+      const result = await updateEvent(selectedEvent.id, data);
+      if (result.success && 'event' in result) {
+        setIsEditing(false);
+        setSelectedEvent(result.event);
+      }
+    }
+  };
+
+  // Handle event deletion
+  const handleDelete = (id: string) => {
+    const event = events.find(e => e.id === id);
+    if (event) {
+      setEventToDelete(event);
+    }
+  };
+
+  const confirmDelete = async () => {
+    if (eventToDelete) {
+      const result = await deleteEvent(eventToDelete.id);
+      if (result.success) {
+        if (selectedEvent && selectedEvent.id === eventToDelete.id) {
+          setSelectedEvent(null);
+        }
+        setEventToDelete(null);
+      }
+    }
+  };
+
+  const handleSelectEvent = (event: Event) => {
+    setSelectedEvent(event);
+    setShowAddForm(false);
+    setIsEditing(false);
+  };
+
+  const handleStartEdit = (event: Event) => {
+    setSelectedEvent(event);
+    setIsEditing(true);
+    setShowAddForm(false);
+  };
+
+  const handleAddNewClick = () => {
+    setShowAddForm(true);
+    setSelectedEvent(null);
+    setIsEditing(false);
+  };
+
+  const handleBackToList = () => {
+    setSelectedEvent(null);
+    setShowAddForm(false);
+    setIsEditing(false);
+  };
+
+  // Render content based on current state
+  const renderContent = () => {
+    if (showAddForm) {
+      return (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.3 }}
+        >
+          <EventForm 
+            onSubmit={handleAddSubmit} 
+            onCancel={handleBackToList} 
+            isLoading={isLoading} 
+          />
+        </motion.div>
+      );
+    }
+
+    if (selectedEvent) {
+      if (isEditing) {
+        return (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            <EventForm 
+              initialData={selectedEvent} 
+              onSubmit={handleEditSubmit} 
+              onCancel={() => setIsEditing(false)} 
+              isLoading={isLoading} 
+            />
+          </motion.div>
+        );
+      }
+
+      return (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.3 }}
+        >
+          <EventDetails 
+            event={selectedEvent} 
+            onBack={handleBackToList}
+            onEdit={handleStartEdit}
+          />
+        </motion.div>
+      );
+    }
+
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3 }}
+        className="space-y-6"
+      >
+        <div className="flex flex-col sm:flex-row justify-between gap-4">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+            <Input
+              placeholder="Search events..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9 w-full"
+            />
+          </div>
+          <Button onClick={handleAddNewClick} className="gap-1 whitespace-nowrap">
+            <PlusCircle className="h-4 w-4" />
+            Add New Event
+          </Button>
+        </div>
+
+        {filteredEvents.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            {filteredEvents.map((event) => (
+              <EventCard
+                key={event.id}
+                event={event}
+                onSelect={handleSelectEvent}
+                onEdit={handleStartEdit}
+                onDelete={handleDelete}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-12 border border-dashed rounded-lg">
+            <h3 className="text-lg font-medium">No events found</h3>
+            <p className="text-muted-foreground mt-1">
+              {searchQuery ? 'Try a different search term' : 'Add your first event to get started'}
+            </p>
+          </div>
+        )}
+      </motion.div>
+    );
+  };
 
   return (
     <StandardLayout>
@@ -59,59 +213,14 @@ const EventsAttractions = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          {demoEvents.map((event) => (
-            <Card key={event.id} className="overflow-hidden hover:shadow-md transition-shadow">
-              <div className="aspect-video relative overflow-hidden">
-                <img 
-                  src={event.image} 
-                  alt={event.title}
-                  className="w-full h-full object-cover transition-transform hover:scale-105 duration-300"
-                />
-                <div className="absolute top-3 right-3 bg-black/70 text-white py-1 px-2 rounded text-xs font-medium">
-                  {event.category}
-                </div>
-              </div>
-              
-              <CardHeader className="pb-2">
-                <CardTitle className="text-xl">{event.title}</CardTitle>
-                <CardDescription className="flex items-center gap-1 text-sm">
-                  <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" />
-                  <span>{event.rating} rating</span>
-                </CardDescription>
-              </CardHeader>
-              
-              <CardContent className="space-y-2 pb-2">
-                <p className="text-sm text-muted-foreground">{event.description}</p>
-                <div className="flex flex-col gap-1 text-sm">
-                  <div className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4 text-muted-foreground" />
-                    <span>{event.date}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <MapPin className="h-4 w-4 text-muted-foreground" />
-                    <span>{event.location}</span>
-                  </div>
-                </div>
-              </CardContent>
-              
-              <CardFooter className="flex justify-between">
-                <Button variant="outline" size="sm" className="gap-1">
-                  <Ticket className="h-4 w-4" />
-                  Book Now
-                </Button>
-                <Button variant="ghost" size="sm" className="gap-1">
-                  Details
-                  <ArrowUpRight className="h-4 w-4" />
-                </Button>
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
+        {renderContent()}
 
-        <Button className="mt-4">
-          Add New Event
-        </Button>
+        <DeleteEventDialog
+          event={eventToDelete}
+          isOpen={!!eventToDelete}
+          onClose={() => setEventToDelete(null)}
+          onConfirm={confirmDelete}
+        />
       </div>
     </StandardLayout>
   );
