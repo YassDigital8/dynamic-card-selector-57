@@ -4,7 +4,7 @@ import { SidebarProvider, Sidebar, SidebarContent, SidebarHeader, SidebarFooter,
 import { Link, useLocation } from 'react-router-dom';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { Logo } from '@/components/ui/logo';
-import { LayoutDashboard, FileText, Image, Hotel, Users, Settings, HelpCircle, PlusCircle, ListFilter, Ticket } from 'lucide-react';
+import { LayoutDashboard, FileText, Image, Hotel, Users, Settings, HelpCircle, Ticket } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import LogoutButton from '@/components/auth/LogoutButton';
@@ -56,19 +56,7 @@ const StandardLayout: React.FC<StandardLayoutProps> = ({ children }) => {
     { 
       label: 'Hotel Network', 
       icon: Hotel, 
-      href: '/hotel',
-      subItems: [
-        {
-          label: 'All Hotels',
-          icon: ListFilter,
-          href: '/hotel'
-        },
-        {
-          label: 'Add New Hotel',
-          icon: PlusCircle,
-          href: '/hotel/add'
-        }
-      ]
+      href: '/hotel'
     },
     {
       label: 'Events & Attractions',
@@ -109,41 +97,18 @@ const StandardLayout: React.FC<StandardLayoutProps> = ({ children }) => {
               <SidebarGroupContent>
                 <SidebarMenu>
                   {navItems.map((item) => (
-                    <React.Fragment key={item.label}>
-                      <SidebarMenuItem>
-                        <Link to={item.href} className="w-full">
-                          <SidebarMenuButton 
-                            isActive={isActive(item.href)} 
-                            tooltip={item.label} 
-                            size={isMobile ? "sm" : "default"}
-                          >
-                            <item.icon className="h-3.5 w-3.5 md:h-4 md:w-4" />
-                            <span className="text-xs md:text-sm">{item.label}</span>
-                          </SidebarMenuButton>
-                        </Link>
-                      </SidebarMenuItem>
-                      
-                      {/* Show subitems if expanded and there are subitems */}
-                      {item.subItems && isActive(item.href) && (
-                        <div className="ml-6 mt-1 space-y-1">
-                          {item.subItems.map((subItem) => (
-                            <Link
-                              key={subItem.label}
-                              to={subItem.href}
-                              className={cn(
-                                "flex items-center px-3 py-1.5 rounded-md text-xs group",
-                                location.pathname === subItem.href
-                                  ? "bg-accent/80 text-accent-foreground font-medium"
-                                  : "hover:bg-accent/30 text-sidebar-foreground"
-                              )}
-                            >
-                              <subItem.icon className="mr-2 h-3.5 w-3.5" />
-                              {subItem.label}
-                            </Link>
-                          ))}
-                        </div>
-                      )}
-                    </React.Fragment>
+                    <SidebarMenuItem key={item.label}>
+                      <Link to={item.href} className="w-full">
+                        <SidebarMenuButton 
+                          isActive={isActive(item.href)} 
+                          tooltip={item.label} 
+                          size={isMobile ? "sm" : "default"}
+                        >
+                          <item.icon className="h-3.5 w-3.5 md:h-4 md:w-4" />
+                          <span className="text-xs md:text-sm">{item.label}</span>
+                        </SidebarMenuButton>
+                      </Link>
+                    </SidebarMenuItem>
                   ))}
                 </SidebarMenu>
               </SidebarGroupContent>
