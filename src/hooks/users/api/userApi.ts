@@ -1,6 +1,7 @@
 
 import { toast } from '@/hooks/use-toast';
 import { User, UserPrivilege } from '@/types/user.types';
+import { getAuthToken } from '@/services/api/config/apiConfig';
 
 interface ApiUser {
   code: string;
@@ -112,10 +113,20 @@ export const mapApiUserToUser = (apiUser: ApiUser): User => {
 
 export const fetchAllUsers = async () => {
   try {
+    // Get auth token from config utility
+    let token;
+    try {
+      token = getAuthToken();
+    } catch (error) {
+      console.error("Authentication token not found, using fallback data");
+      throw new Error("Authentication token not found");
+    }
+
     const response = await fetch('https://92.112.184.210:7182/api/Authentication/get-all-users', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
       },
     });
     
