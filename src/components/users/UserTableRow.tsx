@@ -2,7 +2,7 @@
 import React from 'react';
 import { format } from 'date-fns';
 import { TableRow, TableCell } from '@/components/ui/table';
-import { User as UserIcon } from 'lucide-react';
+import { User as UserIcon, Crown } from 'lucide-react';
 import { User, UserPrivilege, ModuleType } from '@/types/user.types';
 import UserStatusBadge from './UserStatusBadge';
 import UserModuleRoleSelect from './UserModuleRoleSelect';
@@ -33,6 +33,7 @@ const UserTableRow: React.FC<UserTableRowProps> = ({
   onDeleteUser
 }) => {
   const isMobile = useIsMobile();
+  const isSuperAdmin = user.role === 'SuperAdmin';
   
   // Helper function to get user's role for a specific module
   const getUserModuleRole = (moduleId: ModuleType): UserPrivilege => {
@@ -76,7 +77,11 @@ const UserTableRow: React.FC<UserTableRowProps> = ({
     >
       <TableCell>
         <div className="flex justify-center items-center">
-          <UserIcon className="h-4 w-4" />
+          {isSuperAdmin ? (
+            <Crown className="h-4 w-4 text-amber-500" />
+          ) : (
+            <UserIcon className="h-4 w-4" />
+          )}
         </div>
       </TableCell>
       <TableCell className="font-medium">
