@@ -10,6 +10,7 @@ import { User, UserPrivilege, ModuleType } from '@/types/user.types';
 import UsersTableHeader from './UsersTableHeader';
 import UserTableRow from './UserTableRow';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface UsersTableProps {
   users: User[];
@@ -40,41 +41,43 @@ const UsersTable: React.FC<UsersTableProps> = ({
   
   return (
     <div className="rounded-md border w-full overflow-hidden">
-      <div className="overflow-x-auto">
-        <Table className="w-full">
-          <UsersTableHeader />
-          <TableBody>
-            {isLoading ? (
-              <TableRow>
-                <TableCell colSpan={isMobile ? 5 : 7} className="h-24 text-center">
-                  Loading users...
-                </TableCell>
-              </TableRow>
-            ) : users.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={isMobile ? 5 : 7} className="h-24 text-center">
-                  No users found.
-                </TableCell>
-              </TableRow>
-            ) : (
-              users.map((user) => (
-                <UserTableRow
-                  key={user.id}
-                  user={user}
-                  isSelected={selectedUser?.id === user.id}
-                  privileges={privileges}
-                  onSelectUser={onSelectUser}
-                  onUpdateRole={onUpdateRole}
-                  onUpdateModuleRole={onUpdateModuleRole}
-                  onToggleStatus={onToggleStatus}
-                  onPromoteToSuperAdmin={onPromoteToSuperAdmin}
-                  onDeleteUser={onDeleteUser}
-                />
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
+      <ScrollArea className="w-full" type="always">
+        <div className={`min-w-[600px] ${!isMobile ? 'min-w-[900px]' : ''}`}>
+          <Table>
+            <UsersTableHeader />
+            <TableBody>
+              {isLoading ? (
+                <TableRow>
+                  <TableCell colSpan={isMobile ? 5 : 9} className="h-24 text-center">
+                    Loading users...
+                  </TableCell>
+                </TableRow>
+              ) : users.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={isMobile ? 5 : 9} className="h-24 text-center">
+                    No users found.
+                  </TableCell>
+                </TableRow>
+              ) : (
+                users.map((user) => (
+                  <UserTableRow
+                    key={user.id}
+                    user={user}
+                    isSelected={selectedUser?.id === user.id}
+                    privileges={privileges}
+                    onSelectUser={onSelectUser}
+                    onUpdateRole={onUpdateRole}
+                    onUpdateModuleRole={onUpdateModuleRole}
+                    onToggleStatus={onToggleStatus}
+                    onPromoteToSuperAdmin={onPromoteToSuperAdmin}
+                    onDeleteUser={onDeleteUser}
+                  />
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      </ScrollArea>
     </div>
   );
 };
