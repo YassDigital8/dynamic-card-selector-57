@@ -1,14 +1,10 @@
-
 import React from 'react';
 import { TableHeader, TableRow, TableHead } from '@/components/ui/table';
 import { Hotel, Users, Image, FileText } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
-
 const UsersTableHeader: React.FC = () => {
   const isMobile = useIsMobile();
-  
-  return (
-    <TableHeader>
+  return <TableHeader>
       <TableRow>
         <TableHead className="w-[50px]"></TableHead>
         <TableHead>Name</TableHead>
@@ -19,7 +15,7 @@ const UsersTableHeader: React.FC = () => {
         
         <TableHead className="text-center">
           <div className="flex items-center justify-center gap-2">
-            <span className="hidden md:inline">Roles</span>
+            <span className="hidden md:inline">Hotel</span>
             <div className="flex space-x-1">
               <Hotel className="h-4 w-4" />
               <Users className="h-4 w-4 md:hidden" />
@@ -29,8 +25,7 @@ const UsersTableHeader: React.FC = () => {
           </div>
         </TableHead>
         
-        {!isMobile && (
-          <>
+        {!isMobile && <>
             <TableHead className="text-center">
               <div className="flex items-center justify-center">
                 <Users className="h-4 w-4" />
@@ -46,11 +41,8 @@ const UsersTableHeader: React.FC = () => {
                 <FileText className="h-4 w-4" />
               </div>
             </TableHead>
-          </>
-        )}
+          </>}
       </TableRow>
-    </TableHeader>
-  );
+    </TableHeader>;
 };
-
 export default UsersTableHeader;
