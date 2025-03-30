@@ -50,7 +50,7 @@ const UserTableRow: React.FC<UserTableRowProps> = ({
   const isSuperAdmin = user.role === 'SuperAdmin';
 
   return (
-    <TableRow className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+    <TableRow>
       <TableCell>
         <Button
           variant="ghost"
@@ -60,8 +60,8 @@ const UserTableRow: React.FC<UserTableRowProps> = ({
           <UserIcon className="h-4 w-4" />
         </Button>
       </TableCell>
-      <TableCell className="font-medium whitespace-nowrap">{user.name}</TableCell>
-      <TableCell className="whitespace-nowrap">{user.email}</TableCell>
+      <TableCell className="font-medium">{user.name}</TableCell>
+      <TableCell>{user.email}</TableCell>
       <TableCell>
         <UserStatusBadge 
           isActive={user.isActive} 
@@ -69,7 +69,7 @@ const UserTableRow: React.FC<UserTableRowProps> = ({
         />
       </TableCell>
       <TableCell>{user.department || 'N/A'}</TableCell>
-      <TableCell className="whitespace-nowrap">
+      <TableCell>
         {user.lastLogin && user.lastLogin.getFullYear() > 1 
           ? format(user.lastLogin, 'MMM dd, yyyy h:mm a') 
           : 'Never'}
@@ -105,7 +105,7 @@ const UserTableRow: React.FC<UserTableRowProps> = ({
         />
       </TableCell>
       
-      {/* Promote to Super Admin button */}
+      {/* Add a dedicated cell for the Promote to Super Admin button */}
       <TableCell className="text-center px-2">
         {isSuperAdmin ? (
           <div className="text-xs text-amber-600 flex items-center justify-center">
@@ -115,7 +115,7 @@ const UserTableRow: React.FC<UserTableRowProps> = ({
         ) : (
           <button 
             onClick={() => onPromoteToSuperAdmin(user.id)}
-            className="text-xs text-amber-600 hover:text-amber-800 flex items-center justify-center w-full"
+            className="text-xs text-amber-600 hover:text-amber-800 flex items-center"
             title="Promote to Super Admin"
           >
             <Award className="h-3 w-3 mr-1" />

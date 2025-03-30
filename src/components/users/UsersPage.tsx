@@ -4,7 +4,7 @@ import AddUserDialog from './AddUserDialog';
 import UsersHeader from './UsersHeader';
 import UsersContent from './UsersContent';
 import UsersSearchBar from './UsersSearchBar';
-import { useUsers } from '@/hooks/users';
+import { useUsers } from '@/hooks/users'; // Updated import
 import useUserDialog from './useUserDialog';
 import useSearchFilters from './useSearchFilters';
 import { motion } from 'framer-motion';
@@ -46,7 +46,7 @@ const UsersPage: React.FC = () => {
     <motion.div 
       initial="initial"
       animate="animate"
-      className="space-y-6 w-full mx-auto"
+      className="space-y-6 max-w-7xl mx-auto px-1 sm:px-2 md:px-4"
       variants={{
         initial: { opacity: 0 },
         animate: { 
