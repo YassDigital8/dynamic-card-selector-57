@@ -33,7 +33,7 @@ const UsersTableHeader: React.FC = () => {
             <FileText className="h-4 w-4" />
           </div>
         </TableHead>
-        <TableHead className="px-2 text-center w-[140px]">Actions</TableHead>
+        <TableHead className="px-2 text-center w-[200px]">Actions</TableHead>
       </TableRow>
     </TableHeader>
   );

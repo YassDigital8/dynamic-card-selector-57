@@ -110,53 +110,56 @@ const UserTableRow: React.FC<UserTableRowProps> = ({
       
       {/* Actions */}
       <TableCell className="text-center px-2 space-x-2 whitespace-nowrap">
-        {/* Promote to Super Admin button */}
-        {isSuperAdmin ? (
-          <div className="text-xs text-amber-600 inline-flex items-center mr-2">
-            <Award className="h-3 w-3 mr-1" />
-            <span>Super Admin</span>
-          </div>
-        ) : (
-          <button 
-            onClick={() => onPromoteToSuperAdmin(user.id)}
-            className="text-xs text-amber-600 hover:text-amber-800 inline-flex items-center mr-2"
-            title="Promote to Super Admin"
-          >
-            <Award className="h-3 w-3 mr-1" />
-            <span>Promote</span>
-          </button>
-        )}
-        
-        {/* Delete User button with confirmation dialog */}
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
+        <div className="flex items-center gap-3 justify-center">
+          {/* Promote to Super Admin button */}
+          {isSuperAdmin ? (
+            <div className="text-xs text-amber-600 inline-flex items-center">
+              <Award className="h-3 w-3 mr-1" />
+              <span>Super Admin</span>
+            </div>
+          ) : (
             <Button 
-              variant="ghost" 
-              size="icon" 
-              className="h-7 w-7 text-red-500 hover:text-red-700 hover:bg-red-50"
-              title="Delete User"
+              onClick={() => onPromoteToSuperAdmin(user.id)}
+              variant="outline"
+              size="sm"
+              className="text-xs text-amber-600 hover:text-amber-800 hover:bg-amber-50 h-8"
             >
-              <Trash2 className="h-4 w-4" />
+              <Award className="h-3 w-3 mr-1" />
+              <span>Promote</span>
             </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Delete User</AlertDialogTitle>
-              <AlertDialogDescription>
-                Are you sure you want to delete {user.name}? This action cannot be undone.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction 
-                className="bg-red-500 hover:bg-red-600"
-                onClick={() => onDeleteUser(user.id)}
+          )}
+          
+          {/* Delete User button with confirmation dialog */}
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="h-8 text-red-500 hover:text-red-700 hover:bg-red-50 border-red-200"
               >
-                Delete
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+                <Trash2 className="h-3 w-3 mr-1" />
+                <span>Delete</span>
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Delete User</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Are you sure you want to delete {user.name}? This action cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction 
+                  className="bg-red-500 hover:bg-red-600"
+                  onClick={() => onDeleteUser(user.id)}
+                >
+                  Delete
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
       </TableCell>
     </TableRow>
   );
