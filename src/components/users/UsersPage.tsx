@@ -12,11 +12,8 @@ import { motion } from 'framer-motion';
 import { User } from '@/types/user.types';
 import { Card } from '@/components/ui/card';
 
-const USERS_PER_PAGE = 5;
-
 const UsersPage: React.FC = () => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
 
   const {
     users,
@@ -44,25 +41,6 @@ const UsersPage: React.FC = () => {
     filteredUsers,
     departments
   } = useSearchFilters(users);
-
-  // Paginate users
-  const totalPages = Math.ceil(filteredUsers.length / USERS_PER_PAGE);
-  const paginatedUsers = filteredUsers.slice(
-    (currentPage - 1) * USERS_PER_PAGE,
-    currentPage * USERS_PER_PAGE
-  );
-  
-  // Handle page change
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-    // Clear selected user when changing pages
-    setSelectedUser(null);
-  };
-
-  // Reset to page 1 when filters change
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchFilters]);
 
   // Clear selected user when users are refreshed
   useEffect(() => {
@@ -102,7 +80,6 @@ const UsersPage: React.FC = () => {
         onRefresh={() => {
           fetchUsers();
           setSelectedUser(null);
-          setCurrentPage(1);
         }}
         onAddUser={openAddDialog}
         isLoading={isLoading}
@@ -129,7 +106,7 @@ const UsersPage: React.FC = () => {
       )}
 
       <UsersContent
-        users={paginatedUsers}
+        users={filteredUsers}
         userPrivileges={userPrivileges}
         isLoading={isLoading}
         selectedUser={selectedUser}
@@ -139,9 +116,6 @@ const UsersPage: React.FC = () => {
         onToggleStatus={handleToggleStatus}
         onDeleteUser={handleDeleteUser}
         onPromoteToSuperAdmin={handlePromoteToSuperAdmin}
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={handlePageChange}
       />
 
       <AddUserDialog
