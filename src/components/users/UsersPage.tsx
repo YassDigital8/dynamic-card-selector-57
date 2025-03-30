@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import AddUserDialog from './AddUserDialog';
 import UsersHeader from './UsersHeader';
 import UsersContent from './UsersContent';
@@ -8,8 +8,11 @@ import { useUsers } from '@/hooks/users';
 import useUserDialog from './useUserDialog';
 import useSearchFilters from './useSearchFilters';
 import { motion } from 'framer-motion';
+import { User } from '@/types/user.types';
 
 const UsersPage: React.FC = () => {
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+
   const {
     users,
     isLoading,
@@ -37,10 +40,22 @@ const UsersPage: React.FC = () => {
     departments
   } = useSearchFilters(users);
 
+  // Clear selected user when users are refreshed
+  useEffect(() => {
+    setSelectedUser(null);
+  }, [users]);
+
   // Fetch users when component mounts
   useEffect(() => {
     fetchUsers();
   }, [fetchUsers]);
+
+  // Handle user selection
+  const handleSelectUser = (user: User) => {
+    setSelectedUser(prevSelected => 
+      prevSelected?.id === user.id ? null : user
+    );
+  };
 
   return (
     <motion.div 
@@ -58,8 +73,15 @@ const UsersPage: React.FC = () => {
       }}
     >
       <UsersHeader 
-        onRefresh={fetchUsers}
+        selectedUser={selectedUser}
+        onClearSelection={() => setSelectedUser(null)}
+        onRefresh={() => {
+          fetchUsers();
+          setSelectedUser(null);
+        }}
         onAddUser={openAddDialog}
+        onDeleteUser={handleDeleteUser}
+        onPromoteToSuperAdmin={handlePromoteToSuperAdmin}
         isLoading={isLoading}
       />
 
@@ -77,7 +99,8 @@ const UsersPage: React.FC = () => {
         users={filteredUsers}
         userPrivileges={userPrivileges}
         isLoading={isLoading}
-        onSelectUser={() => {}} // Empty function since we no longer need to select users
+        selectedUser={selectedUser}
+        onSelectUser={handleSelectUser}
         onUpdateRole={handleUpdateRole}
         onUpdateModuleRole={handleUpdateModuleRole}
         onToggleStatus={handleToggleStatus}

@@ -3,14 +3,14 @@ import React from 'react';
 import { format } from 'date-fns';
 import { TableRow, TableCell } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { User as UserIcon, Award, Trash2 } from 'lucide-react';
+import { User as UserIcon } from 'lucide-react';
 import { User, UserPrivilege, ModuleType } from '@/types/user.types';
 import UserStatusBadge from './UserStatusBadge';
 import UserModuleRoleSelect from './UserModuleRoleSelect';
-import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from '@/components/ui/alert-dialog';
 
 interface UserTableRowProps {
   user: User;
+  isSelected: boolean;
   privileges: UserPrivilege[];
   onSelectUser: (user: User) => void;
   onUpdateRole: (userId: string, role: UserPrivilege) => void;
@@ -22,6 +22,7 @@ interface UserTableRowProps {
 
 const UserTableRow: React.FC<UserTableRowProps> = ({
   user,
+  isSelected,
   privileges,
   onSelectUser,
   onUpdateRole,
@@ -49,16 +50,16 @@ const UserTableRow: React.FC<UserTableRowProps> = ({
     onUpdateModuleRole(user.id, moduleId, role);
   };
 
-  // Check if the user is already a SuperAdmin
-  const isSuperAdmin = user.role === 'SuperAdmin';
-
   return (
-    <TableRow className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+    <TableRow 
+      className={`hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors ${isSelected ? 'bg-accent/40' : ''}`}
+    >
       <TableCell>
         <Button
-          variant="ghost"
+          variant={isSelected ? "secondary" : "ghost"}
           size="icon"
           onClick={() => onSelectUser(user)}
+          className={isSelected ? "bg-primary text-primary-foreground" : ""}
         >
           <UserIcon className="h-4 w-4" />
         </Button>
@@ -108,58 +109,13 @@ const UserTableRow: React.FC<UserTableRowProps> = ({
         />
       </TableCell>
       
-      {/* Actions */}
-      <TableCell className="text-center px-2 space-x-2 whitespace-nowrap">
-        <div className="flex items-center gap-3 justify-center">
-          {/* Promote to Super Admin button */}
-          {isSuperAdmin ? (
-            <div className="text-xs text-amber-600 inline-flex items-center">
-              <Award className="h-3 w-3 mr-1" />
-              <span>Super Admin</span>
-            </div>
-          ) : (
-            <Button 
-              onClick={() => onPromoteToSuperAdmin(user.id)}
-              variant="outline"
-              size="sm"
-              className="text-xs text-amber-600 hover:text-amber-800 hover:bg-amber-50 h-8"
-            >
-              <Award className="h-3 w-3 mr-1" />
-              <span>Promote</span>
-            </Button>
-          )}
-          
-          {/* Delete User button with confirmation dialog */}
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button 
-                variant="outline" 
-                size="sm"
-                className="h-8 text-red-500 hover:text-red-700 hover:bg-red-50 border-red-200"
-              >
-                <Trash2 className="h-3 w-3 mr-1" />
-                <span>Delete</span>
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Delete User</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Are you sure you want to delete {user.name}? This action cannot be undone.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction 
-                  className="bg-red-500 hover:bg-red-600"
-                  onClick={() => onDeleteUser(user.id)}
-                >
-                  Delete
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </div>
+      {/* Actions column - now only has the selection indicator */}
+      <TableCell className="text-center px-2">
+        {user.role === 'SuperAdmin' && (
+          <div className="text-xs text-amber-600 inline-flex items-center justify-center">
+            <span>Super Admin</span>
+          </div>
+        )}
       </TableCell>
     </TableRow>
   );

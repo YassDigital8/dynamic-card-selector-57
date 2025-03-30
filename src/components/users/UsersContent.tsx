@@ -8,6 +8,7 @@ interface UsersContentProps {
   users: User[];
   userPrivileges: UserPrivilege[];
   isLoading: boolean;
+  selectedUser: User | null;
   onSelectUser: (user: User) => void;
   onUpdateRole: (userId: string, role: UserPrivilege) => void;
   onUpdateModuleRole: (userId: string, moduleId: ModuleType, role: UserPrivilege) => void;
@@ -20,6 +21,7 @@ const UsersContent: React.FC<UsersContentProps> = ({
   users,
   userPrivileges,
   isLoading,
+  selectedUser,
   onSelectUser,
   onUpdateRole,
   onUpdateModuleRole,
@@ -38,6 +40,7 @@ const UsersContent: React.FC<UsersContentProps> = ({
         users={users}
         privileges={userPrivileges}
         isLoading={isLoading}
+        selectedUser={selectedUser}
         onSelectUser={onSelectUser}
         onUpdateRole={onUpdateRole}
         onUpdateModuleRole={onUpdateModuleRole}

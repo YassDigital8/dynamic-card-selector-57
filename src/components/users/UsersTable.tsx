@@ -13,6 +13,7 @@ import UserTableRow from './UserTableRow';
 interface UsersTableProps {
   users: User[];
   privileges: UserPrivilege[];
+  selectedUser: User | null;
   onSelectUser: (user: User) => void;
   onUpdateRole: (userId: string, role: UserPrivilege) => void;
   onUpdateModuleRole: (userId: string, moduleId: ModuleType, role: UserPrivilege) => void;
@@ -25,6 +26,7 @@ interface UsersTableProps {
 const UsersTable: React.FC<UsersTableProps> = ({
   users,
   privileges,
+  selectedUser,
   onSelectUser,
   onUpdateRole,
   onUpdateModuleRole,
@@ -55,6 +57,7 @@ const UsersTable: React.FC<UsersTableProps> = ({
               <UserTableRow
                 key={user.id}
                 user={user}
+                isSelected={selectedUser?.id === user.id}
                 privileges={privileges}
                 onSelectUser={onSelectUser}
                 onUpdateRole={onUpdateRole}
