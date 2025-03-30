@@ -2,8 +2,7 @@
 import React from 'react';
 import { format } from 'date-fns';
 import { TableRow, TableCell } from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
-import { User as UserIcon, ChevronRight } from 'lucide-react';
+import { User as UserIcon } from 'lucide-react';
 import { User, UserPrivilege, ModuleType } from '@/types/user.types';
 import UserStatusBadge from './UserStatusBadge';
 import UserModuleRoleSelect from './UserModuleRoleSelect';
@@ -54,19 +53,31 @@ const UserTableRow: React.FC<UserTableRowProps> = ({
     onUpdateModuleRole(user.id, moduleId, role);
   };
 
+  // Handle row click event without propagating to the module role selects
+  const handleRowClick = (e: React.MouseEvent) => {
+    // Check if the click event originated from a select, button, or other interactive element
+    const target = e.target as HTMLElement;
+    const isInteractiveElement = 
+      target.tagName === 'BUTTON' || 
+      target.tagName === 'SELECT' || 
+      target.closest('button') ||
+      target.closest('[role="combobox"]') ||
+      target.closest('[data-state]'); // Most shadcn/ui components have data-state
+    
+    if (!isInteractiveElement) {
+      onSelectUser(user);
+    }
+  };
+
   return (
     <TableRow 
-      className={`hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors ${isSelected ? 'bg-accent/40' : ''}`}
+      className={`hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors ${isSelected ? 'bg-accent/40' : ''} cursor-pointer`}
+      onClick={handleRowClick}
     >
       <TableCell>
-        <Button
-          variant={isSelected ? "secondary" : "ghost"}
-          size="icon"
-          onClick={() => onSelectUser(user)}
-          className={isSelected ? "bg-primary text-primary-foreground" : ""}
-        >
+        <div className="flex justify-center items-center">
           <UserIcon className="h-4 w-4" />
-        </Button>
+        </div>
       </TableCell>
       <TableCell className="font-medium">
         <div className="flex flex-col">
@@ -98,7 +109,7 @@ const UserTableRow: React.FC<UserTableRowProps> = ({
       
       {/* Module roles - combined on mobile, separate on desktop */}
       {isMobile ? (
-        <TableCell className="text-center">
+        <TableCell className="text-center" onClick={e => e.stopPropagation()}>
           <div className="flex space-x-1 justify-center">
             <TooltipProvider>
               <Tooltip>
@@ -127,28 +138,28 @@ const UserTableRow: React.FC<UserTableRowProps> = ({
         </TableCell>
       ) : (
         <>
-          <TableCell className="text-center px-2">
+          <TableCell className="text-center px-2" onClick={e => e.stopPropagation()}>
             <UserModuleRoleSelect
               currentRole={getUserModuleRole('hotels')}
               privileges={privileges}
               onRoleChange={handleModuleRoleChange('hotels')}
             />
           </TableCell>
-          <TableCell className="text-center px-2">
+          <TableCell className="text-center px-2" onClick={e => e.stopPropagation()}>
             <UserModuleRoleSelect
               currentRole={getUserModuleRole('users')}
               privileges={privileges}
               onRoleChange={handleModuleRoleChange('users')}
             />
           </TableCell>
-          <TableCell className="text-center px-2">
+          <TableCell className="text-center px-2" onClick={e => e.stopPropagation()}>
             <UserModuleRoleSelect
               currentRole={getUserModuleRole('gallery')}
               privileges={privileges}
               onRoleChange={handleModuleRoleChange('gallery')}
             />
           </TableCell>
-          <TableCell className="text-center px-2">
+          <TableCell className="text-center px-2" onClick={e => e.stopPropagation()}>
             <UserModuleRoleSelect
               currentRole={getUserModuleRole('cms')}
               privileges={privileges}
