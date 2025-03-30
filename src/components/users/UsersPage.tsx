@@ -4,6 +4,7 @@ import AddUserDialog from './AddUserDialog';
 import UsersHeader from './UsersHeader';
 import UsersContent from './UsersContent';
 import UsersSearchBar from './UsersSearchBar';
+import SelectedUserActions from './SelectedUserActions';
 import { useUsers } from '@/hooks/users';
 import useUserDialog from './useUserDialog';
 import useSearchFilters from './useSearchFilters';
@@ -81,8 +82,6 @@ const UsersPage: React.FC = () => {
           setSelectedUser(null);
         }}
         onAddUser={openAddDialog}
-        onDeleteUser={handleDeleteUser}
-        onPromoteToSuperAdmin={handlePromoteToSuperAdmin}
         isLoading={isLoading}
       />
 
@@ -97,6 +96,14 @@ const UsersPage: React.FC = () => {
           onResetFilters={resetFilters}
         />
       </Card>
+      
+      {selectedUser && (
+        <SelectedUserActions
+          selectedUser={selectedUser}
+          onDeleteUser={handleDeleteUser}
+          onPromoteToSuperAdmin={handlePromoteToSuperAdmin}
+        />
+      )}
 
       <UsersContent
         users={filteredUsers}
