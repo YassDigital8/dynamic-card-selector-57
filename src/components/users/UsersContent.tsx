@@ -37,13 +37,7 @@ const UsersContent: React.FC<UsersContentProps> = ({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <Card className="p-0 overflow-hidden shadow-sm">
-        <div className="p-2 sm:p-4">
-          <h2 className="text-lg font-medium mb-2">Users</h2>
-          <p className="text-sm text-muted-foreground mb-4">
-            {users.length} user{users.length !== 1 ? 's' : ''} found
-          </p>
-        </div>
+      <Card className="p-0 overflow-hidden">
         <UsersTable 
           users={users}
           privileges={userPrivileges}

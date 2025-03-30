@@ -8,7 +8,6 @@ import UserStatusBadge from './UserStatusBadge';
 import UserModuleRoleSelect from './UserModuleRoleSelect';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface UserTableRowProps {
   user: User;
@@ -76,7 +75,7 @@ const UserTableRow: React.FC<UserTableRowProps> = ({
       className={`hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors ${isSelected ? 'bg-accent/40' : ''} cursor-pointer`}
       onClick={handleRowClick}
     >
-      <TableCell className="w-[40px] px-2">
+      <TableCell>
         <div className="flex justify-center items-center">
           {isSuperAdmin ? (
             <Crown className="h-4 w-4 text-amber-500" />
@@ -85,32 +84,28 @@ const UserTableRow: React.FC<UserTableRowProps> = ({
           )}
         </div>
       </TableCell>
-      <TableCell className="font-medium max-w-[140px] md:w-[180px]">
+      <TableCell className="font-medium">
         <div className="flex flex-col">
-          <span className="truncate">{user.name}</span>
+          <span className="truncate max-w-[120px] md:max-w-full">{user.name}</span>
           {isMobile && (
-            <span className="text-xs text-muted-foreground truncate">{user.email}</span>
+            <span className="text-xs text-muted-foreground truncate max-w-[120px]">{user.email}</span>
           )}
         </div>
       </TableCell>
       
-      {!isMobile && (
-        <TableCell className="max-w-[180px]">
-          <div className="truncate">{user.email}</div>
-        </TableCell>
-      )}
+      {!isMobile && <TableCell className="whitespace-nowrap">{user.email}</TableCell>}
       
-      <TableCell className="w-[100px]">
+      <TableCell>
         <UserStatusBadge 
           isActive={user.isActive} 
           onToggle={() => onToggleStatus(user.id)} 
         />
       </TableCell>
       
-      {!isMobile && <TableCell className="w-[100px]">{user.department || 'N/A'}</TableCell>}
+      {!isMobile && <TableCell>{user.department || 'N/A'}</TableCell>}
       
       {!isMobile && (
-        <TableCell className="whitespace-nowrap w-[140px]">
+        <TableCell className="whitespace-nowrap">
           {user.lastLogin && user.lastLogin.getFullYear() > 1 
             ? format(user.lastLogin, 'MMM dd, yyyy h:mm a') 
             : 'Never'}
@@ -119,7 +114,7 @@ const UserTableRow: React.FC<UserTableRowProps> = ({
       
       {/* Module roles - combined on mobile, separate on desktop */}
       {isMobile ? (
-        <TableCell className="text-center px-1" onClick={e => e.stopPropagation()}>
+        <TableCell className="text-center" onClick={e => e.stopPropagation()}>
           <div className="flex space-x-1 justify-center">
             <TooltipProvider>
               <Tooltip>
@@ -148,28 +143,28 @@ const UserTableRow: React.FC<UserTableRowProps> = ({
         </TableCell>
       ) : (
         <>
-          <TableCell className="text-center px-2 w-[100px]" onClick={e => e.stopPropagation()}>
+          <TableCell className="text-center px-2" onClick={e => e.stopPropagation()}>
             <UserModuleRoleSelect
               currentRole={getUserModuleRole('hotels')}
               privileges={privileges}
               onRoleChange={handleModuleRoleChange('hotels')}
             />
           </TableCell>
-          <TableCell className="text-center px-2 w-[100px]" onClick={e => e.stopPropagation()}>
+          <TableCell className="text-center px-2" onClick={e => e.stopPropagation()}>
             <UserModuleRoleSelect
               currentRole={getUserModuleRole('users')}
               privileges={privileges}
               onRoleChange={handleModuleRoleChange('users')}
             />
           </TableCell>
-          <TableCell className="text-center px-2 w-[100px]" onClick={e => e.stopPropagation()}>
+          <TableCell className="text-center px-2" onClick={e => e.stopPropagation()}>
             <UserModuleRoleSelect
               currentRole={getUserModuleRole('gallery')}
               privileges={privileges}
               onRoleChange={handleModuleRoleChange('gallery')}
             />
           </TableCell>
-          <TableCell className="text-center px-2 w-[100px]" onClick={e => e.stopPropagation()}>
+          <TableCell className="text-center px-2" onClick={e => e.stopPropagation()}>
             <UserModuleRoleSelect
               currentRole={getUserModuleRole('cms')}
               privileges={privileges}
