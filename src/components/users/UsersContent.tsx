@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import UsersTable from './UsersTable';
 import { User, UserPrivilege, ModuleType } from '@/types/user.types';
 import { Card } from '@/components/ui/card';
+import UsersPagination from './UsersPagination';
 
 interface UsersContentProps {
   users: User[];
@@ -16,6 +17,9 @@ interface UsersContentProps {
   onToggleStatus: (userId: string) => void;
   onDeleteUser: (userId: string) => void;
   onPromoteToSuperAdmin: (userId: string) => void;
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
 }
 
 const UsersContent: React.FC<UsersContentProps> = ({
@@ -28,7 +32,10 @@ const UsersContent: React.FC<UsersContentProps> = ({
   onUpdateModuleRole,
   onToggleStatus,
   onDeleteUser,
-  onPromoteToSuperAdmin
+  onPromoteToSuperAdmin,
+  currentPage,
+  totalPages,
+  onPageChange
 }) => {
   return (
     <motion.div 
@@ -51,6 +58,16 @@ const UsersContent: React.FC<UsersContentProps> = ({
           onPromoteToSuperAdmin={onPromoteToSuperAdmin}
         />
       </Card>
+      
+      {!isLoading && totalPages > 1 && (
+        <div className="mt-4">
+          <UsersPagination 
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={onPageChange}
+          />
+        </div>
+      )}
     </motion.div>
   );
 };
