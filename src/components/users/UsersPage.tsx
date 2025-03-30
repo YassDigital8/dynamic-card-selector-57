@@ -9,6 +9,7 @@ import useUserDialog from './useUserDialog';
 import useSearchFilters from './useSearchFilters';
 import { motion } from 'framer-motion';
 import { User } from '@/types/user.types';
+import { Card } from '@/components/ui/card';
 
 const UsersPage: React.FC = () => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
@@ -61,7 +62,7 @@ const UsersPage: React.FC = () => {
     <motion.div 
       initial="initial"
       animate="animate"
-      className="space-y-6 w-full mx-auto"
+      className="space-y-4 w-full max-w-full mx-auto px-2 md:px-4"
       variants={{
         initial: { opacity: 0 },
         animate: { 
@@ -85,15 +86,17 @@ const UsersPage: React.FC = () => {
         isLoading={isLoading}
       />
 
-      <UsersSearchBar
-        nameFilter={searchFilters.name}
-        emailFilter={searchFilters.email}
-        departmentFilter={searchFilters.department}
-        statusFilter={searchFilters.status}
-        departments={departments}
-        onUpdateFilter={updateFilter}
-        onResetFilters={resetFilters}
-      />
+      <Card className="p-3 md:p-4">
+        <UsersSearchBar
+          nameFilter={searchFilters.name}
+          emailFilter={searchFilters.email}
+          departmentFilter={searchFilters.department}
+          statusFilter={searchFilters.status}
+          departments={departments}
+          onUpdateFilter={updateFilter}
+          onResetFilters={resetFilters}
+        />
+      </Card>
 
       <UsersContent
         users={filteredUsers}

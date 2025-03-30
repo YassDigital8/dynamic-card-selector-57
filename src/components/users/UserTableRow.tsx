@@ -3,10 +3,12 @@ import React from 'react';
 import { format } from 'date-fns';
 import { TableRow, TableCell } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { User as UserIcon } from 'lucide-react';
+import { User as UserIcon, ChevronRight } from 'lucide-react';
 import { User, UserPrivilege, ModuleType } from '@/types/user.types';
 import UserStatusBadge from './UserStatusBadge';
 import UserModuleRoleSelect from './UserModuleRoleSelect';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface UserTableRowProps {
   user: User;
@@ -31,6 +33,8 @@ const UserTableRow: React.FC<UserTableRowProps> = ({
   onPromoteToSuperAdmin,
   onDeleteUser
 }) => {
+  const isMobile = useIsMobile();
+  
   // Helper function to get user's role for a specific module
   const getUserModuleRole = (moduleId: ModuleType): UserPrivilege => {
     // If user is SuperAdmin, return SuperAdmin for all modules
@@ -64,59 +68,95 @@ const UserTableRow: React.FC<UserTableRowProps> = ({
           <UserIcon className="h-4 w-4" />
         </Button>
       </TableCell>
-      <TableCell className="font-medium whitespace-nowrap">{user.name}</TableCell>
-      <TableCell className="whitespace-nowrap">{user.email}</TableCell>
+      <TableCell className="font-medium">
+        <div className="flex flex-col">
+          <span className="truncate max-w-[120px] md:max-w-full">{user.name}</span>
+          {isMobile && (
+            <span className="text-xs text-muted-foreground truncate max-w-[120px]">{user.email}</span>
+          )}
+        </div>
+      </TableCell>
+      
+      {!isMobile && <TableCell className="whitespace-nowrap">{user.email}</TableCell>}
+      
       <TableCell>
         <UserStatusBadge 
           isActive={user.isActive} 
           onToggle={() => onToggleStatus(user.id)} 
         />
       </TableCell>
-      <TableCell>{user.department || 'N/A'}</TableCell>
-      <TableCell className="whitespace-nowrap">
-        {user.lastLogin && user.lastLogin.getFullYear() > 1 
-          ? format(user.lastLogin, 'MMM dd, yyyy h:mm a') 
-          : 'Never'}
-      </TableCell>
       
-      {/* Module roles dropdowns */}
-      <TableCell className="text-center px-2">
-        <UserModuleRoleSelect
-          currentRole={getUserModuleRole('hotels')}
-          privileges={privileges}
-          onRoleChange={handleModuleRoleChange('hotels')}
-        />
-      </TableCell>
-      <TableCell className="text-center px-2">
-        <UserModuleRoleSelect
-          currentRole={getUserModuleRole('users')}
-          privileges={privileges}
-          onRoleChange={handleModuleRoleChange('users')}
-        />
-      </TableCell>
-      <TableCell className="text-center px-2">
-        <UserModuleRoleSelect
-          currentRole={getUserModuleRole('gallery')}
-          privileges={privileges}
-          onRoleChange={handleModuleRoleChange('gallery')}
-        />
-      </TableCell>
-      <TableCell className="text-center px-2">
-        <UserModuleRoleSelect
-          currentRole={getUserModuleRole('cms')}
-          privileges={privileges}
-          onRoleChange={handleModuleRoleChange('cms')}
-        />
-      </TableCell>
+      {!isMobile && <TableCell>{user.department || 'N/A'}</TableCell>}
       
-      {/* Actions column - now only has the selection indicator */}
-      <TableCell className="text-center px-2">
-        {user.role === 'SuperAdmin' && (
-          <div className="text-xs text-amber-600 inline-flex items-center justify-center">
-            <span>Super Admin</span>
+      {!isMobile && (
+        <TableCell className="whitespace-nowrap">
+          {user.lastLogin && user.lastLogin.getFullYear() > 1 
+            ? format(user.lastLogin, 'MMM dd, yyyy h:mm a') 
+            : 'Never'}
+        </TableCell>
+      )}
+      
+      {/* Module roles - combined on mobile, separate on desktop */}
+      {isMobile ? (
+        <TableCell className="text-center">
+          <div className="flex space-x-1 justify-center">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div>
+                    <UserModuleRoleSelect
+                      currentRole={getUserModuleRole('hotels')}
+                      privileges={privileges}
+                      onRoleChange={handleModuleRoleChange('hotels')}
+                      compact={true}
+                    />
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Hotels Permission</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            
+            {user.role === 'SuperAdmin' && (
+              <div className="text-xs bg-amber-500 text-white px-1 py-0.5 rounded">
+                Admin
+              </div>
+            )}
           </div>
-        )}
-      </TableCell>
+        </TableCell>
+      ) : (
+        <>
+          <TableCell className="text-center px-2">
+            <UserModuleRoleSelect
+              currentRole={getUserModuleRole('hotels')}
+              privileges={privileges}
+              onRoleChange={handleModuleRoleChange('hotels')}
+            />
+          </TableCell>
+          <TableCell className="text-center px-2">
+            <UserModuleRoleSelect
+              currentRole={getUserModuleRole('users')}
+              privileges={privileges}
+              onRoleChange={handleModuleRoleChange('users')}
+            />
+          </TableCell>
+          <TableCell className="text-center px-2">
+            <UserModuleRoleSelect
+              currentRole={getUserModuleRole('gallery')}
+              privileges={privileges}
+              onRoleChange={handleModuleRoleChange('gallery')}
+            />
+          </TableCell>
+          <TableCell className="text-center px-2">
+            <UserModuleRoleSelect
+              currentRole={getUserModuleRole('cms')}
+              privileges={privileges}
+              onRoleChange={handleModuleRoleChange('cms')}
+            />
+          </TableCell>
+        </>
+      )}
     </TableRow>
   );
 };

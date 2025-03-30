@@ -3,6 +3,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import UsersTable from './UsersTable';
 import { User, UserPrivilege, ModuleType } from '@/types/user.types';
+import { Card } from '@/components/ui/card';
 
 interface UsersContentProps {
   users: User[];
@@ -31,23 +32,25 @@ const UsersContent: React.FC<UsersContentProps> = ({
 }) => {
   return (
     <motion.div 
-      className="w-full overflow-x-auto" 
+      className="w-full" 
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <UsersTable 
-        users={users}
-        privileges={userPrivileges}
-        isLoading={isLoading}
-        selectedUser={selectedUser}
-        onSelectUser={onSelectUser}
-        onUpdateRole={onUpdateRole}
-        onUpdateModuleRole={onUpdateModuleRole}
-        onToggleStatus={onToggleStatus}
-        onDeleteUser={onDeleteUser}
-        onPromoteToSuperAdmin={onPromoteToSuperAdmin}
-      />
+      <Card className="p-0 overflow-hidden">
+        <UsersTable 
+          users={users}
+          privileges={userPrivileges}
+          isLoading={isLoading}
+          selectedUser={selectedUser}
+          onSelectUser={onSelectUser}
+          onUpdateRole={onUpdateRole}
+          onUpdateModuleRole={onUpdateModuleRole}
+          onToggleStatus={onToggleStatus}
+          onDeleteUser={onDeleteUser}
+          onPromoteToSuperAdmin={onPromoteToSuperAdmin}
+        />
+      </Card>
     </motion.div>
   );
 };
