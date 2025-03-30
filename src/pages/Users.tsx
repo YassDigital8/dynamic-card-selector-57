@@ -17,7 +17,7 @@ const Users: React.FC = () => {
 
   return (
     <StandardLayout>
-      <div className="w-full mx-auto px-4 py-6">
+      <div className="container-fluid w-full mx-auto px-0 py-6">
         <BreadcrumbNav items={breadcrumbItems} />
         <UsersPage />
       </div>
