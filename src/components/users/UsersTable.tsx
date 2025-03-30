@@ -34,8 +34,8 @@ const UsersTable: React.FC<UsersTableProps> = ({
   isLoading
 }) => {
   return (
-    <div className="rounded-md border overflow-x-auto max-w-full w-full">
-      <Table className="min-w-max w-full table-auto">
+    <div className="rounded-md border overflow-x-auto w-full" style={{ minWidth: '1200px' }}>
+      <Table className="w-full table-fixed">
         <UsersTableHeader />
         <TableBody>
           {isLoading ? (
@@ -61,6 +61,7 @@ const UsersTable: React.FC<UsersTableProps> = ({
                 onUpdateModuleRole={onUpdateModuleRole}
                 onToggleStatus={onToggleStatus}
                 onPromoteToSuperAdmin={onPromoteToSuperAdmin}
+                onDeleteUser={onDeleteUser}
               />
             ))
           )}

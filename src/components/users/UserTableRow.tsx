@@ -3,10 +3,11 @@ import React from 'react';
 import { format } from 'date-fns';
 import { TableRow, TableCell } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { User as UserIcon, Award } from 'lucide-react';
+import { User as UserIcon, Award, Trash2 } from 'lucide-react';
 import { User, UserPrivilege, ModuleType } from '@/types/user.types';
 import UserStatusBadge from './UserStatusBadge';
 import UserModuleRoleSelect from './UserModuleRoleSelect';
+import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from '@/components/ui/alert-dialog';
 
 interface UserTableRowProps {
   user: User;
@@ -16,6 +17,7 @@ interface UserTableRowProps {
   onUpdateModuleRole: (userId: string, moduleId: ModuleType, role: UserPrivilege) => void;
   onToggleStatus: (userId: string) => void;
   onPromoteToSuperAdmin: (userId: string) => void;
+  onDeleteUser: (userId: string) => void;
 }
 
 const UserTableRow: React.FC<UserTableRowProps> = ({
@@ -25,7 +27,8 @@ const UserTableRow: React.FC<UserTableRowProps> = ({
   onUpdateRole,
   onUpdateModuleRole,
   onToggleStatus,
-  onPromoteToSuperAdmin
+  onPromoteToSuperAdmin,
+  onDeleteUser
 }) => {
   // Helper function to get user's role for a specific module
   const getUserModuleRole = (moduleId: ModuleType): UserPrivilege => {
@@ -75,7 +78,7 @@ const UserTableRow: React.FC<UserTableRowProps> = ({
           : 'Never'}
       </TableCell>
       
-      {/* Module roles dropdowns - only show the 4 specified modules */}
+      {/* Module roles dropdowns */}
       <TableCell className="text-center px-2">
         <UserModuleRoleSelect
           currentRole={getUserModuleRole('hotels')}
@@ -105,23 +108,55 @@ const UserTableRow: React.FC<UserTableRowProps> = ({
         />
       </TableCell>
       
-      {/* Promote to Super Admin button */}
-      <TableCell className="text-center px-2">
+      {/* Actions */}
+      <TableCell className="text-center px-2 space-x-2 whitespace-nowrap">
+        {/* Promote to Super Admin button */}
         {isSuperAdmin ? (
-          <div className="text-xs text-amber-600 flex items-center justify-center">
+          <div className="text-xs text-amber-600 inline-flex items-center mr-2">
             <Award className="h-3 w-3 mr-1" />
             <span>Super Admin</span>
           </div>
         ) : (
           <button 
             onClick={() => onPromoteToSuperAdmin(user.id)}
-            className="text-xs text-amber-600 hover:text-amber-800 flex items-center justify-center w-full"
+            className="text-xs text-amber-600 hover:text-amber-800 inline-flex items-center mr-2"
             title="Promote to Super Admin"
           >
             <Award className="h-3 w-3 mr-1" />
             <span>Promote</span>
           </button>
         )}
+        
+        {/* Delete User button with confirmation dialog */}
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="h-7 w-7 text-red-500 hover:text-red-700 hover:bg-red-50"
+              title="Delete User"
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete User</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to delete {user.name}? This action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction 
+                className="bg-red-500 hover:bg-red-600"
+                onClick={() => onDeleteUser(user.id)}
+              >
+                Delete
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </TableCell>
     </TableRow>
   );
