@@ -8,13 +8,14 @@ export interface AuthResponse {
   token: string;
   expiresOn?: string;
   success?: boolean;
-  role?: string; // Added role field
+  role?: string; // This will capture the role from the roles array
+  roles?: string[]; // Added to match the API response structure
 }
 
 export interface UserInfo {
   firstName: string;
   email: string;
-  role?: string; // Added role field
+  role?: string;
 }
 
 export interface LoginCredentials {

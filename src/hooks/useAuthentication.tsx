@@ -101,7 +101,7 @@ export const useAuthentication = () => {
       const userInfoToStore = {
         firstName: authData.firstName || 'User',
         email: authData.email,
-        role: authData.role || 'User' // Include role in user info
+        role: authData.role || (authData.roles && authData.roles.length > 0 ? authData.roles[0] : 'User')
       };
       
       // Update auth state

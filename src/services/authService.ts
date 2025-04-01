@@ -6,6 +6,7 @@ let isDemoMode = false;
 
 // Define multiple possible API endpoints for authentication
 const AUTH_ENDPOINTS = [
+  'https://staging.sa3d.online:7189/api/Authentication/login',  // Updated to match your Postman URL
   'https://staging.sa3d.online:7182/api/Authentication/login',
   'https://api.sa3d.online/api/Authentication/login',
   'https://sa3d.online/api/Authentication/login'
@@ -75,12 +76,26 @@ export const loginUser = async (credentials: LoginCredentials): Promise<AuthResp
         throw new Error(errorMessage);
       }
       
+      // Check for token using the correct path shown in the Postman screenshot
       if (!responseData.token) {
         console.log('Response missing token:', responseData);
         continue; // Skip to the next endpoint if no token in response
       }
       
-      return responseData;
+      // Map the API response to our AuthResponse type
+      const authResponse: AuthResponse = {
+        token: responseData.token,
+        email: responseData.email,
+        firstName: responseData.firstName,
+        lastName: responseData.lastName || null,
+        message: responseData.message,
+        isAuthenticated: responseData.isAuthenticated || true,
+        role: responseData.roles && responseData.roles.length > 0 ? responseData.roles[0] : 'User',
+        expiresOn: responseData.expiresOn,
+        success: true
+      };
+      
+      return authResponse;
     } catch (error) {
       console.log(`Error with endpoint ${endpoint}:`, error);
       lastError = error;
