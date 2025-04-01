@@ -25,7 +25,6 @@ const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
   const [responseLog, setResponseLog] = useState<string | null>(null);
-  const [apiErrorMessage, setApiErrorMessage] = useState<string | null>(null);
   const { toast } = useToast();
   const { login, demoMode } = useAuthentication();
   const navigate = useNavigate();
@@ -46,7 +45,6 @@ const LoginForm = () => {
     setIsLoading(true);
     setLoginError(null);
     setResponseLog(null);
-    setApiErrorMessage(null);
     
     try {
       console.log('Attempting to authenticate with:', data.email);
@@ -69,12 +67,9 @@ const LoginForm = () => {
       let errorMessage = '';
       
       if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
-        errorMessage = 'Network error: The authentication server is not accessible. This might be due to an SSL certificate issue.';
+        errorMessage = 'Network error: The authentication server is not accessible. Try using Demo Mode.';
       } else if (error instanceof Error) {
         errorMessage = error.message;
-        
-        // Set the API error message specifically
-        setApiErrorMessage(error.message);
       } else {
         errorMessage = 'Unknown error occurred during login';
       }
@@ -91,12 +86,12 @@ const LoginForm = () => {
     }
   };
 
-  // Helper to check if the error is related to SSL certificates
-  const isCertificateError = (error: string | null): boolean => {
+  // Helper to check if the error is related to SSL certificates or network
+  const isNetworkError = (error: string | null): boolean => {
     if (!error) return false;
-    return error.includes('SSL Certificate Error') || 
-           error.includes('certificate') || 
-           error.includes('Failed to fetch');
+    return error.includes('Failed to fetch') || 
+           error.includes('Network error') || 
+           error.includes('certificate');
   };
   
   // Handle entering demo mode
@@ -109,17 +104,17 @@ const LoginForm = () => {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       {loginError && (
         <Alert 
-          variant={isCertificateError(loginError) ? "warning" : "destructive"} 
+          variant={isNetworkError(loginError) ? "warning" : "destructive"} 
           className="mb-4"
         >
-          {isCertificateError(loginError) ? 
+          {isNetworkError(loginError) ? 
             <ShieldAlert className="h-4 w-4" /> : 
             <AlertCircle className="h-4 w-4" />
           }
-          <AlertTitle>{isCertificateError(loginError) ? "SSL Certificate Issue" : "Login failed"}</AlertTitle>
+          <AlertTitle>{isNetworkError(loginError) ? "Connection Issue" : "Login failed"}</AlertTitle>
           <AlertDescription>{loginError}</AlertDescription>
           
-          {isCertificateError(loginError) && (
+          {isNetworkError(loginError) && (
             <Button 
               variant="outline" 
               className="mt-2 bg-amber-50 border-amber-200 text-amber-700 hover:bg-amber-100"
@@ -129,16 +124,6 @@ const LoginForm = () => {
               Enter Demo Mode
             </Button>
           )}
-        </Alert>
-      )}
-      
-      {apiErrorMessage && (
-        <Alert variant="error" className="mb-4">
-          <AlertCircle className="h-4 w-4" />
-          <AlertTitle>API Response</AlertTitle>
-          <AlertDescription className="font-medium">
-            {apiErrorMessage}
-          </AlertDescription>
         </Alert>
       )}
       

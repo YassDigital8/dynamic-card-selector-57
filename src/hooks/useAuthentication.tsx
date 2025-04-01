@@ -2,7 +2,7 @@
 import { useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { LoginCredentials } from '@/types/auth.types';
-import { loginUser } from '@/services/authService';
+import { loginUser, isInDemoMode } from '@/services/authService';
 import { useAuthSession } from '@/hooks/useAuthSession';
 import { useAuthState } from '@/hooks/useAuthState';
 import { useDemoMode } from '@/hooks/useDemoMode';
@@ -55,7 +55,9 @@ export const useAuthentication = () => {
         }
         
         // Check if demo mode is active
-        demoModeState.checkForDemoMode(storedToken);
+        if (isInDemoMode() || storedToken === 'demo-mode-token') {
+          demoModeState.activateDemoMode();
+        }
         
         console.log("Authentication successful with stored token");
       } catch (error) {
@@ -87,18 +89,19 @@ export const useAuthentication = () => {
     authState.setError(null);
     
     try {
+      console.log('Login attempt with:', credentials.email);
       const authData = await loginUser(credentials);
       
       // Check if we're in demo mode
-      if (authData.token === 'demo-mode-token') {
+      if (authData.token === 'demo-mode-token' || isInDemoMode()) {
         demoModeState.activateDemoMode();
       }
       
       // Store the token and user info (including role if available)
       const userInfoToStore = {
-        firstName: authData.firstName,
+        firstName: authData.firstName || 'User',
         email: authData.email,
-        role: authData.role // Include role in user info
+        role: authData.role || 'User' // Include role in user info
       };
       
       // Update auth state
@@ -122,17 +125,6 @@ export const useAuthentication = () => {
       let errorMessage = '';
       if (error instanceof Error) {
         errorMessage = error.message;
-        
-        // Add more specific guidance for SSL certificate errors
-        if (errorMessage.includes('SSL Certificate Error')) {
-          errorMessage += '\n\nThis is typically caused by a self-signed or invalid SSL certificate on the server.';
-          
-          // Offer to enable demo mode for certificate errors
-          if (window.confirm('Would you like to enter demo mode due to SSL certificate issues?')) {
-            demoModeState.activateDemoMode();
-            return login(credentials);
-          }
-        }
       } else {
         errorMessage = 'Unknown error occurred during authentication';
       }
