@@ -13,6 +13,7 @@ import LoginErrorAlert from './LoginErrorAlert';
 import ResponseLogAlert from './ResponseLogAlert';
 import LoginFormFields, { LoginFormValues } from './LoginFormFields';
 import LoginButtons from './LoginButtons';
+import { Form } from '@/components/ui/form';
 
 // Define the schema for the login form
 const loginSchema = z.object({
@@ -30,11 +31,7 @@ const LoginForm = () => {
   
   const { isNetworkTested, canReachServer, testServerConnection } = useServerConnection();
   
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<LoginFormValues>({
+  const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: '',
@@ -103,25 +100,27 @@ const LoginForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <NetworkStatusAlert 
-        isNetworkTested={isNetworkTested}
-        canReachServer={canReachServer}
-        testServerConnection={testServerConnection}
-      />
-      
-      <LoginErrorAlert 
-        loginError={loginError}
-        isNetworkError={isNetworkError(loginError)}
-        onDemoModeClick={handleEnterDemoMode}
-      />
-      
-      <LoginFormFields register={register} errors={errors} />
-      
-      <LoginButtons isLoading={isLoading} onDemoModeClick={handleEnterDemoMode} />
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <NetworkStatusAlert 
+          isNetworkTested={isNetworkTested}
+          canReachServer={canReachServer}
+          testServerConnection={testServerConnection}
+        />
+        
+        <LoginErrorAlert 
+          loginError={loginError}
+          isNetworkError={isNetworkError(loginError)}
+          onDemoModeClick={handleEnterDemoMode}
+        />
+        
+        <LoginFormFields form={form} />
+        
+        <LoginButtons isLoading={isLoading} onDemoModeClick={handleEnterDemoMode} />
 
-      <ResponseLogAlert responseLog={responseLog} />
-    </form>
+        <ResponseLogAlert responseLog={responseLog} />
+      </form>
+    </Form>
   );
 };
 
