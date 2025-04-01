@@ -6,8 +6,32 @@
 // Check if we're running in a development environment
 const isDevelopment = import.meta.env.DEV;
 
+// List of CORS proxies to try in sequence
+const CORS_PROXIES = [
+  {
+    name: 'AllOrigins',
+    url: (targetUrl: string) => `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`,
+    headers: {}
+  },
+  {
+    name: 'CodeTabs',
+    url: (targetUrl: string) => `https://api.codetabs.com/v1/proxy?quest=${targetUrl}`,
+    headers: {}
+  },
+  {
+    name: 'ThingProxy',
+    url: (targetUrl: string) => `https://thingproxy.freeboard.io/fetch/${targetUrl}`,
+    headers: {}
+  },
+  {
+    name: 'CorsAnywhere', // This requires activation at corsdemo.herokuapp.com first
+    url: (targetUrl: string) => `https://cors-anywhere.herokuapp.com/${targetUrl}`,
+    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+  }
+];
+
 /**
- * Attempts to fetch a URL through various methods to bypass CORS restrictions
+ * Try to fetch directly, and if that fails, try through various CORS proxies
  * @param url The URL to fetch
  * @param options Fetch options
  * @returns Promise with the fetch response
@@ -20,43 +44,67 @@ export const fetchWithCorsHandling = async (
   console.log(`Attempting to fetch with CORS handling: ${url}`);
   
   try {
-    // First try direct fetch
-    console.log('Trying direct fetch...');
-    return await fetch(url, options);
+    // First try direct fetch with additional CORS-friendly options
+    console.log('Trying direct fetch with CORS headers...');
+    
+    // Clone the options to avoid modifying the original
+    const corsOptions = {
+      ...options,
+      headers: {
+        ...options.headers,
+        'Accept': 'application/json, text/plain, */*',
+        'Access-Control-Allow-Origin': '*',
+      },
+      // Modern browsers handle mode and credentials correctly
+      mode: 'cors' as RequestMode,
+    };
+    
+    return await fetch(url, corsOptions);
   } catch (error) {
-    console.log('Direct fetch failed, trying with CORS proxy...', error);
+    console.log('Direct fetch failed, trying with CORS proxies...', error);
     
-    // Try different proxy services in sequence until one works
-    const proxies = [
-      `https://cors-anywhere.herokuapp.com/${url}`,
-      `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-      `https://api.codetabs.com/v1/proxy?quest=${url}`,
-      `https://thingproxy.freeboard.io/fetch/${url}`
-    ];
-    
-    // Try each proxy in sequence
-    for (const proxyUrl of proxies) {
+    // Try each proxy in sequence until one works
+    for (const proxy of CORS_PROXIES) {
       try {
-        console.log(`Trying proxy: ${proxyUrl}`);
+        console.log(`Trying ${proxy.name} proxy...`);
         
-        // Clone the options and add necessary headers for this proxy
+        const proxyUrl = proxy.url(url);
+        
+        // Merge the headers from the original options with the proxy-specific headers
         const proxyOptions = {
           ...options,
           headers: {
             ...options.headers,
-            'X-Requested-With': 'XMLHttpRequest', // Required by CORS Anywhere
+            ...proxy.headers
           }
         };
         
-        return await fetch(proxyUrl, proxyOptions);
+        // Try the current proxy
+        const response = await fetch(proxyUrl, proxyOptions);
+        
+        // Check if we got an error response from the proxy itself
+        const contentType = response.headers.get('content-type');
+        
+        if (!response.ok && contentType?.includes('text/html')) {
+          // This could be a proxy error page rather than a proxy success with target API error
+          const text = await response.text();
+          if (text.includes('error') || text.includes('Error') || text.includes('403') || text.includes('forbidden')) {
+            console.log(`${proxy.name} proxy error:`, text);
+            throw new Error(`${proxy.name} proxy error: ${response.status} ${response.statusText}`);
+          }
+        }
+        
+        console.log(`${proxy.name} proxy successful`);
+        return response;
       } catch (proxyError) {
-        console.log(`Proxy failed: ${proxyUrl}`, proxyError);
+        console.log(`${proxy.name} proxy failed:`, proxyError);
         // Continue to next proxy
       }
     }
     
-    // If all proxies fail, throw the original error
-    throw error;
+    // If all proxies fail, throw a clear error
+    console.error('All proxy attempts failed');
+    throw new Error('Could not access API: All connection methods failed. The server may be down or unreachable. Please try again later or use Demo Mode.');
   }
 };
 
