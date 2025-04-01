@@ -6,7 +6,7 @@ let isDemoMode = false;
 
 // Define multiple possible API endpoints for authentication
 const AUTH_ENDPOINTS = [
-  'https://staging.sa3d.online:7189/api/Authentication/login',  // Updated to match your Postman URL
+  'https://staging.sa3d.online:7189/api/Authentication/login',  // Primary endpoint
   'https://staging.sa3d.online:7182/api/Authentication/login',
   'https://api.sa3d.online/api/Authentication/login',
   'https://sa3d.online/api/Authentication/login'
@@ -56,13 +56,20 @@ export const loginUser = async (credentials: LoginCredentials): Promise<AuthResp
       console.log('Raw API response:', responseText);
       lastResponseText = responseText;
       
-      // Try to parse as JSON if possible
+      // Only consider it HTML if it contains both <!DOCTYPE html> and <html
+      const isHtmlResponse = responseText.includes('<!DOCTYPE html>') && responseText.includes('<html');
+      
+      if (isHtmlResponse) {
+        console.log('Response is HTML, trying next endpoint');
+        continue; // Skip to the next endpoint if we got HTML
+      }
+      
+      // Try to parse as JSON
       let responseData;
       try {
         responseData = JSON.parse(responseText);
         console.log('Parsed API response:', responseData);
       } catch (e) {
-        // If not valid JSON, it might be HTML or other content
         console.log('Response is not valid JSON:', e);
         continue; // Skip to the next endpoint if we couldn't parse JSON
       }
@@ -76,24 +83,30 @@ export const loginUser = async (credentials: LoginCredentials): Promise<AuthResp
         throw new Error(errorMessage);
       }
       
-      // Check for token using the correct path shown in the Postman screenshot
+      // Check if there's a token in the response
       if (!responseData.token) {
         console.log('Response missing token:', responseData);
         continue; // Skip to the next endpoint if no token in response
       }
       
+      console.log('Authentication successful, found valid token');
+      
       // Map the API response to our AuthResponse type
       const authResponse: AuthResponse = {
         token: responseData.token,
-        email: responseData.email,
-        firstName: responseData.firstName,
+        email: responseData.email || credentials.email,
+        firstName: responseData.firstName || 'User',
         lastName: responseData.lastName || null,
-        message: responseData.message,
-        isAuthenticated: responseData.isAuthenticated || true,
+        message: responseData.message || 'Authentication successful',
+        isAuthenticated: true,
         role: responseData.roles && responseData.roles.length > 0 ? responseData.roles[0] : 'User',
+        roles: responseData.roles || ['User'],
         expiresOn: responseData.expiresOn,
         success: true
       };
+      
+      // If we got a valid response, reset the demo mode flag (if it was set)
+      isDemoMode = false;
       
       return authResponse;
     } catch (error) {
@@ -120,7 +133,8 @@ export const loginUser = async (credentials: LoginCredentials): Promise<AuthResp
   }
   
   // If we got HTML responses instead of JSON, enable demo mode
-  if (lastResponseText && lastResponseText.includes('<!DOCTYPE html>')) {
+  // Be more specific about HTML detection to avoid false positives
+  if (lastResponseText && lastResponseText.includes('<!DOCTYPE html>') && lastResponseText.includes('<html')) {
     console.log('Enabling demo mode due to HTML response instead of JSON');
     isDemoMode = true;
     
@@ -146,4 +160,9 @@ export const isInDemoMode = (): boolean => {
 // Function to forcibly enable demo mode
 export const enableDemoMode = (): void => {
   isDemoMode = true;
+};
+
+// Function to disable demo mode (for testing)
+export const disableDemoMode = (): void => {
+  isDemoMode = false;
 };

@@ -2,7 +2,7 @@
 import { useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { LoginCredentials } from '@/types/auth.types';
-import { loginUser, isInDemoMode } from '@/services/authService';
+import { loginUser, isInDemoMode, disableDemoMode } from '@/services/authService';
 import { useAuthSession } from '@/hooks/useAuthSession';
 import { useAuthState } from '@/hooks/useAuthState';
 import { useDemoMode } from '@/hooks/useDemoMode';
@@ -51,12 +51,20 @@ export const useAuthentication = () => {
         
         if (storedUserInfo) {
           userInfo = JSON.parse(storedUserInfo);
+          // Set auth data but don't activate demo mode unless it's a demo token
           authState.setAuthData(storedToken, userInfo);
         }
         
-        // Check if demo mode is active
-        if (isInDemoMode() || storedToken === 'demo-mode-token') {
+        // Check if demo mode is active - ONLY if token is the demo token
+        if (storedToken === 'demo-mode-token') {
+          console.log('Demo mode token detected, activating demo mode');
           demoModeState.activateDemoMode();
+        } else {
+          // If we have a real token, make sure demo mode is off
+          console.log('Real token detected, ensuring demo mode is off');
+          demoModeState.resetDemoMode();
+          // Also ensure the service knows we're not in demo mode
+          disableDemoMode();
         }
         
         console.log("Authentication successful with stored token");
@@ -92,9 +100,16 @@ export const useAuthentication = () => {
       console.log('Login attempt with:', credentials.email);
       const authData = await loginUser(credentials);
       
-      // Check if we're in demo mode
-      if (authData.token === 'demo-mode-token' || isInDemoMode()) {
+      console.log('Login response received:', authData);
+      
+      // Only activate demo mode if we get a demo-mode-token specifically
+      if (authData.token === 'demo-mode-token') {
+        console.log('Demo mode token detected, activating demo mode');
         demoModeState.activateDemoMode();
+      } else {
+        // If we have a real token, make sure demo mode is off
+        console.log('Real token received, ensuring demo mode is off');
+        demoModeState.resetDemoMode();
       }
       
       // Store the token and user info (including role if available)

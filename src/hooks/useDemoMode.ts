@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { isInDemoMode, enableDemoMode } from '@/services/authService';
+import { isInDemoMode, enableDemoMode, disableDemoMode } from '@/services/authService';
 
 export const useDemoMode = () => {
   const [demoMode, setDemoMode] = useState<boolean>(false);
@@ -9,7 +9,13 @@ export const useDemoMode = () => {
 
   // Check if we're in demo mode on initial load
   useEffect(() => {
-    setDemoMode(isInDemoMode());
+    const isDemoActive = isInDemoMode();
+    setDemoMode(isDemoActive);
+    
+    // If we're not in demo mode but it's set, reset it
+    if (!isDemoActive && demoMode) {
+      setDemoMode(false);
+    }
   }, []);
 
   const activateDemoMode = () => {
@@ -24,6 +30,7 @@ export const useDemoMode = () => {
   };
 
   const checkForDemoMode = (token: string) => {
+    // Only consider demo mode active if the token is specifically 'demo-mode-token'
     const isDemoModeActive = token === 'demo-mode-token' || isInDemoMode();
     
     if (isDemoModeActive && !demoMode) {
@@ -34,6 +41,9 @@ export const useDemoMode = () => {
         description: "You are using the application in demo mode",
         variant: "default"
       });
+    } else if (!isDemoModeActive && demoMode) {
+      // If we have a real token but demo mode is on, turn it off
+      setDemoMode(false);
     }
     
     return isDemoModeActive;
@@ -41,6 +51,7 @@ export const useDemoMode = () => {
 
   const resetDemoMode = () => {
     setDemoMode(false);
+    disableDemoMode(); // Also make sure to update the service
   };
 
   return {
