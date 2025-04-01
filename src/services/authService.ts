@@ -30,11 +30,15 @@ export const loginUser = async (credentials: LoginCredentials): Promise<AuthResp
   try {
     console.log(`Trying authentication endpoint: ${AUTH_ENDPOINT}`);
     
+    // Adding mode: 'cors' explicitly and credentials: 'include' to handle CORS issues
     const response = await fetch(AUTH_ENDPOINT, {
       method: 'POST',
+      mode: 'cors',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
+        'Access-Control-Allow-Origin': '*',
       },
       body: JSON.stringify({
         email: credentials.email,
@@ -94,18 +98,15 @@ export const loginUser = async (credentials: LoginCredentials): Promise<AuthResp
   } catch (error) {
     console.log(`Error with endpoint ${AUTH_ENDPOINT}:`, error);
     
-    // If we want to fallback to demo mode on error, uncomment this
-    // console.log('Falling back to demo mode due to API error');
-    // isDemoMode = true;
-    // return {
-    //   token: 'demo-mode-token',
-    //   email: credentials.email || 'demo@example.com',
-    //   firstName: 'Demo User',
-    //   role: 'Demo Admin',
-    //   roles: ['Demo Admin'],
-    //   success: true,
-    //   message: 'Demo mode activated due to API error'
-    // };
+    // Check if this is a CORS or network related error
+    if (error instanceof TypeError && 
+        (error.message.includes('Failed to fetch') || 
+         error.message.includes('NetworkError') ||
+         error.message.includes('Network request failed'))) {
+      
+      console.log('CORS or network error detected, showing specific message');
+      throw new Error('Network error: The authentication server is not accessible. This may be due to CORS restrictions. Try using Demo Mode or check your network connection.');
+    }
     
     // Rethrow the error to be handled by the caller
     throw error;
