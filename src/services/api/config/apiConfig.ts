@@ -1,7 +1,7 @@
 
 // API configuration constants and utilities
 
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://staging.sa3d.online:7183';
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://92.112.184.210:7183';
 
 /**
  * Gets the authentication token from localStorage

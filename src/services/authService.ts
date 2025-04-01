@@ -5,7 +5,7 @@ import { AuthResponse, LoginCredentials } from '@/types/auth.types';
 let isDemoMode = false;
 
 // Define the API endpoint for authentication
-const AUTH_ENDPOINT = 'http://sa3d.online:7189/api/Authentication/login';
+const AUTH_ENDPOINT = 'http://92.112.184.210:7189/api/Authentication/login';
 
 export const loginUser = async (credentials: LoginCredentials): Promise<AuthResponse> => {
   console.log('Attempting to authenticate with:', credentials.email);
