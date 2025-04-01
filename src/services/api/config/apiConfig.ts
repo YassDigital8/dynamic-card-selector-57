@@ -1,7 +1,8 @@
 
 // API configuration constants and utilities
+import { createCorsHandledUrl } from '@/services/corsProxyService';
 
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://92.112.184.210:7183';
+export const API_BASE_URL = createCorsHandledUrl(import.meta.env.VITE_API_BASE_URL || 'http://92.112.184.210:7183');
 
 /**
  * Gets the authentication token from localStorage

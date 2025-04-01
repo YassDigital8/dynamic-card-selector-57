@@ -24,26 +24,39 @@ export const fetchWithCorsHandling = async (
     console.log('Trying direct fetch...');
     return await fetch(url, options);
   } catch (error) {
-    console.log('Direct fetch failed, trying with CORS Anywhere proxy...', error);
+    console.log('Direct fetch failed, trying with CORS proxy...', error);
     
-    // If direct fetch fails, try using CORS Anywhere proxy
-    // Note: For production, you should set up your own proxy or ensure proper CORS headers on the server
-    const corsAnywhereUrl = `https://cors-anywhere.herokuapp.com/${url}`;
+    // Try different proxy services in sequence until one works
+    const proxies = [
+      `https://cors-anywhere.herokuapp.com/${url}`,
+      `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+      `https://api.codetabs.com/v1/proxy?quest=${url}`,
+      `https://thingproxy.freeboard.io/fetch/${url}`
+    ];
     
-    try {
-      return await fetch(corsAnywhereUrl, {
-        ...options,
-        headers: {
-          ...options.headers,
-          'X-Requested-With': 'XMLHttpRequest', // Required by CORS Anywhere
-        }
-      });
-    } catch (proxyError) {
-      console.log('CORS Anywhere proxy failed:', proxyError);
-      
-      // If that fails too, throw the original error
-      throw error;
+    // Try each proxy in sequence
+    for (const proxyUrl of proxies) {
+      try {
+        console.log(`Trying proxy: ${proxyUrl}`);
+        
+        // Clone the options and add necessary headers for this proxy
+        const proxyOptions = {
+          ...options,
+          headers: {
+            ...options.headers,
+            'X-Requested-With': 'XMLHttpRequest', // Required by CORS Anywhere
+          }
+        };
+        
+        return await fetch(proxyUrl, proxyOptions);
+      } catch (proxyError) {
+        console.log(`Proxy failed: ${proxyUrl}`, proxyError);
+        // Continue to next proxy
+      }
     }
+    
+    // If all proxies fail, throw the original error
+    throw error;
   }
 };
 
@@ -64,4 +77,6 @@ export const createCorsHandledUrl = (baseUrl: string): string => {
 export const corsProxies = {
   corsAnywhere: 'https://cors-anywhere.herokuapp.com/',
   allOrigins: 'https://api.allorigins.win/raw?url=',
+  codeTabs: 'https://api.codetabs.com/v1/proxy?quest=',
+  thingProxy: 'https://thingproxy.freeboard.io/fetch/',
 };

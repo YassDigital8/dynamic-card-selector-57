@@ -1,5 +1,6 @@
 
 import { AuthResponse, LoginCredentials } from '@/types/auth.types';
+import { fetchWithCorsHandling } from './corsProxyService';
 
 // Flag to track if we're in demo mode due to SSL or connection issues
 let isDemoMode = false;
@@ -30,15 +31,12 @@ export const loginUser = async (credentials: LoginCredentials): Promise<AuthResp
   try {
     console.log(`Trying authentication endpoint: ${AUTH_ENDPOINT}`);
     
-    // Adding mode: 'cors' explicitly and credentials: 'include' to handle CORS issues
-    const response = await fetch(AUTH_ENDPOINT, {
+    // Use our CORS-handling fetch instead of regular fetch
+    const response = await fetchWithCorsHandling(AUTH_ENDPOINT, {
       method: 'POST',
-      mode: 'cors',
-      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'Access-Control-Allow-Origin': '*',
       },
       body: JSON.stringify({
         email: credentials.email,
