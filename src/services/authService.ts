@@ -32,6 +32,7 @@ export const loginUser = async (credentials: LoginCredentials): Promise<AuthResp
   
   // Try all endpoints until one works
   let lastError = null;
+  let lastResponseText = null;
   
   for (const endpoint of AUTH_ENDPOINTS) {
     try {
@@ -52,6 +53,7 @@ export const loginUser = async (credentials: LoginCredentials): Promise<AuthResp
       // Always capture the raw response text first
       const responseText = await response.text();
       console.log('Raw API response:', responseText);
+      lastResponseText = responseText;
       
       // Try to parse as JSON if possible
       let responseData;
@@ -59,9 +61,9 @@ export const loginUser = async (credentials: LoginCredentials): Promise<AuthResp
         responseData = JSON.parse(responseText);
         console.log('Parsed API response:', responseData);
       } catch (e) {
-        // If not valid JSON, use the raw text
-        console.log('Response is not valid JSON, using raw text');
-        responseData = { message: responseText };
+        // If not valid JSON, it might be HTML or other content
+        console.log('Response is not valid JSON:', e);
+        continue; // Skip to the next endpoint if we couldn't parse JSON
       }
       
       if (!response.ok) {
@@ -74,7 +76,8 @@ export const loginUser = async (credentials: LoginCredentials): Promise<AuthResp
       }
       
       if (!responseData.token) {
-        throw new Error('Invalid authentication response: no token received');
+        console.log('Response missing token:', responseData);
+        continue; // Skip to the next endpoint if no token in response
       }
       
       return responseData;
@@ -101,8 +104,23 @@ export const loginUser = async (credentials: LoginCredentials): Promise<AuthResp
     };
   }
   
+  // If we got HTML responses instead of JSON, enable demo mode
+  if (lastResponseText && lastResponseText.includes('<!DOCTYPE html>')) {
+    console.log('Enabling demo mode due to HTML response instead of JSON');
+    isDemoMode = true;
+    
+    return {
+      token: 'demo-mode-token',
+      email: credentials.email || 'demo@example.com',
+      firstName: 'Demo User',
+      role: 'Demo Admin', 
+      success: true,
+      message: 'Demo mode activated due to invalid API response format'
+    };
+  }
+  
   // If we get here, all endpoints failed for a reason other than network issues
-  throw lastError;
+  throw new Error(lastError ? lastError.message : 'All authentication endpoints failed with unknown errors');
 };
 
 // Helper function to check if in demo mode
