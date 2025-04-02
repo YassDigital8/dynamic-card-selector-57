@@ -47,6 +47,107 @@ export const useFiles = (
       uploadedBy: 'admin',
       uploadedOn: '2024-04-09T14:20:00',
       galleryId: '2'
+    },
+    // New enhanced gallery items
+    {
+      id: '3',
+      name: 'dubai_festival.jpg',
+      type: 'image/jpeg',
+      size: 145,
+      url: 'https://images.unsplash.com/photo-1517022812141-23620dba5c23',
+      uploadedBy: 'admin',
+      uploadedOn: '2024-04-08T16:45:00',
+      galleryId: '1',
+      metadata: {
+        title: 'Dubai Shopping Festival',
+        altText: 'Crowd at the Dubai Shopping Festival',
+        caption: 'Annual event highlight',
+        description: 'Shoppers enjoying discounts and entertainment at the annual festival',
+        dimensions: {
+          width: 1200,
+          height: 800
+        }
+      }
+    },
+    {
+      id: '4',
+      name: 'cultural_event.jpg',
+      type: 'image/jpeg',
+      size: 132,
+      url: 'https://images.unsplash.com/photo-1472396961693-142e6e269027',
+      uploadedBy: 'admin',
+      uploadedOn: '2024-04-07T09:15:00',
+      galleryId: '1',
+      metadata: {
+        title: 'Syrian Cultural Event',
+        altText: 'Traditional dancers at Syrian cultural event',
+        caption: 'Cultural celebration',
+        description: 'Traditional Syrian dancers performing at the cultural festival',
+        dimensions: {
+          width: 1600,
+          height: 1067
+        }
+      }
+    },
+    {
+      id: '5',
+      name: 'event_promo.mp4',
+      type: 'video/mp4',
+      size: 256000,
+      url: 'https://example.com/event_promo.mp4',
+      uploadedBy: 'admin',
+      uploadedOn: '2024-04-06T14:30:00',
+      galleryId: '1',
+      metadata: {
+        title: 'Event Promotional Video',
+        altText: 'Promotional video for upcoming events',
+        caption: 'Upcoming events',
+        description: 'A montage of all the exciting events happening this season'
+      }
+    },
+    {
+      id: '6',
+      name: 'schedule.pdf',
+      type: 'application/pdf',
+      size: 87,
+      url: '/placeholder.svg',
+      uploadedBy: 'admin',
+      uploadedOn: '2024-04-05T11:20:00',
+      galleryId: '2',
+      metadata: {
+        title: 'Event Schedule',
+        description: 'Complete schedule of all events for the upcoming month'
+      }
+    },
+    {
+      id: '7',
+      name: 'opera_tour.mp3',
+      type: 'audio/mpeg',
+      size: 45000,
+      url: 'https://example.com/opera_tour.mp3',
+      uploadedBy: 'admin',
+      uploadedOn: '2024-04-04T16:10:00',
+      galleryId: '2',
+      metadata: {
+        title: 'Dubai Opera Audio Tour',
+        description: 'Audio guide explaining the history and architecture of Dubai Opera'
+      }
+    },
+    {
+      id: '8',
+      name: 'attraction_overview.mp4',
+      type: 'video/mp4',
+      size: 375000,
+      url: 'https://example.com/attraction_overview.mp4',
+      uploadedBy: 'admin',
+      uploadedOn: '2024-04-03T13:45:00',
+      galleryId: '1',
+      metadata: {
+        title: 'Top Attractions Overview',
+        altText: 'Video overview of top attractions',
+        caption: 'Must-visit places',
+        description: 'A comprehensive overview of must-visit attractions in Dubai'
+      }
     }
   ]);
 
