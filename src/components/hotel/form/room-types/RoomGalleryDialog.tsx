@@ -1,10 +1,11 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { FileInfo } from '@/models/FileModel';
 import { FileGrid } from '@/components/gallery/file-list/FileGrid';
 import { toast } from '@/hooks/use-toast';
+import { useGalleryFiles } from './useGalleryFiles';
 
 interface RoomGalleryDialogProps {
   isOpen: boolean;
@@ -23,12 +24,36 @@ const RoomGalleryDialog: React.FC<RoomGalleryDialogProps> = ({
   multiSelect = false,
   currentSelectedImages = []
 }) => {
+  // Get enhanced gallery files
+  const { galleryFiles: enhancedGalleryFiles } = useGalleryFiles();
+  
+  // Combine the provided gallery files with the enhanced ones
+  const combinedFiles = [...galleryFiles];
+  
+  // Only add enhanced files if they're not already in the provided files
+  const additionalFiles = enhancedGalleryFiles.filter(gf => 
+    !galleryFiles.some(f => f.id === gf.id)
+  );
+  
+  // Use all available files for selection
+  const allAvailableFiles = [...combinedFiles, ...additionalFiles];
+  
   // Pre-select files that are already selected
-  const initialSelectedFiles = galleryFiles.filter(file => 
+  const initialSelectedFiles = allAvailableFiles.filter(file => 
     currentSelectedImages.includes(file.url)
   );
 
   const [selectedFiles, setSelectedFiles] = useState<FileInfo[]>(initialSelectedFiles);
+  
+  // Update selected files when currentSelectedImages changes
+  useEffect(() => {
+    if (isOpen) {
+      const newInitialFiles = allAvailableFiles.filter(file => 
+        currentSelectedImages.includes(file.url)
+      );
+      setSelectedFiles(newInitialFiles);
+    }
+  }, [isOpen, currentSelectedImages, allAvailableFiles]);
 
   const handleFileSelect = (file: FileInfo) => {
     if (multiSelect) {
@@ -75,7 +100,7 @@ const RoomGalleryDialog: React.FC<RoomGalleryDialogProps> = ({
         </DialogHeader>
         <div className="overflow-y-auto max-h-[60vh]">
           <FileGrid 
-            files={galleryFiles}
+            files={allAvailableFiles.filter(file => file.type.startsWith('image/'))}
             onViewFile={handleFileSelect}
             onShareFile={(file, e) => { e.preventDefault(); }}
             onDeleteFile={(file, e) => { e.preventDefault(); }}

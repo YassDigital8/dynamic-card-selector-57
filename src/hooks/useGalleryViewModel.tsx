@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useGalleryNavigation } from './gallery/useGalleryNavigation';
 import { useGalleries } from './gallery/useGalleries';
 import { useFiles } from './gallery/useFiles';
 import { FileInfo, Gallery } from '@/models/FileModel';
+import { useGalleryFiles } from '@/components/hotel/form/room-types/useGalleryFiles';
 
 export const useGalleryViewModel = () => {
   // Use the navigation hook for tab and selection state
@@ -17,6 +18,9 @@ export const useGalleryViewModel = () => {
     handleSelectGallery,
     handleViewFile
   } = useGalleryNavigation();
+  
+  // Get enhanced gallery files
+  const { galleryFiles: enhancedGalleryFiles } = useGalleryFiles();
   
   // Initialize state for files and galleries to break circular dependency
   const [files, setFiles] = useState<FileInfo[]>([
@@ -70,6 +74,21 @@ export const useGalleryViewModel = () => {
   
   // Override the setFiles from state with the one from the files hook
   const filesOperations = useFiles(galleries, setGalleries);
+  
+  // Merge enhanced gallery files with user files after initial render
+  useEffect(() => {
+    if (files.length === 0 || files.length === 2) {  // Only add if we're using the initial files
+      // Add enhanced files that aren't already in the user's files
+      const newEnhancedFiles = enhancedGalleryFiles.filter(
+        enhancedFile => !files.some(file => file.id === enhancedFile.id)
+      );
+      
+      if (newEnhancedFiles.length > 0) {
+        console.log('Adding enhanced gallery files:', newEnhancedFiles.length);
+        setFiles(prevFiles => [...prevFiles, ...newEnhancedFiles]);
+      }
+    }
+  }, [enhancedGalleryFiles]);
   
   // Create a synchronization effect to keep files in sync
   const updateFiles = (newFile: FileInfo) => {

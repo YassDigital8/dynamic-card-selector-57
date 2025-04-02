@@ -1,9 +1,10 @@
-import React, { memo, useCallback } from 'react';
-import { Gallery, FileInfo } from '@/models/FileModel';
-import { GalleriesView } from './tabs/GalleriesView';
-import { UploadView } from './tabs/UploadView';
+
+import React, { useState } from 'react';
+import { FileInfo, Gallery } from '@/models/FileModel';
+import GalleriesView from './tabs/GalleriesView';
 import GalleryBrowseView from './tabs/GalleryBrowseView';
-import { useGalleryNotifications } from './tabs/GalleryNotifications';
+import UploadView from './tabs/UploadView';
+import { useGalleryFiles } from '@/components/hotel/form/room-types/useGalleryFiles';
 
 interface GalleryTabContentProps {
   activeTab: string;
@@ -17,11 +18,11 @@ interface GalleryTabContentProps {
   onFileUploaded: (file: FileInfo) => void;
   onViewFile: (file: FileInfo) => void;
   onUpdateGallery: (gallery: Gallery) => void;
-  onDeleteFile?: (file: FileInfo) => void;
-  onMoveFile?: (file: FileInfo, toGalleryId: string) => void;
+  onDeleteFile: (file: FileInfo) => void;
+  onMoveFile: (file: FileInfo, toGalleryId: string) => void;
 }
 
-export const GalleryTabContent: React.FC<GalleryTabContentProps> = memo(({
+export const GalleryTabContent: React.FC<GalleryTabContentProps> = ({
   activeTab,
   setActiveTab,
   galleries,
@@ -36,84 +37,66 @@ export const GalleryTabContent: React.FC<GalleryTabContentProps> = memo(({
   onDeleteFile,
   onMoveFile
 }) => {
-  const { showDeleteNotification } = useGalleryNotifications();
+  const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
+  const { galleryFiles } = useGalleryFiles(); // Import the enhanced gallery files
+
+  // Combine the local files with the enhanced gallery files
+  const combinedFiles = [...files];
   
-  // Handler for the "Add Files" button
-  const handleAddFiles = useCallback(() => {
-    // Switch to upload tab while keeping the selected gallery
-    setActiveTab('upload');
-  }, [setActiveTab]);
+  // For galleries tab, add enhanced files only if they're not already present
+  const enhancedGalleryFiles = galleryFiles.filter(gf => 
+    !files.some(f => f.id === gf.id)
+  );
+  
+  // When in gallery mode and the user hasn't uploaded their own files yet,
+  // show the enhanced gallery files
+  const displayFiles = activeTab === "browse" && files.length < 3 
+    ? [...files, ...enhancedGalleryFiles]
+    : files;
 
-  // Handler for viewing a file after upload
-  const handleViewFile = useCallback((file: FileInfo) => {
-    // Set the selected gallery to the gallery the file belongs to
-    const fileGallery = galleries.find(g => g.id === file.galleryId);
-    if (fileGallery) {
-      setSelectedGallery(fileGallery);
-    }
-    
-    // Call the parent component's onViewFile
-    onViewFile(file);
-    
-    // Switch to browse tab
-    setActiveTab('browse');
-  }, [galleries, onViewFile, setActiveTab, setSelectedGallery]);
+  const handleOpenUploadDialog = () => {
+    setIsUploadDialogOpen(true);
+  };
 
-  // Handler for back to galleries button
-  const handleBackToGalleries = useCallback(() => {
+  const handleBackToGalleries = () => {
     setSelectedGallery(null);
-    setActiveTab('galleries');
-  }, [setActiveTab, setSelectedGallery]);
-
-  // Handler for deleting a file
-  const handleDeleteFile = useCallback((file: FileInfo) => {
-    if (onDeleteFile) {
-      onDeleteFile(file);
-      
-      // Show a toast notification for successful deletion
-      showDeleteNotification();
-    }
-  }, [onDeleteFile, showDeleteNotification]);
+    setActiveTab("galleries");
+  };
 
   return (
-    <div className="space-y-4">
-      {activeTab === 'galleries' && (
-        <GalleriesView 
+    <div className="mt-4 space-y-6">
+      {activeTab === "galleries" && (
+        <GalleriesView
           galleries={galleries}
           onSelectGallery={onSelectGallery}
+          onOpenUploadDialog={handleOpenUploadDialog}
           galleryFileTypes={galleryFileTypes}
-          onMoveFile={onMoveFile}
         />
       )}
-      
-      {activeTab === 'upload' && (
-        <UploadView 
-          onFileUploaded={onFileUploaded}
-          galleries={galleries}
-          selectedGalleryId={selectedGallery?.id}
-          onViewFile={handleViewFile}
-        />
-      )}
-      
-      {activeTab === 'browse' && selectedGallery && (
+
+      {activeTab === "browse" && (
         <GalleryBrowseView
+          files={displayFiles}
           selectedGallery={selectedGallery}
           onBackToGalleries={handleBackToGalleries}
-          onAddFiles={handleAddFiles}
-          files={files}
+          onAddFiles={handleOpenUploadDialog}
+          onOpenUploadDialog={handleOpenUploadDialog}
           galleries={galleries}
           galleryFileTypes={galleryFileTypes}
           onViewFile={onViewFile}
-          onDeleteFile={handleDeleteFile}
+          onDeleteFile={onDeleteFile}
           onMoveFile={onMoveFile}
           onUpdateGallery={onUpdateGallery}
-          onOpenUploadDialog={handleAddFiles}
+        />
+      )}
+
+      {activeTab === "upload" && (
+        <UploadView
+          onFileUploaded={onFileUploaded}
+          selectedGallery={selectedGallery}
+          galleries={galleries}
         />
       )}
     </div>
   );
-});
-
-GalleryTabContent.displayName = 'GalleryTabContent';
-
-export default GalleryTabContent;
+};

@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { useGalleryViewModel } from '@/hooks/useGalleryViewModel';
 import { FileInfo } from '@/models/FileModel';
 import { Check } from 'lucide-react';
+import { useGalleryFiles } from '@/components/hotel/form/room-types/useGalleryFiles';
 
 interface GalleryTabProps {
   itemLabel: string;
@@ -23,9 +24,18 @@ export const GalleryTab: React.FC<GalleryTabProps> = ({
   onCancel
 }) => {
   const { files } = useGalleryViewModel();
+  const { galleryFiles } = useGalleryFiles(); // Get enhanced gallery files
   
-  // We'll use all available files
-  const galleryFiles = files;
+  // Combine user files with enhanced gallery files
+  const combinedFiles = [...files];
+  
+  // Only add enhanced files if they're not already in the user's files
+  const enhancedFiles = galleryFiles.filter(gf => 
+    !files.some(f => f.id === gf.id)
+  );
+  
+  // Use combined files for the gallery
+  const allGalleryFiles = [...combinedFiles, ...enhancedFiles];
 
   const isFileSelected = (file: FileInfo): boolean => {
     return selectedFiles.some(f => f.id === file.id);
@@ -33,9 +43,9 @@ export const GalleryTab: React.FC<GalleryTabProps> = ({
 
   return (
     <>
-      {galleryFiles.length > 0 ? (
+      {allGalleryFiles.length > 0 ? (
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-          {galleryFiles.filter(file => file.type.startsWith('image/')).map((file) => (
+          {allGalleryFiles.filter(file => file.type.startsWith('image/')).map((file) => (
             <div 
               key={file.id} 
               className={`cursor-pointer border rounded-md overflow-hidden hover:border-primary transition-colors ${
