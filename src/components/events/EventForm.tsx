@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -247,7 +248,7 @@ const EventForm: React.FC<EventFormProps> = ({ initialData, onSubmit, onCancel, 
       image: data.image,
       images: eventImages,
       category: data.category,
-      eventType: data.eventType,
+      eventType: data.eventType as EventType | undefined,
       rating: data.rating,
       featured: data.featured
     };
