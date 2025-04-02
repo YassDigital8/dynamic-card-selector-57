@@ -78,7 +78,7 @@ const EventListView: React.FC<EventListViewProps> = ({
         <div className="text-center py-12 border border-dashed rounded-lg">
           <h3 className="text-lg font-medium">No events found</h3>
           <p className="text-muted-foreground mt-1">
-            {searchQuery || selectedCategory 
+            {searchQuery || selectedCategory !== 'all' 
               ? 'Try different search terms or filters' 
               : 'Add your first event to get started'}
           </p>

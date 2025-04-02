@@ -25,7 +25,7 @@ export const useEventPageState = () => {
 
   const [showAddForm, setShowAddForm] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [eventToDelete, setEventToDelete] = useState<Event | null>(null);
 
   // Filter events based on search query and category
@@ -40,7 +40,7 @@ export const useEventPageState = () => {
       (event.hasTime && event.startTime?.includes(searchQuery.toLowerCase()));
     
     // Filter by category
-    const matchesCategory = selectedCategory ? event.category === selectedCategory : true;
+    const matchesCategory = selectedCategory === 'all' ? true : event.category === selectedCategory;
     
     // Return true if both conditions are met
     return matchesSearch && matchesCategory;
