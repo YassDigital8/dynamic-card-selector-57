@@ -70,6 +70,7 @@ export const GalleryTabContent: React.FC<GalleryTabContentProps> = ({
           onSelectGallery={onSelectGallery}
           onOpenUploadDialog={handleOpenUploadDialog}
           galleryFileTypes={galleryFileTypes}
+          onMoveFile={onMoveFile}
         />
       )}
 
