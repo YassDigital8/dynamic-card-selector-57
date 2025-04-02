@@ -10,16 +10,24 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { EventFormData, Event, EventType, EventImage } from '@/models/EventModel';
-import { Save, X, Upload, Plus, Image, Trash2 } from 'lucide-react';
+import { Save, X, Upload, Plus, Image, Trash2, CalendarIcon } from 'lucide-react';
 import { EventTypeIcon } from '@/components/events';
 import { ImageUploadDialog } from '@/components/hotel/form/shared';
 import { FileInfo } from '@/models/FileModel';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
+import { format } from 'date-fns';
+import { cn } from '@/lib/utils';
 
 // Create a schema for form validation
 const eventFormSchema = z.object({
   title: z.string().min(3, { message: "Title must be at least 3 characters" }),
   description: z.string().min(10, { message: "Description must be at least 10 characters" }),
-  date: z.string().min(3, { message: "Date is required" }),
+  date: z.object({
+    startDate: z.date().optional(),
+    endDate: z.date().optional(),
+    displayValue: z.string(),
+  }),
   location: z.object({
     address: z.string().min(3, { message: "Address is required" }),
     city: z.string().min(2, { message: "City is required" }),
@@ -54,16 +62,61 @@ const EventForm: React.FC<EventFormProps> = ({ initialData, onSubmit, onCancel, 
   const [eventImages, setEventImages] = useState<EventImage[]>(
     initialData?.images || []
   );
+  const [startDate, setStartDate] = useState<Date | undefined>(
+    initialData?.date ? parseEventDate(initialData.date).startDate : undefined
+  );
+  const [endDate, setEndDate] = useState<Date | undefined>(
+    initialData?.date ? parseEventDate(initialData.date).endDate : undefined
+  );
+
+  // Function to parse event date from string to dates
+  function parseEventDate(dateString: string): { startDate?: Date; endDate?: Date; displayValue: string } {
+    // Handle date formats like "Jan 1 - Jan 30, 2024" or "Jan 15, 2024"
+    const result = { startDate: undefined as Date | undefined, endDate: undefined as Date | undefined, displayValue: dateString };
+    
+    try {
+      if (dateString.includes('-')) {
+        const [start, end] = dateString.split('-').map(d => d.trim());
+        // This is a simplified parsing approach, in a production app you'd want more robust parsing
+        result.startDate = new Date(start);
+        result.endDate = new Date(end);
+      } else {
+        result.startDate = new Date(dateString);
+      }
+    } catch (e) {
+      console.error("Error parsing date:", e);
+    }
+    
+    return result;
+  }
+
+  // Function to format dates to display string
+  function formatEventDates(start?: Date, end?: Date): string {
+    if (!start) return '';
+    
+    if (end) {
+      return `${format(start, 'MMM d')} - ${format(end, 'MMM d, yyyy')}`;
+    }
+    
+    return format(start, 'MMM d, yyyy');
+  }
 
   // Set up form with react-hook-form and zod validation
-  const form = useForm<EventFormData>({
+  const form = useForm<z.infer<typeof eventFormSchema>>({
     resolver: zodResolver(eventFormSchema),
     defaultValues: initialData ? {
       ...initialData,
+      date: initialData.date ? 
+        { 
+          startDate: parseEventDate(initialData.date).startDate, 
+          endDate: parseEventDate(initialData.date).endDate,
+          displayValue: initialData.date 
+        } : 
+        { displayValue: '' },
     } : {
       title: "",
       description: "",
-      date: "",
+      date: { displayValue: '' },
       location: {
         address: "",
         city: "",
@@ -77,6 +130,18 @@ const EventForm: React.FC<EventFormProps> = ({ initialData, onSubmit, onCancel, 
       featured: false,
     }
   });
+
+  // Update form value when dates change
+  React.useEffect(() => {
+    if (startDate || endDate) {
+      const displayValue = formatEventDates(startDate, endDate);
+      form.setValue('date', {
+        startDate,
+        endDate,
+        displayValue
+      });
+    }
+  }, [startDate, endDate, form]);
 
   const handleAddImage = (imageUrl: string, metadata?: any) => {
     const newImage: EventImage = {
@@ -182,11 +247,15 @@ const EventForm: React.FC<EventFormProps> = ({ initialData, onSubmit, onCancel, 
     'Maritime Heritage'
   ];
 
-  const handleFormSubmit = (data: EventFormData) => {
-    onSubmit({
+  const handleFormSubmit = (data: z.infer<typeof eventFormSchema>) => {
+    // Transform the date object back to string format for API submission
+    const formattedData: EventFormData = {
       ...data,
+      date: data.date.displayValue,
       images: eventImages
-    });
+    };
+    
+    onSubmit(formattedData);
   };
 
   return (
@@ -289,13 +358,81 @@ const EventForm: React.FC<EventFormProps> = ({ initialData, onSubmit, onCancel, 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
-                name="date"
+                name="date.displayValue"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col">
                     <FormLabel>Date/Schedule</FormLabel>
-                    <FormControl>
-                      <Input placeholder="E.g., Jan 1 - Jan 30, 2024" {...field} />
-                    </FormControl>
+                    <div className="flex space-x-2">
+                      {/* Start Date Selector */}
+                      <div className="flex-1">
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <FormControl>
+                              <Button
+                                variant={"outline"}
+                                className={cn(
+                                  "w-full pl-3 text-left font-normal",
+                                  !startDate && "text-muted-foreground"
+                                )}
+                              >
+                                {startDate ? (
+                                  format(startDate, "MMM d, yyyy")
+                                ) : (
+                                  <span>Start date</span>
+                                )}
+                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                              </Button>
+                            </FormControl>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar
+                              mode="single"
+                              selected={startDate}
+                              onSelect={setStartDate}
+                              initialFocus
+                              className={cn("p-3 pointer-events-auto")}
+                            />
+                          </PopoverContent>
+                        </Popover>
+                      </div>
+                      
+                      {/* End Date Selector */}
+                      <div className="flex-1">
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <FormControl>
+                              <Button
+                                variant={"outline"}
+                                className={cn(
+                                  "w-full pl-3 text-left font-normal",
+                                  !endDate && "text-muted-foreground"
+                                )}
+                              >
+                                {endDate ? (
+                                  format(endDate, "MMM d, yyyy")
+                                ) : (
+                                  <span>End date</span>
+                                )}
+                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                              </Button>
+                            </FormControl>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar
+                              mode="single"
+                              selected={endDate}
+                              onSelect={setEndDate}
+                              disabled={(date) => startDate ? date < startDate : false}
+                              initialFocus
+                              className={cn("p-3 pointer-events-auto")}
+                            />
+                          </PopoverContent>
+                        </Popover>
+                      </div>
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-1">
+                      {field.value ? field.value : "Select start and optional end date"}
+                    </div>
                     <FormMessage />
                   </FormItem>
                 )}

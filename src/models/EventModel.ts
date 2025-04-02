@@ -64,11 +64,17 @@ export type EventType =
   | 'Health and Wellness'
   | 'Maritime Heritage';
 
+export interface EventDateRange {
+  startDate?: Date;
+  endDate?: Date;
+  displayValue: string;
+}
+
 export interface Event {
   id: string;
   title: string;
   description: string;
-  date: string; // Could be a range or fixed date
+  date: string; // Stored as a formatted string like "Jan 1 - Jan 30, 2024"
   location: EventLocation;
   image: string;
   images?: EventImage[];
