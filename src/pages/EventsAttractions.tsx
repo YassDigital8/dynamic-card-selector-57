@@ -14,6 +14,7 @@ const EventsAttractions = () => {
     eventToDelete,
     isLoading,
     isEditing,
+    viewInventory,
     searchQuery,
     selectedCategory,
     viewState,
@@ -24,6 +25,7 @@ const EventsAttractions = () => {
     handleShowAddForm,
     handleSelectEvent,
     handleStartEdit,
+    handleViewInventory,
     handleAddSubmit,
     handleEditSubmit,
     handleStartDelete,
@@ -43,13 +45,16 @@ const EventsAttractions = () => {
         );
       case EventViewState.DETAILS:
       case EventViewState.EDIT:
+      case EventViewState.INVENTORY:
         return (
           <EventDetailsWrapper
             selectedEvent={selectedEvent}
             isEditing={isEditing}
+            viewInventory={viewState === EventViewState.INVENTORY}
             isLoading={isLoading}
             onBack={handleShowList}
             onEdit={handleStartEdit}
+            onViewInventory={handleViewInventory}
             onEditSubmit={handleEditSubmit}
           />
         );

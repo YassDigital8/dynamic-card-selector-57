@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, MapPin, Star, Ticket, Phone, Globe, Mail, ArrowLeft, Edit, Wallet, Users } from 'lucide-react';
+import { Calendar, MapPin, Star, Ticket, Phone, Globe, Mail, ArrowLeft, Edit, Wallet, Users, Package } from 'lucide-react';
 import { Event } from '@/models/EventModel';
 import { EventTypeIcon } from '@/components/events';
 import { Progress } from "@/components/ui/progress";
@@ -13,9 +13,10 @@ interface EventDetailsProps {
   event: Event;
   onBack: () => void;
   onEdit: (event: Event) => void;
+  onViewInventory: (event: Event) => void;
 }
 
-const EventDetails: React.FC<EventDetailsProps> = ({ event, onBack, onEdit }) => {
+const EventDetails: React.FC<EventDetailsProps> = ({ event, onBack, onEdit, onViewInventory }) => {
   // Format price display
   const formatPrice = (price: number) => {
     return price === 0 ? 'Free' : `$${price.toFixed(2)}`;
@@ -49,10 +50,16 @@ const EventDetails: React.FC<EventDetailsProps> = ({ event, onBack, onEdit }) =>
           <ArrowLeft className="h-4 w-4" />
           Back to events
         </Button>
-        <Button variant="outline" size="sm" onClick={() => onEdit(event)} className="gap-1">
-          <Edit className="h-4 w-4" />
-          Edit Event
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" onClick={() => onViewInventory(event)} className="gap-1">
+            <Package className="h-4 w-4" />
+            Manage Inventory
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => onEdit(event)} className="gap-1">
+            <Edit className="h-4 w-4" />
+            Edit Event
+          </Button>
+        </div>
       </div>
 
       <Card className="overflow-hidden">

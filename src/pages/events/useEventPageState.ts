@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Event } from '@/models/EventModel';
 import { useEventsAttractions } from '@/hooks/events/useEventsAttractions';
@@ -7,7 +6,8 @@ export enum EventViewState {
   LIST = 'list',
   DETAILS = 'details',
   ADD = 'add',
-  EDIT = 'edit'
+  EDIT = 'edit',
+  INVENTORY = 'inventory'
 }
 
 export const useEventPageState = () => {
@@ -24,13 +24,12 @@ export const useEventPageState = () => {
   } = useEventsAttractions();
 
   const [showAddForm, setShowAddForm] = useState<boolean>(false);
+  const [viewInventory, setViewInventory] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [eventToDelete, setEventToDelete] = useState<Event | null>(null);
 
-  // Filter events based on search query and category
   const filteredEvents = events.filter(event => {
-    // Filter by search query
     const matchesSearch = 
       event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       event.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -39,27 +38,25 @@ export const useEventPageState = () => {
       event.location.country.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (event.hasTime && event.startTime?.includes(searchQuery.toLowerCase()));
     
-    // Filter by category
     const matchesCategory = selectedCategory === 'all' ? true : event.category === selectedCategory;
     
-    // Return true if both conditions are met
     return matchesSearch && matchesCategory;
   });
 
-  // Get current view state
   const getCurrentViewState = (): EventViewState => {
     if (showAddForm) return EventViewState.ADD;
     if (selectedEvent) {
+      if (viewInventory) return EventViewState.INVENTORY;
       return isEditing ? EventViewState.EDIT : EventViewState.DETAILS;
     }
     return EventViewState.LIST;
   };
 
-  // Navigation handlers
   const handleShowList = () => {
     setSelectedEvent(null);
     setShowAddForm(false);
     setIsEditing(false);
+    setViewInventory(false);
   };
 
   const handleShowAddForm = () => {
@@ -80,7 +77,13 @@ export const useEventPageState = () => {
     setShowAddForm(false);
   };
 
-  // CRUD operations
+  const handleViewInventory = (event: Event) => {
+    setSelectedEvent(event);
+    setViewInventory(true);
+    setIsEditing(false);
+    setShowAddForm(false);
+  };
+
   const handleAddSubmit = async (data: any) => {
     const result = await addEvent(data);
     if (result.success && 'event' in result) {
@@ -124,6 +127,7 @@ export const useEventPageState = () => {
     eventToDelete,
     isLoading,
     isEditing,
+    viewInventory,
     searchQuery,
     selectedCategory,
     viewState: getCurrentViewState(),
@@ -134,6 +138,7 @@ export const useEventPageState = () => {
     handleShowAddForm,
     handleSelectEvent,
     handleStartEdit,
+    handleViewInventory,
     handleAddSubmit,
     handleEditSubmit,
     handleStartDelete,
