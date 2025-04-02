@@ -10,7 +10,6 @@ import {
 import { Tag } from 'lucide-react';
 import { categoryNames } from '@/data/eventCategoriesData';
 import { categoryDescriptions } from '@/data/categoryDescriptions';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface CategoryFilterProps {
   selectedCategory: string;

@@ -23,5 +23,6 @@ export const categoryDescriptions: Record<string, string> = {
   "Gaming & Esports": "LAN Parties, Tournaments, Gaming Nights",
   "Themed Experiences": "Interactive Theater, Escape Rooms",
   "Pet & Animal Events": "Adoption Days, Fundraisers, Festivals",
-  "Language & Culture Exchange": "Multicultural Meetups, Language Swaps"
+  "Language & Culture Exchange": "Multicultural Meetups, Language Swaps",
+  "Instagrammable Spots": "Panoramic Views, Art Installations, Scenic Locations"
 };
