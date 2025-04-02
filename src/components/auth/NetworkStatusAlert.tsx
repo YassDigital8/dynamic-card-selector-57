@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Wifi, WifiOff, Shield } from 'lucide-react';
+import { Wifi, WifiOff, Shield, ExternalLink } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 
@@ -17,6 +17,11 @@ const NetworkStatusAlert: React.FC<NetworkStatusAlertProps> = ({
 }) => {
   if (!isNetworkTested) return null;
   
+  // Function to open the security tutorial in a new tab
+  const openCorsSecurityGuide = () => {
+    window.open('https://cors-anywhere.herokuapp.com/corsdemo', '_blank', 'noopener,noreferrer');
+  };
+  
   return (
     <Alert 
       variant={canReachServer ? "info" : "warning"} 
@@ -28,15 +33,32 @@ const NetworkStatusAlert: React.FC<NetworkStatusAlertProps> = ({
         {canReachServer 
           ? "The authentication server is reachable. Multiple CORS bypass methods are enabled." 
           : "The system is attempting to bypass CORS restrictions using multiple proxy methods. If login fails, try Demo Mode."}
+        
         {!canReachServer && (
-          <Button 
-            variant="outline" 
-            className="mt-2 bg-amber-50 border-amber-200 text-amber-700 hover:bg-amber-100"
-            onClick={testServerConnection}
-            type="button"
-          >
-            Retry Connection
-          </Button>
+          <div className="mt-2 space-y-2">
+            <div className="text-amber-700 text-sm">
+              <a 
+                href="https://cors-anywhere.herokuapp.com/corsdemo" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center hover:underline"
+              >
+                <ExternalLink className="h-3 w-3 mr-1" />
+                Enable CORS Anywhere Service
+              </a>
+            </div>
+            <Button 
+              variant="outline" 
+              className="mt-1 bg-amber-50 border-amber-200 text-amber-700 hover:bg-amber-100"
+              onClick={testServerConnection}
+              type="button"
+            >
+              Retry Connection
+            </Button>
+            <div className="text-xs text-gray-500 mt-1">
+              Click the link above to enable the CORS proxy service, then click "Retry Connection".
+            </div>
+          </div>
         )}
       </AlertDescription>
     </Alert>
