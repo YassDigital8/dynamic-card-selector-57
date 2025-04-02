@@ -50,6 +50,12 @@ export const loginUser = async (credentials: LoginCredentials): Promise<AuthResp
     const responseText = await response.text();
     console.log('Raw API response:', responseText);
     
+    // Check for the specific CORS Anywhere error message
+    if (responseText.includes('See /corsdemo')) {
+      console.log('CORS Anywhere requires activation');
+      throw new Error('CORS Proxy Activation Required: You need to enable the CORS Anywhere service before using it. Please click the "Enable CORS Anywhere Service" link, then click the button on that page to request temporary access, and then try again.');
+    }
+    
     // Try to parse as JSON
     let responseData;
     try {
@@ -97,6 +103,11 @@ export const loginUser = async (credentials: LoginCredentials): Promise<AuthResp
     return authResponse;
   } catch (error) {
     console.log(`Error with endpoint ${AUTH_ENDPOINT}:`, error);
+    
+    // Check if this is a CORS Anywhere activation error
+    if (error instanceof Error && error.message.includes('CORS Proxy Activation Required')) {
+      throw error; // Rethrow the specific error
+    }
     
     // Check if this is a CORS or network related error
     if (error instanceof TypeError && 
