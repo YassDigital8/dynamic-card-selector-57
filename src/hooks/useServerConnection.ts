@@ -1,21 +1,24 @@
 
 import { useState, useEffect } from 'react';
+import { fetchWithCorsHandling } from '@/services/corsProxyService';
 
 export const useServerConnection = () => {
   const [isNetworkTested, setIsNetworkTested] = useState(false);
   const [canReachServer, setCanReachServer] = useState(false);
   
-  // Function to test network connectivity to the auth server
+  // Function to test network connectivity to the auth server with enhanced CORS handling
   const testServerConnection = async () => {
     setIsNetworkTested(false);
     try {
-      // Use HEAD method just to check connectivity without transferring much data
-      const response = await fetch('http://92.112.184.210:7189/', {
+      console.log('Testing server connection with enhanced CORS handling...');
+      
+      // Try to reach the server with our enhanced CORS handling
+      const response = await fetchWithCorsHandling('http://92.112.184.210:7189/', {
         method: 'HEAD',
-        mode: 'no-cors', // This allows us to at least attempt the connection
+        // The fetchWithCorsHandling function will take care of CORS handling
       });
       
-      // If we get here, we could at least establish a connection
+      // If we get here, we could establish a connection
       setCanReachServer(true);
       console.log('Authentication server is reachable!');
     } catch (error) {

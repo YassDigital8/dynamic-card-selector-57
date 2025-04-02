@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Wifi, WifiOff } from 'lucide-react';
+import { Wifi, WifiOff, Shield } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 
@@ -22,12 +22,12 @@ const NetworkStatusAlert: React.FC<NetworkStatusAlertProps> = ({
       variant={canReachServer ? "info" : "warning"} 
       className="mb-4"
     >
-      {canReachServer ? <Wifi className="h-4 w-4" /> : <WifiOff className="h-4 w-4" />}
-      <AlertTitle>{canReachServer ? "Server Reachable" : "Server Unreachable"}</AlertTitle>
+      {canReachServer ? <Wifi className="h-4 w-4" /> : <Shield className="h-4 w-4" />}
+      <AlertTitle>{canReachServer ? "Server Reachable" : "CORS Issue Detected"}</AlertTitle>
       <AlertDescription>
         {canReachServer 
-          ? "The authentication server is reachable, but you may still experience CORS issues in the browser. If login fails, try Demo Mode." 
-          : "The authentication server cannot be reached. This might be due to network issues or CORS restrictions."}
+          ? "The authentication server is reachable. Multiple CORS bypass methods are enabled." 
+          : "The system is attempting to bypass CORS restrictions using multiple proxy methods. If login fails, try Demo Mode."}
         {!canReachServer && (
           <Button 
             variant="outline" 

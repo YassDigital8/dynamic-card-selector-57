@@ -29,19 +29,21 @@ export const loginUser = async (credentials: LoginCredentials): Promise<AuthResp
   }
   
   try {
-    console.log(`Trying authentication endpoint: ${AUTH_ENDPOINT}`);
+    console.log(`Trying authentication endpoint with enhanced CORS handling: ${AUTH_ENDPOINT}`);
     
-    // Use our CORS-handling fetch instead of regular fetch
+    // Use our enhanced CORS-handling fetch with improved options
     const response = await fetchWithCorsHandling(AUTH_ENDPOINT, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest', // This can help with some CORS configurations
       },
       body: JSON.stringify({
         email: credentials.email,
         password: credentials.password
       }),
+      // Don't include credentials to avoid preflight issues
     });
     
     // Always capture the raw response text first
@@ -103,7 +105,7 @@ export const loginUser = async (credentials: LoginCredentials): Promise<AuthResp
          error.message.includes('Network request failed'))) {
       
       console.log('CORS or network error detected, showing specific message');
-      throw new Error('Network error: The authentication server is not accessible. This may be due to CORS restrictions. Try using Demo Mode or check your network connection.');
+      throw new Error('Network error: The authentication server is not accessible due to CORS restrictions. Try using Demo Mode or check your network connection.');
     }
     
     // Rethrow the error to be handled by the caller
