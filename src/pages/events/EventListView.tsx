@@ -1,12 +1,13 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { PlusCircle, Search } from 'lucide-react';
+import { PlusCircle, Search, Package } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Event } from '@/models/EventModel';
 import EventCard from '@/components/events/EventCard';
 import { CategoryFilter } from '@/components/events/filters';
 import { motion } from 'framer-motion';
+import { Separator } from '@/components/ui/separator';
 
 interface EventListViewProps {
   events: Event[];
@@ -18,6 +19,7 @@ interface EventListViewProps {
   onSelectEvent: (event: Event) => void;
   onEditEvent: (event: Event) => void;
   onDeleteEvent: (id: string) => void;
+  onViewInventoryDashboard: () => void;
 }
 
 const EventListView: React.FC<EventListViewProps> = ({
@@ -29,7 +31,8 @@ const EventListView: React.FC<EventListViewProps> = ({
   onAddNewClick,
   onSelectEvent,
   onEditEvent,
-  onDeleteEvent
+  onDeleteEvent,
+  onViewInventoryDashboard
 }) => {
   return (
     <motion.div
@@ -54,10 +57,20 @@ const EventListView: React.FC<EventListViewProps> = ({
             onSelectCategory={onCategoryChange}
           />
         </div>
-        <Button onClick={onAddNewClick} className="gap-1 whitespace-nowrap">
-          <PlusCircle className="h-4 w-4" />
-          Add New Event
-        </Button>
+        <div className="flex gap-2">
+          <Button 
+            variant="outline" 
+            onClick={onViewInventoryDashboard} 
+            className="gap-1 whitespace-nowrap"
+          >
+            <Package className="h-4 w-4" />
+            Inventory Dashboard
+          </Button>
+          <Button onClick={onAddNewClick} className="gap-1 whitespace-nowrap">
+            <PlusCircle className="h-4 w-4" />
+            Add New Event
+          </Button>
+        </div>
       </div>
 
       {events.length > 0 ? (

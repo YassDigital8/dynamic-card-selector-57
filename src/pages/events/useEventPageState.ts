@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Event } from '@/models/EventModel';
 import { useEventsAttractions } from '@/hooks/events/useEventsAttractions';
@@ -28,6 +29,7 @@ export const useEventPageState = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [eventToDelete, setEventToDelete] = useState<Event | null>(null);
+  const [showInventoryDashboard, setShowInventoryDashboard] = useState<boolean>(false);
 
   const filteredEvents = events.filter(event => {
     const matchesSearch = 
@@ -131,9 +133,11 @@ export const useEventPageState = () => {
     searchQuery,
     selectedCategory,
     viewState: getCurrentViewState(),
+    showInventoryDashboard,
     setSearchQuery,
     setSelectedCategory,
     setEventToDelete,
+    setShowInventoryDashboard,
     handleShowList,
     handleShowAddForm,
     handleSelectEvent,

@@ -6,6 +6,7 @@ import { EventViewState, useEventPageState } from './events/useEventPageState';
 import EventListView from './events/EventListView';
 import EventDetailsWrapper from './events/EventDetailsWrapper';
 import EventAddForm from './events/EventAddForm';
+import { InventoryDashboard } from '@/components/events/inventory';
 
 const EventsAttractions = () => {
   const {
@@ -29,11 +30,27 @@ const EventsAttractions = () => {
     handleAddSubmit,
     handleEditSubmit,
     handleStartDelete,
-    handleConfirmDelete
+    handleConfirmDelete,
+    showInventoryDashboard,
+    setShowInventoryDashboard
   } = useEventPageState();
 
   // Render content based on current state
   const renderContent = () => {
+    if (showInventoryDashboard) {
+      return (
+        <InventoryDashboard 
+          events={events} 
+          onBack={() => setShowInventoryDashboard(false)} 
+          onSelectEvent={(event) => {
+            handleSelectEvent(event);
+            handleViewInventory(event);
+            setShowInventoryDashboard(false);
+          }}
+        />
+      );
+    }
+    
     switch (viewState) {
       case EventViewState.ADD:
         return (
@@ -71,6 +88,7 @@ const EventsAttractions = () => {
             onSelectEvent={handleSelectEvent}
             onEditEvent={handleStartEdit}
             onDeleteEvent={handleStartDelete}
+            onViewInventoryDashboard={() => setShowInventoryDashboard(true)}
           />
         );
     }
