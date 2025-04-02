@@ -67,6 +67,8 @@ export type EventType =
 export interface EventDateRange {
   startDate?: Date;
   endDate?: Date;
+  startTime?: string; // Added for time support
+  endTime?: string;   // Added for time support
   displayValue: string;
 }
 
@@ -84,6 +86,9 @@ export interface Event {
   featured?: boolean;
   contactDetails?: EventContact[];
   ticketInfo?: TicketInfo[];
+  hasTime?: boolean; // Flag to indicate if the event has a specific time
+  startTime?: string; // Optional time field 
+  endTime?: string;   // Optional time field
   createdAt: Date;
   updatedAt: Date;
 }

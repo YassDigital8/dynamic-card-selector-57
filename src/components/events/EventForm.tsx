@@ -10,7 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { EventFormData, Event, EventType, EventImage } from '@/models/EventModel';
-import { Save, X, Upload, Plus, Image, Trash2, CalendarIcon } from 'lucide-react';
+import { Save, X, Upload, Plus, Image, Trash2, CalendarIcon, Clock } from 'lucide-react';
 import { EventTypeIcon } from '@/components/events';
 import { ImageUploadDialog } from '@/components/hotel/form/shared';
 import { FileInfo } from '@/models/FileModel';
@@ -18,6 +18,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { Switch } from '@/components/ui/switch';
 
 const eventFormSchema = z.object({
   title: z.string().min(3, { message: "Title must be at least 3 characters" }),
@@ -27,6 +28,9 @@ const eventFormSchema = z.object({
     endDate: z.date().optional(),
     displayValue: z.string(),
   }),
+  hasTime: z.boolean().default(false),
+  startTime: z.string().optional(),
+  endTime: z.string().optional(),
   location: z.object({
     address: z.string().min(3, { message: "Address is required" }),
     city: z.string().min(2, { message: "City is required" }),
@@ -67,6 +71,9 @@ const EventForm: React.FC<EventFormProps> = ({ initialData, onSubmit, onCancel, 
   const [endDate, setEndDate] = useState<Date | undefined>(
     initialData?.date ? parseEventDate(initialData.date).endDate : undefined
   );
+  const [hasTime, setHasTime] = useState<boolean>(
+    initialData?.hasTime || false
+  );
 
   function parseEventDate(dateString: string): { startDate?: Date; endDate?: Date; displayValue: string } {
     const result = { startDate: undefined as Date | undefined, endDate: undefined as Date | undefined, displayValue: dateString };
@@ -86,14 +93,26 @@ const EventForm: React.FC<EventFormProps> = ({ initialData, onSubmit, onCancel, 
     return result;
   }
 
-  function formatEventDates(start?: Date, end?: Date): string {
+  function formatEventDates(start?: Date, end?: Date, startTime?: string, endTime?: string, hasTime?: boolean): string {
     if (!start) return '';
     
+    let formattedDate = '';
+    
     if (end) {
-      return `${format(start, 'MMM d')} - ${format(end, 'MMM d, yyyy')}`;
+      formattedDate = `${format(start, 'MMM d')} - ${format(end, 'MMM d, yyyy')}`;
+    } else {
+      formattedDate = format(start, 'MMM d, yyyy');
     }
     
-    return format(start, 'MMM d, yyyy');
+    // Add time information if available
+    if (hasTime && startTime) {
+      formattedDate += ` at ${startTime}`;
+      if (endTime) {
+        formattedDate += ` - ${endTime}`;
+      }
+    }
+    
+    return formattedDate;
   }
 
   const form = useForm<z.infer<typeof eventFormSchema>>({
@@ -107,10 +126,16 @@ const EventForm: React.FC<EventFormProps> = ({ initialData, onSubmit, onCancel, 
           displayValue: initialData.date 
         } : 
         { displayValue: '' },
+      hasTime: initialData.hasTime || false,
+      startTime: initialData.startTime || '',
+      endTime: initialData.endTime || '',
     } : {
       title: "",
       description: "",
       date: { displayValue: '' },
+      hasTime: false,
+      startTime: '',
+      endTime: '',
       location: {
         address: "",
         city: "",
@@ -127,7 +152,11 @@ const EventForm: React.FC<EventFormProps> = ({ initialData, onSubmit, onCancel, 
 
   React.useEffect(() => {
     if (startDate || endDate) {
-      const displayValue = formatEventDates(startDate, endDate);
+      const startTime = form.getValues('startTime');
+      const endTime = form.getValues('endTime');
+      const hasTimeValue = form.getValues('hasTime');
+      
+      const displayValue = formatEventDates(startDate, endDate, startTime, endTime, hasTimeValue);
       form.setValue('date', {
         startDate,
         endDate,
@@ -135,6 +164,18 @@ const EventForm: React.FC<EventFormProps> = ({ initialData, onSubmit, onCancel, 
       });
     }
   }, [startDate, endDate, form]);
+
+  // Update display value when time changes
+  React.useEffect(() => {
+    if (startDate) {
+      const startTime = form.getValues('startTime');
+      const endTime = form.getValues('endTime');
+      const hasTimeValue = form.getValues('hasTime');
+      
+      const displayValue = formatEventDates(startDate, endDate, startTime, endTime, hasTimeValue);
+      form.setValue('date.displayValue', displayValue);
+    }
+  }, [form.watch('startTime'), form.watch('endTime'), form.watch('hasTime')]);
 
   const handleAddImage = (imageUrl: string, metadata?: any) => {
     const newImage: EventImage = {
@@ -250,10 +291,22 @@ const EventForm: React.FC<EventFormProps> = ({ initialData, onSubmit, onCancel, 
       category: data.category,
       eventType: data.eventType as EventType | undefined,
       rating: data.rating,
-      featured: data.featured
+      featured: data.featured,
+      hasTime: data.hasTime,
+      startTime: data.startTime,
+      endTime: data.endTime
     };
     
     onSubmit(formattedData);
+  };
+
+  const handleTimeToggle = (checked: boolean) => {
+    setHasTime(checked);
+    form.setValue('hasTime', checked);
+    if (!checked) {
+      form.setValue('startTime', '');
+      form.setValue('endTime', '');
+    }
   };
 
   return (
@@ -352,87 +405,160 @@ const EventForm: React.FC<EventFormProps> = ({ initialData, onSubmit, onCancel, 
               )}
             />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4">
               <FormField
                 control={form.control}
                 name="date.displayValue"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
                     <FormLabel>Date/Schedule</FormLabel>
-                    <div className="flex space-x-2">
-                      <div className="flex-1">
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <FormControl>
-                              <Button
-                                variant={"outline"}
-                                className={cn(
-                                  "w-full pl-3 text-left font-normal",
-                                  !startDate && "text-muted-foreground"
-                                )}
-                              >
-                                {startDate ? (
-                                  format(startDate, "MMM d, yyyy")
-                                ) : (
-                                  <span>Start date</span>
-                                )}
-                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                              </Button>
-                            </FormControl>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                              mode="single"
-                              selected={startDate}
-                              onSelect={setStartDate}
-                              initialFocus
-                              className={cn("p-3 pointer-events-auto")}
-                            />
-                          </PopoverContent>
-                        </Popover>
+                    <div className="flex flex-col space-y-2">
+                      <div className="flex space-x-2">
+                        <div className="flex-1">
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <FormControl>
+                                <Button
+                                  variant={"outline"}
+                                  className={cn(
+                                    "w-full pl-3 text-left font-normal",
+                                    !startDate && "text-muted-foreground"
+                                  )}
+                                >
+                                  {startDate ? (
+                                    format(startDate, "MMM d, yyyy")
+                                  ) : (
+                                    <span>Start date</span>
+                                  )}
+                                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                </Button>
+                              </FormControl>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="start">
+                              <Calendar
+                                mode="single"
+                                selected={startDate}
+                                onSelect={setStartDate}
+                                initialFocus
+                                className={cn("p-3 pointer-events-auto")}
+                              />
+                            </PopoverContent>
+                          </Popover>
+                        </div>
+                        
+                        <div className="flex-1">
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <FormControl>
+                                <Button
+                                  variant={"outline"}
+                                  className={cn(
+                                    "w-full pl-3 text-left font-normal",
+                                    !endDate && "text-muted-foreground"
+                                  )}
+                                >
+                                  {endDate ? (
+                                    format(endDate, "MMM d, yyyy")
+                                  ) : (
+                                    <span>End date</span>
+                                  )}
+                                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                </Button>
+                              </FormControl>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="start">
+                              <Calendar
+                                mode="single"
+                                selected={endDate}
+                                onSelect={setEndDate}
+                                disabled={(date) => startDate ? date < startDate : false}
+                                initialFocus
+                                className={cn("p-3 pointer-events-auto")}
+                              />
+                            </PopoverContent>
+                          </Popover>
+                        </div>
                       </div>
+
+                      <FormField
+                        control={form.control}
+                        name="hasTime"
+                        render={({ field }) => (
+                          <FormItem className="flex flex-row items-center justify-between border p-3 rounded-md">
+                            <div className="space-y-0.5">
+                              <FormLabel>Event has specific time?</FormLabel>
+                              <div className="text-sm text-muted-foreground">
+                                Toggle on to add start and end times for your event
+                              </div>
+                            </div>
+                            <FormControl>
+                              <Switch
+                                checked={field.value}
+                                onCheckedChange={(checked) => {
+                                  field.onChange(checked);
+                                  handleTimeToggle(checked);
+                                }}
+                              />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+
+                      {form.watch('hasTime') && (
+                        <div className="flex space-x-2">
+                          <FormField
+                            control={form.control}
+                            name="startTime"
+                            render={({ field }) => (
+                              <FormItem className="flex-1">
+                                <FormLabel>Start Time</FormLabel>
+                                <div className="flex items-center">
+                                  <Clock className="mr-2 h-4 w-4 text-muted-foreground" />
+                                  <FormControl>
+                                    <Input
+                                      type="time"
+                                      {...field}
+                                    />
+                                  </FormControl>
+                                </div>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          
+                          <FormField
+                            control={form.control}
+                            name="endTime"
+                            render={({ field }) => (
+                              <FormItem className="flex-1">
+                                <FormLabel>End Time (Optional)</FormLabel>
+                                <div className="flex items-center">
+                                  <Clock className="mr-2 h-4 w-4 text-muted-foreground" />
+                                  <FormControl>
+                                    <Input
+                                      type="time"
+                                      {...field}
+                                    />
+                                  </FormControl>
+                                </div>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                      )}
                       
-                      <div className="flex-1">
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <FormControl>
-                              <Button
-                                variant={"outline"}
-                                className={cn(
-                                  "w-full pl-3 text-left font-normal",
-                                  !endDate && "text-muted-foreground"
-                                )}
-                              >
-                                {endDate ? (
-                                  format(endDate, "MMM d, yyyy")
-                                ) : (
-                                  <span>End date</span>
-                                )}
-                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                              </Button>
-                            </FormControl>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                              mode="single"
-                              selected={endDate}
-                              onSelect={setEndDate}
-                              disabled={(date) => startDate ? date < startDate : false}
-                              initialFocus
-                              className={cn("p-3 pointer-events-auto")}
-                            />
-                          </PopoverContent>
-                        </Popover>
+                      <div className="text-xs text-muted-foreground mt-1 border-t pt-2">
+                        <strong>Display format:</strong> {field.value ? field.value : "Select start and optional end date/time"}
                       </div>
-                    </div>
-                    <div className="text-xs text-muted-foreground mt-1">
-                      {field.value ? field.value : "Select start and optional end date"}
                     </div>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+            </div>
 
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
                 name="category"
@@ -460,38 +586,38 @@ const EventForm: React.FC<EventFormProps> = ({ initialData, onSubmit, onCancel, 
                   </FormItem>
                 )}
               />
-            </div>
 
-            <FormField
-              control={form.control}
-              name="eventType"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Event Type</FormLabel>
-                  <Select 
-                    onValueChange={field.onChange} 
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select an event type" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent className="max-h-[300px]">
-                      {eventTypes.map(type => (
-                        <SelectItem key={type} value={type} className="flex items-center gap-2">
-                          <div className="flex items-center gap-2">
-                            <EventTypeIcon eventType={type as EventType} className="text-muted-foreground" />
-                            <span>{type}</span>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={form.control}
+                name="eventType"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Event Type</FormLabel>
+                    <Select 
+                      onValueChange={field.onChange} 
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select an event type" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent className="max-h-[300px]">
+                        {eventTypes.map(type => (
+                          <SelectItem key={type} value={type} className="flex items-center gap-2">
+                            <div className="flex items-center gap-2">
+                              <EventTypeIcon eventType={type as EventType} className="text-muted-foreground" />
+                              <span>{type}</span>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
             <FormField
               control={form.control}

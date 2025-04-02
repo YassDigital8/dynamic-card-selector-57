@@ -30,3 +30,25 @@ export const formatDateTime = (dateString: string): string => {
     return dateString;
   }
 };
+
+/**
+ * Format time from 24-hour format to 12-hour format
+ * @param time Time string in 24-hour format (HH:MM)
+ * @returns Formatted time string in 12-hour format (h:MM AM/PM)
+ */
+export const formatTime = (time: string): string => {
+  if (!time) return '';
+  
+  try {
+    // Create a date object with today's date and the time
+    const date = new Date();
+    const [hours, minutes] = time.split(':').map(Number);
+    date.setHours(hours);
+    date.setMinutes(minutes);
+    
+    return format(date, 'h:mm a');
+  } catch (error) {
+    console.error('Error formatting time:', error);
+    return time;
+  }
+};

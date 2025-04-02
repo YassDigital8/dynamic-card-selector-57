@@ -35,7 +35,8 @@ const EventsAttractions = () => {
     event.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
     event.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
     event.location.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    event.location.country.toLowerCase().includes(searchQuery.toLowerCase())
+    event.location.country.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (event.hasTime && event.startTime?.includes(searchQuery.toLowerCase()))
   );
 
   // Handle form submission for adding a new event
