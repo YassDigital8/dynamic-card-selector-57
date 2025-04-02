@@ -9,6 +9,8 @@ import {
 } from '@/components/ui/select';
 import { Tag } from 'lucide-react';
 import { categoryNames } from '@/data/eventCategoriesData';
+import { categoryDescriptions } from '@/data/categoryDescriptions';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface CategoryFilterProps {
   selectedCategory: string;
@@ -31,11 +33,24 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
             <SelectValue placeholder="Filter by category" />
           </div>
         </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">All Categories</SelectItem>
+        <SelectContent className="max-h-[400px]">
+          <SelectItem value="all" className="py-2">
+            <div className="flex flex-col">
+              <span>All Categories</span>
+              <span className="text-xs text-muted-foreground">View events from all categories</span>
+            </div>
+          </SelectItem>
+          
           {categoryNames.map(category => (
-            <SelectItem key={category} value={category}>
-              {category}
+            <SelectItem key={category} value={category} className="py-2">
+              <div className="flex flex-col">
+                <span>{category}</span>
+                {categoryDescriptions[category] && (
+                  <span className="text-xs text-muted-foreground">
+                    {categoryDescriptions[category]}
+                  </span>
+                )}
+              </div>
             </SelectItem>
           ))}
         </SelectContent>

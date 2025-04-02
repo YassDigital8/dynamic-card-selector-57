@@ -10,6 +10,8 @@ import {
 import { 
   Select, 
   SelectContent, 
+  SelectGroup,
+  SelectLabel,
   SelectItem, 
   SelectTrigger, 
   SelectValue 
@@ -18,6 +20,7 @@ import { EventType } from '@/models/EventModel';
 import { EventTypeIcon } from '@/components/events';
 import { UseFormReturn } from 'react-hook-form';
 import { eventCategoriesData } from '@/data/eventCategoriesData';
+import { categoryDescriptions } from '@/data/categoryDescriptions';
 
 interface EventTypeSelectorProps {
   form: UseFormReturn<any>;
@@ -61,10 +64,17 @@ const EventTypeSelector: React.FC<EventTypeSelectorProps> = ({
                   <SelectValue placeholder="Select a category" />
                 </SelectTrigger>
               </FormControl>
-              <SelectContent>
+              <SelectContent className="max-h-[400px]">
                 {categories.map(category => (
-                  <SelectItem key={category} value={category}>
-                    {category}
+                  <SelectItem key={category} value={category} className="py-2">
+                    <div className="flex flex-col">
+                      <span>{category}</span>
+                      {categoryDescriptions[category] && (
+                        <span className="text-xs text-muted-foreground">
+                          {categoryDescriptions[category]}
+                        </span>
+                      )}
+                    </div>
                   </SelectItem>
                 ))}
               </SelectContent>
