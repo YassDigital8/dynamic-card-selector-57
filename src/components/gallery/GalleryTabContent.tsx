@@ -1,9 +1,8 @@
-
 import React, { useState } from 'react';
 import { FileInfo, Gallery } from '@/models/FileModel';
-import GalleriesView from './tabs/GalleriesView';
+import { GalleriesView } from './tabs/GalleriesView';
 import GalleryBrowseView from './tabs/GalleryBrowseView';
-import UploadView from './tabs/UploadView';
+import { UploadView } from './tabs/UploadView';
 import { useGalleryFiles } from '@/components/hotel/form/room-types/useGalleryFiles';
 
 interface GalleryTabContentProps {
@@ -95,6 +94,7 @@ export const GalleryTabContent: React.FC<GalleryTabContentProps> = ({
           onFileUploaded={onFileUploaded}
           selectedGallery={selectedGallery}
           galleries={galleries}
+          onViewFile={onViewFile}
         />
       )}
     </div>
