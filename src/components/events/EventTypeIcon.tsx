@@ -3,7 +3,7 @@ import React from 'react';
 import { 
   Ticket, Music, Star, Utensils, Camera, MapPin, Book, Users, 
   Tent, Mountain, Calendar, ShoppingCart, Briefcase, Heart, Film, 
-  Moon, Palette, Bike, Trophy, Martini, Jeep
+  Moon, Palette, Bike, Trophy, Martini
 } from 'lucide-react';
 import { EventType } from '@/models/EventModel';
 
@@ -89,7 +89,7 @@ const EventTypeIcon: React.FC<EventTypeIconProps> = ({
       return <Mountain size={size} className={className} />;
     }
     if (eventType.includes("4x4") || eventType.includes("Desert")) {
-      return <Jeep size={size} className={className} />;
+      return <Utensils size={size} className={className} />; // Use another available icon since Jeep is not available
     }
     if (eventType.includes("Horseback")) {
       return <Utensils size={size} className={className} />;

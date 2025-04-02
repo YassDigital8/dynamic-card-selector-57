@@ -14,7 +14,7 @@ export const demoEvents: Event[] = [
     },
     image: "/lovable-uploads/37575151-7391-42fc-ad6c-deea51f3e4b2.png",
     category: "Shopping",
-    eventType: "Festivals",
+    eventType: "Local Food and Craft Festivals",
     rating: 4.8,
     featured: true,
     contactDetails: [
@@ -54,7 +54,7 @@ export const demoEvents: Event[] = [
     },
     image: "/lovable-uploads/37575151-7391-42fc-ad6c-deea51f3e4b2.png",
     category: "Cultural",
-    eventType: "Arabic Events",
+    eventType: "Cultural Heritage Festivals",
     rating: 4.7,
     contactDetails: [
       {
@@ -99,7 +99,7 @@ export const demoEvents: Event[] = [
     },
     image: "/lovable-uploads/37575151-7391-42fc-ad6c-deea51f3e4b2.png",
     category: "Attraction",
-    eventType: "Morning Tours",
+    eventType: "Historic Site Tours",
     rating: 4.9,
     featured: true,
     contactDetails: [
@@ -146,7 +146,7 @@ export const demoEvents: Event[] = [
     },
     image: "/lovable-uploads/37575151-7391-42fc-ad6c-deea51f3e4b2.png",
     category: "Adventure",
-    eventType: "Evening Tours",
+    eventType: "4x4 Desert Tours near Palmyra",
     rating: 4.6,
     contactDetails: [
       {
@@ -192,7 +192,7 @@ export const demoEvents: Event[] = [
     },
     image: "/lovable-uploads/37575151-7391-42fc-ad6c-deea51f3e4b2.png",
     category: "Cultural",
-    eventType: "Shows and Theatrical Plays",
+    eventType: "Cultural Film Screenings",
     rating: 4.9,
     featured: true,
     contactDetails: [
@@ -239,7 +239,7 @@ export const demoEvents: Event[] = [
     },
     image: "/lovable-uploads/37575151-7391-42fc-ad6c-deea51f3e4b2.png",
     category: "Music",
-    eventType: "Concerts",
+    eventType: "Live Music Nights at Cafés or Cultural Hubs",
     rating: 4.8,
     featured: true,
     contactDetails: [
