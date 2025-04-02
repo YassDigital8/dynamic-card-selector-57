@@ -9,7 +9,7 @@ import EventBasicInfoFields from './form/EventBasicInfoFields';
 import EventDateTimePicker from './form/EventDateTimePicker';
 import EventTypeSelector from './form/EventTypeSelector';
 import EventLocationFields from './form/EventLocationFields';
-import EventPricingInventory from './form/EventPricingInventory';
+import { EventPricingInventory } from './form/pricing';
 import FormWrapper from './form/FormWrapper';
 import FormActions from './form/FormActions';
 import { useEventForm } from './form/useEventForm';
