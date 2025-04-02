@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -19,7 +18,6 @@ import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 
-// Create a schema for form validation
 const eventFormSchema = z.object({
   title: z.string().min(3, { message: "Title must be at least 3 characters" }),
   description: z.string().min(10, { message: "Description must be at least 10 characters" }),
@@ -69,15 +67,12 @@ const EventForm: React.FC<EventFormProps> = ({ initialData, onSubmit, onCancel, 
     initialData?.date ? parseEventDate(initialData.date).endDate : undefined
   );
 
-  // Function to parse event date from string to dates
   function parseEventDate(dateString: string): { startDate?: Date; endDate?: Date; displayValue: string } {
-    // Handle date formats like "Jan 1 - Jan 30, 2024" or "Jan 15, 2024"
     const result = { startDate: undefined as Date | undefined, endDate: undefined as Date | undefined, displayValue: dateString };
     
     try {
       if (dateString.includes('-')) {
         const [start, end] = dateString.split('-').map(d => d.trim());
-        // This is a simplified parsing approach, in a production app you'd want more robust parsing
         result.startDate = new Date(start);
         result.endDate = new Date(end);
       } else {
@@ -90,7 +85,6 @@ const EventForm: React.FC<EventFormProps> = ({ initialData, onSubmit, onCancel, 
     return result;
   }
 
-  // Function to format dates to display string
   function formatEventDates(start?: Date, end?: Date): string {
     if (!start) return '';
     
@@ -101,7 +95,6 @@ const EventForm: React.FC<EventFormProps> = ({ initialData, onSubmit, onCancel, 
     return format(start, 'MMM d, yyyy');
   }
 
-  // Set up form with react-hook-form and zod validation
   const form = useForm<z.infer<typeof eventFormSchema>>({
     resolver: zodResolver(eventFormSchema),
     defaultValues: initialData ? {
@@ -131,7 +124,6 @@ const EventForm: React.FC<EventFormProps> = ({ initialData, onSubmit, onCancel, 
     }
   });
 
-  // Update form value when dates change
   React.useEffect(() => {
     if (startDate || endDate) {
       const displayValue = formatEventDates(startDate, endDate);
@@ -159,7 +151,6 @@ const EventForm: React.FC<EventFormProps> = ({ initialData, onSubmit, onCancel, 
     setEventImages(updatedImages);
     form.setValue('images', updatedImages);
 
-    // Set the main image URL if this is the first image
     if (updatedImages.length === 1) {
       form.setValue('image', imageUrl);
     }
@@ -171,7 +162,6 @@ const EventForm: React.FC<EventFormProps> = ({ initialData, onSubmit, onCancel, 
     setEventImages(updatedImages);
     form.setValue('images', updatedImages);
 
-    // Update main image if needed
     if (updatedImages.length > 0 && form.getValues('image') === eventImages[index].url) {
       form.setValue('image', updatedImages[0].url);
     } else if (updatedImages.length === 0) {
@@ -195,7 +185,6 @@ const EventForm: React.FC<EventFormProps> = ({ initialData, onSubmit, onCancel, 
     setEventImages(updatedImages);
     form.setValue('images', updatedImages);
 
-    // Set the main image URL if this is the first image
     if (eventImages.length === 0 && newImages.length > 0) {
       form.setValue('image', newImages[0].url);
     }
@@ -205,7 +194,6 @@ const EventForm: React.FC<EventFormProps> = ({ initialData, onSubmit, onCancel, 
     form.setValue('image', url);
   };
 
-  // Categories for the dropdown
   const categories = [
     "Shopping",
     "Cultural",
@@ -217,7 +205,6 @@ const EventForm: React.FC<EventFormProps> = ({ initialData, onSubmit, onCancel, 
     "Exhibition"
   ];
 
-  // Event types from our model
   const eventTypes: EventType[] = [
     'Shows and Theatrical Plays',
     'Concerts',
@@ -248,11 +235,21 @@ const EventForm: React.FC<EventFormProps> = ({ initialData, onSubmit, onCancel, 
   ];
 
   const handleFormSubmit = (data: z.infer<typeof eventFormSchema>) => {
-    // Transform the date object back to string format for API submission
     const formattedData: EventFormData = {
-      ...data,
+      title: data.title,
+      description: data.description,
       date: data.date.displayValue,
-      images: eventImages
+      location: {
+        address: data.location.address,
+        city: data.location.city,
+        country: data.location.country,
+      },
+      image: data.image,
+      images: eventImages,
+      category: data.category,
+      eventType: data.eventType,
+      rating: data.rating,
+      featured: data.featured
     };
     
     onSubmit(formattedData);
@@ -266,7 +263,6 @@ const EventForm: React.FC<EventFormProps> = ({ initialData, onSubmit, onCancel, 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-6">
           <CardContent className="space-y-4">
-            {/* Event Images Section */}
             <div className="space-y-2">
               <FormLabel>Event Images</FormLabel>
               <div className="flex flex-wrap gap-4 mt-2">
@@ -363,7 +359,6 @@ const EventForm: React.FC<EventFormProps> = ({ initialData, onSubmit, onCancel, 
                   <FormItem className="flex flex-col">
                     <FormLabel>Date/Schedule</FormLabel>
                     <div className="flex space-x-2">
-                      {/* Start Date Selector */}
                       <div className="flex-1">
                         <Popover>
                           <PopoverTrigger asChild>
@@ -396,7 +391,6 @@ const EventForm: React.FC<EventFormProps> = ({ initialData, onSubmit, onCancel, 
                         </Popover>
                       </div>
                       
-                      {/* End Date Selector */}
                       <div className="flex-1">
                         <Popover>
                           <PopoverTrigger asChild>
