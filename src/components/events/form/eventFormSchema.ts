@@ -1,5 +1,6 @@
 
 import { z } from 'zod';
+import { categoryNames } from '@/data/eventCategoriesData';
 
 export const eventFormSchema = z.object({
   title: z.string().min(3, { message: "Title must be at least 3 characters" }),
@@ -36,16 +37,7 @@ export const eventFormSchema = z.object({
 
 export type EventFormSchema = z.infer<typeof eventFormSchema>;
 
-// Common categories and event types data
-export const categories = [
-  "Shopping",
-  "Cultural",
-  "Attraction",
-  "Adventure",
-  "Food",
-  "Music",
-  "Sports",
-  "Exhibition"
-];
+// Common categories data
+export const categories = categoryNames;
 
 export const DEFAULT_EVENT_IMAGE = "/lovable-uploads/37575151-7391-42fc-ad6c-deea51f3e4b2.png";

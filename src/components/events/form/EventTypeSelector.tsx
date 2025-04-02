@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { 
   FormField, 
   FormItem, 
@@ -17,18 +17,28 @@ import {
 import { EventType } from '@/models/EventModel';
 import { EventTypeIcon } from '@/components/events';
 import { UseFormReturn } from 'react-hook-form';
+import { eventCategoriesData } from '@/data/eventCategoriesData';
 
 interface EventTypeSelectorProps {
   form: UseFormReturn<any>;
   categories: string[];
-  eventTypes: EventType[];
 }
 
 const EventTypeSelector: React.FC<EventTypeSelectorProps> = ({
   form,
-  categories,
-  eventTypes
+  categories
 }) => {
+  // Get the current selected category
+  const selectedCategory = form.watch('category');
+  
+  // Filter event types based on selected category
+  const availableEventTypes = useMemo(() => {
+    if (!selectedCategory) return [];
+    
+    const categoryData = eventCategoriesData.find(cat => cat.name === selectedCategory);
+    return categoryData?.eventTypes || [];
+  }, [selectedCategory]);
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       <FormField
@@ -38,8 +48,13 @@ const EventTypeSelector: React.FC<EventTypeSelectorProps> = ({
           <FormItem>
             <FormLabel>Category</FormLabel>
             <Select 
-              onValueChange={field.onChange} 
+              onValueChange={(value) => {
+                field.onChange(value);
+                // Reset event type when category changes
+                form.setValue('eventType', undefined);
+              }}
               defaultValue={field.value}
+              value={field.value}
             >
               <FormControl>
                 <SelectTrigger>
@@ -68,6 +83,8 @@ const EventTypeSelector: React.FC<EventTypeSelectorProps> = ({
             <Select 
               onValueChange={field.onChange} 
               defaultValue={field.value}
+              value={field.value}
+              disabled={!selectedCategory || availableEventTypes.length === 0}
             >
               <FormControl>
                 <SelectTrigger>
@@ -75,7 +92,7 @@ const EventTypeSelector: React.FC<EventTypeSelectorProps> = ({
                 </SelectTrigger>
               </FormControl>
               <SelectContent className="max-h-[300px]">
-                {eventTypes.map(type => (
+                {availableEventTypes.map(type => (
                   <SelectItem key={type} value={type} className="flex items-center gap-2">
                     <div className="flex items-center gap-2">
                       <EventTypeIcon eventType={type} className="text-muted-foreground" />

@@ -7,7 +7,6 @@ import { Event } from '@/models/EventModel';
 import EventCard from '@/components/events/EventCard';
 import { CategoryFilter } from '@/components/events/filters';
 import { motion } from 'framer-motion';
-import { categories } from '@/components/events/form/eventFormSchema';
 
 interface EventListViewProps {
   events: Event[];
@@ -51,7 +50,6 @@ const EventListView: React.FC<EventListViewProps> = ({
             />
           </div>
           <CategoryFilter 
-            categories={categories}
             selectedCategory={selectedCategory}
             onSelectCategory={onCategoryChange}
           />

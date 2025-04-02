@@ -8,15 +8,14 @@ import {
   SelectValue 
 } from '@/components/ui/select';
 import { Tag } from 'lucide-react';
+import { categoryNames } from '@/data/eventCategoriesData';
 
 interface CategoryFilterProps {
-  categories: string[];
   selectedCategory: string;
   onSelectCategory: (category: string) => void;
 }
 
 const CategoryFilter: React.FC<CategoryFilterProps> = ({
-  categories,
   selectedCategory,
   onSelectCategory
 }) => {
@@ -34,7 +33,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="all">All Categories</SelectItem>
-          {categories.map(category => (
+          {categoryNames.map(category => (
             <SelectItem key={category} value={category}>
               {category}
             </SelectItem>

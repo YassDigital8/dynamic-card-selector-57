@@ -1,11 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Event, EventFormData, EventType, EventImage } from '@/models/EventModel';
+import { Event, EventFormData, EventImage } from '@/models/EventModel';
 import { Save, X } from 'lucide-react';
 import { ImageUploadDialog } from '@/components/hotel/form/shared';
 import { FileInfo } from '@/models/FileModel';
@@ -38,35 +37,6 @@ const EventForm: React.FC<EventFormProps> = ({ initialData, onSubmit, onCancel, 
   const [hasTime, setHasTime] = useState<boolean>(
     initialData?.hasTime || false
   );
-
-  const eventTypes: EventType[] = [
-    'Shows and Theatrical Plays',
-    'Concerts',
-    'Nightlife',
-    'Comedy Events',
-    'Festivals',
-    'Arabic Events',
-    'Sports Events',
-    'Classical Events',
-    'Business Events',
-    'Instagrammable Places',
-    'Eid Events',
-    'Dining Experiences',
-    'Exhibitions',
-    'Art Events',
-    'Ramadan',
-    'Automotive',
-    'Brunches',
-    'Seminars',
-    'Conferences',
-    'Evening Tours',
-    'New Year Events',
-    'Night Tours',
-    'Morning Tours',
-    'Gaming & Esports',
-    'Health and Wellness',
-    'Maritime Heritage'
-  ];
 
   const form = useForm<EventFormSchema>({
     resolver: zodResolver(eventFormSchema),
@@ -212,7 +182,7 @@ const EventForm: React.FC<EventFormProps> = ({ initialData, onSubmit, onCancel, 
       image: data.image,
       images: eventImages,
       category: data.category,
-      eventType: data.eventType as EventType | undefined,
+      eventType: data.eventType as any,
       rating: data.rating,
       featured: data.featured,
       hasTime: data.hasTime,
@@ -253,7 +223,6 @@ const EventForm: React.FC<EventFormProps> = ({ initialData, onSubmit, onCancel, 
             <EventTypeSelector 
               form={form}
               categories={categories}
-              eventTypes={eventTypes}
             />
 
             <EventLocationFields form={form} />
