@@ -2,10 +2,11 @@
 import React from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Calendar, MapPin, Ticket, Star, Edit, Trash2 } from 'lucide-react';
+import { Calendar, MapPin, Ticket, Star, Edit, Trash2, DollarSign } from 'lucide-react';
 import { Event } from '@/models/EventModel';
 import { motion } from 'framer-motion';
 import { EventTypeIcon } from '@/components/events';
+import { Badge } from '@/components/ui/badge';
 
 interface EventCardProps {
   event: Event;
@@ -15,6 +16,37 @@ interface EventCardProps {
 }
 
 const EventCard: React.FC<EventCardProps> = ({ event, onSelect, onEdit, onDelete }) => {
+  // Format price display
+  const displayPrice = () => {
+    if (event.ticketInfo && event.ticketInfo.length > 0) {
+      const prices = event.ticketInfo.map(t => t.price);
+      const minPrice = Math.min(...prices);
+      const maxPrice = Math.max(...prices);
+      
+      if (minPrice === maxPrice) {
+        return `$${minPrice.toFixed(2)}`;
+      }
+      return `From $${minPrice.toFixed(2)}`;
+    }
+    
+    return event.price ? `$${event.price.toFixed(2)}` : "Free";
+  };
+  
+  // Determine if sold out
+  const isSoldOut = () => {
+    if (event.remainingInventory === 0) {
+      return true;
+    }
+    
+    if (event.ticketInfo && event.ticketInfo.length > 0) {
+      return event.ticketInfo.every(ticket => 
+        ticket.remainingInventory === 0 || !ticket.available
+      );
+    }
+    
+    return false;
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -44,6 +76,21 @@ const EventCard: React.FC<EventCardProps> = ({ event, onSelect, onEdit, onDelete
               <span>{event.eventType}</span>
             </div>
           )}
+          
+          {/* Price indicator */}
+          <div className="absolute bottom-3 right-3 bg-white/90 text-black py-1 px-2 rounded text-xs font-semibold flex items-center gap-1">
+            <DollarSign className="h-3 w-3" />
+            {displayPrice()}
+          </div>
+          
+          {/* Sold out indicator */}
+          {isSoldOut() && (
+            <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+              <Badge variant="destructive" className="text-sm px-3 py-1.5 uppercase font-bold">
+                Sold Out
+              </Badge>
+            </div>
+          )}
         </div>
         
         <CardHeader className="pb-2">
@@ -65,6 +112,20 @@ const EventCard: React.FC<EventCardProps> = ({ event, onSelect, onEdit, onDelete
               <MapPin className="h-4 w-4 text-muted-foreground" />
               <span>{event.location.city}, {event.location.country}</span>
             </div>
+            
+            {/* Inventory information */}
+            {event.totalInventory && event.remainingInventory !== undefined && (
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <Ticket className="h-3.5 w-3.5" />
+                {event.remainingInventory === 0 ? (
+                  <span className="text-red-500 font-medium">Sold out</span>
+                ) : (
+                  <span>
+                    {event.remainingInventory} / {event.totalInventory} spots left
+                  </span>
+                )}
+              </div>
+            )}
           </div>
         </CardContent>
         

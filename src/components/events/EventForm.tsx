@@ -9,6 +9,7 @@ import EventBasicInfoFields from './form/EventBasicInfoFields';
 import EventDateTimePicker from './form/EventDateTimePicker';
 import EventTypeSelector from './form/EventTypeSelector';
 import EventLocationFields from './form/EventLocationFields';
+import EventPricingInventory from './form/EventPricingInventory';
 import FormWrapper from './form/FormWrapper';
 import FormActions from './form/FormActions';
 import { useEventForm } from './form/useEventForm';
@@ -79,6 +80,8 @@ const EventForm: React.FC<EventFormProps> = ({
             />
 
             <EventLocationFields form={form} />
+
+            <EventPricingInventory form={form} />
           </div>
 
           <FormActions onCancel={onCancel} isLoading={isLoading} />

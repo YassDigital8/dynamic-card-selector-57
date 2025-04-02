@@ -17,6 +17,9 @@ export const demoEvents: Event[] = [
     eventType: "Local Food and Craft Festivals",
     rating: 4.8,
     featured: true,
+    price: 0,
+    totalInventory: 5000,
+    remainingInventory: 2350,
     contactDetails: [
       {
         id: "c1",
@@ -36,7 +39,9 @@ export const demoEvents: Event[] = [
         name: "Entry Pass",
         price: 0,
         description: "Free entry to shopping areas",
-        available: true
+        available: true,
+        totalInventory: 5000,
+        remainingInventory: 2350
       }
     ],
     createdAt: new Date("2023-11-01"),
@@ -56,6 +61,9 @@ export const demoEvents: Event[] = [
     category: "Cultural",
     eventType: "Cultural Heritage Festivals",
     rating: 4.7,
+    price: 25,
+    totalInventory: 2000,
+    remainingInventory: 450,
     contactDetails: [
       {
         id: "c3",
@@ -70,14 +78,18 @@ export const demoEvents: Event[] = [
         name: "Standard Entry",
         price: 25,
         description: "Access to all festival areas",
-        available: true
+        available: true,
+        totalInventory: 1500,
+        remainingInventory: 350
       },
       {
         id: "t3",
         name: "VIP Pass",
         price: 75,
         description: "Includes exclusive events and tastings",
-        available: true
+        available: true,
+        totalInventory: 500,
+        remainingInventory: 100
       }
     ],
     createdAt: new Date("2023-12-15"),
@@ -102,6 +114,9 @@ export const demoEvents: Event[] = [
     eventType: "Historic Site Tours",
     rating: 4.9,
     featured: true,
+    price: 149,
+    totalInventory: 1000,
+    remainingInventory: 78,
     contactDetails: [
       {
         id: "c4",
@@ -121,14 +136,18 @@ export const demoEvents: Event[] = [
         name: "General Admission",
         price: 149,
         description: "Access to observation deck on level 124",
-        available: true
+        available: true,
+        totalInventory: 750,
+        remainingInventory: 45
       },
       {
         id: "t5",
         name: "Premium",
         price: 379,
         description: "Access to levels 124, 125, and 148",
-        available: true
+        available: true,
+        totalInventory: 250,
+        remainingInventory: 33
       }
     ],
     createdAt: new Date("2023-10-05"),
@@ -148,6 +167,9 @@ export const demoEvents: Event[] = [
     category: "Adventure",
     eventType: "4x4 Desert Tours near Palmyra",
     rating: 4.6,
+    price: 199,
+    totalInventory: 500,
+    remainingInventory: 0, // Sold out
     contactDetails: [
       {
         id: "c6",
@@ -167,14 +189,18 @@ export const demoEvents: Event[] = [
         name: "Standard Safari",
         price: 199,
         description: "6-hour desert adventure including dinner",
-        available: true
+        available: false,
+        totalInventory: 300,
+        remainingInventory: 0
       },
       {
         id: "t7",
         name: "Overnight Safari",
         price: 499,
         description: "Includes overnight stay in luxury desert camp",
-        available: true
+        available: false,
+        totalInventory: 200,
+        remainingInventory: 0
       }
     ],
     createdAt: new Date("2023-09-15"),
@@ -195,6 +221,9 @@ export const demoEvents: Event[] = [
     eventType: "Cultural Film Screenings",
     rating: 4.9,
     featured: true,
+    price: 350,
+    totalInventory: 2400,
+    remainingInventory: 895,
     contactDetails: [
       {
         id: "c8",
@@ -214,14 +243,18 @@ export const demoEvents: Event[] = [
         name: "Orchestra",
         price: 750,
         description: "Best seats in the house",
-        available: true
+        available: true,
+        totalInventory: 1000,
+        remainingInventory: 215
       },
       {
         id: "t9",
         name: "Balcony",
         price: 350,
         description: "Upper level seating",
-        available: true
+        available: true,
+        totalInventory: 1400,
+        remainingInventory: 680
       }
     ],
     createdAt: new Date("2024-01-10"),
@@ -242,6 +275,9 @@ export const demoEvents: Event[] = [
     eventType: "Live Music Nights at Cafés or Cultural Hubs",
     rating: 4.8,
     featured: true,
+    price: 595,
+    totalInventory: 20000,
+    remainingInventory: 2145,
     contactDetails: [
       {
         id: "c10",
@@ -256,14 +292,18 @@ export const demoEvents: Event[] = [
         name: "Golden Circle",
         price: 1200,
         description: "Front stage standing",
-        available: false
+        available: false,
+        totalInventory: 5000,
+        remainingInventory: 0
       },
       {
         id: "t11",
         name: "Regular Standing",
         price: 595,
         description: "General admission",
-        available: true
+        available: true,
+        totalInventory: 15000,
+        remainingInventory: 2145
       }
     ],
     createdAt: new Date("2024-02-10"),

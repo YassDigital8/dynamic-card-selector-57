@@ -33,6 +33,18 @@ export const eventFormSchema = z.object({
   eventType: z.string().optional(),
   rating: z.number().min(0).max(5),
   featured: z.boolean().optional(),
+  price: z.number().min(0).optional().default(0),
+  totalInventory: z.number().min(0).optional(),
+  remainingInventory: z.number().min(0).optional(),
+  ticketInfo: z.array(z.object({
+    id: z.string(),
+    name: z.string().min(1, { message: "Ticket name is required" }),
+    price: z.number().min(0),
+    description: z.string().optional(),
+    available: z.boolean().default(true),
+    totalInventory: z.number().min(0).optional(),
+    remainingInventory: z.number().min(0).optional(),
+  })).optional(),
 });
 
 export type EventFormSchema = z.infer<typeof eventFormSchema>;

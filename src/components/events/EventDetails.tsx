@@ -4,9 +4,10 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, MapPin, Star, Ticket, Phone, Globe, Mail, ArrowLeft, Edit } from 'lucide-react';
+import { Calendar, MapPin, Star, Ticket, Phone, Globe, Mail, ArrowLeft, Edit, Wallet, Users } from 'lucide-react';
 import { Event } from '@/models/EventModel';
 import { EventTypeIcon } from '@/components/events';
+import { Progress } from "@/components/ui/progress";
 
 interface EventDetailsProps {
   event: Event;
@@ -15,6 +16,32 @@ interface EventDetailsProps {
 }
 
 const EventDetails: React.FC<EventDetailsProps> = ({ event, onBack, onEdit }) => {
+  // Format price display
+  const formatPrice = (price: number) => {
+    return price === 0 ? 'Free' : `$${price.toFixed(2)}`;
+  };
+  
+  // Calculate inventory percentage for progress bar
+  const calculateInventoryPercentage = (remaining?: number, total?: number) => {
+    if (!remaining || !total || total === 0) return 0;
+    return (remaining / total) * 100;
+  };
+  
+  // Determine if the event is sold out
+  const isSoldOut = () => {
+    if (event.remainingInventory === 0) {
+      return true;
+    }
+    
+    if (event.ticketInfo && event.ticketInfo.length > 0) {
+      return event.ticketInfo.every(ticket => 
+        ticket.remainingInventory === 0 || !ticket.available
+      );
+    }
+    
+    return false;
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -44,6 +71,13 @@ const EventDetails: React.FC<EventDetailsProps> = ({ event, onBack, onEdit }) =>
                   <span>{event.eventType}</span>
                 </Badge>
               )}
+              
+              {/* Base price badge */}
+              {event.price !== undefined && (
+                <Badge variant="outline" className="bg-white/90 text-black border-white">
+                  {formatPrice(event.price)}
+                </Badge>
+              )}
             </div>
             <h1 className="text-2xl font-bold text-white">{event.title}</h1>
             <div className="flex items-center gap-2 text-white mt-1">
@@ -51,6 +85,15 @@ const EventDetails: React.FC<EventDetailsProps> = ({ event, onBack, onEdit }) =>
               <span>{event.rating} rating</span>
             </div>
           </div>
+          
+          {/* Sold out overlay */}
+          {isSoldOut() && (
+            <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+              <Badge variant="destructive" className="text-lg px-4 py-2 uppercase font-bold">
+                Sold Out
+              </Badge>
+            </div>
+          )}
         </div>
 
         <CardContent className="space-y-4 pt-6">
@@ -76,6 +119,36 @@ const EventDetails: React.FC<EventDetailsProps> = ({ event, onBack, onEdit }) =>
                     <div>{event.location.city}, {event.location.country}</div>
                   </div>
                 </div>
+                
+                {/* Price information */}
+                {(event.price !== undefined || (event.ticketInfo && event.ticketInfo.length > 0)) && (
+                  <div className="flex items-center gap-2">
+                    <Wallet className="h-5 w-5 text-muted-foreground" />
+                    <div>
+                      {event.ticketInfo && event.ticketInfo.length > 0 ? (
+                        <span>Multiple ticket options available</span>
+                      ) : (
+                        <span>{formatPrice(event.price || 0)}</span>
+                      )}
+                    </div>
+                  </div>
+                )}
+                
+                {/* Inventory information */}
+                {event.totalInventory && event.remainingInventory !== undefined && (
+                  <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-2">
+                      <Users className="h-5 w-5 text-muted-foreground" />
+                      <span>
+                        {event.remainingInventory} of {event.totalInventory} spots remaining
+                      </span>
+                    </div>
+                    <Progress 
+                      value={calculateInventoryPercentage(event.remainingInventory, event.totalInventory)} 
+                      className="h-2 w-full" 
+                    />
+                  </div>
+                )}
               </div>
             </div>
             
@@ -103,24 +176,44 @@ const EventDetails: React.FC<EventDetailsProps> = ({ event, onBack, onEdit }) =>
                 <h2 className="text-lg font-semibold mb-2">Ticket Information</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {event.ticketInfo.map(ticket => (
-                    <Card key={ticket.id}>
+                    <Card key={ticket.id} className={!ticket.available ? "opacity-75" : ""}>
                       <CardHeader className="pb-2">
-                        <CardTitle className="text-base flex items-center gap-2">
-                          <Ticket className="h-4 w-4" />
-                          {ticket.name}
+                        <CardTitle className="text-base flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <Ticket className="h-4 w-4" />
+                            {ticket.name}
+                          </div>
+                          <span className="text-lg font-bold">
+                            {formatPrice(ticket.price)}
+                          </span>
                         </CardTitle>
                         <CardDescription>
-                          {ticket.price === 0 ? 'Free' : `$${ticket.price.toFixed(2)}`}
+                          {ticket.description || "Standard admission"}
                         </CardDescription>
                       </CardHeader>
-                      {ticket.description && (
-                        <CardContent className="pb-2 text-sm">
-                          {ticket.description}
-                        </CardContent>
-                      )}
-                      <CardFooter>
+                      
+                      <CardContent className="pb-2">
+                        {ticket.totalInventory !== undefined && ticket.remainingInventory !== undefined && (
+                          <div className="space-y-1">
+                            <div className="text-sm flex justify-between">
+                              <span>Availability:</span>
+                              <span>
+                                {ticket.remainingInventory} of {ticket.totalInventory} remaining
+                              </span>
+                            </div>
+                            <Progress 
+                              value={calculateInventoryPercentage(ticket.remainingInventory, ticket.totalInventory)} 
+                              className="h-2 w-full" 
+                            />
+                          </div>
+                        )}
+                      </CardContent>
+                      
+                      <CardFooter className="pt-0">
                         <Badge variant={ticket.available ? "default" : "secondary"}>
-                          {ticket.available ? 'Available' : 'Unavailable'}
+                          {ticket.available ? (
+                            ticket.remainingInventory === 0 ? "Sold Out" : "Available"
+                          ) : "Unavailable"}
                         </Badge>
                       </CardFooter>
                     </Card>
@@ -132,9 +225,9 @@ const EventDetails: React.FC<EventDetailsProps> = ({ event, onBack, onEdit }) =>
         </CardContent>
 
         <CardFooter className="flex justify-end">
-          <Button className="gap-1">
+          <Button className="gap-1" disabled={isSoldOut()}>
             <Ticket className="h-4 w-4" />
-            Book Now
+            {isSoldOut() ? "Sold Out" : "Book Now"}
           </Button>
         </CardFooter>
       </Card>

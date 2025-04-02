@@ -35,6 +35,10 @@ export const useEventForm = (initialData?: Event, onSubmit?: (data: EventFormDat
       hasTime: initialData.hasTime || false,
       startTime: initialData.startTime || '',
       endTime: initialData.endTime || '',
+      price: initialData.price || 0,
+      totalInventory: initialData.totalInventory || 0,
+      remainingInventory: initialData.remainingInventory || 0,
+      ticketInfo: initialData.ticketInfo || []
     } : {
       title: "",
       description: "",
@@ -53,6 +57,10 @@ export const useEventForm = (initialData?: Event, onSubmit?: (data: EventFormDat
       eventType: undefined,
       rating: 4.5,
       featured: false,
+      price: 0,
+      totalInventory: 0,
+      remainingInventory: 0,
+      ticketInfo: [],
     }
   });
 
@@ -172,7 +180,14 @@ export const useEventForm = (initialData?: Event, onSubmit?: (data: EventFormDat
       featured: data.featured,
       hasTime: data.hasTime,
       startTime: data.startTime,
-      endTime: data.endTime
+      endTime: data.endTime,
+      price: data.price,
+      totalInventory: data.totalInventory,
+      remainingInventory: data.remainingInventory || data.totalInventory, // Default to total if not set
+      ticketInfo: data.ticketInfo?.map(ticket => ({
+        ...ticket,
+        remainingInventory: ticket.remainingInventory ?? ticket.totalInventory // Default to total if not set
+      }))
     };
     
     onSubmit(formattedData);

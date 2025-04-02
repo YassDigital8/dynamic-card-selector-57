@@ -34,6 +34,8 @@ export interface TicketInfo {
   price: number;
   description?: string;
   available: boolean;
+  totalInventory?: number; // Total number of tickets available
+  remainingInventory?: number; // Number of tickets still available
 }
 
 export type EventType = 
@@ -145,6 +147,9 @@ export interface Event {
   eventType?: EventType;
   rating: number;
   featured?: boolean;
+  price?: number; // Base price for the event
+  totalInventory?: number; // Total capacity/inventory for the event
+  remainingInventory?: number; // Remaining tickets/spots
   contactDetails?: EventContact[];
   ticketInfo?: TicketInfo[];
   hasTime?: boolean; // Flag to indicate if the event has a specific time
