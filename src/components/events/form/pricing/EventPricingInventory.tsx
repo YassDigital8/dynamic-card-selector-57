@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { EventFormSchema } from '../eventFormSchema';
 import { SingleTicketPricing } from './SingleTicketPricing';
-import { MultipleTicketTypes } from './MultipleTicketTypes';
+import { MultipleTicketTypes } from './ticket-types';
 import { PricingToggle } from './PricingToggle';
 
 interface EventPricingInventoryProps {
