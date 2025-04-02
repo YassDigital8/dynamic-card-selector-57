@@ -1,57 +1,21 @@
 
-import React, { useState } from 'react';
-import { z } from 'zod';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Form } from '@/components/ui/form';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { EventFormData, Event, EventType, EventImage } from '@/models/EventModel';
-import { Save, X, Upload, Plus, Image, Trash2, CalendarIcon, Clock } from 'lucide-react';
-import { EventTypeIcon } from '@/components/events';
+import { Event, EventFormData, EventType, EventImage } from '@/models/EventModel';
+import { Save, X } from 'lucide-react';
 import { ImageUploadDialog } from '@/components/hotel/form/shared';
 import { FileInfo } from '@/models/FileModel';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Calendar } from '@/components/ui/calendar';
-import { format } from 'date-fns';
-import { cn } from '@/lib/utils';
-import { Switch } from '@/components/ui/switch';
-
-const eventFormSchema = z.object({
-  title: z.string().min(3, { message: "Title must be at least 3 characters" }),
-  description: z.string().min(10, { message: "Description must be at least 10 characters" }),
-  date: z.object({
-    startDate: z.date().optional(),
-    endDate: z.date().optional(),
-    displayValue: z.string(),
-  }),
-  hasTime: z.boolean().default(false),
-  startTime: z.string().optional(),
-  endTime: z.string().optional(),
-  location: z.object({
-    address: z.string().min(3, { message: "Address is required" }),
-    city: z.string().min(2, { message: "City is required" }),
-    country: z.string().min(2, { message: "Country is required" }),
-  }),
-  image: z.string().min(5, { message: "Image URL is required" }),
-  images: z.array(z.object({
-    url: z.string(),
-    description: z.string().optional(),
-    id: z.string().optional(),
-    metadata: z.object({
-      title: z.string().optional(),
-      altText: z.string().optional(),
-      caption: z.string().optional(),
-    }).optional(),
-  })).optional(),
-  category: z.string().min(2, { message: "Category is required" }),
-  eventType: z.string().optional(),
-  rating: z.number().min(0).max(5),
-  featured: z.boolean().optional(),
-});
+import { eventFormSchema, EventFormSchema, categories, DEFAULT_EVENT_IMAGE } from './form/eventFormSchema';
+import { parseEventDate, formatEventDates } from './utils/dateUtils';
+import EventImageGallery from './form/EventImageGallery';
+import EventBasicInfoFields from './form/EventBasicInfoFields';
+import EventDateTimePicker from './form/EventDateTimePicker';
+import EventTypeSelector from './form/EventTypeSelector';
+import EventLocationFields from './form/EventLocationFields';
 
 interface EventFormProps {
   initialData?: Event;
@@ -75,47 +39,36 @@ const EventForm: React.FC<EventFormProps> = ({ initialData, onSubmit, onCancel, 
     initialData?.hasTime || false
   );
 
-  function parseEventDate(dateString: string): { startDate?: Date; endDate?: Date; displayValue: string } {
-    const result = { startDate: undefined as Date | undefined, endDate: undefined as Date | undefined, displayValue: dateString };
-    
-    try {
-      if (dateString.includes('-')) {
-        const [start, end] = dateString.split('-').map(d => d.trim());
-        result.startDate = new Date(start);
-        result.endDate = new Date(end);
-      } else {
-        result.startDate = new Date(dateString);
-      }
-    } catch (e) {
-      console.error("Error parsing date:", e);
-    }
-    
-    return result;
-  }
+  const eventTypes: EventType[] = [
+    'Shows and Theatrical Plays',
+    'Concerts',
+    'Nightlife',
+    'Comedy Events',
+    'Festivals',
+    'Arabic Events',
+    'Sports Events',
+    'Classical Events',
+    'Business Events',
+    'Instagrammable Places',
+    'Eid Events',
+    'Dining Experiences',
+    'Exhibitions',
+    'Art Events',
+    'Ramadan',
+    'Automotive',
+    'Brunches',
+    'Seminars',
+    'Conferences',
+    'Evening Tours',
+    'New Year Events',
+    'Night Tours',
+    'Morning Tours',
+    'Gaming & Esports',
+    'Health and Wellness',
+    'Maritime Heritage'
+  ];
 
-  function formatEventDates(start?: Date, end?: Date, startTime?: string, endTime?: string, hasTime?: boolean): string {
-    if (!start) return '';
-    
-    let formattedDate = '';
-    
-    if (end) {
-      formattedDate = `${format(start, 'MMM d')} - ${format(end, 'MMM d, yyyy')}`;
-    } else {
-      formattedDate = format(start, 'MMM d, yyyy');
-    }
-    
-    // Add time information if available
-    if (hasTime && startTime) {
-      formattedDate += ` at ${startTime}`;
-      if (endTime) {
-        formattedDate += ` - ${endTime}`;
-      }
-    }
-    
-    return formattedDate;
-  }
-
-  const form = useForm<z.infer<typeof eventFormSchema>>({
+  const form = useForm<EventFormSchema>({
     resolver: zodResolver(eventFormSchema),
     defaultValues: initialData ? {
       ...initialData,
@@ -141,7 +94,7 @@ const EventForm: React.FC<EventFormProps> = ({ initialData, onSubmit, onCancel, 
         city: "",
         country: "",
       },
-      image: "/lovable-uploads/37575151-7391-42fc-ad6c-deea51f3e4b2.png",
+      image: DEFAULT_EVENT_IMAGE,
       images: [],
       category: "",
       eventType: undefined,
@@ -150,7 +103,8 @@ const EventForm: React.FC<EventFormProps> = ({ initialData, onSubmit, onCancel, 
     }
   });
 
-  React.useEffect(() => {
+  // Update date display when dates change
+  useEffect(() => {
     if (startDate || endDate) {
       const startTime = form.getValues('startTime');
       const endTime = form.getValues('endTime');
@@ -166,7 +120,7 @@ const EventForm: React.FC<EventFormProps> = ({ initialData, onSubmit, onCancel, 
   }, [startDate, endDate, form]);
 
   // Update display value when time changes
-  React.useEffect(() => {
+  useEffect(() => {
     if (startDate) {
       const startTime = form.getValues('startTime');
       const endTime = form.getValues('endTime');
@@ -175,7 +129,7 @@ const EventForm: React.FC<EventFormProps> = ({ initialData, onSubmit, onCancel, 
       const displayValue = formatEventDates(startDate, endDate, startTime, endTime, hasTimeValue);
       form.setValue('date.displayValue', displayValue);
     }
-  }, [form.watch('startTime'), form.watch('endTime'), form.watch('hasTime')]);
+  }, [form.watch('startTime'), form.watch('endTime'), form.watch('hasTime'), startDate, endDate, form]);
 
   const handleAddImage = (imageUrl: string, metadata?: any) => {
     const newImage: EventImage = {
@@ -207,7 +161,7 @@ const EventForm: React.FC<EventFormProps> = ({ initialData, onSubmit, onCancel, 
     if (updatedImages.length > 0 && form.getValues('image') === eventImages[index].url) {
       form.setValue('image', updatedImages[0].url);
     } else if (updatedImages.length === 0) {
-      form.setValue('image', "/lovable-uploads/37575151-7391-42fc-ad6c-deea51f3e4b2.png");
+      form.setValue('image', DEFAULT_EVENT_IMAGE);
     }
   };
 
@@ -236,47 +190,16 @@ const EventForm: React.FC<EventFormProps> = ({ initialData, onSubmit, onCancel, 
     form.setValue('image', url);
   };
 
-  const categories = [
-    "Shopping",
-    "Cultural",
-    "Attraction",
-    "Adventure",
-    "Food",
-    "Music",
-    "Sports",
-    "Exhibition"
-  ];
+  const handleTimeToggle = (checked: boolean) => {
+    setHasTime(checked);
+    form.setValue('hasTime', checked);
+    if (!checked) {
+      form.setValue('startTime', '');
+      form.setValue('endTime', '');
+    }
+  };
 
-  const eventTypes: EventType[] = [
-    'Shows and Theatrical Plays',
-    'Concerts',
-    'Nightlife',
-    'Comedy Events',
-    'Festivals',
-    'Arabic Events',
-    'Sports Events',
-    'Classical Events',
-    'Business Events',
-    'Instagrammable Places',
-    'Eid Events',
-    'Dining Experiences',
-    'Exhibitions',
-    'Art Events',
-    'Ramadan',
-    'Automotive',
-    'Brunches',
-    'Seminars',
-    'Conferences',
-    'Evening Tours',
-    'New Year Events',
-    'Night Tours',
-    'Morning Tours',
-    'Gaming & Esports',
-    'Health and Wellness',
-    'Maritime Heritage'
-  ];
-
-  const handleFormSubmit = (data: z.infer<typeof eventFormSchema>) => {
+  const handleFormSubmit = (data: EventFormSchema) => {
     const formattedData: EventFormData = {
       title: data.title,
       description: data.description,
@@ -300,15 +223,6 @@ const EventForm: React.FC<EventFormProps> = ({ initialData, onSubmit, onCancel, 
     onSubmit(formattedData);
   };
 
-  const handleTimeToggle = (checked: boolean) => {
-    setHasTime(checked);
-    form.setValue('hasTime', checked);
-    if (!checked) {
-      form.setValue('startTime', '');
-      form.setValue('endTime', '');
-    }
-  };
-
   return (
     <Card className="w-full">
       <CardHeader>
@@ -317,372 +231,32 @@ const EventForm: React.FC<EventFormProps> = ({ initialData, onSubmit, onCancel, 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-6">
           <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <FormLabel>Event Images</FormLabel>
-              <div className="flex flex-wrap gap-4 mt-2">
-                {eventImages.map((image, index) => (
-                  <div 
-                    key={image.id || index} 
-                    className={`relative group overflow-hidden rounded-md border border-gray-200 bg-gray-50 ${form.getValues('image') === image.url ? 'ring-2 ring-primary' : ''}`}
-                  >
-                    <div className="relative w-24 h-24 md:w-28 md:h-28">
-                      <img 
-                        src={image.url} 
-                        alt={image.metadata?.altText || `Event image ${index + 1}`} 
-                        className="w-full h-full object-cover"
-                      />
-                      {form.getValues('image') === image.url && (
-                        <div className="absolute top-0 left-0 bg-primary/80 text-white text-xs px-2 py-1 rounded-br-md">
-                          Main
-                        </div>
-                      )}
-                    </div>
-                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex flex-col justify-center items-center gap-1 transition-opacity">
-                      {form.getValues('image') !== image.url && (
-                        <Button 
-                          type="button" 
-                          variant="ghost" 
-                          size="sm" 
-                          className="text-white h-8 w-8 p-0"
-                          onClick={() => setMainImage(image.url)}
-                        >
-                          <Image className="h-4 w-4" />
-                        </Button>
-                      )}
-                      <Button 
-                        type="button" 
-                        variant="ghost" 
-                        size="sm" 
-                        className="text-white h-8 w-8 p-0"
-                        onClick={() => handleRemoveImage(index)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="w-24 h-24 md:w-28 md:h-28 flex flex-col items-center justify-center border-dashed"
-                  onClick={() => setShowImageUploadDialog(true)}
-                >
-                  <Plus className="h-5 w-5 mb-1" />
-                  <span className="text-sm">Add Images</span>
-                </Button>
-              </div>
-            </div>
-
-            <FormField
-              control={form.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Event Title</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter event title" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+            <EventImageGallery 
+              images={eventImages}
+              mainImageUrl={form.getValues('image')}
+              onAddImages={() => setShowImageUploadDialog(true)}
+              onRemoveImage={handleRemoveImage}
+              onSetMainImage={setMainImage}
             />
 
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Description</FormLabel>
-                  <FormControl>
-                    <Textarea 
-                      placeholder="Enter event description" 
-                      className="min-h-32" 
-                      {...field} 
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+            <EventBasicInfoFields form={form} />
+
+            <EventDateTimePicker 
+              form={form}
+              startDate={startDate}
+              endDate={endDate}
+              setStartDate={setStartDate}
+              setEndDate={setEndDate}
+              handleTimeToggle={handleTimeToggle}
             />
 
-            <div className="grid grid-cols-1 gap-4">
-              <FormField
-                control={form.control}
-                name="date.displayValue"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>Date/Schedule</FormLabel>
-                    <div className="flex flex-col space-y-2">
-                      <div className="flex space-x-2">
-                        <div className="flex-1">
-                          <Popover>
-                            <PopoverTrigger asChild>
-                              <FormControl>
-                                <Button
-                                  variant={"outline"}
-                                  className={cn(
-                                    "w-full pl-3 text-left font-normal",
-                                    !startDate && "text-muted-foreground"
-                                  )}
-                                >
-                                  {startDate ? (
-                                    format(startDate, "MMM d, yyyy")
-                                  ) : (
-                                    <span>Start date</span>
-                                  )}
-                                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                </Button>
-                              </FormControl>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0" align="start">
-                              <Calendar
-                                mode="single"
-                                selected={startDate}
-                                onSelect={setStartDate}
-                                initialFocus
-                                className={cn("p-3 pointer-events-auto")}
-                              />
-                            </PopoverContent>
-                          </Popover>
-                        </div>
-                        
-                        <div className="flex-1">
-                          <Popover>
-                            <PopoverTrigger asChild>
-                              <FormControl>
-                                <Button
-                                  variant={"outline"}
-                                  className={cn(
-                                    "w-full pl-3 text-left font-normal",
-                                    !endDate && "text-muted-foreground"
-                                  )}
-                                >
-                                  {endDate ? (
-                                    format(endDate, "MMM d, yyyy")
-                                  ) : (
-                                    <span>End date</span>
-                                  )}
-                                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                </Button>
-                              </FormControl>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0" align="start">
-                              <Calendar
-                                mode="single"
-                                selected={endDate}
-                                onSelect={setEndDate}
-                                disabled={(date) => startDate ? date < startDate : false}
-                                initialFocus
-                                className={cn("p-3 pointer-events-auto")}
-                              />
-                            </PopoverContent>
-                          </Popover>
-                        </div>
-                      </div>
-
-                      <FormField
-                        control={form.control}
-                        name="hasTime"
-                        render={({ field }) => (
-                          <FormItem className="flex flex-row items-center justify-between border p-3 rounded-md">
-                            <div className="space-y-0.5">
-                              <FormLabel>Event has specific time?</FormLabel>
-                              <div className="text-sm text-muted-foreground">
-                                Toggle on to add start and end times for your event
-                              </div>
-                            </div>
-                            <FormControl>
-                              <Switch
-                                checked={field.value}
-                                onCheckedChange={(checked) => {
-                                  field.onChange(checked);
-                                  handleTimeToggle(checked);
-                                }}
-                              />
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
-
-                      {form.watch('hasTime') && (
-                        <div className="flex space-x-2">
-                          <FormField
-                            control={form.control}
-                            name="startTime"
-                            render={({ field }) => (
-                              <FormItem className="flex-1">
-                                <FormLabel>Start Time</FormLabel>
-                                <div className="flex items-center">
-                                  <Clock className="mr-2 h-4 w-4 text-muted-foreground" />
-                                  <FormControl>
-                                    <Input
-                                      type="time"
-                                      {...field}
-                                    />
-                                  </FormControl>
-                                </div>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          
-                          <FormField
-                            control={form.control}
-                            name="endTime"
-                            render={({ field }) => (
-                              <FormItem className="flex-1">
-                                <FormLabel>End Time (Optional)</FormLabel>
-                                <div className="flex items-center">
-                                  <Clock className="mr-2 h-4 w-4 text-muted-foreground" />
-                                  <FormControl>
-                                    <Input
-                                      type="time"
-                                      {...field}
-                                    />
-                                  </FormControl>
-                                </div>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        </div>
-                      )}
-                      
-                      <div className="text-xs text-muted-foreground mt-1 border-t pt-2">
-                        <strong>Display format:</strong> {field.value ? field.value : "Select start and optional end date/time"}
-                      </div>
-                    </div>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="category"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Category</FormLabel>
-                    <Select 
-                      onValueChange={field.onChange} 
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a category" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {categories.map(category => (
-                          <SelectItem key={category} value={category}>
-                            {category}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="eventType"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Event Type</FormLabel>
-                    <Select 
-                      onValueChange={field.onChange} 
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select an event type" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent className="max-h-[300px]">
-                        {eventTypes.map(type => (
-                          <SelectItem key={type} value={type} className="flex items-center gap-2">
-                            <div className="flex items-center gap-2">
-                              <EventTypeIcon eventType={type as EventType} className="text-muted-foreground" />
-                              <span>{type}</span>
-                            </div>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <FormField
-              control={form.control}
-              name="location.address"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Address</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Event address/venue" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+            <EventTypeSelector 
+              form={form}
+              categories={categories}
+              eventTypes={eventTypes}
             />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="location.city"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>City</FormLabel>
-                    <FormControl>
-                      <Input placeholder="City" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="location.country"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Country</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Country" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <FormField
-              control={form.control}
-              name="rating"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Rating (0-5)</FormLabel>
-                  <FormControl>
-                    <Input 
-                      type="number" 
-                      min="0" 
-                      max="5" 
-                      step="0.1" 
-                      {...field}
-                      onChange={e => field.onChange(parseFloat(e.target.value))}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <EventLocationFields form={form} />
           </CardContent>
 
           <CardFooter className="flex justify-between">
