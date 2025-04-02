@@ -39,7 +39,9 @@ const EventTypeSelector: React.FC<EventTypeSelectorProps> = ({ form, categories 
                 <SelectContent>
                   {categories.map((category) => (
                     <SelectItem key={category} value={category}>
-                      {category}
+                      <div className="flex flex-col">
+                        <span>{category}</span>
+                      </div>
                     </SelectItem>
                   ))}
                 </SelectContent>
