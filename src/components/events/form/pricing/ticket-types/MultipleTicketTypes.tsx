@@ -1,12 +1,11 @@
 
 import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
-import { EventFormSchema } from '../eventFormSchema';
+import { EventFormSchema } from '../../eventFormSchema';
 import { FormDescription } from '@/components/ui/form';
-import { PricingToggle } from './PricingToggle';
-import { Button } from '@/components/ui/button';
-import { PlusCircle } from 'lucide-react';
-import { TicketTypeCard } from './TicketTypeCard';
+import { PricingToggle } from '../PricingToggle';
+import { TicketTypeList } from './TicketTypeList';
+import { AddTicketButton } from './AddTicketButton';
 
 interface MultipleTicketTypesProps {
   form: UseFormReturn<EventFormSchema>;
@@ -14,29 +13,11 @@ interface MultipleTicketTypesProps {
   setHasMultipleTicketTypes: (value: boolean) => void;
 }
 
-export const MultipleTicketTypes: React.FC<MultipleTicketTypesProps> = ({ 
+const MultipleTicketTypes: React.FC<MultipleTicketTypesProps> = ({ 
   form, 
   hasMultipleTicketTypes, 
   setHasMultipleTicketTypes 
 }) => {
-  const ticketInfo = form.watch('ticketInfo') || [];
-  
-  const addTicketType = () => {
-    const currentTickets = form.getValues('ticketInfo') || [];
-    form.setValue('ticketInfo', [
-      ...currentTickets,
-      {
-        id: crypto.randomUUID(),
-        name: '',
-        price: 0,
-        description: '',
-        available: true,
-        totalInventory: 0,
-        remainingInventory: 0
-      }
-    ]);
-  };
-
   const removeTicketType = (index: number) => {
     const currentTickets = [...(form.getValues('ticketInfo') || [])];
     currentTickets.splice(index, 1);
@@ -53,7 +34,19 @@ export const MultipleTicketTypes: React.FC<MultipleTicketTypesProps> = ({
     if (!checked) {
       form.setValue('ticketInfo', []);
     } else if (checked && !form.getValues('ticketInfo')?.length) {
-      addTicketType();
+      const currentTickets = form.getValues('ticketInfo') || [];
+      form.setValue('ticketInfo', [
+        ...currentTickets,
+        {
+          id: crypto.randomUUID(),
+          name: '',
+          price: 0,
+          description: '',
+          available: true,
+          totalInventory: 0,
+          remainingInventory: 0
+        }
+      ]);
     }
   };
 
@@ -70,27 +63,11 @@ export const MultipleTicketTypes: React.FC<MultipleTicketTypesProps> = ({
       </div>
 
       <div className="space-y-3">
-        {ticketInfo.map((ticket, index) => (
-          <TicketTypeCard
-            key={ticket.id}
-            ticket={ticket}
-            index={index}
-            form={form}
-            onRemove={() => removeTicketType(index)}
-          />
-        ))}
-        
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          className="mt-2 w-full"
-          onClick={addTicketType}
-        >
-          <PlusCircle className="mr-2 h-4 w-4" />
-          Add Ticket Type
-        </Button>
+        <TicketTypeList form={form} onRemove={removeTicketType} />
+        <AddTicketButton form={form} />
       </div>
     </div>
   );
 };
+
+export default MultipleTicketTypes;
