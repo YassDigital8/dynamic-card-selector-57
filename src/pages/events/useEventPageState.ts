@@ -25,17 +25,26 @@ export const useEventPageState = () => {
 
   const [showAddForm, setShowAddForm] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [eventToDelete, setEventToDelete] = useState<Event | null>(null);
 
-  // Handle search
-  const filteredEvents = events.filter(event => 
-    event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    event.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    event.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    event.location.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    event.location.country.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (event.hasTime && event.startTime?.includes(searchQuery.toLowerCase()))
-  );
+  // Filter events based on search query and category
+  const filteredEvents = events.filter(event => {
+    // Filter by search query
+    const matchesSearch = 
+      event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      event.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      event.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      event.location.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      event.location.country.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (event.hasTime && event.startTime?.includes(searchQuery.toLowerCase()));
+    
+    // Filter by category
+    const matchesCategory = selectedCategory ? event.category === selectedCategory : true;
+    
+    // Return true if both conditions are met
+    return matchesSearch && matchesCategory;
+  });
 
   // Get current view state
   const getCurrentViewState = (): EventViewState => {
@@ -116,8 +125,10 @@ export const useEventPageState = () => {
     isLoading,
     isEditing,
     searchQuery,
+    selectedCategory,
     viewState: getCurrentViewState(),
     setSearchQuery,
+    setSelectedCategory,
     setEventToDelete,
     handleShowList,
     handleShowAddForm,

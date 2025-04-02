@@ -15,8 +15,10 @@ const EventsAttractions = () => {
     isLoading,
     isEditing,
     searchQuery,
+    selectedCategory,
     viewState,
     setSearchQuery,
+    setSelectedCategory,
     setEventToDelete,
     handleShowList,
     handleShowAddForm,
@@ -57,7 +59,9 @@ const EventsAttractions = () => {
           <EventListView
             events={events}
             searchQuery={searchQuery}
+            selectedCategory={selectedCategory}
             onSearchChange={setSearchQuery}
+            onCategoryChange={setSelectedCategory}
             onAddNewClick={handleShowAddForm}
             onSelectEvent={handleSelectEvent}
             onEditEvent={handleStartEdit}
