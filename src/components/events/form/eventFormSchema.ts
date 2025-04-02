@@ -37,7 +37,7 @@ export const eventFormSchema = z.object({
   totalInventory: z.number().min(0).optional(),
   remainingInventory: z.number().min(0).optional(),
   ticketInfo: z.array(z.object({
-    id: z.string(),
+    id: z.string(), // This is required in the TicketInfo interface
     name: z.string().min(1, { message: "Ticket name is required" }),
     price: z.number().min(0),
     description: z.string().optional(),

@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Event, EventImage, EventFormData } from '@/models/EventModel';
+import { Event, EventImage, EventFormData, TicketInfo } from '@/models/EventModel';
 import { eventFormSchema, EventFormSchema, DEFAULT_EVENT_IMAGE } from './eventFormSchema';
 import { parseEventDate, formatEventDates } from '../utils/dateUtils';
 
@@ -184,10 +184,16 @@ export const useEventForm = (initialData?: Event, onSubmit?: (data: EventFormDat
       price: data.price,
       totalInventory: data.totalInventory,
       remainingInventory: data.remainingInventory || data.totalInventory, // Default to total if not set
+      // Ensure each ticket has required fields, especially 'id'
       ticketInfo: data.ticketInfo?.map(ticket => ({
-        ...ticket,
+        id: ticket.id, // This is now guaranteed to exist because it's required in the schema
+        name: ticket.name,
+        price: ticket.price,
+        description: ticket.description,
+        available: ticket.available,
+        totalInventory: ticket.totalInventory,
         remainingInventory: ticket.remainingInventory ?? ticket.totalInventory // Default to total if not set
-      }))
+      })) as TicketInfo[] | undefined
     };
     
     onSubmit(formattedData);
