@@ -95,15 +95,8 @@ const EventsAttractions = () => {
   };
 
   return (
-    <StandardLayout>
+    <StandardLayout pageTitle="Events & Attractions" pageDescription="Discover and manage events and attractions for your travelers">
       <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Events & Attractions</h1>
-          <p className="text-muted-foreground mt-2">
-            Discover and manage events and attractions for your travelers
-          </p>
-        </div>
-
         {renderContent()}
 
         <DeleteEventDialog
