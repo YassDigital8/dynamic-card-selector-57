@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { Building, Hotel, PencilLine } from 'lucide-react';
-import { BreadcrumbNav } from '@/components/ui/breadcrumb-nav';
 import { useParams } from 'react-router-dom';
 import { useHotelNetwork } from '@/hooks/hotel/useHotelNetwork';
 import HotelEditPage from '@/components/hotel/edit/HotelEditPage';
@@ -17,11 +16,16 @@ const HotelEdit = () => {
   return (
     <StandardLayout>
       <div className="container mx-auto py-6">
-        <BreadcrumbNav items={[
-          { label: 'Hotel Network', href: '/hotel', icon: Building },
-          { label: hotelName, href: `/hotel/view/${hotelId}`, icon: Hotel },
-          { label: 'Edit', icon: PencilLine }
-        ]} />
+        <div className="flex items-center gap-2 mb-4 text-sm text-muted-foreground">
+          <Building className="h-4 w-4" />
+          <span>Hotel Network</span>
+          <span className="mx-1">/</span>
+          <Hotel className="h-4 w-4" />
+          <span>{hotelName}</span>
+          <span className="mx-1">/</span>
+          <PencilLine className="h-4 w-4" />
+          <span>Edit</span>
+        </div>
         {hotelId && <HotelEditPage hotelId={hotelId} />}
       </div>
     </StandardLayout>

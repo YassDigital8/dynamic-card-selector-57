@@ -6,7 +6,6 @@ import HotelLoadingIndicator from '@/components/hotel/HotelLoadingIndicator';
 import { useToast } from '@/hooks/use-toast';
 import { useHotelNetwork } from '@/hooks/hotel/useHotelNetwork';
 import { HotelViewHeader, HotelViewAccordion, ErrorState } from '@/components/hotel/view';
-import { BreadcrumbNav } from '@/components/ui/breadcrumb-nav';
 import { Building, Hotel } from 'lucide-react';
 import StandardLayout from '@/components/layout/StandardLayout';
 import { motion } from 'framer-motion';
@@ -61,10 +60,12 @@ const HotelView = () => {
     return (
       <StandardLayout>
         <div className="container mx-auto py-6">
-          <BreadcrumbNav items={[
-            { label: 'Hotel Network', href: '/hotel', icon: Building },
-            { label: 'Loading...', icon: Hotel }
-          ]} />
+          <div className="flex items-center gap-2 mb-4 text-sm text-muted-foreground">
+            <Building className="h-4 w-4" />
+            <span>Hotel Network</span>
+            <span className="mx-1">/</span>
+            <span>Loading...</span>
+          </div>
           <div className="bg-white dark:bg-slate-900 rounded-xl p-8 shadow-lg">
             <HotelLoadingIndicator />
           </div>
@@ -77,10 +78,12 @@ const HotelView = () => {
     return (
       <StandardLayout>
         <div className="container mx-auto py-6">
-          <BreadcrumbNav items={[
-            { label: 'Hotel Network', href: '/hotel', icon: Building },
-            { label: 'Hotel Not Found', icon: Hotel }
-          ]} />
+          <div className="flex items-center gap-2 mb-4 text-sm text-muted-foreground">
+            <Building className="h-4 w-4" />
+            <span>Hotel Network</span>
+            <span className="mx-1">/</span>
+            <span>Hotel Not Found</span>
+          </div>
           <div className="bg-white dark:bg-slate-900 rounded-xl p-8 shadow-lg">
             <ErrorState />
           </div>
@@ -98,10 +101,13 @@ const HotelView = () => {
         animate="visible"
       >
         <motion.div variants={itemVariants}>
-          <BreadcrumbNav items={[
-            { label: 'Hotel Network', href: '/hotel', icon: Building },
-            { label: hotel.name || 'Hotel Details', icon: Hotel }
-          ]} />
+          <div className="flex items-center gap-2 mb-4 text-sm text-muted-foreground">
+            <Building className="h-4 w-4" />
+            <Link to="/hotel" className="hover:text-primary transition-colors">Hotel Network</Link>
+            <span className="mx-1">/</span>
+            <Hotel className="h-4 w-4" />
+            <span>{hotel.name || 'Hotel Details'}</span>
+          </div>
         </motion.div>
         
         <motion.div variants={itemVariants}>
