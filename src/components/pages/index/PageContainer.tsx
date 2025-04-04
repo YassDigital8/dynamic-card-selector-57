@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -35,6 +34,7 @@ import useApiStatus from '@/hooks/useApiStatus';
 import { BreadcrumbNav } from '@/components/ui/breadcrumb-nav';
 import LogoutButton from '@/components/auth/LogoutButton';
 import HelpSection from '@/components/layout/components/HelpSection';
+import NotificationCenter from '@/components/notifications/NotificationCenter';
 
 interface PageContainerProps {
   children: React.ReactNode;
@@ -93,6 +93,7 @@ const PageContainer: React.FC<PageContainerProps> = ({ children }) => {
                 <Logo showText={true} />
               </Link>
               <div className="flex items-center gap-1 md:gap-2">
+                <NotificationCenter />
                 <ThemeToggle />
                 <SidebarTrigger />
               </div>
@@ -202,7 +203,13 @@ const PageContainer: React.FC<PageContainerProps> = ({ children }) => {
           <SidebarFooter className="border-t border-sidebar-border p-2 md:p-4">
             <div className="flex items-center justify-between">
               <HelpSection />
-              <LogoutButton variant="ghost" size="sm" showIcon={false} showRole={false} />
+              <LogoutButton 
+                variant="ghost" 
+                size="sm" 
+                showIcon={false} 
+                showText={true} 
+                showRole={false}
+              />
             </div>
           </SidebarFooter>
         </Sidebar>

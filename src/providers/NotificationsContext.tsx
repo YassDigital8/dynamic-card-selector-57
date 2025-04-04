@@ -1,0 +1,121 @@
+
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { v4 as uuidv4 } from 'uuid';
+import { useToast } from '@/hooks/use-toast';
+import { Notification, NotificationType } from '@/hooks/useNotifications';
+
+interface NotificationsContextType {
+  notifications: Notification[];
+  unreadCount: number;
+  addNotification: (title: string, message: string, type: NotificationType, showToast: boolean) => string;
+  markAsRead: (id: string) => void;
+  markAllAsRead: () => void;
+  removeNotification: (id: string) => void;
+  clearAllNotifications: () => void;
+}
+
+const NotificationsContext = createContext<NotificationsContextType | undefined>(undefined);
+
+export function NotificationsProvider({ children }: { children: React.ReactNode }) {
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const { toast } = useToast();
+  
+  // Load notifications from localStorage on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('notifications');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        // Convert string timestamps back to Date objects
+        const withDates = parsed.map((n: any) => ({
+          ...n,
+          timestamp: new Date(n.timestamp)
+        }));
+        setNotifications(withDates);
+      }
+    } catch (error) {
+      console.error('Failed to load notifications from localStorage:', error);
+    }
+  }, []);
+  
+  // Save notifications to localStorage when they change
+  useEffect(() => {
+    try {
+      localStorage.setItem('notifications', JSON.stringify(notifications));
+    } catch (error) {
+      console.error('Failed to save notifications to localStorage:', error);
+    }
+  }, [notifications]);
+  
+  const addNotification = (
+    title: string,
+    message: string,
+    type: NotificationType = 'info',
+    showToast: boolean = true
+  ) => {
+    const newNotification: Notification = {
+      id: uuidv4(),
+      title,
+      message,
+      type,
+      timestamp: new Date(),
+      read: false
+    };
+    
+    setNotifications(prev => [newNotification, ...prev]);
+    
+    if (showToast) {
+      toast({
+        title,
+        description: message,
+        variant: type === 'error' ? 'destructive' : 'default',
+      });
+    }
+    
+    return newNotification.id;
+  };
+  
+  const markAsRead = (id: string) => {
+    setNotifications(prev => 
+      prev.map(n => n.id === id ? { ...n, read: true } : n)
+    );
+  };
+  
+  const markAllAsRead = () => {
+    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+  };
+  
+  const removeNotification = (id: string) => {
+    setNotifications(prev => prev.filter(n => n.id !== id));
+  };
+  
+  const clearAllNotifications = () => {
+    setNotifications([]);
+  };
+  
+  return (
+    <NotificationsContext.Provider 
+      value={{
+        notifications,
+        unreadCount: notifications.filter(n => !n.read).length,
+        addNotification,
+        markAsRead,
+        markAllAsRead,
+        removeNotification,
+        clearAllNotifications
+      }}
+    >
+      {children}
+    </NotificationsContext.Provider>
+  );
+}
+
+export function useNotificationsContext() {
+  const context = useContext(NotificationsContext);
+  
+  if (context === undefined) {
+    throw new Error('useNotificationsContext must be used within a NotificationsProvider');
+  }
+  
+  return context;
+}

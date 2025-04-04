@@ -1,158 +1,57 @@
-import React, { memo, Suspense } from "react";
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { NotificationProvider } from "./providers/NotificationProvider";
-import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
-import Login from "./pages/Login";
-import Gallery from "./pages/Gallery";
-import Hotel from "./pages/Hotel";
-import HotelAdd from "./pages/HotelAdd";
-import HotelEdit from "./pages/HotelEdit";
-import HotelView from "./pages/HotelView";
-import Users from "./pages/Users";
-import EventsAttractions from "./pages/EventsAttractions";
-import useAuthentication from "./hooks/useAuthentication";
 
-// Initialize theme from localStorage or default to light
-const initializeTheme = () => {
-  const savedTheme = localStorage.getItem('theme');
-  
-  if (savedTheme === 'dark') {
-    document.documentElement.classList.add('dark');
-  } else if (savedTheme === 'light' || !savedTheme) {
-    document.documentElement.classList.remove('dark');
-    if (!savedTheme) {
-      localStorage.setItem('theme', 'light');
-    }
-  } else if (savedTheme === 'system') {
-    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    if (systemPrefersDark) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }
-  
-  document.title = "Cham Wings Admin Portal";
-};
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ThemeProvider } from '@/components/ui/theme-provider';
+import { NotificationsProvider } from '@/providers/NotificationsContext';
+import { Toaster } from '@/components/ui/toaster';
 
-// Create QueryClient outside of component to prevent recreation on renders
+import Index from '@/pages/Index';
+import Login from '@/pages/Login';
+import NotFound from '@/pages/NotFound';
+import Gallery from '@/pages/Gallery';
+import Hotel from '@/pages/Hotel';
+import HotelAdd from '@/pages/HotelAdd';
+import HotelEdit from '@/pages/HotelEdit';
+import HotelView from '@/pages/HotelView';
+import Users from '@/pages/Users';
+import EventsAttractions from '@/pages/EventsAttractions';
+
+import './App.css';
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
-      retry: 1,
-      staleTime: 5 * 60 * 1000, // 5 minutes
+      retry: false,
     },
   },
 });
 
-// Protected route component
-const ProtectedRoute = memo(({ children }: { children: React.ReactNode }) => {
-  const { authToken, authLoading } = useAuthentication();
-  
-  if (authLoading) {
-    return <div className="flex h-screen w-screen items-center justify-center">
-      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-    </div>;
-  }
-  
-  if (!authToken) {
-    return <Navigate to="/login" replace />;
-  }
-  
-  return <>{children}</>;
-});
-
-ProtectedRoute.displayName = 'ProtectedRoute';
-
-// Initialize theme immediately upon script load
-initializeTheme();
-
-const App = () => {
+function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <NotificationProvider>
-          <BrowserRouter>
+      <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+        <NotificationsProvider>
+          <Router>
             <Routes>
-              {/* Public routes */}
+              <Route path="/" element={<Index />} />
               <Route path="/login" element={<Login />} />
-              
-              {/* Protected routes */}
-              <Route path="/" element={
-                <ProtectedRoute>
-                  <Index />
-                </ProtectedRoute>
-              } />
-              <Route path="/pages" element={
-                <ProtectedRoute>
-                  <Index />
-                </ProtectedRoute>
-              } />
-              <Route path="/users" element={
-                <ProtectedRoute>
-                  <Users />
-                </ProtectedRoute>
-              } />
-              <Route path="/settings" element={
-                <ProtectedRoute>
-                  <Index />
-                </ProtectedRoute>
-              } />
-              <Route path="/gallery" element={
-                <ProtectedRoute>
-                  <Gallery />
-                </ProtectedRoute>
-              } />
-              
-              {/* Hotel routes */}
-              <Route path="/hotel" element={
-                <ProtectedRoute>
-                  <Hotel />
-                </ProtectedRoute>
-              } />
-              <Route path="/hotel/add" element={
-                <ProtectedRoute>
-                  <HotelAdd />
-                </ProtectedRoute>
-              } />
-              <Route path="/hotel/edit/:hotelId" element={
-                <ProtectedRoute>
-                  <HotelEdit />
-                </ProtectedRoute>
-              } />
-              <Route path="/hotel/view/:hotelId" element={
-                <ProtectedRoute>
-                  <HotelView />
-                </ProtectedRoute>
-              } />
-              
-              {/* Events & Attractions route */}
-              <Route path="/events" element={
-                <ProtectedRoute>
-                  <EventsAttractions />
-                </ProtectedRoute>
-              } />
-              
-              {/* Catch-all route - also protected */}
-              <Route path="*" element={
-                <ProtectedRoute>
-                  <NotFound />
-                </ProtectedRoute>
-              } />
+              <Route path="/gallery" element={<Gallery />} />
+              <Route path="/hotel" element={<Hotel />} />
+              <Route path="/hotel/add" element={<HotelAdd />} />
+              <Route path="/hotel/edit/:id" element={<HotelEdit />} />
+              <Route path="/hotel/view/:id" element={<HotelView />} />
+              <Route path="/users" element={<Users />} />
+              <Route path="/events" element={<EventsAttractions />} />
+              <Route path="*" element={<NotFound />} />
             </Routes>
-          </BrowserRouter>
+          </Router>
           <Toaster />
-          <Sonner />
-        </NotificationProvider>
-      </TooltipProvider>
+        </NotificationsProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
-};
+}
 
 export default App;
