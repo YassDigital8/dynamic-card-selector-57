@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -201,7 +202,7 @@ const PageContainer: React.FC<PageContainerProps> = ({ children }) => {
           <SidebarFooter className="border-t border-sidebar-border p-2 md:p-4">
             <div className="flex items-center justify-between">
               <HelpSection />
-              <LogoutButton variant="ghost" size="sm" showIcon={false} />
+              <LogoutButton variant="ghost" size="sm" showIcon={false} showRole={false} />
             </div>
           </SidebarFooter>
         </Sidebar>

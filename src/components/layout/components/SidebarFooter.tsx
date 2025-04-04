@@ -14,6 +14,7 @@ const SidebarFooter: React.FC = () => {
           size="sm" 
           showIcon={false} 
           showText={true} 
+          showRole={false}
         />
       </div>
     </Footer>
