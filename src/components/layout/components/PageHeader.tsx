@@ -1,11 +1,11 @@
 
 import React from 'react';
-import { BreadcrumbNav } from '@/components/ui/breadcrumb-nav';
 import { useLocation } from 'react-router-dom';
 import SessionTimer from '@/components/auth/SessionTimer';
 import { ApiStatusIndicator } from '@/components/ui/api-status-indicator';
 import LogoutButton from '@/components/auth/LogoutButton';
 import useApiStatus from '@/hooks/useApiStatus';
+import { BreadcrumbNav } from '@/components/ui/breadcrumb-nav';
 
 interface PageHeaderProps {
   pageTitle?: string;
@@ -49,14 +49,12 @@ const PageHeader: React.FC<PageHeaderProps> = ({ pageTitle, pageDescription }) =
   
   return (
     <div className="flex flex-col space-y-4 md:space-y-6 mb-6">
-      {location.pathname !== '/' && (
-        <BreadcrumbNav 
-          items={[
-            { label: 'Dashboard', href: '/' },
-            ...getBreadcrumbItems()
-          ]}
-        />
-      )}
+      <BreadcrumbNav 
+        items={[
+          { label: 'Dashboard', href: '/' },
+          ...getBreadcrumbItems()
+        ]}
+      />
       
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
         <div className="mb-3 md:mb-0">
