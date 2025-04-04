@@ -20,7 +20,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({ pageTitle, pageDescription }) =
   const getBreadcrumbItems = () => {
     const path = location.pathname;
     
-    // Special case for hotel page
+    // Special case for hotel page - we want it to display "Hotel Network" instead of just "Hotel"
     if (path === '/hotel') {
       return [];
     }
@@ -38,8 +38,13 @@ const PageHeader: React.FC<PageHeaderProps> = ({ pageTitle, pageDescription }) =
       // Only add links for segments before the last one
       const isLastSegment = index === segments.length - 1;
       
-      // Format the segment name - capitalize first letter
-      const label = segment.charAt(0).toUpperCase() + segment.slice(1);
+      // Format the segment name - capitalize first letter and handle special cases
+      let label = segment.charAt(0).toUpperCase() + segment.slice(1);
+      
+      // Special cases for specific routes
+      if (segment === 'hotel' && index === 0) {
+        label = 'Hotel Network';
+      }
       
       // Add this segment to the breadcrumb trail
       return {

@@ -6,7 +6,7 @@ import HotelPage from '@/components/hotel/HotelPage';
 const Hotel = () => {
   return (
     <StandardLayout 
-      pageTitle="Hotel"
+      pageTitle="Hotel Network"
       pageDescription="Manage hotels and accommodations"
     >
       <div className="w-full h-full py-2">
