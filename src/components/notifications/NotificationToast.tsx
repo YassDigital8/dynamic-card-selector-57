@@ -33,7 +33,7 @@ const NotificationToast: React.FC<NotificationToastProps> = ({
   onClose 
 }) => {
   return (
-    <Toast className={cn("border p-4", backgroundMap[type])}>
+    <Toast className={cn("border p-4 z-50", backgroundMap[type])}>
       <div className="flex items-start gap-3">
         <div className="shrink-0 mt-0.5">
           {iconMap[type]}
