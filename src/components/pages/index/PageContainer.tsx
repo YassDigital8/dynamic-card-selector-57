@@ -12,8 +12,8 @@ import {
   SidebarMenuButton,
   SidebarGroup,
   SidebarGroupLabel,
-  SidebarInset,
   SidebarGroupContent,
+  SidebarInset,
   SidebarTrigger
 } from '@/components/ui/sidebar';
 import { 
@@ -33,6 +33,7 @@ import { ApiStatusIndicator } from '@/components/ui/api-status-indicator';
 import useApiStatus from '@/hooks/useApiStatus';
 import { BreadcrumbNav } from '@/components/ui/breadcrumb-nav';
 import LogoutButton from '@/components/auth/LogoutButton';
+import HelpSection from '@/components/layout/components/HelpSection';
 
 interface PageContainerProps {
   children: React.ReactNode;
@@ -55,7 +56,6 @@ const PageContainer: React.FC<PageContainerProps> = ({ children }) => {
   const { isApiLive } = useApiStatus();
   const location = useLocation();
   
-  // Generate breadcrumb items based on current route
   const getBreadcrumbItems = () => {
     const path = location.pathname;
     const items = [];
@@ -67,16 +67,12 @@ const PageContainer: React.FC<PageContainerProps> = ({ children }) => {
     const segments = path.split('/').filter(Boolean);
     
     segments.forEach((segment, index) => {
-      // Build the path up to this segment
       const currentPath = `/${segments.slice(0, index + 1).join('/')}`;
       
-      // Only add links for segments before the last one
       const isLastSegment = index === segments.length - 1;
       
-      // Format the segment name - capitalize first letter
       const label = segment.charAt(0).toUpperCase() + segment.slice(1);
       
-      // Add this segment to the breadcrumb trail
       items.push({
         label,
         href: isLastSegment ? undefined : currentPath
