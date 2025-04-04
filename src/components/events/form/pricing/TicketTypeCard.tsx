@@ -6,7 +6,7 @@ import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/comp
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Trash2, Ban } from 'lucide-react';
+import { Trash2, Ban, AlertCircle } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
@@ -37,8 +37,22 @@ export const TicketTypeCard: React.FC<TicketTypeCardProps> = ({
           size="sm"
           onClick={onRemove}
           className="h-8 w-8 p-0 text-muted-foreground"
+          disabled={isExistingTicket}
         >
-          <Trash2 className="h-4 w-4" />
+          {isExistingTicket ? (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger className="cursor-not-allowed">
+                  <AlertCircle className="h-4 w-4 text-muted-foreground" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Existing ticket types cannot be deleted</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          ) : (
+            <Trash2 className="h-4 w-4" />
+          )}
         </Button>
       </CardHeader>
       <CardContent className="px-4 pb-3 pt-0">
@@ -50,7 +64,12 @@ export const TicketTypeCard: React.FC<TicketTypeCardProps> = ({
               <FormItem>
                 <FormLabel className="text-xs">Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="e.g. Adult, Child, VIP" {...field} />
+                  <Input 
+                    placeholder="e.g. Adult, Child, VIP" 
+                    {...field} 
+                    disabled={isExistingTicket}
+                    className={isExistingTicket ? "bg-muted cursor-not-allowed" : ""}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -72,6 +91,8 @@ export const TicketTypeCard: React.FC<TicketTypeCardProps> = ({
                       placeholder="0.00"
                       {...field}
                       onChange={(e) => field.onChange(Number(e.target.value))}
+                      disabled={isExistingTicket}
+                      className={isExistingTicket ? "bg-muted cursor-not-allowed" : ""}
                     />
                   </FormControl>
                   <FormMessage />
@@ -128,7 +149,12 @@ export const TicketTypeCard: React.FC<TicketTypeCardProps> = ({
               <FormItem>
                 <FormLabel className="text-xs">Description (optional)</FormLabel>
                 <FormControl>
-                  <Input placeholder="Brief description" {...field} />
+                  <Input 
+                    placeholder="Brief description" 
+                    {...field} 
+                    disabled={isExistingTicket}
+                    className={isExistingTicket ? "bg-muted cursor-not-allowed" : ""}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -142,6 +168,11 @@ export const TicketTypeCard: React.FC<TicketTypeCardProps> = ({
               <FormItem className="flex flex-row items-center justify-between rounded-lg border p-2">
                 <div className="space-y-0.5">
                   <FormLabel className="text-xs">Available for sale</FormLabel>
+                  {isExistingTicket && (
+                    <p className="text-xs text-muted-foreground">
+                      You can only toggle availability for this ticket type
+                    </p>
+                  )}
                 </div>
                 <FormControl>
                   <Switch
