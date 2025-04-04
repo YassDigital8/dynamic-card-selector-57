@@ -20,8 +20,12 @@ const PageHeader: React.FC<PageHeaderProps> = ({ pageTitle, pageDescription }) =
   const getBreadcrumbItems = () => {
     const path = location.pathname;
     
-    // Special case for hotel page - we want it to display "Hotel Network" instead of just "Hotel"
+    // Special cases for specific pages that need custom breadcrumb handling
     if (path === '/hotel') {
+      return [];
+    }
+    
+    if (path === '/gallery') {
       return [];
     }
     
@@ -44,6 +48,10 @@ const PageHeader: React.FC<PageHeaderProps> = ({ pageTitle, pageDescription }) =
       // Special cases for specific routes
       if (segment === 'hotel' && index === 0) {
         label = 'Hotel Network';
+      }
+      
+      if (segment === 'gallery' && index === 0) {
+        label = 'Media Gallery';
       }
       
       // Add this segment to the breadcrumb trail

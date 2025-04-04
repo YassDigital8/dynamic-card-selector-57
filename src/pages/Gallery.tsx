@@ -8,6 +8,7 @@ import { GalleryHeader } from '@/components/gallery/GalleryHeader';
 import { GalleryTabs } from '@/components/gallery/GalleryTabs';
 import { GalleryTabContent } from '@/components/gallery/GalleryTabContent';
 import { useGalleryViewModel } from '@/hooks/useGalleryViewModel';
+import StandardLayout from '@/components/layout/StandardLayout';
 
 const GalleryPage: React.FC = () => {
   const { userInfo } = useAuthentication();
@@ -31,14 +32,10 @@ const GalleryPage: React.FC = () => {
   } = useGalleryViewModel();
 
   return (
-    <PageContainer>
-      <AuthenticatedContent userInfo={userInfo} />
-      
-      <GalleryHeader 
-        title="Media Gallery"
-        description="Manage and organize your media files"
-      />
-      
+    <StandardLayout
+      pageTitle="Media Gallery"
+      pageDescription="Manage and organize your media files"
+    >
       <GalleryTabs 
         activeTab={activeTab}
         setActiveTab={setActiveTab}
@@ -67,7 +64,7 @@ const GalleryPage: React.FC = () => {
         onOpenChange={setIsCreateGalleryOpen}
         onCreateGallery={handleCreateGallery}
       />
-    </PageContainer>
+    </StandardLayout>
   );
 };
 
