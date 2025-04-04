@@ -22,7 +22,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({ pageTitle, pageDescription }) =
     
     // Special case for hotel page
     if (path === '/hotel') {
-      return [{ label: 'Hotel' }];
+      return [];
     }
     
     if (path === '/') {
