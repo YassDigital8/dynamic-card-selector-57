@@ -6,8 +6,9 @@ import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/comp
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Trash2 } from 'lucide-react';
+import { Trash2, Ban } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface TicketTypeCardProps {
   ticket: any;
@@ -22,6 +23,11 @@ export const TicketTypeCard: React.FC<TicketTypeCardProps> = ({
   form, 
   onRemove 
 }) => {
+  // Determine if this is an existing ticket with sales
+  const isExistingTicket = !!ticket.id;
+  const hasInventorySet = ticket.totalInventory > 0;
+  const shouldDisableInventory = isExistingTicket && hasInventorySet;
+  
   return (
     <Card key={ticket.id} className="border border-muted">
       <CardHeader className="pb-3 pt-3 px-4 flex flex-row items-center justify-between">
@@ -78,7 +84,21 @@ export const TicketTypeCard: React.FC<TicketTypeCardProps> = ({
               name={`ticketInfo.${index}.totalInventory`}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-xs">Quantity</FormLabel>
+                  <FormLabel className="text-xs flex items-center gap-1">
+                    Quantity
+                    {shouldDisableInventory && (
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <Ban className="h-3 w-3 text-muted-foreground" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Inventory cannot be modified after tickets have been created</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    )}
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -86,8 +106,15 @@ export const TicketTypeCard: React.FC<TicketTypeCardProps> = ({
                       placeholder="Available tickets"
                       {...field}
                       onChange={(e) => field.onChange(Number(e.target.value))}
+                      disabled={shouldDisableInventory}
+                      className={shouldDisableInventory ? "bg-muted cursor-not-allowed" : ""}
                     />
                   </FormControl>
+                  {shouldDisableInventory && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Inventory cannot be changed after creation
+                    </p>
+                  )}
                   <FormMessage />
                 </FormItem>
               )}
