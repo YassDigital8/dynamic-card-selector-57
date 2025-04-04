@@ -9,22 +9,12 @@ import {
   Users, 
   Settings,
   HelpCircle,
-  Ticket,
-  ChevronDown
+  Ticket
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import useAuthentication from '@/hooks/useAuthentication';
-import { 
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger 
-} from '@/components/ui/dropdown-menu';
 
 const AdminSidebar: React.FC = () => {
   const location = useLocation();
-  const { userInfo, logout } = useAuthentication();
   
   const isActive = (path: string) => {
     if (path === '/hotel' && location.pathname.startsWith('/hotel/')) {
@@ -103,40 +93,9 @@ const AdminSidebar: React.FC = () => {
       </div>
       
       {/* Footer */}
-      <div className="mt-auto p-4 border-t border-sidebar-border">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center text-sm text-muted-foreground gap-2">
-            <HelpCircle className="h-4 w-4" />
-            <span>Need help?</span>
-          </div>
-          
-          <DropdownMenu>
-            <DropdownMenuTrigger className="flex items-center gap-1 text-sm hover:text-foreground">
-              <span className="max-w-[100px] truncate">{userInfo?.firstName || 'User'}</span>
-              <ChevronDown className="h-3 w-3" />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
-              {userInfo?.role && (
-                <>
-                  <div className="px-2 py-1.5 text-xs text-muted-foreground">
-                    {userInfo.role}
-                  </div>
-                  <DropdownMenuSeparator />
-                </>
-              )}
-              <DropdownMenuItem asChild>
-                <Link to="/settings" className="cursor-pointer">
-                  <Settings className="mr-2 h-4 w-4" />
-                  <span>Settings</span>
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={logout} className="cursor-pointer">
-                <Settings className="mr-2 h-4 w-4" />
-                <span>Logout</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+      <div className="mt-auto p-4 border-t border-sidebar-border flex items-center text-sm text-muted-foreground">
+        <HelpCircle className="mr-2 h-4 w-4" />
+        <span>Need help?</span>
       </div>
     </div>
   );

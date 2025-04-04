@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import { SidebarHeader as Header, SidebarTrigger } from '@/components/ui/sidebar';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { Logo } from '@/components/ui/logo';
-import NotificationCenter from '@/components/notifications/NotificationCenter';
 
 const SidebarHeader: React.FC = () => {
   return (
@@ -14,7 +13,6 @@ const SidebarHeader: React.FC = () => {
           <Logo showText={true} />
         </Link>
         <div className="flex items-center gap-1 md:gap-2">
-          <NotificationCenter />
           <ThemeToggle />
           <SidebarTrigger />
         </div>

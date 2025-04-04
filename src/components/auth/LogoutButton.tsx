@@ -19,7 +19,6 @@ interface LogoutButtonProps {
   className?: string;
   showIcon?: boolean;
   showText?: boolean;
-  showRole?: boolean;
 }
 
 const LogoutButton = ({ 
@@ -27,8 +26,7 @@ const LogoutButton = ({
   size = 'sm',
   className,
   showIcon = true,
-  showText = true,
-  showRole = true
+  showText = true
 }: LogoutButtonProps) => {
   const { logout, userInfo } = useAuthentication();
   const navigate = useNavigate();
@@ -48,9 +46,9 @@ const LogoutButton = ({
         >
           {showText && (
             <div className="flex items-center gap-1">
-              <span className="max-w-[100px] truncate">{userInfo?.firstName || userInfo?.email || 'User'}</span>
-              {showRole && userInfo?.role && (
-                <span className="text-xs opacity-80 hidden md:inline">({userInfo.role})</span>
+              <span>{userInfo?.firstName || userInfo?.email || 'User'}</span>
+              {userInfo?.role && (
+                <span className="text-xs opacity-80">({userInfo.role})</span>
               )}
             </div>
           )}
