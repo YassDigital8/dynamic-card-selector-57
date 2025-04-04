@@ -24,6 +24,22 @@ const routeLabels: Record<string, string> = {
   'view': 'View Details',
 };
 
+// Define module structure for hierarchical breadcrumbs
+const moduleStructure: Record<string, { parent: string | null; title: string }> = {
+  'users': { parent: null, title: 'Users' },
+  'hotel': { parent: null, title: 'Hotel Network' },
+  'gallery': { parent: null, title: 'Media Gallery' },
+  'events': { parent: null, title: 'Events & Attractions' },
+  'settings': { parent: null, title: 'Settings' },
+  
+  // Hotel sub-modules
+  'add': { parent: 'hotel', title: 'Add New' },
+  'edit': { parent: 'hotel', title: 'Edit' },
+  'view': { parent: 'hotel', title: 'View Details' },
+  
+  // Add more sub-modules as needed
+};
+
 const PageHeader: React.FC<PageHeaderProps> = ({ pageTitle, pageDescription }) => {
   const location = useLocation();
   const { isApiLive } = useApiStatus();
@@ -45,12 +61,13 @@ const PageHeader: React.FC<PageHeaderProps> = ({ pageTitle, pageDescription }) =
       return [];
     }
     
-    return segments.map((segment, index) => {
-      // Build the path up to this segment
-      const currentPath = `/${segments.slice(0, index + 1).join('/')}`;
-      
-      // Only add links for segments before the last one
-      const isLastSegment = index === segments.length - 1;
+    // Build breadcrumb items in hierarchical order
+    const breadcrumbItems = [];
+    let currentPath = '';
+    
+    for (let i = 0; i < segments.length; i++) {
+      const segment = segments[i];
+      currentPath += `/${segment}`;
       
       // Format the segment name - use predefined labels or capitalize first letter
       let label = routeLabels[segment] || segment.charAt(0).toUpperCase() + segment.slice(1);
@@ -60,12 +77,21 @@ const PageHeader: React.FC<PageHeaderProps> = ({ pageTitle, pageDescription }) =
         label = 'ID: ' + segment.substring(0, 8) + '...';
       }
       
+      // Check if this is a numeric ID or other parameter
+      if (segment.match(/^\d+$/)) {
+        label = `Item ${segment}`;
+      }
+      
+      const isLastSegment = i === segments.length - 1;
+      
       // Add this segment to the breadcrumb trail
-      return {
+      breadcrumbItems.push({
         label,
         href: isLastSegment ? undefined : currentPath
-      };
-    });
+      });
+    }
+    
+    return breadcrumbItems;
   };
   
   return (
