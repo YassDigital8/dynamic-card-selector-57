@@ -6,7 +6,7 @@ import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/comp
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Trash2, Ban, AlertCircle } from 'lucide-react';
+import { Trash2, Ban, AlertCircle, Lock } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
@@ -31,7 +31,21 @@ export const TicketTypeCard: React.FC<TicketTypeCardProps> = ({
   return (
     <Card key={ticket.id} className="border border-muted">
       <CardHeader className="pb-3 pt-3 px-4 flex flex-row items-center justify-between">
-        <CardTitle className="text-sm font-medium">Ticket Type {index + 1}</CardTitle>
+        <CardTitle className="text-sm font-medium flex items-center gap-2">
+          Ticket Type {index + 1}
+          {isExistingTicket && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Lock className="h-4 w-4 text-muted-foreground" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Only availability can be modified for existing tickets</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
+        </CardTitle>
         <Button
           variant="ghost"
           size="sm"
@@ -62,7 +76,21 @@ export const TicketTypeCard: React.FC<TicketTypeCardProps> = ({
             name={`ticketInfo.${index}.name`}
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-xs">Name</FormLabel>
+                <FormLabel className="text-xs flex items-center gap-1">
+                  Name
+                  {isExistingTicket && (
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <Lock className="h-3 w-3 text-muted-foreground" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Name cannot be modified for existing tickets</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  )}
+                </FormLabel>
                 <FormControl>
                   <Input 
                     placeholder="e.g. Adult, Child, VIP" 
@@ -82,7 +110,21 @@ export const TicketTypeCard: React.FC<TicketTypeCardProps> = ({
               name={`ticketInfo.${index}.price`}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-xs">Price ($)</FormLabel>
+                  <FormLabel className="text-xs flex items-center gap-1">
+                    Price ($)
+                    {isExistingTicket && (
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <Lock className="h-3 w-3 text-muted-foreground" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Price cannot be modified for existing tickets</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    )}
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -147,7 +189,21 @@ export const TicketTypeCard: React.FC<TicketTypeCardProps> = ({
             name={`ticketInfo.${index}.description`}
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-xs">Description (optional)</FormLabel>
+                <FormLabel className="text-xs flex items-center gap-1">
+                  Description (optional)
+                  {isExistingTicket && (
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <Lock className="h-3 w-3 text-muted-foreground" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Description cannot be modified for existing tickets</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  )}
+                </FormLabel>
                 <FormControl>
                   <Input 
                     placeholder="Brief description" 
