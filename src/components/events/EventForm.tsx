@@ -69,7 +69,7 @@ const EventForm: React.FC<EventFormProps> = ({
               images={eventImages}
               mainImageUrl={form.getValues('image')}
               onAddImages={() => setShowImageUploadDialog(!isEditing && true)}
-              onRemoveImage={!isEditing ? handleRemoveImage : undefined}
+              onRemoveImage={!isEditing ? (imageId) => handleRemoveImage(imageId) : undefined}
               onSetMainImage={!isEditing ? setMainImage : undefined}
               readOnly={isEditing}
             />

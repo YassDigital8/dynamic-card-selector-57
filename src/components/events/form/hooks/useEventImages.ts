@@ -29,7 +29,10 @@ export const useEventImages = (form: UseFormReturn<any>, initialImages: EventIma
     }
   };
 
-  const handleRemoveImage = (index: number) => {
+  const handleRemoveImage = (imageId: string) => {
+    const index = eventImages.findIndex(img => (img.id || img.url) === imageId);
+    if (index === -1) return;
+    
     const updatedImages = [...eventImages];
     updatedImages.splice(index, 1);
     setEventImages(updatedImages);
