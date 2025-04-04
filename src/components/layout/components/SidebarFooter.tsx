@@ -1,8 +1,8 @@
 
 import React from 'react';
 import { SidebarFooter as Footer } from '@/components/ui/sidebar';
+import HelpSection from '@/components/layout/components/HelpSection';
 import LogoutButton from '@/components/auth/LogoutButton';
-import HelpSection from './HelpSection';
 
 const SidebarFooter: React.FC = () => {
   return (

@@ -7,6 +7,7 @@ interface PageContentProps {
   children: React.ReactNode;
   pageTitle?: string;
   pageDescription?: string;
+  fadeAnimation?: boolean;
 }
 
 const fadeInVariants = {
@@ -21,18 +22,28 @@ const fadeInVariants = {
   }
 };
 
-const PageContent: React.FC<PageContentProps> = ({ children, pageTitle, pageDescription }) => {
+const PageContent: React.FC<PageContentProps> = ({ 
+  children, 
+  pageTitle, 
+  pageDescription,
+  fadeAnimation = true
+}) => {
+  const ContentWrapper = fadeAnimation ? motion.div : 'div';
+  const motionProps = fadeAnimation ? {
+    initial: "hidden",
+    animate: "visible",
+    variants: fadeInVariants
+  } : {};
+  
   return (
     <div className="p-2 sm:p-4 md:p-8 lg:p-10">
-      <motion.div 
+      <ContentWrapper 
         className="max-w-6xl mx-auto"
-        initial="hidden"
-        animate="visible"
-        variants={fadeInVariants}
+        {...motionProps}
       >
         <PageHeader pageTitle={pageTitle} pageDescription={pageDescription} />
         {children}
-      </motion.div>
+      </ContentWrapper>
     </div>
   );
 };
