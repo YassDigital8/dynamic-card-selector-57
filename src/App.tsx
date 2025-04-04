@@ -1,3 +1,4 @@
+
 import React, { memo, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -15,6 +16,7 @@ import HotelView from "./pages/HotelView";
 import Users from "./pages/Users";
 import EventsAttractions from "./pages/EventsAttractions";
 import useAuthentication from "./hooks/useAuthentication";
+import StandardLayout from "./components/layout/StandardLayout";
 
 // Initialize theme from localStorage or default to light
 const initializeTheme = () => {
@@ -50,8 +52,12 @@ const queryClient = new QueryClient({
   },
 });
 
-// Protected route component
-const ProtectedRoute = memo(({ children }: { children: React.ReactNode }) => {
+// Protected route component with StandardLayout
+const ProtectedRoute = memo(({ children, title, description }: { 
+  children: React.ReactNode, 
+  title?: string, 
+  description?: string 
+}) => {
   const { authToken, authLoading } = useAuthentication();
   
   if (authLoading) {
@@ -64,7 +70,11 @@ const ProtectedRoute = memo(({ children }: { children: React.ReactNode }) => {
     return <Navigate to="/login" replace />;
   }
   
-  return <>{children}</>;
+  return (
+    <StandardLayout title={title} description={description}>
+      {children}
+    </StandardLayout>
+  );
 });
 
 ProtectedRoute.displayName = 'ProtectedRoute';
@@ -83,63 +93,63 @@ const App = () => {
             
             {/* Protected routes */}
             <Route path="/" element={
-              <ProtectedRoute>
+              <ProtectedRoute title="Dashboard" description="Welcome to Cham Wings Admin Portal">
                 <Index />
               </ProtectedRoute>
             } />
             <Route path="/pages" element={
-              <ProtectedRoute>
+              <ProtectedRoute title="Pages" description="Manage all website pages">
                 <Index />
               </ProtectedRoute>
             } />
             <Route path="/users" element={
-              <ProtectedRoute>
+              <ProtectedRoute title="Users" description="Manage system users">
                 <Users />
               </ProtectedRoute>
             } />
             <Route path="/settings" element={
-              <ProtectedRoute>
+              <ProtectedRoute title="Settings" description="Configure system settings">
                 <Index />
               </ProtectedRoute>
             } />
             <Route path="/gallery" element={
-              <ProtectedRoute>
+              <ProtectedRoute title="Media Gallery" description="Manage and organize your media files">
                 <Gallery />
               </ProtectedRoute>
             } />
             
             {/* Hotel routes */}
             <Route path="/hotel" element={
-              <ProtectedRoute>
+              <ProtectedRoute title="Hotel Network" description="Manage hotel network across regions">
                 <Hotel />
               </ProtectedRoute>
             } />
             <Route path="/hotel/add" element={
-              <ProtectedRoute>
+              <ProtectedRoute title="Add Hotel" description="Add a new hotel to the network">
                 <HotelAdd />
               </ProtectedRoute>
             } />
             <Route path="/hotel/edit/:hotelId" element={
-              <ProtectedRoute>
+              <ProtectedRoute title="Edit Hotel" description="Modify hotel details">
                 <HotelEdit />
               </ProtectedRoute>
             } />
             <Route path="/hotel/view/:hotelId" element={
-              <ProtectedRoute>
+              <ProtectedRoute title="Hotel Details" description="View detailed hotel information">
                 <HotelView />
               </ProtectedRoute>
             } />
             
             {/* Events & Attractions route */}
             <Route path="/events" element={
-              <ProtectedRoute>
+              <ProtectedRoute title="Events & Attractions" description="Manage events and attractions">
                 <EventsAttractions />
               </ProtectedRoute>
             } />
             
             {/* Catch-all route - also protected */}
             <Route path="*" element={
-              <ProtectedRoute>
+              <ProtectedRoute title="Page Not Found" description="The requested page does not exist">
                 <NotFound />
               </ProtectedRoute>
             } />

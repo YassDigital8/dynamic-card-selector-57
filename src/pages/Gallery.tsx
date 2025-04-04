@@ -1,8 +1,6 @@
 
 import React from 'react';
-import PageContainer from '@/components/pages/index/PageContainer';
 import AuthenticatedContent from '@/components/pages/index/AuthenticatedContent';
-import { useAuthentication } from '@/hooks/useAuthentication';
 import { CreateGalleryDialog } from '@/components/gallery/CreateGalleryDialog';
 import { GalleryHeader } from '@/components/gallery/GalleryHeader';
 import { GalleryTabs } from '@/components/gallery/GalleryTabs';
@@ -10,7 +8,6 @@ import { GalleryTabContent } from '@/components/gallery/GalleryTabContent';
 import { useGalleryViewModel } from '@/hooks/useGalleryViewModel';
 
 const GalleryPage: React.FC = () => {
-  const { userInfo } = useAuthentication();
   const {
     activeTab,
     setActiveTab,
@@ -31,14 +28,7 @@ const GalleryPage: React.FC = () => {
   } = useGalleryViewModel();
 
   return (
-    <PageContainer>
-      <AuthenticatedContent userInfo={userInfo} />
-      
-      <GalleryHeader 
-        title="Media Gallery"
-        description="Manage and organize your media files"
-      />
-      
+    <>
       <GalleryTabs 
         activeTab={activeTab}
         setActiveTab={setActiveTab}
@@ -67,7 +57,7 @@ const GalleryPage: React.FC = () => {
         onOpenChange={setIsCreateGalleryOpen}
         onCreateGallery={handleCreateGallery}
       />
-    </PageContainer>
+    </>
   );
 };
 

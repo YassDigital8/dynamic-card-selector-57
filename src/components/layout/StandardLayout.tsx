@@ -5,28 +5,21 @@ import { Link, useLocation } from 'react-router-dom';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { Logo } from '@/components/ui/logo';
 import { LayoutDashboard, FileText, Image, Hotel, Users, Settings, HelpCircle, Ticket } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import LogoutButton from '@/components/auth/LogoutButton';
-import { motion } from 'framer-motion';
+import AdminHeader from './AdminHeader';
 
 interface StandardLayoutProps {
   children: React.ReactNode;
+  title?: string;
+  description?: string;
 }
 
-const fadeInVariants = {
-  hidden: { opacity: 0 },
-  visible: { 
-    opacity: 1,
-    transition: { 
-      duration: 0.5,
-      when: "beforeChildren",
-      staggerChildren: 0.1
-    }
-  }
-};
-
-const StandardLayout: React.FC<StandardLayoutProps> = ({ children }) => {
+const StandardLayout: React.FC<StandardLayoutProps> = ({ 
+  children,
+  title,
+  description
+}) => {
   const location = useLocation();
   const isMobile = useIsMobile();
   
@@ -127,15 +120,13 @@ const StandardLayout: React.FC<StandardLayoutProps> = ({ children }) => {
         </Sidebar>
         
         <SidebarInset>
-          <div className="p-2 sm:p-4 md:p-8 lg:p-10">
-            <motion.div 
-              className="max-w-6xl mx-auto"
-              initial="hidden"
-              animate="visible"
-              variants={fadeInVariants}
-            >
-              {children}
-            </motion.div>
+          <div className="flex flex-col h-full">
+            <AdminHeader title={title} description={description} />
+            <div className="flex-1 overflow-auto p-2 sm:p-4 md:p-6">
+              <div className="max-w-6xl mx-auto">
+                {children}
+              </div>
+            </div>
           </div>
         </SidebarInset>
       </div>
