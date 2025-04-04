@@ -52,10 +52,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({ pageTitle, pageDescription }) =
   return (
     <div className="flex flex-col space-y-4 md:space-y-6 mb-6">
       <BreadcrumbNav 
-        items={[
-          { label: 'Home', href: '/' },
-          ...getBreadcrumbItems()
-        ]}
+        items={getBreadcrumbItems()}
       />
       
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
