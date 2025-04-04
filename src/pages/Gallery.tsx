@@ -1,6 +1,5 @@
 
 import React from 'react';
-import PageContainer from '@/components/pages/index/PageContainer';
 import AuthenticatedContent from '@/components/pages/index/AuthenticatedContent';
 import { useAuthentication } from '@/hooks/useAuthentication';
 import { CreateGalleryDialog } from '@/components/gallery/CreateGalleryDialog';
