@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { Hotel } from '@/models/HotelModel';
 import { usePageSelectionViewModel } from '@/viewmodels/PageSelectionViewModel';
 import { useHotelNetwork, useHotelFilters } from '@/hooks/hotel';
 import { useHotelLoadingState } from '@/hooks/hotel/useHotelLoadingState';
@@ -38,7 +39,7 @@ const HotelPageContainer: React.FC = () => {
   // If data is not yet loaded, show the loading indicator
   if (!dataLoaded) {
     return (
-      <div className="w-full h-[calc(100vh-150px)]">
+      <div className="w-full h-[calc(100vh-60px)]">
         <HotelLoadingIndicator />
       </div>
     );
@@ -56,7 +57,7 @@ const HotelPageContainer: React.FC = () => {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ type: "spring", stiffness: 100, damping: 10 }}
-        className="w-full h-[calc(100vh-200px)]"
+        className="w-full h-[calc(100vh-130px)]"
       >
         <Card className="h-full overflow-hidden border-indigo-100 dark:border-indigo-900 shadow-lg bg-white dark:bg-slate-900 rounded-xl">
           <ScrollArea 
