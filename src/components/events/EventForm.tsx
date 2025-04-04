@@ -45,6 +45,8 @@ const EventForm: React.FC<EventFormProps> = ({
     handleFormSubmit
   } = useEventForm(initialData, onSubmit);
 
+  const isEditing = !!initialData;
+
   return (
     <FormWrapper 
       initialData={initialData} 
@@ -55,15 +57,24 @@ const EventForm: React.FC<EventFormProps> = ({
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-6">
           <div className="space-y-4 px-6">
+            {isEditing ? (
+              <div className="bg-yellow-50 dark:bg-yellow-950 border border-yellow-200 dark:border-yellow-800 rounded-md p-4 mb-4">
+                <p className="text-yellow-800 dark:text-yellow-200 text-sm">
+                  <strong>Note:</strong> For existing events, you can only modify the availability of tickets and extend the end date.
+                </p>
+              </div>
+            ) : null}
+            
             <EventImageGallery 
               images={eventImages}
               mainImageUrl={form.getValues('image')}
-              onAddImages={() => setShowImageUploadDialog(true)}
-              onRemoveImage={handleRemoveImage}
-              onSetMainImage={setMainImage}
+              onAddImages={() => setShowImageUploadDialog(!isEditing && true)}
+              onRemoveImage={!isEditing ? handleRemoveImage : undefined}
+              onSetMainImage={!isEditing ? setMainImage : undefined}
+              readOnly={isEditing}
             />
 
-            <EventBasicInfoFields form={form} />
+            <EventBasicInfoFields form={form} readOnly={isEditing} />
 
             <EventDateTimePicker 
               form={form}
@@ -72,14 +83,16 @@ const EventForm: React.FC<EventFormProps> = ({
               setStartDate={setStartDate}
               setEndDate={setEndDate}
               handleTimeToggle={handleTimeToggle}
+              isEditing={isEditing}
             />
 
             <EventTypeSelector 
               form={form}
               categories={categories}
+              readOnly={isEditing}
             />
 
-            <EventLocationFields form={form} />
+            <EventLocationFields form={form} readOnly={isEditing} />
 
             <EventPricingInventory form={form} />
           </div>
@@ -89,7 +102,7 @@ const EventForm: React.FC<EventFormProps> = ({
       </Form>
 
       <ImageUploadDialog
-        isOpen={showImageUploadDialog}
+        isOpen={showImageUploadDialog && !isEditing}
         onClose={() => setShowImageUploadDialog(false)}
         onAddImage={handleAddImage}
         itemLabel="Event"
