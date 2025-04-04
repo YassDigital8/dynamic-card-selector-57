@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
-import useNotifications from '@/hooks/useNotifications';
+import { useNotificationContext } from '@/providers/NotificationProvider';
 
 const getNotificationDot = (type: 'info' | 'warning' | 'error' | 'success') => {
   const colors = {
@@ -51,7 +51,7 @@ const NotificationsPopover: React.FC = () => {
     markAsRead, 
     markAllAsRead, 
     clearAllNotifications 
-  } = useNotifications();
+  } = useNotificationContext();
   
   const handleNotificationClick = (notification: any) => {
     // Mark as read
@@ -60,43 +60,6 @@ const NotificationsPopover: React.FC = () => {
     // Show detailed view
     setSelectedNotification(notification);
   };
-  
-  // Add a demo notification on component mount (for demonstration purposes)
-  React.useEffect(() => {
-    // This effect should only run in development and if there are no notifications
-    if (process.env.NODE_ENV === 'development' && notifications.length === 0) {
-      // Import inside the effect to avoid circular dependencies
-      import('@/hooks/useNotifications').then(({ default: useNotifs }) => {
-        const { addNotification } = useNotifs();
-        
-        // Add demo notifications
-        if (typeof addNotification === 'function') {
-          setTimeout(() => {
-            addNotification(
-              'System Update',
-              'The system will undergo maintenance on Saturday at 2 AM EST.',
-              'info',
-              false
-            );
-            
-            addNotification(
-              'New Feature Available',
-              'Hotel booking module has been updated with new features.',
-              'success',
-              false
-            );
-            
-            addNotification(
-              'API Connection Issue',
-              'Some services may be running in demo mode due to API connectivity issues.',
-              'warning',
-              false
-            );
-          }, 1000);
-        }
-      });
-    }
-  }, []);
   
   return (
     <>
