@@ -6,6 +6,7 @@ import SessionTimer from '@/components/auth/SessionTimer';
 import { ApiStatusIndicator } from '@/components/ui/api-status-indicator';
 import LogoutButton from '@/components/auth/LogoutButton';
 import useApiStatus from '@/hooks/useApiStatus';
+import NotificationsPopover from './NotificationsPopover';
 
 interface PageHeaderProps {
   pageTitle?: string;
@@ -65,6 +66,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({ pageTitle, pageDescription }) =
         </div>
         <div className="flex items-center gap-2 self-start">
           <SessionTimer />
+          <NotificationsPopover />
           <ApiStatusIndicator isLive={isApiLive} />
           <LogoutButton 
             variant="outline" 

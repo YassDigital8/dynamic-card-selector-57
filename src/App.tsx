@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { NotificationProvider } from "./providers/NotificationProvider";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
@@ -76,77 +77,79 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <BrowserRouter>
-          <Routes>
-            {/* Public routes */}
-            <Route path="/login" element={<Login />} />
-            
-            {/* Protected routes */}
-            <Route path="/" element={
-              <ProtectedRoute>
-                <Index />
-              </ProtectedRoute>
-            } />
-            <Route path="/pages" element={
-              <ProtectedRoute>
-                <Index />
-              </ProtectedRoute>
-            } />
-            <Route path="/users" element={
-              <ProtectedRoute>
-                <Users />
-              </ProtectedRoute>
-            } />
-            <Route path="/settings" element={
-              <ProtectedRoute>
-                <Index />
-              </ProtectedRoute>
-            } />
-            <Route path="/gallery" element={
-              <ProtectedRoute>
-                <Gallery />
-              </ProtectedRoute>
-            } />
-            
-            {/* Hotel routes */}
-            <Route path="/hotel" element={
-              <ProtectedRoute>
-                <Hotel />
-              </ProtectedRoute>
-            } />
-            <Route path="/hotel/add" element={
-              <ProtectedRoute>
-                <HotelAdd />
-              </ProtectedRoute>
-            } />
-            <Route path="/hotel/edit/:hotelId" element={
-              <ProtectedRoute>
-                <HotelEdit />
-              </ProtectedRoute>
-            } />
-            <Route path="/hotel/view/:hotelId" element={
-              <ProtectedRoute>
-                <HotelView />
-              </ProtectedRoute>
-            } />
-            
-            {/* Events & Attractions route */}
-            <Route path="/events" element={
-              <ProtectedRoute>
-                <EventsAttractions />
-              </ProtectedRoute>
-            } />
-            
-            {/* Catch-all route - also protected */}
-            <Route path="*" element={
-              <ProtectedRoute>
-                <NotFound />
-              </ProtectedRoute>
-            } />
-          </Routes>
-        </BrowserRouter>
-        <Toaster />
-        <Sonner />
+        <NotificationProvider>
+          <BrowserRouter>
+            <Routes>
+              {/* Public routes */}
+              <Route path="/login" element={<Login />} />
+              
+              {/* Protected routes */}
+              <Route path="/" element={
+                <ProtectedRoute>
+                  <Index />
+                </ProtectedRoute>
+              } />
+              <Route path="/pages" element={
+                <ProtectedRoute>
+                  <Index />
+                </ProtectedRoute>
+              } />
+              <Route path="/users" element={
+                <ProtectedRoute>
+                  <Users />
+                </ProtectedRoute>
+              } />
+              <Route path="/settings" element={
+                <ProtectedRoute>
+                  <Index />
+                </ProtectedRoute>
+              } />
+              <Route path="/gallery" element={
+                <ProtectedRoute>
+                  <Gallery />
+                </ProtectedRoute>
+              } />
+              
+              {/* Hotel routes */}
+              <Route path="/hotel" element={
+                <ProtectedRoute>
+                  <Hotel />
+                </ProtectedRoute>
+              } />
+              <Route path="/hotel/add" element={
+                <ProtectedRoute>
+                  <HotelAdd />
+                </ProtectedRoute>
+              } />
+              <Route path="/hotel/edit/:hotelId" element={
+                <ProtectedRoute>
+                  <HotelEdit />
+                </ProtectedRoute>
+              } />
+              <Route path="/hotel/view/:hotelId" element={
+                <ProtectedRoute>
+                  <HotelView />
+                </ProtectedRoute>
+              } />
+              
+              {/* Events & Attractions route */}
+              <Route path="/events" element={
+                <ProtectedRoute>
+                  <EventsAttractions />
+                </ProtectedRoute>
+              } />
+              
+              {/* Catch-all route - also protected */}
+              <Route path="*" element={
+                <ProtectedRoute>
+                  <NotFound />
+                </ProtectedRoute>
+              } />
+            </Routes>
+          </BrowserRouter>
+          <Toaster />
+          <Sonner />
+        </NotificationProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );
