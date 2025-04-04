@@ -19,15 +19,19 @@ const PageHeader: React.FC<PageHeaderProps> = ({ pageTitle, pageDescription }) =
   // Generate breadcrumb items based on current route
   const getBreadcrumbItems = () => {
     const path = location.pathname;
-    const items = [];
+    
+    // Special case for hotel page
+    if (path === '/hotel') {
+      return [{ label: 'Hotel Network' }];
+    }
     
     if (path === '/') {
-      return [{ label: 'Dashboard' }];
+      return [];
     }
     
     const segments = path.split('/').filter(Boolean);
     
-    segments.forEach((segment, index) => {
+    return segments.map((segment, index) => {
       // Build the path up to this segment
       const currentPath = `/${segments.slice(0, index + 1).join('/')}`;
       
@@ -38,20 +42,18 @@ const PageHeader: React.FC<PageHeaderProps> = ({ pageTitle, pageDescription }) =
       const label = segment.charAt(0).toUpperCase() + segment.slice(1);
       
       // Add this segment to the breadcrumb trail
-      items.push({
+      return {
         label,
         href: isLastSegment ? undefined : currentPath
-      });
+      };
     });
-    
-    return items;
   };
   
   return (
     <div className="flex flex-col space-y-4 md:space-y-6 mb-6">
       <BreadcrumbNav 
         items={[
-          { label: 'Dashboard', href: '/' },
+          { label: 'Home', href: '/' },
           ...getBreadcrumbItems()
         ]}
       />
