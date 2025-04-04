@@ -7,7 +7,7 @@ import SidebarFooter from '@/components/layout/components/SidebarFooter';
 import BreadcrumbGenerator from '@/components/layout/components/BreadcrumbGenerator';
 import PageContent from '@/components/layout/components/PageContent';
 import { motion } from 'framer-motion';
-import { useMobile } from '@/hooks/use-mobile';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface StandardLayoutProps {
   children: React.ReactNode;
@@ -20,12 +20,11 @@ const StandardLayout: React.FC<StandardLayoutProps> = ({
   pageTitle, 
   pageDescription 
 }) => {
-  const { isMobile } = useMobile();
+  const isMobile = useIsMobile();
 
   return (
     <div className="h-screen flex overflow-hidden bg-background">
       <Sidebar 
-        defaultCollapsed={isMobile}
         className="border-r border-border h-screen flex flex-col"
       >
         <SidebarHeader />
