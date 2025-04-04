@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -205,10 +204,7 @@ const PageContainer: React.FC<PageContainerProps> = ({ children }) => {
           
           <SidebarFooter className="border-t border-sidebar-border p-2 md:p-4">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1.5 md:gap-2 text-xs md:text-sm text-muted-foreground">
-                <HelpCircle className="h-3.5 w-3.5 md:h-4 md:w-4" />
-                <span className="text-xs md:text-sm">Need help?</span>
-              </div>
+              <HelpSection />
               <LogoutButton variant="ghost" size="sm" showIcon={false} />
             </div>
           </SidebarFooter>
@@ -240,11 +236,6 @@ const PageContainer: React.FC<PageContainerProps> = ({ children }) => {
                   <div className="flex items-center gap-2 self-start">
                     <SessionTimer />
                     <ApiStatusIndicator isLive={isApiLive} />
-                    <LogoutButton 
-                      variant="outline" 
-                      size="sm" 
-                      className="ml-2" 
-                    />
                   </div>
                 </div>
               </div>

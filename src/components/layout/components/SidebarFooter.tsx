@@ -9,7 +9,12 @@ const SidebarFooter: React.FC = () => {
     <Footer className="border-t border-sidebar-border p-2 md:p-4">
       <div className="flex items-center justify-between">
         <HelpSection />
-        <LogoutButton variant="ghost" size="sm" showIcon={false} />
+        <LogoutButton 
+          variant="ghost" 
+          size="sm" 
+          showIcon={false} 
+          showText={true} 
+        />
       </div>
     </Footer>
   );

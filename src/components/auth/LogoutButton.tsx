@@ -46,9 +46,9 @@ const LogoutButton = ({
         >
           {showText && (
             <div className="flex items-center gap-1">
-              <span>{userInfo?.firstName || userInfo?.email || 'User'}</span>
+              <span className="max-w-[100px] truncate">{userInfo?.firstName || userInfo?.email || 'User'}</span>
               {userInfo?.role && (
-                <span className="text-xs opacity-80">({userInfo.role})</span>
+                <span className="text-xs opacity-80 hidden md:inline">({userInfo.role})</span>
               )}
             </div>
           )}
