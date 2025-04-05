@@ -29,7 +29,8 @@ import {
   CheckCircle2,
   XCircle,
   MessageSquare,
-  AlertCircle
+  AlertCircle,
+  Info
 } from 'lucide-react';
 import {
   Tabs,
@@ -52,6 +53,14 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { toast } from 'sonner';
+import { useApplicationsData } from '@/hooks/hr/useApplicationsData';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 interface ApplicationDetailsProps {
   application: JobApplication;
@@ -103,7 +112,58 @@ const ApplicationDetails: React.FC<ApplicationDetailsProps> = ({
   const [offerDetails, setOfferDetails] = useState(application.offerDetails || '');
   const [activeTab, setActiveTab] = useState('details');
   const [selectedStatus, setSelectedStatus] = useState<JobApplication['status']>(application.status);
+  const { applications } = useApplicationsData();
   const validNextStatuses = getValidNextStatuses(application.status);
+  
+  // Get the earliest status for this job's applications
+  const getEarliestStatusForJob = (): JobApplication['status'] => {
+    const jobApplications = applications.filter(app => app.jobId === application.jobId);
+    if (jobApplications.length <= 1) return application.status;
+    
+    // Define the order of statuses in the hiring process
+    const statusOrder: JobApplication['status'][] = [
+      'Pending', 'Reviewed', 'Interviewed', 'Offered', 'Hired', 'Rejected'
+    ];
+    
+    // Find the earliest status in the pipeline
+    let earliestStatusIndex = statusOrder.length - 1;
+    
+    jobApplications.forEach(app => {
+      if (app.id !== application.id) { // Skip the current application
+        const appStatusIndex = statusOrder.indexOf(app.status);
+        if (appStatusIndex < earliestStatusIndex) {
+          earliestStatusIndex = appStatusIndex;
+        }
+      }
+    });
+    
+    return statusOrder[earliestStatusIndex];
+  };
+  
+  // Get total applications and their statuses for this job
+  const getJobApplicationStats = () => {
+    const jobApplications = applications.filter(app => app.jobId === application.jobId);
+    const total = jobApplications.length;
+    
+    // Count applications by status
+    const statusCounts: Record<JobApplication['status'], number> = {
+      'Pending': 0,
+      'Reviewed': 0,
+      'Interviewed': 0,
+      'Offered': 0,
+      'Hired': 0,
+      'Rejected': 0
+    };
+    
+    jobApplications.forEach(app => {
+      statusCounts[app.status]++;
+    });
+    
+    return { total, statusCounts };
+  };
+  
+  const jobStats = getJobApplicationStats();
+  const earliestStatus = getEarliestStatusForJob();
   
   // Reset the selected status when the application changes
   useEffect(() => {
@@ -168,6 +228,23 @@ const ApplicationDetails: React.FC<ApplicationDetailsProps> = ({
     }
   };
 
+  // Check if application can move to next stage based on other applications
+  const canAdvanceToNextStage = (nextStatus: JobApplication['status']): boolean => {
+    if (nextStatus === 'Rejected' || (application.status === 'Rejected' && nextStatus === 'Pending')) {
+      return true; // Can always reject or reopen rejected applications
+    }
+    
+    const statusOrder: JobApplication['status'][] = [
+      'Pending', 'Reviewed', 'Interviewed', 'Offered', 'Hired'
+    ];
+    
+    const nextStatusIndex = statusOrder.indexOf(nextStatus);
+    const earliestStatusIndex = statusOrder.indexOf(earliestStatus);
+    
+    // Can only advance if all other applications are at the same stage or later
+    return nextStatusIndex <= earliestStatusIndex || application.status === earliestStatus;
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
@@ -177,8 +254,47 @@ const ApplicationDetails: React.FC<ApplicationDetailsProps> = ({
             <Badge className={getStatusColor()}>
               {application.status}
             </Badge>
+            
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="ghost" className="h-8 w-8 p-0 ml-auto">
+                    <Info className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent className="max-w-xs">
+                  <p className="text-xs">
+                    Fair evaluation system: all applicants for a position must reach the same stage
+                    before any can advance to the next stage in the hiring process.
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </DialogTitle>
         </DialogHeader>
+        
+        {/* Fair Evaluation Alert */}
+        {jobStats.total > 1 && (
+          <Alert className="mb-4 bg-blue-50 dark:bg-blue-950/30">
+            <Info className="h-4 w-4" />
+            <AlertTitle>Fair Evaluation Process</AlertTitle>
+            <AlertDescription className="text-sm">
+              <p className="mb-1">
+                This application is for <strong>{job?.title || 'a position'}</strong> with <strong>{jobStats.total} total applicants</strong>.
+              </p>
+              <p>
+                Current stage distribution: {jobStats.statusCounts.Pending} Pending, {jobStats.statusCounts.Reviewed} Reviewed, 
+                {jobStats.statusCounts.Interviewed} Interviewed, {jobStats.statusCounts.Offered} Offered, 
+                {jobStats.statusCounts.Hired} Hired, {jobStats.statusCounts.Rejected} Rejected
+              </p>
+              {application.status !== earliestStatus && earliestStatus !== 'Rejected' && (
+                <p className="mt-1 text-blue-700 dark:text-blue-300 font-medium">
+                  All applications must reach the "{earliestStatus}" stage before advancing further.
+                </p>
+              )}
+            </AlertDescription>
+          </Alert>
+        )}
         
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="w-full grid grid-cols-4">
@@ -342,61 +458,77 @@ const ApplicationDetails: React.FC<ApplicationDetailsProps> = ({
               </h3>
               
               {(application.status === 'Pending' || application.status === 'Reviewed') ? (
-                <div className="grid grid-cols-1 gap-4">
-                  <div className="flex flex-col space-y-2">
-                    <label className="font-medium">Interview Date & Time</label>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          className="justify-start text-left"
-                        >
-                          <CalendarIcon className="mr-2 h-4 w-4" />
-                          {interviewDate ? format(interviewDate, 'PPP') : "Select date"}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0">
-                        <Calendar
-                          mode="single"
-                          selected={interviewDate}
-                          onSelect={setInterviewDate}
-                          initialFocus
-                          className="pointer-events-auto"
-                        />
-                      </PopoverContent>
-                    </Popover>
-                    
-                    {interviewDate && (
-                      <div className="flex items-center gap-2">
-                        <Input
-                          type="time"
-                          className="w-32"
-                          onChange={(e) => {
-                            const [hours, minutes] = e.target.value.split(':');
-                            const newDate = new Date(interviewDate);
-                            newDate.setHours(Number(hours));
-                            newDate.setMinutes(Number(minutes));
-                            setInterviewDate(newDate);
-                          }}
-                          defaultValue={
-                            interviewDate ? 
-                            `${interviewDate.getHours().toString().padStart(2, '0')}:${interviewDate.getMinutes().toString().padStart(2, '0')}` :
-                            "09:00"
-                          }
-                        />
+                <>
+                  {/* Check if can advance to interview stage */}
+                  {canAdvanceToNextStage('Interviewed') ? (
+                    <div className="grid grid-cols-1 gap-4">
+                      <div className="flex flex-col space-y-2">
+                        <label className="font-medium">Interview Date & Time</label>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant="outline"
+                              className="justify-start text-left"
+                            >
+                              <CalendarIcon className="mr-2 h-4 w-4" />
+                              {interviewDate ? format(interviewDate, 'PPP') : "Select date"}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0">
+                            <Calendar
+                              mode="single"
+                              selected={interviewDate}
+                              onSelect={setInterviewDate}
+                              initialFocus
+                              className="pointer-events-auto"
+                            />
+                          </PopoverContent>
+                        </Popover>
+                        
+                        {interviewDate && (
+                          <div className="flex items-center gap-2">
+                            <Input
+                              type="time"
+                              className="w-32"
+                              onChange={(e) => {
+                                const [hours, minutes] = e.target.value.split(':');
+                                const newDate = new Date(interviewDate);
+                                newDate.setHours(Number(hours));
+                                newDate.setMinutes(Number(minutes));
+                                setInterviewDate(newDate);
+                              }}
+                              defaultValue={
+                                interviewDate ? 
+                                `${interviewDate.getHours().toString().padStart(2, '0')}:${interviewDate.getMinutes().toString().padStart(2, '0')}` :
+                                "09:00"
+                              }
+                            />
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
-                  
-                  <Button 
-                    onClick={handleScheduleInterview} 
-                    disabled={!interviewDate}
-                    className="mt-2"
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    Schedule Interview
-                  </Button>
-                </div>
+                      
+                      <Button 
+                        onClick={handleScheduleInterview} 
+                        disabled={!interviewDate}
+                        className="mt-2"
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        Schedule Interview
+                      </Button>
+                    </div>
+                  ) : (
+                    <Alert className="bg-amber-50 dark:bg-amber-900/30 border-amber-200">
+                      <AlertCircle className="h-4 w-4 text-amber-600" />
+                      <AlertTitle>Cannot schedule interview yet</AlertTitle>
+                      <AlertDescription className="text-sm">
+                        Other applications for this position need to reach the "{earliestStatus}" stage first.
+                        {jobStats.statusCounts.Pending > 0 && (
+                          <p className="mt-1">There are {jobStats.statusCounts.Pending} applications still in the "Pending" stage.</p>
+                        )}
+                      </AlertDescription>
+                    </Alert>
+                  )}
+                </>
               ) : application.status === 'Interviewed' ? (
                 <div className="p-4 bg-blue-50 dark:bg-blue-900/30 rounded-md">
                   <div className="flex items-start space-x-2">
@@ -445,28 +577,46 @@ const ApplicationDetails: React.FC<ApplicationDetailsProps> = ({
               </h3>
               
               {application.status === 'Interviewed' ? (
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <label className="font-medium">Offer Details</label>
-                    <Textarea
-                      placeholder="Enter the job offer details, including salary, benefits, start date, etc."
-                      className="min-h-[150px]"
-                      value={offerDetails}
-                      onChange={(e) => setOfferDetails(e.target.value)}
-                    />
-                  </div>
-                  
-                  <div className="flex gap-2">
-                    <Button 
-                      onClick={handleSendOffer} 
-                      disabled={!offerDetails.trim()}
-                      className="flex-1"
-                    >
-                      <SendHorizontal className="mr-2 h-4 w-4" />
-                      Send Offer
-                    </Button>
-                  </div>
-                </div>
+                <>
+                  {canAdvanceToNextStage('Offered') ? (
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <label className="font-medium">Offer Details</label>
+                        <Textarea
+                          placeholder="Enter the job offer details, including salary, benefits, start date, etc."
+                          className="min-h-[150px]"
+                          value={offerDetails}
+                          onChange={(e) => setOfferDetails(e.target.value)}
+                        />
+                      </div>
+                      
+                      <div className="flex gap-2">
+                        <Button 
+                          onClick={handleSendOffer} 
+                          disabled={!offerDetails.trim()}
+                          className="flex-1"
+                        >
+                          <SendHorizontal className="mr-2 h-4 w-4" />
+                          Send Offer
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <Alert className="bg-amber-50 dark:bg-amber-900/30 border-amber-200">
+                      <AlertCircle className="h-4 w-4 text-amber-600" />
+                      <AlertTitle>Cannot send offer yet</AlertTitle>
+                      <AlertDescription className="text-sm">
+                        Other applications for this position need to reach the "Interviewed" stage first.
+                        {jobStats.statusCounts.Pending > 0 && (
+                          <p className="mt-1">There are {jobStats.statusCounts.Pending} applications still in the "Pending" stage.</p>
+                        )}
+                        {jobStats.statusCounts.Reviewed > 0 && (
+                          <p className="mt-1">There are {jobStats.statusCounts.Reviewed} applications still in the "Reviewed" stage.</p>
+                        )}
+                      </AlertDescription>
+                    </Alert>
+                  )}
+                </>
               ) : application.status === 'Offered' || application.status === 'Hired' ? (
                 <div className="p-4 bg-green-50 dark:bg-green-900/30 rounded-md">
                   <div className="flex items-start space-x-2">
@@ -478,7 +628,7 @@ const ApplicationDetails: React.FC<ApplicationDetailsProps> = ({
                           `Offer sent on ${format(new Date(application.offerDate), 'PPP')}`
                         ) : 'An offer has been extended to the candidate'}
                       </p>
-                      {application.status === 'Offered' && (
+                      {application.status === 'Offered' && canAdvanceToNextStage('Hired') && (
                         <div className="mt-2">
                           <Button variant="secondary" size="sm" 
                                   onClick={() => handleStatusChange('Hired')}>
@@ -520,46 +670,95 @@ const ApplicationDetails: React.FC<ApplicationDetailsProps> = ({
                 <SelectValue placeholder="Change status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Pending" disabled={!validNextStatuses.includes('Pending')}>
+                <SelectItem 
+                  value="Pending" 
+                  disabled={!validNextStatuses.includes('Pending') || !canAdvanceToNextStage('Pending')}
+                >
                   Pending
                 </SelectItem>
-                <SelectItem value="Reviewed" disabled={!validNextStatuses.includes('Reviewed')}>
+                <SelectItem 
+                  value="Reviewed" 
+                  disabled={!validNextStatuses.includes('Reviewed') || !canAdvanceToNextStage('Reviewed')}
+                >
                   Reviewed
                 </SelectItem>
-                <SelectItem value="Interviewed" disabled={!validNextStatuses.includes('Interviewed')}>
+                <SelectItem 
+                  value="Interviewed" 
+                  disabled={!validNextStatuses.includes('Interviewed') || !canAdvanceToNextStage('Interviewed')}
+                >
                   Interviewed
                 </SelectItem>
-                <SelectItem value="Offered" disabled={!validNextStatuses.includes('Offered')}>
+                <SelectItem 
+                  value="Offered" 
+                  disabled={!validNextStatuses.includes('Offered') || !canAdvanceToNextStage('Offered')}
+                >
                   Offered
                 </SelectItem>
-                <SelectItem value="Hired" disabled={!validNextStatuses.includes('Hired')}>
+                <SelectItem 
+                  value="Hired" 
+                  disabled={!validNextStatuses.includes('Hired') || !canAdvanceToNextStage('Hired')}
+                >
                   Hired
                 </SelectItem>
-                <SelectItem value="Rejected" disabled={!validNextStatuses.includes('Rejected')}>
+                <SelectItem 
+                  value="Rejected" 
+                  disabled={!validNextStatuses.includes('Rejected')}
+                >
                   Rejected
                 </SelectItem>
               </SelectContent>
             </Select>
             
             <div className="flex gap-2">
-              <Button 
-                variant="success" 
-                onClick={() => {
-                  if (application.status === 'Interviewed') {
-                    setActiveTab('offer');
-                  } else if (application.status === 'Offered') {
-                    handleStatusChange('Hired');
-                  } else {
-                    handleStatusChange('Hired');
-                  }
-                }}
-                className="flex-1"
-                disabled={application.status === 'Rejected' || application.status === 'Hired'}
-              >
-                <CheckCircle2 className="mr-2 h-4 w-4" />
-                {application.status === 'Interviewed' ? 'Make Offer' : 
-                 application.status === 'Offered' ? 'Hire' : 'Hire'}
-              </Button>
+              {/* Context-aware action button */}
+              {application.status === 'Pending' && (
+                <Button 
+                  variant="default" 
+                  onClick={() => handleStatusChange('Reviewed')}
+                  className="flex-1"
+                  disabled={!canAdvanceToNextStage('Reviewed')}
+                >
+                  <CheckCircle2 className="mr-2 h-4 w-4" />
+                  Mark as Reviewed
+                </Button>
+              )}
+              
+              {application.status === 'Reviewed' && (
+                <Button 
+                  variant="default" 
+                  onClick={() => setActiveTab('interview')}
+                  className="flex-1"
+                  disabled={!canAdvanceToNextStage('Interviewed')}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  Schedule Interview
+                </Button>
+              )}
+              
+              {application.status === 'Interviewed' && (
+                <Button 
+                  variant="default" 
+                  onClick={() => setActiveTab('offer')}
+                  className="flex-1"
+                  disabled={!canAdvanceToNextStage('Offered')}
+                >
+                  <SendHorizontal className="mr-2 h-4 w-4" />
+                  Make Offer
+                </Button>
+              )}
+              
+              {application.status === 'Offered' && (
+                <Button 
+                  variant="success" 
+                  onClick={() => handleStatusChange('Hired')}
+                  className="flex-1"
+                  disabled={!canAdvanceToNextStage('Hired')}
+                >
+                  <CheckCircle2 className="mr-2 h-4 w-4" />
+                  Hire
+                </Button>
+              )}
+
               <Button 
                 variant="destructive" 
                 onClick={() => handleStatusChange('Rejected')}

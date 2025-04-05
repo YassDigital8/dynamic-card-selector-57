@@ -20,12 +20,96 @@ export const useApplicationHandlers = (
     setIsViewingApplication(true);
   };
 
+  // Check if all applications for a job are at the same status
+  const areAllApplicationsAtSameStatus = (
+    jobId: string, 
+    targetStatus: JobApplication['status'],
+    excludeApplicationId?: string
+  ): boolean => {
+    // Get all applications for this job, excluding the current one if specified
+    const jobApplications = applications.filter(app => 
+      app.jobId === jobId && (excludeApplicationId ? app.id !== excludeApplicationId : true)
+    );
+    
+    // If there are no other applications, return true
+    if (jobApplications.length === 0) return true;
+    
+    // Check if all applications have the same status as the target status
+    return jobApplications.every(app => app.status === targetStatus);
+  };
+
+  // Get the earliest status in the hiring process for applications of a job
+  const getEarliestStatusForJob = (jobId: string): JobApplication['status'] => {
+    const jobApplications = applications.filter(app => app.jobId === jobId);
+    if (jobApplications.length === 0) return 'Pending';
+    
+    // Define the order of statuses in the hiring process
+    const statusOrder: JobApplication['status'][] = [
+      'Pending', 'Reviewed', 'Interviewed', 'Offered', 'Hired', 'Rejected'
+    ];
+    
+    // Find the earliest status in the pipeline
+    let earliestStatusIndex = statusOrder.length - 1;
+    
+    jobApplications.forEach(app => {
+      const appStatusIndex = statusOrder.indexOf(app.status);
+      if (appStatusIndex < earliestStatusIndex) {
+        earliestStatusIndex = appStatusIndex;
+      }
+    });
+    
+    return statusOrder[earliestStatusIndex];
+  };
+
   // Update application status with status validation
   const handleUpdateApplicationStatus = (application: JobApplication, newStatus: JobApplication['status']) => {
     // Prevent invalid status transitions
     if (!isValidStatusTransition(application.status, newStatus)) {
       toast.error(`Cannot change from ${application.status} to ${newStatus}`, {
         description: "This status transition is not allowed."
+      });
+      return;
+    }
+    
+    // Special case for "Rejected" status - can always reject an application
+    if (newStatus === 'Rejected') {
+      const updatedApplication = { 
+        ...application, 
+        status: newStatus,
+        rejectionReason: application.rejectionReason || 'No reason provided'
+      };
+      updateApplication(updatedApplication);
+      toast(`Application rejected`, {
+        description: `${candidates.find(c => c.id === application.candidateId)?.name || 'Candidate'}'s application has been rejected.`
+      });
+      return;
+    }
+    
+    // Special case for reopening a rejected application
+    if (application.status === 'Rejected' && newStatus === 'Pending') {
+      const updatedApplication = { ...application, status: newStatus };
+      updateApplication(updatedApplication);
+      toast(`Application reopened`, {
+        description: `${candidates.find(c => c.id === application.candidateId)?.name || 'Candidate'}'s application has been reopened.`
+      });
+      return;
+    }
+    
+    // For progression to next status, check if all other applications are at least at the same stage
+    const earliestStatus = getEarliestStatusForJob(application.jobId);
+    const statusOrder: JobApplication['status'][] = [
+      'Pending', 'Reviewed', 'Interviewed', 'Offered', 'Hired'
+    ];
+    
+    const currentStatusIndex = statusOrder.indexOf(application.status);
+    const newStatusIndex = statusOrder.indexOf(newStatus);
+    const earliestStatusIndex = statusOrder.indexOf(earliestStatus);
+    
+    // Only allow progression if this application is not moving ahead of others
+    if (newStatusIndex > earliestStatusIndex && application.status !== earliestStatus) {
+      const jobTitle = jobs.find(j => j.id === application.jobId)?.title || 'this position';
+      toast.error(`Cannot advance this application yet`, {
+        description: `All applications for ${jobTitle} must reach the ${earliestStatus} stage before any can advance further.`
       });
       return;
     }
@@ -100,6 +184,16 @@ export const useApplicationHandlers = (
       return;
     }
     
+    // Check if all other applications for this job are at least at Reviewed status
+    const earliestStatus = getEarliestStatusForJob(application.jobId);
+    if (earliestStatus === 'Pending' && application.status !== 'Pending') {
+      const jobTitle = jobs.find(j => j.id === application.jobId)?.title || 'this position';
+      toast.error('Cannot schedule interview yet', {
+        description: `All applications for ${jobTitle} must be at least in Reviewed status before scheduling interviews.`
+      });
+      return;
+    }
+    
     // Fix: Explicitly cast status as JobApplication['status']
     const updatedApplication: JobApplication = { 
       ...application, 
@@ -122,6 +216,16 @@ export const useApplicationHandlers = (
     if (application.status !== 'Interviewed') {
       toast.error('Cannot send offer', {
         description: `The candidate must be interviewed first. Current status: ${application.status}.`
+      });
+      return;
+    }
+    
+    // Check if all other applications for this job are at least at Interviewed status
+    const earliestStatus = getEarliestStatusForJob(application.jobId);
+    if (earliestStatus !== 'Interviewed' && application.status !== earliestStatus) {
+      const jobTitle = jobs.find(j => j.id === application.jobId)?.title || 'this position';
+      toast.error('Cannot send offer yet', {
+        description: `All applications for ${jobTitle} must complete the interview stage before sending offers.`
       });
       return;
     }
