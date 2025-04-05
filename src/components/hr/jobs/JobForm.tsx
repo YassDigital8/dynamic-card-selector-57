@@ -1,7 +1,15 @@
+
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Form } from '@/components/ui/form';
+import { 
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage
+} from '@/components/ui/form';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { JobPosition } from '@/models/JobModel';
 import { 
@@ -58,7 +66,6 @@ const JobForm: React.FC<JobFormProps> = ({ initialData, onSubmit, onCancel }) =>
     };
     
     // Only add salary if it's provided in the form values
-    // Make sure all required properties are present
     if (values.salary) {
       jobData.salary = {
         min: values.salary.min || 0,
