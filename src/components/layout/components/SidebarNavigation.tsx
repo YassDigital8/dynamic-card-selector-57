@@ -79,7 +79,7 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ isMobile }) => {
     <SidebarMenu>
       {navItems.map((item) => (
         <SidebarMenuItem key={item.label}>
-          <SidebarMenuButton asChild active={isActive(item.href)}>
+          <SidebarMenuButton asChild>
             <Link 
               to={item.href}
               className={cn(

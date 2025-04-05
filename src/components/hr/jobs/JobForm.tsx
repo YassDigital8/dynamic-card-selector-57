@@ -70,13 +70,24 @@ const JobForm: React.FC<JobFormProps> = ({ initialData, onSubmit, onCancel }) =>
   });
 
   const handleSubmit = (values: JobFormValues) => {
-    onSubmit({
+    const jobData: JobPosition = {
       id: initialData?.id || Date.now().toString(),
-      ...values,
+      title: values.title,
+      department: values.department,
+      location: values.location,
+      type: values.type,
+      description: values.description,
+      requirements: values.requirements,
+      responsibilities: values.responsibilities,
       postedDate: initialData?.postedDate || new Date().toISOString(),
       closingDate: values.closingDate.toISOString(),
+      status: values.status,
       applications: initialData?.applications || 0,
-    });
+      salary: values.salary,
+      contactEmail: values.contactEmail,
+    };
+    
+    onSubmit(jobData);
   };
 
   return (
@@ -284,8 +295,6 @@ const JobForm: React.FC<JobFormProps> = ({ initialData, onSubmit, onCancel }) =>
               )}
             />
 
-            {/* Salary fields would go here but keeping it simpler for now */}
-            
             <div className="pt-4 flex justify-end gap-2">
               <Button 
                 type="button" 
