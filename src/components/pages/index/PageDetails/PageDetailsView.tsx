@@ -1,106 +1,165 @@
 
-import React from 'react';
-import { Separator } from '@/components/ui/separator';
+import React, { useState, ChangeEvent } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 import { PageData } from '@/models/PageModel';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { Badge } from '@/components/ui/badge';
+import { Edit, Save, X } from 'lucide-react';
+import { PageHeader } from './PageHeader';
+import { PageFooter } from './PageFooter';
 
 interface PageDetailsViewProps {
-  pageData: PageData;
-  isEditing: boolean;
-  editedTitle: string;
-  editedContent: string;
-  setEditedTitle: (value: string) => void;
-  setEditedContent: (value: string) => void;
-  selectedPOS?: string;
-  selectedLanguage?: string;
-  selectedSlug?: string;
-  selectedSubSlug?: string;
-  selectedPathId?: number | null;
-  selectedSubPathId?: number | null;
-  validationErrors?: {
-    title?: string;
-    content?: string;
-  };
+  page: PageData;
+  onUpdatePage: (updatedPage: PageData) => void;
 }
 
-const PageDetailsView = ({
-  pageData,
-  isEditing,
-  editedTitle,
-  editedContent,
-  setEditedTitle,
-  setEditedContent,
-  selectedPOS,
-  selectedLanguage,
-  selectedSlug,
-  selectedSubSlug,
-  validationErrors = {}
-}: PageDetailsViewProps) => {
-  const isMobile = useIsMobile();
-  
+const PageDetailsView: React.FC<PageDetailsViewProps> = ({ page, onUpdatePage }) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [title, setTitle] = useState(page.title);
+  const [description, setDescription] = useState(page.description);
+  const [content, setContent] = useState(page.content);
+  const [errors, setErrors] = useState<{
+    title?: boolean;
+    description?: boolean;
+    content?: boolean;
+  }>({});
+
+  const handleEdit = () => {
+    setIsEditing(true);
+  };
+
+  const handleCancel = () => {
+    setTitle(page.title);
+    setDescription(page.description);
+    setContent(page.content);
+    setErrors({});
+    setIsEditing(false);
+  };
+
+  const handleSave = () => {
+    const newErrors: typeof errors = {};
+    
+    if (!title.trim()) {
+      newErrors.title = true;
+    }
+    
+    if (!description.trim()) {
+      newErrors.description = true;
+    }
+    
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+    
+    onUpdatePage({
+      ...page,
+      title,
+      description,
+      content,
+      updatedAt: new Date().toISOString(),
+    });
+    
+    setIsEditing(false);
+    setErrors({});
+  };
+
   return (
-    <div className="space-y-3 md:space-y-6">
-      <div>
-        <h3 className="text-[10px] md:text-sm font-medium text-gray-500 mb-1 md:mb-2">Page URL</h3>
-        <div className={`bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md p-1.5 md:p-3 font-mono overflow-x-auto text-[8px] md:text-xs`}>
-          {selectedSlug 
-            ? `${selectedPOS?.toLowerCase()}/${selectedLanguage?.toLowerCase()}/${selectedSlug}${selectedSubSlug ? '/' + selectedSubSlug : ''}`
-            : `${selectedPOS?.toLowerCase()}/${selectedLanguage?.toLowerCase()}`
-          }
-        </div>
-      </div>
+    <div className="space-y-6">
+      <PageHeader page={page} />
       
-      <Separator />
-      
-      <div className="flex items-center justify-between">
-        <h3 className="text-[10px] md:text-sm font-medium text-gray-500 mb-1 md:mb-2">Title</h3>
-        {pageData.status && (
-          <Badge variant={pageData.status === 'published' ? 'default' : 'secondary'} className="capitalize">
-            {pageData.status}
-          </Badge>
-        )}
-      </div>
-      
-      {isEditing ? (
-        <div className="space-y-2">
-          <Input 
-            value={editedTitle}
-            onChange={(e) => setEditedTitle(e.target.value)}
-            className="font-medium text-xs md:text-base"
-            error={!!validationErrors.title}
-          />
-          {validationErrors.title && (
-            <p className="text-sm text-destructive">{validationErrors.title}</p>
+      <Card>
+        <CardContent className="pt-6 space-y-6">
+          {isEditing ? (
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="title" className="font-medium">
+                  Page Title
+                </Label>
+                <Input
+                  id="title"
+                  value={title}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
+                  className={errors.title ? "border-red-500" : ""}
+                  aria-invalid={errors.title ? "true" : "false"}
+                />
+                {errors.title && (
+                  <p className="text-sm text-red-500 mt-1">Title is required</p>
+                )}
+              </div>
+              
+              <div>
+                <Label htmlFor="description" className="font-medium">
+                  Description
+                </Label>
+                <Textarea
+                  value={description}
+                  onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setDescription(e.target.value)}
+                  rows={3}
+                  className={errors.description ? "border-red-500" : ""}
+                  aria-invalid={errors.description ? "true" : "false"}
+                />
+                {errors.description && (
+                  <p className="text-sm text-red-500 mt-1">Description is required</p>
+                )}
+              </div>
+              
+              <div>
+                <Label htmlFor="content" className="font-medium">
+                  Content
+                </Label>
+                <Textarea
+                  value={content}
+                  onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setContent(e.target.value)}
+                  rows={10}
+                  className="font-mono"
+                />
+              </div>
+              
+              <div className="flex justify-end gap-2 pt-2">
+                <Button variant="outline" onClick={handleCancel} className="gap-1">
+                  <X className="h-4 w-4" />
+                  Cancel
+                </Button>
+                <Button onClick={handleSave} className="gap-1">
+                  <Save className="h-4 w-4" />
+                  Save Changes
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div>
+                <h3 className="font-medium text-sm text-gray-500">Page Title</h3>
+                <p className="text-xl font-semibold">{page.title}</p>
+              </div>
+              
+              <div>
+                <h3 className="font-medium text-sm text-gray-500">Description</h3>
+                <p>{page.description}</p>
+              </div>
+              
+              <div>
+                <h3 className="font-medium text-sm text-gray-500">Content</h3>
+                <pre className="whitespace-pre-wrap bg-muted p-4 rounded-md text-sm font-mono">
+                  {page.content}
+                </pre>
+              </div>
+              
+              <div className="flex justify-end">
+                <Button onClick={handleEdit} className="gap-1">
+                  <Edit className="h-4 w-4" />
+                  Edit Page
+                </Button>
+              </div>
+            </div>
           )}
-        </div>
-      ) : (
-        <div className="text-xs md:text-lg font-medium text-gray-800 dark:text-gray-200 break-words">{pageData.title}</div>
-      )}
+        </CardContent>
+      </Card>
       
-      <div>
-        <h3 className="text-[10px] md:text-sm font-medium text-gray-500 mb-1 md:mb-2">Content</h3>
-        {isEditing ? (
-          <div className="space-y-2">
-            <Textarea 
-              value={editedContent}
-              onChange={(e) => setEditedContent(e.target.value)}
-              rows={isMobile ? 3 : 6}
-              className="resize-y text-[10px] md:text-sm"
-              error={!!validationErrors.content}
-            />
-            {validationErrors.content && (
-              <p className="text-sm text-destructive">{validationErrors.content}</p>
-            )}
-          </div>
-        ) : (
-          <div className="p-1.5 md:p-4 bg-gray-50 dark:bg-gray-700 rounded-md border border-gray-100 dark:border-gray-600 text-gray-700 dark:text-gray-300 whitespace-pre-wrap text-[9px] md:text-sm overflow-x-auto">
-            {pageData.content}
-          </div>
-        )}
-      </div>
+      <PageFooter page={page} />
     </div>
   );
 };

@@ -1,165 +1,209 @@
 
 import React from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from '@/components/ui/form';
+import { z } from 'zod';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { DialogFooter } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Loader2 } from 'lucide-react';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AddPageFormValues } from '@/viewmodels/PageAdditionViewModel';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { DialogFooter } from '@/components/ui/dialog';
+import { PageData } from '@/models/PageModel';
 
-interface AddPageDialogFormProps {
-  pos: string;
-  language: string;
-  generatedUrlPath: string;
-  onOpenChange: (open: boolean) => void;
-  onAddPage: (pageData: AddPageFormValues) => Promise<void>;
-  isSubmitting: boolean;
-  error: string | null;
-}
-
-const formSchema = z.object({
-  title: z.string().min(1, "Title is required"),
-  description: z.string().min(1, "Description is required"),
+// Form schema validation
+const pageSchema = z.object({
+  title: z.string().min(1, 'Title is required'),
+  path: z.string().min(1, 'Path is required'),
+  description: z.string().min(1, 'Description is required'),
+  category: z.string().min(1, 'Category is required'),
+  language: z.string().min(1, 'Language is required'),
+  pos: z.string().min(1, 'Point of Sale is required'),
 });
 
-const AddPageDialogForm = ({
-  pos,
-  language,
-  generatedUrlPath,
-  onOpenChange,
-  onAddPage,
-  isSubmitting,
-  error
-}: AddPageDialogFormProps) => {
-  const form = useForm<Omit<AddPageFormValues, 'pageUrlName'>>({
-    resolver: zodResolver(formSchema),
+type PageFormData = z.infer<typeof pageSchema>;
+
+interface AddPageDialogFormProps {
+  onSubmit: (data: PageFormData) => void;
+  onCancel: () => void;
+  categories: string[];
+  languages: string[];
+  pointsOfSale: string[];
+  initialValues?: Partial<PageData>;
+}
+
+const AddPageDialogForm: React.FC<AddPageDialogFormProps> = ({
+  onSubmit,
+  onCancel,
+  categories,
+  languages,
+  pointsOfSale,
+  initialValues,
+}) => {
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors, isSubmitting },
+  } = useForm<PageFormData>({
+    resolver: zodResolver(pageSchema),
     defaultValues: {
-      title: '',
-      description: '',
+      title: initialValues?.title || '',
+      path: initialValues?.path || '',
+      description: initialValues?.description || '',
+      category: initialValues?.category || categories[0],
+      language: initialValues?.language || languages[0],
+      pos: initialValues?.pos || pointsOfSale[0],
     },
   });
 
-  const handleSubmit = async (values: Omit<AddPageFormValues, 'pageUrlName'>) => {
-    await onAddPage({
-      ...values, 
-      pageUrlName: generatedUrlPath
-    });
-    form.reset();
+  const onFormSubmit = (data: PageFormData) => {
+    onSubmit(data);
   };
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-        {error && (
-          <Alert variant="destructive" className="mb-4">
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
-
-        <UrlPathDisplay 
-          pos={pos} 
-          language={language} 
-          generatedUrlPath={generatedUrlPath} 
-        />
-
-        <FormField
-          control={form.control}
-          name="title"
-          render={({ field }) => (
-            <FormItem>
-              <Label htmlFor="title" required>Title</Label>
-              <FormControl>
-                <Input 
-                  id="title"
-                  placeholder="Page Title" 
-                  {...field} 
-                  error={!!form.formState.errors.title}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
+    <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-4">
+      <div className="space-y-4">
+        <div>
+          <Label htmlFor="title">Title</Label>
+          <Input
+            id="title"
+            {...register('title')}
+            aria-invalid={errors.title ? "true" : "false"}
+            className={errors.title ? "border-red-500" : ""}
+          />
+          {errors.title && (
+            <p className="text-red-500 text-sm mt-1">{errors.title.message}</p>
           )}
-        />
+        </div>
 
-        <FormField
-          control={form.control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
-              <Label htmlFor="description" required>Description</Label>
-              <FormControl>
-                <Textarea 
-                  id="description"
-                  placeholder="Page Description" 
-                  {...field} 
-                  className="min-h-[120px]"
-                  error={!!form.formState.errors.description}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
+        <div>
+          <Label htmlFor="path">Path</Label>
+          <Input
+            id="path"
+            {...register('path')}
+            aria-invalid={errors.path ? "true" : "false"}
+            className={errors.path ? "border-red-500" : ""}
+          />
+          {errors.path && (
+            <p className="text-red-500 text-sm mt-1">{errors.path.message}</p>
           )}
-        />
+        </div>
 
-        <DialogFooter className="pt-4">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-            disabled={isSubmitting}
-          >
-            Cancel
-          </Button>
-          <Button 
-            type="submit" 
-            disabled={isSubmitting || !generatedUrlPath}
-            className="bg-blue-600 hover:bg-blue-700"
-          >
-            {isSubmitting ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Adding...
-              </>
-            ) : (
-              'Add Page'
+        <div>
+          <Label htmlFor="description">Description</Label>
+          <Textarea
+            id="description"
+            {...register('description')}
+            placeholder="Enter a description for this page"
+            aria-invalid={errors.description ? "true" : "false"}
+            className={errors.description ? "border-red-500" : ""}
+          />
+          {errors.description && (
+            <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>
+          )}
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <Label htmlFor="category">Category</Label>
+            <Controller
+              name="category"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <SelectTrigger
+                    className={errors.category ? "border-red-500" : ""}
+                  >
+                    <SelectValue placeholder="Select a category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map((category) => (
+                      <SelectItem key={category} value={category}>
+                        {category}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            {errors.category && (
+              <p className="text-red-500 text-sm mt-1">{errors.category.message}</p>
             )}
-          </Button>
-        </DialogFooter>
-      </form>
-    </Form>
-  );
-};
+          </div>
 
-// URL Path Display subcomponent
-interface UrlPathDisplayProps {
-  pos: string;
-  language: string;
-  generatedUrlPath: string;
-}
+          <div>
+            <Label htmlFor="language">Language</Label>
+            <Controller
+              name="language"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <SelectTrigger
+                    className={errors.language ? "border-red-500" : ""}
+                  >
+                    <SelectValue placeholder="Select a language" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {languages.map((language) => (
+                      <SelectItem key={language} value={language}>
+                        {language}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            {errors.language && (
+              <p className="text-red-500 text-sm mt-1">{errors.language.message}</p>
+            )}
+          </div>
 
-const UrlPathDisplay = ({ pos, language, generatedUrlPath }: UrlPathDisplayProps) => {
-  return (
-    <div className="mb-4">
-      <Label>Page URL Path</Label>
-      <div className="p-3 bg-gray-50 border rounded-md text-gray-700">
-        {pos && language ? `${pos.toLowerCase()}/${language.toLowerCase()}/${generatedUrlPath || ""}` : "Please select POS and language"}
+          <div>
+            <Label htmlFor="pos">Point of Sale</Label>
+            <Controller
+              name="pos"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <SelectTrigger className={errors.pos ? "border-red-500" : ""}>
+                    <SelectValue placeholder="Select POS" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {pointsOfSale.map((pos) => (
+                      <SelectItem key={pos} value={pos}>
+                        {pos}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            {errors.pos && (
+              <p className="text-red-500 text-sm mt-1">{errors.pos.message}</p>
+            )}
+          </div>
+        </div>
       </div>
-      <p className="text-xs text-gray-500 mt-1">
-        This path is automatically generated from your selected options.
-      </p>
-    </div>
+
+      <DialogFooter className="mt-6">
+        <Button variant="outline" type="button" onClick={onCancel}>
+          Cancel
+        </Button>
+        <Button type="submit" disabled={isSubmitting}>
+          {initialValues ? 'Update Page' : 'Create Page'}
+        </Button>
+      </DialogFooter>
+    </form>
   );
 };
 

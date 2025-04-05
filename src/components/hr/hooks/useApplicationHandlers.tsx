@@ -72,7 +72,7 @@ export const useApplicationHandlers = (
 
   // Send offer
   const handleSendOffer = (application: JobApplication, offerDetails: string) => {
-    const updatedApplication = { 
+    const updatedApplication: JobApplication = { 
       ...application, 
       offerDetails,
       offerDate: new Date().toISOString(),
