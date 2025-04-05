@@ -33,6 +33,9 @@ interface TabContentProps {
   isViewingApplication: boolean;
   onViewApplicationDetails: (application: JobApplication) => void;
   onUpdateApplicationStatus: (application: JobApplication, newStatus: JobApplication['status']) => void;
+  onUpdateApplicationNotes?: (application: JobApplication, notes: string) => void;
+  onScheduleInterview?: (application: JobApplication, interviewDate: string) => void;
+  onSendOffer?: (application: JobApplication, offerDetails: string) => void;
   onCloseApplicationDetails: () => void;
   
   // Candidates props
@@ -77,6 +80,9 @@ const TabContent: React.FC<TabContentProps> = ({
   isViewingApplication,
   onViewApplicationDetails,
   onUpdateApplicationStatus,
+  onUpdateApplicationNotes,
+  onScheduleInterview,
+  onSendOffer,
   onCloseApplicationDetails,
   
   // Candidates props
@@ -119,6 +125,9 @@ const TabContent: React.FC<TabContentProps> = ({
           isViewingApplication={isViewingApplication}
           onViewDetails={onViewApplicationDetails}
           onUpdateStatus={onUpdateApplicationStatus}
+          onUpdateNotes={onUpdateApplicationNotes}
+          onScheduleInterview={onScheduleInterview}
+          onSendOffer={onSendOffer}
           onCloseDetails={onCloseApplicationDetails}
         />
       )}

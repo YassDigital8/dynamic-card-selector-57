@@ -10,6 +10,12 @@ export interface JobApplication {
   resumeUrl?: string;
   coverLetterUrl?: string;
   notes?: string;
+  interviewDate?: string;
+  interviewNotes?: string;
+  offerDetails?: string;
+  offerDate?: string;
+  hireDate?: string;
+  rejectionReason?: string;
 }
 
 export interface Candidate {

@@ -45,6 +45,9 @@ const HRPage: React.FC = () => {
     applications,
     handleViewApplicationDetails,
     handleUpdateApplicationStatus,
+    handleUpdateApplicationNotes,
+    handleScheduleInterview,
+    handleSendOffer,
     handleCloseApplicationDetails
   } = useApplicationHandlers(
     setSelectedApplication,
@@ -108,6 +111,9 @@ const HRPage: React.FC = () => {
         isViewingApplication={isViewingApplication}
         onViewApplicationDetails={handleViewApplicationDetails}
         onUpdateApplicationStatus={handleUpdateApplicationStatus}
+        onUpdateApplicationNotes={handleUpdateApplicationNotes}
+        onScheduleInterview={handleScheduleInterview}
+        onSendOffer={handleSendOffer}
         onCloseApplicationDetails={handleCloseApplicationDetails}
         
         // Candidates props
