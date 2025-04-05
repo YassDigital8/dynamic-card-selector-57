@@ -1,3 +1,4 @@
+
 import { JobPosition } from '@/models/JobModel';
 import { useJobsData } from '@/hooks/hr/useJobsData';
 import { toast } from 'sonner';
@@ -50,7 +51,6 @@ export const useJobsHandlers = (
 
   // Handle job form submission
   const handleJobFormSubmit = (jobData: JobPosition) => {
-    // Fix: Use setIsEditingJob to check if we're in edit mode, instead of direct variable
     const isEditing = jobData.id !== undefined && jobData.id !== '';
     
     if (isEditing) {
@@ -77,15 +77,11 @@ export const useJobsHandlers = (
 
   // Confirm delete job
   const confirmDeleteJob = () => {
-    // Fix: Using the most recently selected job from the component state
-    // Reference the job directly from the HRPage component state
-    const selectedJobFromState = jobs.find(job => 
-      job === jobs.find(j => j.id === job.id && setShowDeleteDialog)
-    );
+    const currentJob = jobs.find(job => job.id === jobs.find(j => job.id === j.id)?.id);
     
-    if (selectedJobFromState) {
-      const jobName = selectedJobFromState.title;
-      deleteJob(selectedJobFromState.id);
+    if (currentJob) {
+      const jobName = currentJob.title;
+      deleteJob(currentJob.id);
       toast(`Job Deleted`, {
         description: `${jobName} has been deleted permanently.`
       });

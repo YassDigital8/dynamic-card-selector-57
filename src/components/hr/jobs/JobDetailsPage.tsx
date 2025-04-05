@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { 
   Card, 
@@ -74,7 +73,7 @@ const JobDetailsPage: React.FC<JobDetailsPageProps> = ({
     return counts;
   }, {} as Record<string, number>);
   
-  // Function to get status badge variant - Fix: Update to use correct variant names
+  // Function to get status badge variant
   const getStatusBadgeVariant = (status: string) => {
     switch (status) {
       case 'All':
@@ -84,11 +83,11 @@ const JobDetailsPage: React.FC<JobDetailsPageProps> = ({
       case 'Reviewed':
         return 'outline';
       case 'Interviewed':
-        return 'default'; // Changed from 'blue' to 'default'
+        return 'default';
       case 'Offered':
-        return 'success'; // Changed from 'green' to 'success'
+        return 'success';
       case 'Hired':
-        return 'success'; // Changed from 'purple' to 'success'
+        return 'success';
       case 'Rejected':
         return 'destructive';
       default:
