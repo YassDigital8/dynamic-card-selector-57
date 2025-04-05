@@ -194,11 +194,12 @@ export const useApplicationHandlers = (
       return;
     }
     
-    // Fix: Explicitly cast status as JobApplication['status']
+    // Fix: Create a properly typed updated application object
     const updatedApplication: JobApplication = { 
       ...application, 
       interviewDate,
-      status: 'Interviewed' // TypeScript now knows this is a valid literal type
+      // Explicitly specify the status as a literal, not a string
+      status: 'Interviewed' as const
     };
     
     updateApplication(updatedApplication);
@@ -230,12 +231,12 @@ export const useApplicationHandlers = (
       return;
     }
     
-    // Fix: Explicitly type the status property
+    // Fix: Explicitly type the status property as a literal type
     const updatedApplication: JobApplication = { 
       ...application, 
       offerDetails,
       offerDate: new Date().toISOString(),
-      status: 'Offered' // TypeScript knows this is a valid literal type
+      status: 'Offered' as const // TypeScript now knows this is a valid literal type
     };
     
     updateApplication(updatedApplication);

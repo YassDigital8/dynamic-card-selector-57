@@ -15,10 +15,12 @@ interface TabContentProps {
   isAddingJob: boolean;
   isEditingJob: boolean;
   isViewingDetails: boolean;
+  isViewingJobApplications?: boolean;
   showDeleteDialog: boolean;
   onAddJob: () => void;
   onEditJob: (job: JobPosition) => void;
   onViewJobDetails: (job: JobPosition) => void;
+  onViewJobApplications?: (job: JobPosition) => void;
   onDeleteJob: (job: JobPosition) => void;
   onJobFormSubmit: (jobData: JobPosition) => void;
   onConfirmDeleteJob: () => void;
@@ -62,10 +64,12 @@ const TabContent: React.FC<TabContentProps> = ({
   isAddingJob,
   isEditingJob,
   isViewingDetails,
+  isViewingJobApplications = false,
   showDeleteDialog,
   onAddJob,
   onEditJob,
   onViewJobDetails,
+  onViewJobApplications = () => {},
   onDeleteJob,
   onJobFormSubmit,
   onConfirmDeleteJob,
@@ -99,20 +103,26 @@ const TabContent: React.FC<TabContentProps> = ({
       {activeTab === 'jobs' && (
         <JobsTabContent
           jobs={jobs}
+          applications={applications}
+          candidates={candidates}
           selectedJob={selectedJob}
           isAddingJob={isAddingJob}
           isEditingJob={isEditingJob}
           isViewingDetails={isViewingDetails}
+          isViewingJobApplications={isViewingJobApplications}
           showDeleteDialog={showDeleteDialog}
           onAddJob={onAddJob}
           onEditJob={onEditJob}
           onViewJobDetails={onViewJobDetails}
+          onViewJobApplications={onViewJobApplications}
           onDeleteJob={onDeleteJob}
           onJobFormSubmit={onJobFormSubmit}
           onConfirmDeleteJob={onConfirmDeleteJob}
           onCloseForm={onCloseForm}
           onBackToList={onBackToList}
           onCloseDeleteDialog={onCloseDeleteDialog}
+          onViewApplicationDetails={onViewApplicationDetails}
+          onUpdateApplicationStatus={onUpdateApplicationStatus}
         />
       )}
 

@@ -1,32 +1,34 @@
 
-import { useState } from 'react';
-import { toast } from 'sonner';
 import { JobPosition } from '@/models/JobModel';
 import { useJobsData } from '@/hooks/hr/useJobsData';
+import { toast } from 'sonner';
 
 export const useJobsHandlers = (
   setSelectedJob: (job: JobPosition | null) => void,
   setIsAddingJob: (isAdding: boolean) => void,
   setIsEditingJob: (isEditing: boolean) => void,
   setIsViewingDetails: (isViewing: boolean) => void,
+  setIsViewingJobApplications: (isViewingApplications: boolean) => void,
   setShowDeleteDialog: (show: boolean) => void
 ) => {
   const { jobs, addJob, updateJob, deleteJob } = useJobsData();
-  const [jobToDelete, setJobToDelete] = useState<JobPosition | null>(null);
 
-  // Add a new job
+  // Add new job
   const handleAddJob = () => {
     setIsAddingJob(true);
-    setIsEditingJob(false);
+    setSelectedJob(null);
     setIsViewingDetails(false);
+    setIsViewingJobApplications(false);
+    setIsEditingJob(false);
   };
 
-  // Edit an existing job
+  // Edit job
   const handleEditJob = (job: JobPosition) => {
     setSelectedJob(job);
     setIsEditingJob(true);
     setIsAddingJob(false);
     setIsViewingDetails(false);
+    setIsViewingJobApplications(false);
   };
 
   // View job details
@@ -35,60 +37,69 @@ export const useJobsHandlers = (
     setIsViewingDetails(true);
     setIsAddingJob(false);
     setIsEditingJob(false);
+    setIsViewingJobApplications(false);
   };
-
-  // Save job form (add or edit)
-  const handleJobFormSubmit = (jobData: JobPosition) => {
-    if (jobData.id) {
-      // Update existing job
-      updateJob(jobData);
-      toast.success(`Job "${jobData.title}" was updated successfully`);
-    } else {
-      // Add new job
-      const newJob = {
-        ...jobData,
-        id: `job-${Date.now()}`,
-        postedDate: new Date().toISOString(),
-        applications: 0,
-      };
-      addJob(newJob);
-      toast.success(`Job "${jobData.title}" was created successfully`);
-    }
-    
-    // Close form
+  
+  // View job applications
+  const handleViewJobApplications = (job: JobPosition) => {
+    setSelectedJob(job);
+    setIsViewingJobApplications(true);
+    setIsViewingDetails(false);
     setIsAddingJob(false);
     setIsEditingJob(false);
-    setSelectedJob(null);
   };
 
-  // Delete a job
+  // Handle job form submission
+  const handleJobFormSubmit = (jobData: JobPosition) => {
+    if (isEditingJob) {
+      updateJob(jobData);
+      toast(`Job Updated`, {
+        description: `${jobData.title} has been updated successfully.`
+      });
+    } else {
+      addJob(jobData);
+      toast(`Job Created`, {
+        description: `${jobData.title} has been created successfully.`
+      });
+    }
+    
+    setIsAddingJob(false);
+    setIsEditingJob(false);
+  };
+
+  // Delete job
   const handleDeleteJob = (job: JobPosition) => {
-    setJobToDelete(job);
+    setSelectedJob(job);
     setShowDeleteDialog(true);
   };
-  
-  // Confirm job deletion
+
+  // Confirm delete job
   const confirmDeleteJob = () => {
-    if (jobToDelete) {
-      deleteJob(jobToDelete.id);
-      toast.success(`Job "${jobToDelete.title}" was deleted successfully`);
-      setJobToDelete(null);
+    if (selectedJob) {
+      const jobName = selectedJob.title;
+      deleteJob(selectedJob.id);
+      toast(`Job Deleted`, {
+        description: `${jobName} has been deleted permanently.`
+      });
+      
+      setSelectedJob(null);
       setShowDeleteDialog(false);
+      setIsViewingDetails(false);
+      setIsViewingJobApplications(false);
     }
   };
-  
-  // Close job form
+
+  // Close form
   const closeForm = () => {
     setIsAddingJob(false);
     setIsEditingJob(false);
   };
-  
-  // Go back to job list
+
+  // Back to list
   const backToList = () => {
     setSelectedJob(null);
     setIsViewingDetails(false);
-    setIsAddingJob(false);
-    setIsEditingJob(false);
+    setIsViewingJobApplications(false);
   };
 
   return {
@@ -96,6 +107,7 @@ export const useJobsHandlers = (
     handleAddJob,
     handleEditJob,
     handleViewJobDetails,
+    handleViewJobApplications,
     handleJobFormSubmit,
     handleDeleteJob,
     confirmDeleteJob,

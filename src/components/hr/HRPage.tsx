@@ -15,6 +15,7 @@ const HRPage: React.FC = () => {
     isAddingJob, setIsAddingJob,
     isEditingJob, setIsEditingJob,
     isViewingDetails, setIsViewingDetails,
+    isViewingJobApplications, setIsViewingJobApplications,
     showDeleteDialog, setShowDeleteDialog,
     selectedApplication, setSelectedApplication,
     isViewingApplication, setIsViewingApplication,
@@ -27,6 +28,7 @@ const HRPage: React.FC = () => {
     handleAddJob,
     handleEditJob,
     handleViewJobDetails,
+    handleViewJobApplications,
     handleJobFormSubmit,
     handleDeleteJob,
     confirmDeleteJob,
@@ -37,6 +39,7 @@ const HRPage: React.FC = () => {
     setIsAddingJob,
     setIsEditingJob,
     setIsViewingDetails,
+    setIsViewingJobApplications,
     setShowDeleteDialog
   );
   
@@ -93,10 +96,12 @@ const HRPage: React.FC = () => {
         isAddingJob={isAddingJob}
         isEditingJob={isEditingJob}
         isViewingDetails={isViewingDetails}
+        isViewingJobApplications={isViewingJobApplications}
         showDeleteDialog={showDeleteDialog}
         onAddJob={handleAddJob}
         onEditJob={handleEditJob}
         onViewJobDetails={handleViewJobDetails}
+        onViewJobApplications={handleViewJobApplications}
         onDeleteJob={handleDeleteJob}
         onJobFormSubmit={handleJobFormSubmit}
         onConfirmDeleteJob={confirmDeleteJob}

@@ -1,26 +1,31 @@
 
 import React, { useState } from 'react';
 import { JobPosition } from '@/models/JobModel';
+import { JobApplication } from '@/models/ApplicationModel';
 import { 
   Card, 
   CardContent
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Search } from 'lucide-react';
+import { Search, Users } from 'lucide-react';
 import JobCard from './JobCard';
 import { motion } from 'framer-motion';
 
 interface JobListProps {
   jobs: JobPosition[];
+  applications: JobApplication[];
   onViewDetails: (job: JobPosition) => void;
+  onViewApplications: (job: JobPosition) => void;
   onEditJob: (job: JobPosition) => void;
   onDeleteJob: (job: JobPosition) => void;
 }
 
 const JobList: React.FC<JobListProps> = ({ 
   jobs, 
+  applications,
   onViewDetails, 
+  onViewApplications,
   onEditJob,
   onDeleteJob
 }) => {
@@ -31,6 +36,11 @@ const JobList: React.FC<JobListProps> = ({
     job.department.toLowerCase().includes(searchTerm.toLowerCase()) ||
     job.location.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  // Get application counts for each job
+  const getApplicationCount = (jobId: string) => {
+    return applications.filter(app => app.jobId === jobId).length;
+  };
 
   const cardVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -83,7 +93,9 @@ const JobList: React.FC<JobListProps> = ({
             >
               <JobCard 
                 job={job} 
+                applicationCount={getApplicationCount(job.id)}
                 onView={() => onViewDetails(job)}
+                onViewApplications={() => onViewApplications(job)}
                 onEdit={() => onEditJob(job)}
                 onDelete={() => onDeleteJob(job)}
               />

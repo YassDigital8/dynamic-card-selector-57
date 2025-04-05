@@ -20,7 +20,8 @@ import {
   Mail,
   Clock,
   CheckCircle2,
-  CircleAlert
+  CircleAlert,
+  Users
 } from 'lucide-react';
 import { JobPosition } from '@/models/JobModel';
 import { format } from 'date-fns';
@@ -31,9 +32,16 @@ interface JobDetailsProps {
   onEdit: () => void;
   onDelete: () => void;
   onBack: () => void;
+  onViewApplications: () => void;
 }
 
-const JobDetails: React.FC<JobDetailsProps> = ({ job, onEdit, onDelete, onBack }) => {
+const JobDetails: React.FC<JobDetailsProps> = ({ 
+  job, 
+  onEdit, 
+  onDelete, 
+  onBack,
+  onViewApplications
+}) => {
   const getStatusVariant = () => {
     switch (job.status) {
       case 'Open':
@@ -94,6 +102,14 @@ const JobDetails: React.FC<JobDetailsProps> = ({ job, onEdit, onDelete, onBack }
             </div>
           )}
         </div>
+
+        <Button 
+          className="w-full flex items-center justify-center gap-2"
+          onClick={onViewApplications}
+        >
+          <Users className="h-5 w-5" />
+          View Applications ({job.applications || 0})
+        </Button>
 
         <Separator />
 
