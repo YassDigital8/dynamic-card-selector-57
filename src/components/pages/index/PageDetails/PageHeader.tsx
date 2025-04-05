@@ -15,6 +15,7 @@ interface PageHeaderProps {
   isPublishing?: boolean;
   isTogglingStatus?: boolean;
   pageStatus?: string;
+  page?: any;  // Added to match usage in PageDetailsView
 }
 
 const PageHeader = ({ 
@@ -27,7 +28,8 @@ const PageHeader = ({
   onToggleStatus,
   isPublishing,
   isTogglingStatus,
-  pageStatus
+  pageStatus,
+  page
 }: PageHeaderProps) => {
   const isPublished = pageStatus === 'published';
 

@@ -10,6 +10,7 @@ export interface PageData {
   description?: string;
   pageUrlName?: string;
   segments?: any[];
+  updatedAt?: string; // Added to support the PageDetailsView component
 }
 
 export interface PageSelectionModel {

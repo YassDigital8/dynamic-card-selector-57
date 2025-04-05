@@ -1,8 +1,7 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { FileDropzone } from '@/components/gallery/FileDropzone';
-import { ImageMetadataForm } from '@/components/gallery/ImageMetadataForm';
+import ImageMetadataForm from '@/components/gallery/ImageMetadataForm';
 import { useFileSelection } from '@/hooks/upload/useFileSelection';
 import { useFileMetadata, FileMetadataValues } from '@/hooks/upload/useFileMetadata';
 

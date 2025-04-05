@@ -20,9 +20,10 @@ interface PageFooterProps {
   onRefresh?: () => void;
   onDelete?: () => void;
   canDelete: boolean;
+  page?: any;  // Added to match usage in PageDetailsView
 }
 
-const PageFooter = ({ onRefresh, onDelete, canDelete }: PageFooterProps) => {
+const PageFooter = ({ onRefresh, onDelete, canDelete, page }: PageFooterProps) => {
   const isMobile = useIsMobile();
   
   return (

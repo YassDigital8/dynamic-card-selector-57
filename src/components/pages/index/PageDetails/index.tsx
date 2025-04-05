@@ -103,18 +103,8 @@ const PageDetails = ({
         />
         <CardContent className="p-6">
           <PageDetailsView 
-            pageData={pageData}
-            isEditing={isEditing}
-            editedTitle={editedTitle}
-            editedContent={editedContent}
-            setEditedTitle={setEditedTitle}
-            setEditedContent={setEditedContent}
-            selectedPOS={selectedPOS}
-            selectedLanguage={selectedLanguage}
-            selectedSlug={selectedSlug}
-            selectedSubSlug={selectedSubSlug}
-            selectedPathId={selectedPathId}
-            selectedSubPathId={selectedSubPathId}
+            page={pageData}
+            onUpdatePage={handleSave}
           />
         </CardContent>
         <PageFooter 

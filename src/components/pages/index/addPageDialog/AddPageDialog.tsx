@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { 
   Dialog, 
@@ -52,17 +51,17 @@ const AddPageDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[550px]">
+      <DialogContent className="sm:max-w-[625px]">
         <DialogHeader>
           <DialogTitle>Add New Page</DialogTitle>
           <DialogDescription>
-            Create a new page for {pos} in {language}
+            Create a new page for {pos}/{language}.
           </DialogDescription>
         </DialogHeader>
-
+        
         <AddPageDialogForm
-          pos={pos}
-          language={language}
+          selectedPOS={pos}
+          selectedLanguage={language}
           generatedUrlPath={generatedUrlPath}
           onOpenChange={onOpenChange}
           onAddPage={handleAddPage}

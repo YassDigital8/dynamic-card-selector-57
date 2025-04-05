@@ -1,209 +1,161 @@
-
-import React from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Button } from '@/components/ui/button';
+import * as z from 'zod';
+
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { DialogFooter } from '@/components/ui/dialog';
-import { PageData } from '@/models/PageModel';
+import { Button } from '@/components/ui/button';
+import { generateSlug } from '@/lib/utils';
 
-// Form schema validation
-const pageSchema = z.object({
-  title: z.string().min(1, 'Title is required'),
-  path: z.string().min(1, 'Path is required'),
-  description: z.string().min(1, 'Description is required'),
-  category: z.string().min(1, 'Category is required'),
-  language: z.string().min(1, 'Language is required'),
-  pos: z.string().min(1, 'Point of Sale is required'),
+const formSchema = z.object({
+  title: z.string().min(2, {
+    message: 'Title must be at least 2 characters.',
+  }),
+  description: z.string().min(10, {
+    message: 'Description must be at least 10 characters.',
+  }),
+  content: z.string().optional(),
+  urlPath: z.string().optional(),
 });
 
-type PageFormData = z.infer<typeof pageSchema>;
-
 interface AddPageDialogFormProps {
-  onSubmit: (data: PageFormData) => void;
-  onCancel: () => void;
-  categories: string[];
-  languages: string[];
-  pointsOfSale: string[];
-  initialValues?: Partial<PageData>;
+  selectedPOS: string;
+  selectedLanguage: string;
+  generatedUrlPath: string;
+  onOpenChange: (open: boolean) => void;
+  onAddPage: (formValues: any) => Promise<void>;
+  isSubmitting: boolean;
+  error: string;
 }
 
-const AddPageDialogForm: React.FC<AddPageDialogFormProps> = ({
-  onSubmit,
-  onCancel,
-  categories,
-  languages,
-  pointsOfSale,
-  initialValues,
-}) => {
-  const {
-    register,
-    handleSubmit,
-    control,
-    formState: { errors, isSubmitting },
-  } = useForm<PageFormData>({
-    resolver: zodResolver(pageSchema),
+const AddPageDialogForm = ({
+  selectedPOS,
+  selectedLanguage,
+  generatedUrlPath,
+  onOpenChange,
+  onAddPage,
+  isSubmitting,
+  error,
+}: AddPageDialogFormProps) => {
+  const [urlPath, setUrlPath] = useState(generatedUrlPath);
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
-      title: initialValues?.title || '',
-      path: initialValues?.path || '',
-      description: initialValues?.description || '',
-      category: initialValues?.category || categories[0],
-      language: initialValues?.language || languages[0],
-      pos: initialValues?.pos || pointsOfSale[0],
+      title: '',
+      description: '',
+      content: '',
+      urlPath: generatedUrlPath,
     },
   });
 
-  const onFormSubmit = (data: PageFormData) => {
-    onSubmit(data);
+  const onSubmit = async (formValues: z.infer<typeof formSchema>) => {
+    try {
+      const formData = {
+        title: formValues.title,
+        description: formValues.description,
+        content: formValues.content,
+        urlPath: formValues.urlPath,
+        selectedPOS,
+        selectedLanguage,
+      };
+
+      await onAddPage(formData);
+      form.reset();
+      onOpenChange(false);
+    } catch (e) {
+      console.error('Failed to add page:', e);
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-4">
-      <div className="space-y-4">
-        <div>
-          <Label htmlFor="title">Title</Label>
-          <Input
-            id="title"
-            {...register('title')}
-            aria-invalid={errors.title ? "true" : "false"}
-            className={errors.title ? "border-red-500" : ""}
-          />
-          {errors.title && (
-            <p className="text-red-500 text-sm mt-1">{errors.title.message}</p>
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <FormField
+          control={form.control}
+          name="title"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Title</FormLabel>
+              <FormControl>
+                <Input placeholder="Page Title" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
           )}
-        </div>
-
-        <div>
-          <Label htmlFor="path">Path</Label>
-          <Input
-            id="path"
-            {...register('path')}
-            aria-invalid={errors.path ? "true" : "false"}
-            className={errors.path ? "border-red-500" : ""}
-          />
-          {errors.path && (
-            <p className="text-red-500 text-sm mt-1">{errors.path.message}</p>
+        />
+        <FormField
+          control={form.control}
+          name="description"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Description</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder="Page Description"
+                  className="resize-none"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
           )}
-        </div>
-
-        <div>
-          <Label htmlFor="description">Description</Label>
-          <Textarea
-            id="description"
-            {...register('description')}
-            placeholder="Enter a description for this page"
-            aria-invalid={errors.description ? "true" : "false"}
-            className={errors.description ? "border-red-500" : ""}
-          />
-          {errors.description && (
-            <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>
+        />
+        <FormField
+          control={form.control}
+          name="content"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Content</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder="Page Content"
+                  className="resize-none"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
           )}
-        </div>
+        />
+        <FormField
+          control={form.control}
+          name="urlPath"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>URL Path</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="URL Path"
+                  value={urlPath}
+                  onChange={(e) => {
+                    const newUrlPath = generateSlug(e.target.value);
+                    setUrlPath(newUrlPath);
+                    field.onChange(newUrlPath);
+                  }}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <Label htmlFor="category">Category</Label>
-            <Controller
-              name="category"
-              control={control}
-              render={({ field }) => (
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <SelectTrigger
-                    className={errors.category ? "border-red-500" : ""}
-                  >
-                    <SelectValue placeholder="Select a category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories.map((category) => (
-                      <SelectItem key={category} value={category}>
-                        {category}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            />
-            {errors.category && (
-              <p className="text-red-500 text-sm mt-1">{errors.category.message}</p>
-            )}
-          </div>
+        {error && <p className="text-red-500">{error}</p>}
 
-          <div>
-            <Label htmlFor="language">Language</Label>
-            <Controller
-              name="language"
-              control={control}
-              render={({ field }) => (
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <SelectTrigger
-                    className={errors.language ? "border-red-500" : ""}
-                  >
-                    <SelectValue placeholder="Select a language" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {languages.map((language) => (
-                      <SelectItem key={language} value={language}>
-                        {language}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            />
-            {errors.language && (
-              <p className="text-red-500 text-sm mt-1">{errors.language.message}</p>
-            )}
-          </div>
-
-          <div>
-            <Label htmlFor="pos">Point of Sale</Label>
-            <Controller
-              name="pos"
-              control={control}
-              render={({ field }) => (
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <SelectTrigger className={errors.pos ? "border-red-500" : ""}>
-                    <SelectValue placeholder="Select POS" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {pointsOfSale.map((pos) => (
-                      <SelectItem key={pos} value={pos}>
-                        {pos}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            />
-            {errors.pos && (
-              <p className="text-red-500 text-sm mt-1">{errors.pos.message}</p>
-            )}
-          </div>
-        </div>
-      </div>
-
-      <DialogFooter className="mt-6">
-        <Button variant="outline" type="button" onClick={onCancel}>
-          Cancel
-        </Button>
         <Button type="submit" disabled={isSubmitting}>
-          {initialValues ? 'Update Page' : 'Create Page'}
+          {isSubmitting ? 'Submitting...' : 'Submit'}
         </Button>
-      </DialogFooter>
-    </form>
+      </form>
+    </Form>
   );
 };
 

@@ -7,8 +7,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { PageData } from '@/models/PageModel';
 import { Edit, Save, X } from 'lucide-react';
-import { PageHeader } from './PageHeader';
-import { PageFooter } from './PageFooter';
+import PageHeader from './PageHeader';
+import PageFooter from './PageFooter';
 
 interface PageDetailsViewProps {
   page: PageData;
@@ -59,7 +59,7 @@ const PageDetailsView: React.FC<PageDetailsViewProps> = ({ page, onUpdatePage })
       title,
       description,
       content,
-      updatedAt: new Date().toISOString(),
+      lastUpdated: new Date().toISOString(),
     });
     
     setIsEditing(false);
