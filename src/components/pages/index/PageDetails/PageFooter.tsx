@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useIsMobile } from '@/hooks/use-mobile';
 
-interface PageFooterProps {
+export interface PageFooterProps {
   onRefresh?: () => void;
   onDelete?: () => void;
   canDelete: boolean;
@@ -71,4 +71,5 @@ const PageFooter = ({ onRefresh, onDelete, canDelete, page }: PageFooterProps) =
   );
 };
 
+export { PageFooter };
 export default PageFooter;

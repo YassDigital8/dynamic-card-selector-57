@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Button } from '@/components/ui/button';
@@ -9,9 +10,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { AspectRatio } from "@/components/ui/aspect-ratio"
-import { Progress } from "@/components/ui/progress"
+} from "@/components/ui/dialog";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { Progress } from "@/components/ui/progress";
 import { useToast } from '@/hooks/use-toast';
 import { generateFileName } from '@/lib/utils';
 import { uploadFile } from '@/lib/storage';
@@ -21,9 +22,20 @@ import ImageMetadataForm from './ImageMetadataForm';
 interface UploadComponentProps {
   directory: string;
   onUploadComplete?: (metadata: FileMetadata) => void;
+  onFileUploaded?: (file: any) => void;
+  galleries?: any[];
+  selectedGalleryId?: string;
+  onViewFile?: (file: any) => void;
 }
 
-const UploadComponent: React.FC<UploadComponentProps> = ({ directory, onUploadComplete }) => {
+const UploadComponent: React.FC<UploadComponentProps> = ({ 
+  directory, 
+  onUploadComplete,
+  onFileUploaded,
+  galleries,
+  selectedGalleryId,
+  onViewFile 
+}) => {
   const [files, setFiles] = useState<File[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -75,11 +87,11 @@ const UploadComponent: React.FC<UploadComponentProps> = ({ directory, onUploadCo
 
           // Create default metadata
           const metadata: FileMetadata = {
-            id: fileName,
-            name: file.name,
             title: file.name,
             altText: file.name,
+            caption: '',
             description: '',
+            dimensions: { width: 0, height: 0 },
             url: uploadPath,
             size: file.size,
             type: file.type,
@@ -87,7 +99,24 @@ const UploadComponent: React.FC<UploadComponentProps> = ({ directory, onUploadCo
           };
 
           // Notify parent component about the successful upload
-          onUploadComplete?.(metadata);
+          if (onUploadComplete) {
+            onUploadComplete(metadata);
+          }
+          
+          if (onFileUploaded) {
+            const fileInfo = {
+              id: fileName,
+              name: file.name,
+              type: file.type,
+              size: Math.round(file.size / 1024),
+              url: URL.createObjectURL(file),
+              uploadedBy: 'current-user',
+              uploadedOn: new Date().toISOString(),
+              galleryId: selectedGalleryId || '',
+              metadata
+            };
+            onFileUploaded(fileInfo);
+          }
         } else {
           toast({
             title: 'Upload failed',
@@ -186,4 +215,5 @@ const UploadComponent: React.FC<UploadComponentProps> = ({ directory, onUploadCo
   );
 };
 
+export { UploadComponent };
 export default UploadComponent;

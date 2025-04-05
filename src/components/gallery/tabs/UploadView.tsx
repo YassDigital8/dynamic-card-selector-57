@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { FileInfo, Gallery } from '@/models/FileModel';
-import { UploadComponent } from '../UploadComponent';
+import UploadComponent, { UploadComponent as UploadComponentExport } from '../UploadComponent';
 
 export interface UploadViewProps {
   onFileUploaded: (file: FileInfo) => void;
@@ -27,6 +27,7 @@ export const UploadView: React.FC<UploadViewProps> = ({
       galleries={galleries}
       selectedGalleryId={galleryId}
       onViewFile={onViewFile}
+      directory={selectedGallery?.name || "uploads"}
     />
   );
 };
