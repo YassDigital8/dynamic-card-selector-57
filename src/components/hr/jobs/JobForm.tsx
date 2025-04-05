@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -70,6 +71,7 @@ const JobForm: React.FC<JobFormProps> = ({ initialData, onSubmit, onCancel }) =>
   });
 
   const handleSubmit = (values: JobFormValues) => {
+    // Create the base job data
     const jobData: JobPosition = {
       id: initialData?.id || Date.now().toString(),
       title: values.title,
@@ -83,9 +85,22 @@ const JobForm: React.FC<JobFormProps> = ({ initialData, onSubmit, onCancel }) =>
       closingDate: values.closingDate.toISOString(),
       status: values.status,
       applications: initialData?.applications || 0,
-      salary: values.salary,
-      contactEmail: values.contactEmail,
     };
+    
+    // Only add salary if it's provided in the form values
+    // Make sure all required properties are present
+    if (values.salary) {
+      jobData.salary = {
+        min: values.salary.min || 0,
+        max: values.salary.max || 0,
+        currency: values.salary.currency || 'USD',
+      };
+    }
+    
+    // Add optional contactEmail if present
+    if (values.contactEmail) {
+      jobData.contactEmail = values.contactEmail;
+    }
     
     onSubmit(jobData);
   };
