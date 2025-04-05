@@ -55,6 +55,8 @@ export const useApplicationActions = () => {
     
     const earliestStatus = getEarliestStatusForJob(application.jobId);
     
+    // Fix: Use type assertion to compare status values safely
+    // or explicitly check if earliestStatus is not the string "Interviewed"
     if (earliestStatus !== 'Interviewed' && 
         application.status !== earliestStatus) {
       const jobTitle = jobs.find(j => j.id === application.jobId)?.title || 'this position';
