@@ -14,7 +14,7 @@ const mockJobs: JobPosition[] = [
     type: 'Full-time',
     description: 'We are looking for a Senior Frontend Developer to join our team. You will be responsible for building and maintaining our web applications.',
     requirements: [
-      'Bachelor's degree in Computer Science or related field',
+      'Bachelor\'s degree in Computer Science or related field',
       '5+ years of experience with JavaScript and frontend frameworks',
       'Experience with React, TypeScript, and modern CSS',
       'Strong understanding of web performance optimization'
@@ -44,7 +44,7 @@ const mockJobs: JobPosition[] = [
     type: 'Full-time',
     description: 'We are seeking a talented UX/UI Designer to create amazing user experiences. In this role, you will work with product and engineering teams to design intuitive interfaces.',
     requirements: [
-      'Bachelor's degree in Design, HCI, or related field',
+      'Bachelor\'s degree in Design, HCI, or related field',
       '3+ years of experience in UX/UI design',
       'Proficiency in design tools such as Figma or Adobe XD',
       'Strong portfolio demonstrating your design process'
@@ -73,7 +73,7 @@ const mockJobs: JobPosition[] = [
     type: 'Full-time',
     description: 'We are looking for a DevOps Engineer to help us automate and optimize our infrastructure and deployment processes.',
     requirements: [
-      'Bachelor's degree in Computer Science or related field',
+      'Bachelor\'s degree in Computer Science or related field',
       '3+ years of experience in DevOps or SRE role',
       'Experience with cloud platforms (AWS, GCP, or Azure)',
       'Knowledge of containerization and orchestration technologies'
@@ -97,7 +97,7 @@ const mockJobs: JobPosition[] = [
     type: 'Full-time',
     description: 'We are seeking a Marketing Manager to lead our marketing efforts and drive growth.',
     requirements: [
-      'Bachelor's degree in Marketing or related field',
+      'Bachelor\'s degree in Marketing or related field',
       '5+ years of experience in marketing',
       'Experience with digital marketing channels',
       'Strong analytical and communication skills'
