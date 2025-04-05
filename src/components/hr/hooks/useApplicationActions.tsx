@@ -33,7 +33,7 @@ export const useApplicationActions = () => {
     const updatedApplication: JobApplication = { 
       ...application, 
       interviewDate,
-      status: 'Interviewed' as const
+      status: 'Interviewed' as JobApplication['status']
     };
     
     updateApplication(updatedApplication);
@@ -68,7 +68,7 @@ export const useApplicationActions = () => {
       ...application, 
       offerDetails,
       offerDate: new Date().toISOString(),
-      status: 'Offered' as const
+      status: 'Offered' as JobApplication['status']
     };
     
     updateApplication(updatedApplication);
