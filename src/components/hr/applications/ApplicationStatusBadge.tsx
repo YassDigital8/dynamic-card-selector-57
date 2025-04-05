@@ -17,9 +17,9 @@ const ApplicationStatusBadge: React.FC<ApplicationStatusBadgeProps> = ({ status 
       case 'Interviewed':
         return { variant: 'default' as const, className: 'bg-blue-500 hover:bg-blue-600' };
       case 'Offered':
-        return { variant: 'default' as const, className: 'bg-green-500 hover:bg-green-600' };
+        return { variant: 'success' as const };
       case 'Hired':
-        return { variant: 'default' as const, className: 'bg-purple-500 hover:bg-purple-600' };
+        return { variant: 'success' as const, className: 'bg-purple-500 hover:bg-purple-600' };
       case 'Rejected':
         return { variant: 'destructive' as const };
       default:

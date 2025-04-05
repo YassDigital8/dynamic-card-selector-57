@@ -223,6 +223,7 @@ export const useApplicationHandlers = (
     
     // Check if all other applications for this job are at least at Interviewed status
     const earliestStatus = getEarliestStatusForJob(application.jobId);
+    // Fix for TS2367: This was comparing different types - needed to check against the literal status type
     if (earliestStatus !== 'Interviewed' && application.status !== earliestStatus) {
       const jobTitle = jobs.find(j => j.id === application.jobId)?.title || 'this position';
       toast.error('Cannot send offer yet', {

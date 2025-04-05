@@ -74,7 +74,7 @@ const JobDetailsPage: React.FC<JobDetailsPageProps> = ({
     return counts;
   }, {} as Record<string, number>);
   
-  // Function to get status badge variant
+  // Function to get status badge variant - Fix: Update to use correct variant names
   const getStatusBadgeVariant = (status: string) => {
     switch (status) {
       case 'All':
@@ -84,11 +84,11 @@ const JobDetailsPage: React.FC<JobDetailsPageProps> = ({
       case 'Reviewed':
         return 'outline';
       case 'Interviewed':
-        return 'blue';
+        return 'default'; // Changed from 'blue' to 'default'
       case 'Offered':
-        return 'green';
+        return 'success'; // Changed from 'green' to 'success'
       case 'Hired':
-        return 'purple';
+        return 'success'; // Changed from 'purple' to 'success'
       case 'Rejected':
         return 'destructive';
       default:

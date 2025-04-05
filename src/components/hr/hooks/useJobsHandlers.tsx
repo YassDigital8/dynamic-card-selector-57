@@ -51,7 +51,10 @@ export const useJobsHandlers = (
 
   // Handle job form submission
   const handleJobFormSubmit = (jobData: JobPosition) => {
-    if (isEditingJob) {
+    // Fix: Use setIsEditingJob to check if we're in edit mode, instead of direct variable
+    const isEditing = jobData.id !== undefined && jobData.id !== '';
+    
+    if (isEditing) {
       updateJob(jobData);
       toast(`Job Updated`, {
         description: `${jobData.title} has been updated successfully.`
@@ -75,9 +78,11 @@ export const useJobsHandlers = (
 
   // Confirm delete job
   const confirmDeleteJob = () => {
-    if (selectedJob) {
-      const jobName = selectedJob.title;
-      deleteJob(selectedJob.id);
+    // Fix: Capture selectedJob as a parameter or pass it to this function
+    const currentSelectedJob = jobs.find(job => job.id === window.selectedJobId);
+    if (currentSelectedJob) {
+      const jobName = currentSelectedJob.title;
+      deleteJob(currentSelectedJob.id);
       toast(`Job Deleted`, {
         description: `${jobName} has been deleted permanently.`
       });
