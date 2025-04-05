@@ -1,53 +1,22 @@
 
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
+import { cn } from '@/lib/utils';
 import { 
   SidebarMenu, 
   SidebarMenuItem, 
-  SidebarMenuButton, 
-  SidebarGroup,
-  SidebarGroupLabel,
-  SidebarGroupContent
+  SidebarMenuButton 
 } from '@/components/ui/sidebar';
-import { LayoutDashboard, FileText, Image, Hotel, Users, Settings, HelpCircle, Ticket } from 'lucide-react';
-
-export const navItems = [
-  { 
-    label: 'Dashboard', 
-    icon: LayoutDashboard, 
-    href: '/' 
-  },
-  { 
-    label: 'Pages', 
-    icon: FileText, 
-    href: '/pages' 
-  },
-  { 
-    label: 'Gallery', 
-    icon: Image, 
-    href: '/gallery' 
-  },
-  { 
-    label: 'Hotel Network', 
-    icon: Hotel, 
-    href: '/hotel'
-  },
-  {
-    label: 'Events & Attractions',
-    icon: Ticket,
-    href: '/events'
-  },
-  { 
-    label: 'Users', 
-    icon: Users, 
-    href: '/users' 
-  },
-  { 
-    label: 'Settings', 
-    icon: Settings, 
-    href: '/settings' 
-  },
-];
+import { 
+  LayoutDashboard, 
+  FileText, 
+  Image, 
+  Hotel, 
+  Users, 
+  Settings,
+  Ticket,
+  Briefcase
+} from 'lucide-react';
 
 interface SidebarNavigationProps {
   isMobile: boolean;
@@ -57,34 +26,74 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ isMobile }) => {
   const location = useLocation();
   
   const isActive = (path: string) => {
-    if (path === '/hotel' && location.pathname.startsWith('/hotel/')) {
+    if (path === '/hotel' && location.pathname.startsWith('/hotel')) {
       return true;
     }
     return location.pathname === path;
   };
   
+  const navItems = [
+    { 
+      label: 'Dashboard', 
+      icon: LayoutDashboard, 
+      href: '/' 
+    },
+    { 
+      label: 'Pages', 
+      icon: FileText, 
+      href: '/pages' 
+    },
+    { 
+      label: 'Gallery', 
+      icon: Image, 
+      href: '/gallery' 
+    },
+    { 
+      label: 'Hotel Network', 
+      icon: Hotel, 
+      href: '/hotel'
+    },
+    {
+      label: 'Events & Attractions',
+      icon: Ticket,
+      href: '/events'
+    },
+    {
+      label: 'HR',
+      icon: Briefcase,
+      href: '/hr'
+    },
+    { 
+      label: 'Users', 
+      icon: Users, 
+      href: '/users' 
+    },
+    { 
+      label: 'Settings', 
+      icon: Settings, 
+      href: '/settings' 
+    },
+  ];
+  
   return (
-    <SidebarGroup>
-      <SidebarGroupLabel className="text-[10px] md:text-xs">Navigation</SidebarGroupLabel>
-      <SidebarGroupContent>
-        <SidebarMenu>
-          {navItems.map((item) => (
-            <SidebarMenuItem key={item.label}>
-              <Link to={item.href} className="w-full">
-                <SidebarMenuButton 
-                  isActive={isActive(item.href)} 
-                  tooltip={item.label} 
-                  size={isMobile ? "sm" : "default"}
-                >
-                  <item.icon className="h-3.5 w-3.5 md:h-4 md:w-4" />
-                  <span className="text-xs md:text-sm">{item.label}</span>
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
-          ))}
-        </SidebarMenu>
-      </SidebarGroupContent>
-    </SidebarGroup>
+    <SidebarMenu>
+      {navItems.map((item) => (
+        <SidebarMenuItem key={item.label}>
+          <SidebarMenuButton asChild active={isActive(item.href)}>
+            <Link 
+              to={item.href}
+              className={cn(
+                "flex items-center gap-2 py-2",
+                isActive(item.href) && "font-medium"
+              )}
+            >
+              <item.icon className={cn("h-5 w-5", isMobile && "h-4 w-4")} />
+              <span>{item.label}</span>
+            </Link>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      ))}
+    </SidebarMenu>
   );
 };
 

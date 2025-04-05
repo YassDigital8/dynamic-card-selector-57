@@ -14,6 +14,7 @@ import HotelEdit from "./pages/HotelEdit";
 import HotelView from "./pages/HotelView";
 import Users from "./pages/Users";
 import EventsAttractions from "./pages/EventsAttractions";
+import HR from "./pages/HR";
 import useAuthentication from "./hooks/useAuthentication";
 
 // Initialize theme from localStorage or default to light
@@ -134,6 +135,13 @@ const App = () => {
             <Route path="/events" element={
               <ProtectedRoute>
                 <EventsAttractions />
+              </ProtectedRoute>
+            } />
+            
+            {/* HR route */}
+            <Route path="/hr" element={
+              <ProtectedRoute>
+                <HR />
               </ProtectedRoute>
             } />
             
