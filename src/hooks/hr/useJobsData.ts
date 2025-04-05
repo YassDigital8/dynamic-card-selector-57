@@ -17,13 +17,13 @@ const mockJobs: JobPosition[] = [
       'Bachelor's degree in Computer Science or related field',
       '5+ years of experience with JavaScript and frontend frameworks',
       'Experience with React, TypeScript, and modern CSS',
-      'Strong understanding of web performance optimization',
+      'Strong understanding of web performance optimization'
     ],
     responsibilities: [
       'Develop and maintain frontend applications using React and TypeScript',
       'Collaborate with UX designers to implement responsive designs',
       'Write clean, maintainable, and well-documented code',
-      'Participate in code reviews and mentor junior developers',
+      'Participate in code reviews and mentor junior developers'
     ],
     salary: {
       min: 120000,
@@ -47,13 +47,13 @@ const mockJobs: JobPosition[] = [
       'Bachelor's degree in Design, HCI, or related field',
       '3+ years of experience in UX/UI design',
       'Proficiency in design tools such as Figma or Adobe XD',
-      'Strong portfolio demonstrating your design process',
+      'Strong portfolio demonstrating your design process'
     ],
     responsibilities: [
       'Create wireframes, prototypes, and high-fidelity designs',
       'Conduct user research and usability testing',
       'Collaborate with product managers to define features',
-      'Create and maintain design systems',
+      'Create and maintain design systems'
     ],
     salary: {
       min: 95000,
@@ -76,13 +76,13 @@ const mockJobs: JobPosition[] = [
       'Bachelor's degree in Computer Science or related field',
       '3+ years of experience in DevOps or SRE role',
       'Experience with cloud platforms (AWS, GCP, or Azure)',
-      'Knowledge of containerization and orchestration technologies',
+      'Knowledge of containerization and orchestration technologies'
     ],
     responsibilities: [
       'Design and implement CI/CD pipelines',
       'Manage and optimize cloud infrastructure',
       'Implement monitoring and alerting solutions',
-      'Collaborate with development teams to improve deployment processes',
+      'Collaborate with development teams to improve deployment processes'
     ],
     postedDate: '2025-03-10T00:00:00.000Z',
     closingDate: '2025-04-10T00:00:00.000Z',
@@ -100,13 +100,13 @@ const mockJobs: JobPosition[] = [
       'Bachelor's degree in Marketing or related field',
       '5+ years of experience in marketing',
       'Experience with digital marketing channels',
-      'Strong analytical and communication skills',
+      'Strong analytical and communication skills'
     ],
     responsibilities: [
       'Develop and execute marketing strategies',
       'Manage marketing campaigns across various channels',
       'Analyze marketing performance and optimize campaigns',
-      'Collaborate with sales and product teams',
+      'Collaborate with sales and product teams'
     ],
     postedDate: '2025-03-05T00:00:00.000Z',
     closingDate: '2025-04-05T00:00:00.000Z',
