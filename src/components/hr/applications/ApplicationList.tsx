@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Search } from 'lucide-react';
 import ApplicationCard from './ApplicationCard';
 import ApplicationStatusFilter from './ApplicationStatusFilter';
+import JobPositionFilter from './JobPositionFilter';
 
 interface ApplicationListProps {
   applications: JobApplication[];
@@ -23,6 +24,7 @@ const ApplicationList: React.FC<ApplicationListProps> = ({
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('All');
+  const [jobFilter, setJobFilter] = useState<string | 'All'>('All');
   const { jobs } = useJobsData();
   const { candidates } = useCandidatesData();
   
@@ -30,6 +32,11 @@ const ApplicationList: React.FC<ApplicationListProps> = ({
     // Find job and candidate info for this application
     const job = jobs.find(j => j.id === app.jobId);
     const candidate = candidates.find(c => c.id === app.candidateId);
+    
+    // Job filter
+    if (jobFilter !== 'All' && app.jobId !== jobFilter) {
+      return false;
+    }
     
     // Status filter
     if (statusFilter !== 'All' && app.status !== statusFilter) {
@@ -58,6 +65,11 @@ const ApplicationList: React.FC<ApplicationListProps> = ({
             className="pl-8"
           />
         </div>
+        <JobPositionFilter 
+          jobs={jobs}
+          selectedJobId={jobFilter}
+          onChange={setJobFilter}
+        />
         <ApplicationStatusFilter 
           selectedStatus={statusFilter} 
           onChange={setStatusFilter} 
@@ -68,12 +80,13 @@ const ApplicationList: React.FC<ApplicationListProps> = ({
         <Card>
           <CardContent className="py-8 text-center text-muted-foreground">
             <p>No applications found.</p>
-            {(searchTerm || statusFilter !== 'All') && (
+            {(searchTerm || statusFilter !== 'All' || jobFilter !== 'All') && (
               <Button 
                 variant="link" 
                 onClick={() => {
                   setSearchTerm('');
                   setStatusFilter('All');
+                  setJobFilter('All');
                 }}
                 className="mt-2"
               >
