@@ -1,128 +1,66 @@
-import React, { useState } from 'react';
-import { JobsTabs } from './tabs';
+
+import React from 'react';
 import { motion } from 'framer-motion';
-import JobList from './jobs/JobList';
-import { useJobsData } from '@/hooks/hr/useJobsData';
-import { useApplicationsData } from '@/hooks/hr/useApplicationsData';
-import { useCandidatesData } from '@/hooks/hr/useCandidatesData';
-import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
-import { JobPosition } from '@/models/JobModel';
-import { JobApplication, Candidate } from '@/models/ApplicationModel';
-import JobForm from './jobs/JobForm';
-import JobDetails from './jobs/JobDetails';
-import DeleteJobDialog from './jobs/DeleteJobDialog';
-import { ApplicationList, ApplicationDetails } from './applications';
-import { CandidateList } from './candidates';
+import { JobsTabs, TabContent } from './tabs';
+import { useHRPageState } from './hooks/useHRPageState';
+import { useJobsHandlers } from './hooks/useJobsHandlers';
+import { useApplicationHandlers } from './hooks/useApplicationHandlers';
+import { useCandidateHandlers } from './hooks/useCandidateHandlers';
 
 const HRPage: React.FC = () => {
-  const { jobs, addJob, updateJob, deleteJob } = useJobsData();
-  const { applications, updateApplication } = useApplicationsData();
-  const { candidates } = useCandidatesData();
+  // Get state and state setters from custom hook
+  const {
+    activeTab, setActiveTab,
+    selectedJob, setSelectedJob,
+    isAddingJob, setIsAddingJob,
+    isEditingJob, setIsEditingJob,
+    isViewingDetails, setIsViewingDetails,
+    showDeleteDialog, setShowDeleteDialog,
+    selectedApplication, setSelectedApplication,
+    isViewingApplication, setIsViewingApplication,
+    selectedCandidate, setSelectedCandidate,
+  } = useHRPageState();
   
-  const [activeTab, setActiveTab] = useState<string>('jobs');
+  // Get job handlers
+  const {
+    jobs,
+    handleAddJob,
+    handleEditJob,
+    handleViewJobDetails,
+    handleJobFormSubmit,
+    handleDeleteJob,
+    confirmDeleteJob,
+    closeForm,
+    backToList,
+  } = useJobsHandlers(
+    setSelectedJob,
+    setIsAddingJob,
+    setIsEditingJob,
+    setIsViewingDetails,
+    setShowDeleteDialog
+  );
   
-  // Jobs state
-  const [selectedJob, setSelectedJob] = useState<JobPosition | null>(null);
-  const [isAddingJob, setIsAddingJob] = useState(false);
-  const [isEditingJob, setIsEditingJob] = useState(false);
-  const [isViewingDetails, setIsViewingDetails] = useState(false);
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  // Get application handlers
+  const {
+    applications,
+    handleViewApplicationDetails,
+    handleUpdateApplicationStatus,
+    handleCloseApplicationDetails
+  } = useApplicationHandlers(
+    setSelectedApplication,
+    setIsViewingApplication
+  );
   
-  // Applications state
-  const [selectedApplication, setSelectedApplication] = useState<JobApplication | null>(null);
-  const [isViewingApplication, setIsViewingApplication] = useState(false);
-  
-  // Candidates state
-  const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
+  // Get candidate handlers
+  const {
+    candidates,
+    handleViewCandidateDetails,
+    handleEditCandidate,
+    handleDeleteCandidate
+  } = useCandidateHandlers(
+    setSelectedCandidate
+  );
 
-  // Job handlers
-  const handleAddJob = () => {
-    setIsAddingJob(true);
-    setSelectedJob(null);
-    setIsViewingDetails(false);
-    setIsEditingJob(false);
-  };
-
-  const handleEditJob = (job: JobPosition) => {
-    setSelectedJob(job);
-    setIsEditingJob(true);
-    setIsViewingDetails(false);
-    setIsAddingJob(false);
-  };
-
-  const handleViewJobDetails = (job: JobPosition) => {
-    setSelectedJob(job);
-    setIsViewingDetails(true);
-    setIsEditingJob(false);
-    setIsAddingJob(false);
-  };
-
-  const handleJobFormSubmit = (jobData: JobPosition) => {
-    if (isEditingJob && selectedJob) {
-      updateJob(jobData);
-    } else {
-      addJob(jobData);
-    }
-    setIsAddingJob(false);
-    setIsEditingJob(false);
-    setSelectedJob(null);
-  };
-
-  const handleDeleteJob = (job: JobPosition) => {
-    setSelectedJob(job);
-    setShowDeleteDialog(true);
-  };
-
-  const confirmDeleteJob = () => {
-    if (selectedJob) {
-      deleteJob(selectedJob.id);
-      setShowDeleteDialog(false);
-      setSelectedJob(null);
-      setIsViewingDetails(false);
-    }
-  };
-
-  const closeForm = () => {
-    setIsAddingJob(false);
-    setIsEditingJob(false);
-    setSelectedJob(null);
-  };
-
-  const backToList = () => {
-    setIsViewingDetails(false);
-    setSelectedJob(null);
-  };
-  
-  // Application handlers
-  const handleViewApplicationDetails = (application: JobApplication) => {
-    setSelectedApplication(application);
-    setIsViewingApplication(true);
-  };
-  
-  const handleUpdateApplicationStatus = (application: JobApplication, newStatus: JobApplication['status']) => {
-    updateApplication({ ...application, status: newStatus });
-  };
-  
-  const handleCloseApplicationDetails = () => {
-    setIsViewingApplication(false);
-    setSelectedApplication(null);
-  };
-  
-  // Candidate handlers
-  const handleViewCandidateDetails = (candidate: Candidate) => {
-    setSelectedCandidate(candidate);
-    // TODO: Implement candidate details view
-  };
-  
-  const handleEditCandidate = (candidate: Candidate) => {
-    // TODO: Implement candidate edit
-  };
-  
-  const handleDeleteCandidate = (candidate: Candidate) => {
-    // TODO: Implement candidate delete
-  };
-  
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -142,82 +80,41 @@ const HRPage: React.FC = () => {
     >
       <div className="flex items-center justify-between">
         <JobsTabs activeTab={activeTab} onTabChange={setActiveTab} />
-        {activeTab === 'jobs' && (
-          <Button 
-            onClick={handleAddJob}
-            className="flex items-center gap-2"
-            size="sm"
-          >
-            <Plus className="h-4 w-4" />
-            Post New Job
-          </Button>
-        )}
       </div>
 
-      {activeTab === 'jobs' && (
-        <>
-          {isAddingJob || isEditingJob ? (
-            <JobForm 
-              initialData={isEditingJob ? selectedJob : undefined} 
-              onSubmit={handleJobFormSubmit} 
-              onCancel={closeForm}
-            />
-          ) : isViewingDetails && selectedJob ? (
-            <JobDetails 
-              job={selectedJob} 
-              onEdit={() => handleEditJob(selectedJob)}
-              onDelete={() => handleDeleteJob(selectedJob)}
-              onBack={backToList}
-            />
-          ) : (
-            <JobList 
-              jobs={jobs} 
-              onViewDetails={handleViewJobDetails}
-              onEditJob={handleEditJob}
-              onDeleteJob={handleDeleteJob}
-            />
-          )}
-
-          <DeleteJobDialog 
-            job={selectedJob}
-            isOpen={showDeleteDialog}
-            onClose={() => setShowDeleteDialog(false)}
-            onConfirm={confirmDeleteJob}
-          />
-        </>
-      )}
-
-      {activeTab === 'applications' && (
-        <>
-          <ApplicationList 
-            applications={applications}
-            onViewDetails={handleViewApplicationDetails}
-            onUpdateStatus={handleUpdateApplicationStatus}
-          />
-          
-          {selectedApplication && (
-            <ApplicationDetails
-              application={selectedApplication}
-              job={jobs.find(j => j.id === selectedApplication.jobId)}
-              candidate={candidates.find(c => c.id === selectedApplication.candidateId)}
-              isOpen={isViewingApplication}
-              onClose={handleCloseApplicationDetails}
-              onUpdateStatus={(newStatus) => 
-                handleUpdateApplicationStatus(selectedApplication, newStatus)
-              }
-            />
-          )}
-        </>
-      )}
-
-      {activeTab === 'candidates' && (
-        <CandidateList 
-          candidates={candidates}
-          onViewDetails={handleViewCandidateDetails}
-          onEditCandidate={handleEditCandidate}
-          onDeleteCandidate={handleDeleteCandidate}
-        />
-      )}
+      <TabContent
+        activeTab={activeTab}
+        // Jobs props
+        jobs={jobs}
+        selectedJob={selectedJob}
+        isAddingJob={isAddingJob}
+        isEditingJob={isEditingJob}
+        isViewingDetails={isViewingDetails}
+        showDeleteDialog={showDeleteDialog}
+        onAddJob={handleAddJob}
+        onEditJob={handleEditJob}
+        onViewJobDetails={handleViewJobDetails}
+        onDeleteJob={handleDeleteJob}
+        onJobFormSubmit={handleJobFormSubmit}
+        onConfirmDeleteJob={confirmDeleteJob}
+        onCloseForm={closeForm}
+        onBackToList={backToList}
+        onCloseDeleteDialog={() => setShowDeleteDialog(false)}
+        
+        // Applications props
+        applications={applications}
+        candidates={candidates}
+        selectedApplication={selectedApplication}
+        isViewingApplication={isViewingApplication}
+        onViewApplicationDetails={handleViewApplicationDetails}
+        onUpdateApplicationStatus={handleUpdateApplicationStatus}
+        onCloseApplicationDetails={handleCloseApplicationDetails}
+        
+        // Candidates props
+        onViewCandidateDetails={handleViewCandidateDetails}
+        onEditCandidate={handleEditCandidate}
+        onDeleteCandidate={handleDeleteCandidate}
+      />
     </motion.div>
   );
 };
