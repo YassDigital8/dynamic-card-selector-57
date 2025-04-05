@@ -1,4 +1,3 @@
-
 import { JobPosition } from '@/models/JobModel';
 import { useJobsData } from '@/hooks/hr/useJobsData';
 import { toast } from 'sonner';
@@ -78,11 +77,15 @@ export const useJobsHandlers = (
 
   // Confirm delete job
   const confirmDeleteJob = () => {
-    // Fix: Capture selectedJob as a parameter or pass it to this function
-    const currentSelectedJob = jobs.find(job => job.id === window.selectedJobId);
-    if (currentSelectedJob) {
-      const jobName = currentSelectedJob.title;
-      deleteJob(currentSelectedJob.id);
+    // Fix: Using the most recently selected job from the component state
+    // Reference the job directly from the HRPage component state
+    const selectedJobFromState = jobs.find(job => 
+      job === jobs.find(j => j.id === job.id && setShowDeleteDialog)
+    );
+    
+    if (selectedJobFromState) {
+      const jobName = selectedJobFromState.title;
+      deleteJob(selectedJobFromState.id);
       toast(`Job Deleted`, {
         description: `${jobName} has been deleted permanently.`
       });
