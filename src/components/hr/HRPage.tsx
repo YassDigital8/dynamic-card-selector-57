@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { JobsTabs } from './tabs';
 import { motion } from 'framer-motion';
@@ -13,7 +12,7 @@ import { JobApplication, Candidate } from '@/models/ApplicationModel';
 import JobForm from './jobs/JobForm';
 import JobDetails from './jobs/JobDetails';
 import DeleteJobDialog from './jobs/DeleteJobDialog';
-import { ApplicationList } from './applications';
+import { ApplicationList, ApplicationDetails } from './applications';
 import { CandidateList } from './candidates';
 
 const HRPage: React.FC = () => {
@@ -32,6 +31,7 @@ const HRPage: React.FC = () => {
   
   // Applications state
   const [selectedApplication, setSelectedApplication] = useState<JobApplication | null>(null);
+  const [isViewingApplication, setIsViewingApplication] = useState(false);
   
   // Candidates state
   const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
@@ -97,11 +97,16 @@ const HRPage: React.FC = () => {
   // Application handlers
   const handleViewApplicationDetails = (application: JobApplication) => {
     setSelectedApplication(application);
-    // TODO: Implement application details view
+    setIsViewingApplication(true);
   };
   
   const handleUpdateApplicationStatus = (application: JobApplication, newStatus: JobApplication['status']) => {
     updateApplication({ ...application, status: newStatus });
+  };
+  
+  const handleCloseApplicationDetails = () => {
+    setIsViewingApplication(false);
+    setSelectedApplication(null);
   };
   
   // Candidate handlers
@@ -183,11 +188,26 @@ const HRPage: React.FC = () => {
       )}
 
       {activeTab === 'applications' && (
-        <ApplicationList 
-          applications={applications}
-          onViewDetails={handleViewApplicationDetails}
-          onUpdateStatus={handleUpdateApplicationStatus}
-        />
+        <>
+          <ApplicationList 
+            applications={applications}
+            onViewDetails={handleViewApplicationDetails}
+            onUpdateStatus={handleUpdateApplicationStatus}
+          />
+          
+          {selectedApplication && (
+            <ApplicationDetails
+              application={selectedApplication}
+              job={jobs.find(j => j.id === selectedApplication.jobId)}
+              candidate={candidates.find(c => c.id === selectedApplication.candidateId)}
+              isOpen={isViewingApplication}
+              onClose={handleCloseApplicationDetails}
+              onUpdateStatus={(newStatus) => 
+                handleUpdateApplicationStatus(selectedApplication, newStatus)
+              }
+            />
+          )}
+        </>
       )}
 
       {activeTab === 'candidates' && (
