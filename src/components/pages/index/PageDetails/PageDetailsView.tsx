@@ -20,6 +20,7 @@ const PageDetailsView: React.FC<PageDetailsViewProps> = ({ page, onUpdatePage })
   const [title, setTitle] = useState(page.title);
   const [description, setDescription] = useState(page.description);
   const [content, setContent] = useState(page.content);
+  const [isSaving, setIsSaving] = useState(false);
   const [errors, setErrors] = useState<{
     title?: boolean;
     description?: boolean;
@@ -54,6 +55,8 @@ const PageDetailsView: React.FC<PageDetailsViewProps> = ({ page, onUpdatePage })
       return;
     }
     
+    setIsSaving(true);
+    
     onUpdatePage({
       ...page,
       title,
@@ -64,11 +67,19 @@ const PageDetailsView: React.FC<PageDetailsViewProps> = ({ page, onUpdatePage })
     
     setIsEditing(false);
     setErrors({});
+    setIsSaving(false);
   };
 
   return (
     <div className="space-y-6">
-      <PageHeader page={page} />
+      <PageHeader 
+        page={page}
+        isEditing={isEditing}
+        isSaving={isSaving}
+        onEdit={handleEdit}
+        onCancel={handleCancel}
+        onSave={handleSave}
+      />
       
       <Card>
         <CardContent className="pt-6 space-y-6">
@@ -159,7 +170,7 @@ const PageDetailsView: React.FC<PageDetailsViewProps> = ({ page, onUpdatePage })
         </CardContent>
       </Card>
       
-      <PageFooter page={page} />
+      <PageFooter page={page} canDelete={true} />
     </div>
   );
 };

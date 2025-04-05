@@ -11,6 +11,10 @@ export interface FileMetadata {
   description?: string;
   dimensions?: ImageDimensions;
   hotelId?: string; // Add hotelId to associate files with specific hotels
+  url?: string; // Added url property to fix the type error
+  size?: number;
+  type?: string;
+  uploadedAt?: string;
 }
 
 export interface FileInfo {
