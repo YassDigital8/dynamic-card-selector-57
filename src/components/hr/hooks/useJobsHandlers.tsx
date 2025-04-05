@@ -1,71 +1,94 @@
 
+import { useState } from 'react';
+import { toast } from 'sonner';
 import { JobPosition } from '@/models/JobModel';
 import { useJobsData } from '@/hooks/hr/useJobsData';
 
 export const useJobsHandlers = (
   setSelectedJob: (job: JobPosition | null) => void,
-  setIsAddingJob: (value: boolean) => void,
-  setIsEditingJob: (value: boolean) => void,
-  setIsViewingDetails: (value: boolean) => void,
-  setShowDeleteDialog: (value: boolean) => void,
+  setIsAddingJob: (isAdding: boolean) => void,
+  setIsEditingJob: (isEditing: boolean) => void,
+  setIsViewingDetails: (isViewing: boolean) => void,
+  setShowDeleteDialog: (show: boolean) => void
 ) => {
   const { jobs, addJob, updateJob, deleteJob } = useJobsData();
+  const [jobToDelete, setJobToDelete] = useState<JobPosition | null>(null);
 
+  // Add a new job
   const handleAddJob = () => {
     setIsAddingJob(true);
-    setSelectedJob(null);
-    setIsViewingDetails(false);
     setIsEditingJob(false);
+    setIsViewingDetails(false);
   };
 
+  // Edit an existing job
   const handleEditJob = (job: JobPosition) => {
     setSelectedJob(job);
     setIsEditingJob(true);
-    setIsViewingDetails(false);
     setIsAddingJob(false);
+    setIsViewingDetails(false);
   };
 
+  // View job details
   const handleViewJobDetails = (job: JobPosition) => {
     setSelectedJob(job);
     setIsViewingDetails(true);
-    setIsEditingJob(false);
     setIsAddingJob(false);
+    setIsEditingJob(false);
   };
 
+  // Save job form (add or edit)
   const handleJobFormSubmit = (jobData: JobPosition) => {
-    if (jobData.id && jobs.some(job => job.id === jobData.id)) {
+    if (jobData.id) {
+      // Update existing job
       updateJob(jobData);
+      toast.success(`Job "${jobData.title}" was updated successfully`);
     } else {
-      addJob(jobData);
+      // Add new job
+      const newJob = {
+        ...jobData,
+        id: `job-${Date.now()}`,
+        postedDate: new Date().toISOString(),
+        applications: 0,
+      };
+      addJob(newJob);
+      toast.success(`Job "${jobData.title}" was created successfully`);
     }
+    
+    // Close form
     setIsAddingJob(false);
     setIsEditingJob(false);
     setSelectedJob(null);
   };
 
+  // Delete a job
   const handleDeleteJob = (job: JobPosition) => {
-    setSelectedJob(job);
+    setJobToDelete(job);
     setShowDeleteDialog(true);
   };
-
+  
+  // Confirm job deletion
   const confirmDeleteJob = () => {
-    if (setSelectedJob) {
-      deleteJob(setSelectedJob.id);
+    if (jobToDelete) {
+      deleteJob(jobToDelete.id);
+      toast.success(`Job "${jobToDelete.title}" was deleted successfully`);
+      setJobToDelete(null);
       setShowDeleteDialog(false);
-      setSelectedJob(null);
-      setIsViewingDetails(false);
     }
   };
-
+  
+  // Close job form
   const closeForm = () => {
     setIsAddingJob(false);
     setIsEditingJob(false);
-    setSelectedJob(null);
   };
-
+  
+  // Go back to job list
   const backToList = () => {
-    setIsViewingDetails(false);
     setSelectedJob(null);
+    setIsViewingDetails(false);
+    setIsAddingJob(false);
+    setIsEditingJob(false);
   };
 
   return {
@@ -77,6 +100,6 @@ export const useJobsHandlers = (
     handleDeleteJob,
     confirmDeleteJob,
     closeForm,
-    backToList,
+    backToList
   };
 };

@@ -17,8 +17,7 @@ import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { format } from 'date-fns';
 import { 
-  Briefcase, 
-  Calendar, 
+  Briefcase,
   User, 
   Mail, 
   Phone, 
@@ -164,7 +163,7 @@ const ApplicationDetails: React.FC<ApplicationDetailsProps> = ({
                   </h3>
                   <div className="space-y-2 pl-7">
                     <div className="flex items-center">
-                      <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
+                      <CalendarIcon className="h-4 w-4 mr-2 text-muted-foreground" />
                       <span className="font-medium mr-2">Applied:</span> 
                       {format(new Date(application.appliedDate), 'MMM dd, yyyy')}
                     </div>
@@ -303,6 +302,7 @@ const ApplicationDetails: React.FC<ApplicationDetailsProps> = ({
                         selected={interviewDate}
                         onSelect={setInterviewDate}
                         initialFocus
+                        className="pointer-events-auto"
                       />
                     </PopoverContent>
                   </Popover>
