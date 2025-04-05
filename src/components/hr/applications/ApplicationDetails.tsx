@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   JobApplication, 
   Candidate 
@@ -28,7 +28,8 @@ import {
   SendHorizontal,
   CheckCircle2,
   XCircle,
-  MessageSquare
+  MessageSquare,
+  AlertCircle
 } from 'lucide-react';
 import {
   Tabs,
@@ -43,6 +44,14 @@ import {
 } from '@/components/ui/popover';
 import { Input } from '@/components/ui/input';
 import { Calendar } from '@/components/ui/calendar';
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { toast } from 'sonner';
 
 interface ApplicationDetailsProps {
   application: JobApplication;
@@ -55,6 +64,26 @@ interface ApplicationDetailsProps {
   onScheduleInterview?: (interviewDate: string) => void;
   onSendOffer?: (offerDetails: string) => void;
 }
+
+// Define the valid status transitions
+const getValidNextStatuses = (currentStatus: JobApplication['status']): JobApplication['status'][] => {
+  switch (currentStatus) {
+    case 'Pending':
+      return ['Reviewed', 'Rejected'];
+    case 'Reviewed':
+      return ['Interviewed', 'Rejected'];
+    case 'Interviewed':
+      return ['Offered', 'Rejected'];
+    case 'Offered':
+      return ['Hired', 'Rejected'];
+    case 'Rejected':
+      return ['Pending']; // Allow reopening a rejected application
+    case 'Hired':
+      return []; // No transitions from Hired
+    default:
+      return [];
+  }
+};
 
 const ApplicationDetails: React.FC<ApplicationDetailsProps> = ({
   application,
@@ -73,6 +102,13 @@ const ApplicationDetails: React.FC<ApplicationDetailsProps> = ({
   );
   const [offerDetails, setOfferDetails] = useState(application.offerDetails || '');
   const [activeTab, setActiveTab] = useState('details');
+  const [selectedStatus, setSelectedStatus] = useState<JobApplication['status']>(application.status);
+  const validNextStatuses = getValidNextStatuses(application.status);
+  
+  // Reset the selected status when the application changes
+  useEffect(() => {
+    setSelectedStatus(application.status);
+  }, [application]);
   
   const handleSaveNotes = () => {
     if (onUpdateNotes) {
@@ -83,13 +119,34 @@ const ApplicationDetails: React.FC<ApplicationDetailsProps> = ({
   const handleScheduleInterview = () => {
     if (onScheduleInterview && interviewDate) {
       onScheduleInterview(interviewDate.toISOString());
+      
+      // Auto-update status to Interviewed if status is Reviewed
+      if (application.status === 'Reviewed') {
+        onUpdateStatus('Interviewed');
+      }
+      
+      toast('Interview scheduled', {
+        description: `Interview with ${candidate?.name || 'candidate'} has been scheduled.`
+      });
     }
   };
 
   const handleSendOffer = () => {
     if (onSendOffer && offerDetails) {
       onSendOffer(offerDetails);
+      
+      // Auto-update status to Offered
+      onUpdateStatus('Offered');
+      
+      toast('Offer sent', {
+        description: `Job offer has been sent to ${candidate?.name || 'candidate'}.`
+      });
     }
+  };
+
+  const handleStatusChange = (status: JobApplication['status']) => {
+    setSelectedStatus(status);
+    onUpdateStatus(status);
   };
 
   const getStatusColor = () => {
@@ -283,61 +340,100 @@ const ApplicationDetails: React.FC<ApplicationDetailsProps> = ({
                 <CalendarIcon className="mr-2 h-5 w-5 text-primary" />
                 Schedule Interview
               </h3>
-              <div className="grid grid-cols-1 gap-4">
-                <div className="flex flex-col space-y-2">
-                  <label className="font-medium">Interview Date & Time</label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className="justify-start text-left"
-                      >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {interviewDate ? format(interviewDate, 'PPP') : "Select date"}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0">
-                      <Calendar
-                        mode="single"
-                        selected={interviewDate}
-                        onSelect={setInterviewDate}
-                        initialFocus
-                        className="pointer-events-auto"
-                      />
-                    </PopoverContent>
-                  </Popover>
+              
+              {(application.status === 'Pending' || application.status === 'Reviewed') ? (
+                <div className="grid grid-cols-1 gap-4">
+                  <div className="flex flex-col space-y-2">
+                    <label className="font-medium">Interview Date & Time</label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className="justify-start text-left"
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {interviewDate ? format(interviewDate, 'PPP') : "Select date"}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0">
+                        <Calendar
+                          mode="single"
+                          selected={interviewDate}
+                          onSelect={setInterviewDate}
+                          initialFocus
+                          className="pointer-events-auto"
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    
+                    {interviewDate && (
+                      <div className="flex items-center gap-2">
+                        <Input
+                          type="time"
+                          className="w-32"
+                          onChange={(e) => {
+                            const [hours, minutes] = e.target.value.split(':');
+                            const newDate = new Date(interviewDate);
+                            newDate.setHours(Number(hours));
+                            newDate.setMinutes(Number(minutes));
+                            setInterviewDate(newDate);
+                          }}
+                          defaultValue={
+                            interviewDate ? 
+                            `${interviewDate.getHours().toString().padStart(2, '0')}:${interviewDate.getMinutes().toString().padStart(2, '0')}` :
+                            "09:00"
+                          }
+                        />
+                      </div>
+                    )}
+                  </div>
                   
-                  {interviewDate && (
-                    <div className="flex items-center gap-2">
-                      <Input
-                        type="time"
-                        className="w-32"
-                        onChange={(e) => {
-                          const [hours, minutes] = e.target.value.split(':');
-                          const newDate = new Date(interviewDate);
-                          newDate.setHours(Number(hours));
-                          newDate.setMinutes(Number(minutes));
-                          setInterviewDate(newDate);
-                        }}
-                        defaultValue={
-                          interviewDate ? 
-                          `${interviewDate.getHours().toString().padStart(2, '0')}:${interviewDate.getMinutes().toString().padStart(2, '0')}` :
-                          "09:00"
-                        }
-                      />
-                    </div>
-                  )}
+                  <Button 
+                    onClick={handleScheduleInterview} 
+                    disabled={!interviewDate}
+                    className="mt-2"
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    Schedule Interview
+                  </Button>
                 </div>
-                
-                <Button 
-                  onClick={handleScheduleInterview} 
-                  disabled={!interviewDate}
-                  className="mt-2"
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  Schedule Interview
-                </Button>
-              </div>
+              ) : application.status === 'Interviewed' ? (
+                <div className="p-4 bg-blue-50 dark:bg-blue-900/30 rounded-md">
+                  <div className="flex items-start space-x-2">
+                    <CheckCircle2 className="h-5 w-5 text-blue-500 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-medium">Interview already scheduled</p>
+                      <p className="text-sm text-muted-foreground">
+                        {application.interviewDate ? (
+                          `Scheduled for ${format(new Date(application.interviewDate), 'PPP p')}`
+                        ) : 'Interview has been conducted'}
+                      </p>
+                      {/* Allow rescheduling if needed */}
+                      <Button variant="link" className="h-auto p-0 text-sm" onClick={() => setActiveTab('notes')}>
+                        Add interview notes instead
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="p-4 bg-amber-50 dark:bg-amber-900/30 rounded-md">
+                  <div className="flex items-start space-x-2">
+                    <AlertCircle className="h-5 w-5 text-amber-500 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-medium">Cannot schedule interview at this stage</p>
+                      <p className="text-sm text-muted-foreground">
+                        The application is currently in the "{application.status}" stage
+                      </p>
+                      {application.status === 'Rejected' && (
+                        <Button variant="link" className="h-auto p-0 text-sm" 
+                                onClick={() => handleStatusChange('Pending')}>
+                          Move back to Pending stage
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </TabsContent>
           
@@ -347,60 +443,128 @@ const ApplicationDetails: React.FC<ApplicationDetailsProps> = ({
                 <SendHorizontal className="mr-2 h-5 w-5 text-primary" />
                 Job Offer
               </h3>
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <label className="font-medium">Offer Details</label>
-                  <Textarea
-                    placeholder="Enter the job offer details, including salary, benefits, start date, etc."
-                    className="min-h-[150px]"
-                    value={offerDetails}
-                    onChange={(e) => setOfferDetails(e.target.value)}
-                  />
+              
+              {application.status === 'Interviewed' ? (
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="font-medium">Offer Details</label>
+                    <Textarea
+                      placeholder="Enter the job offer details, including salary, benefits, start date, etc."
+                      className="min-h-[150px]"
+                      value={offerDetails}
+                      onChange={(e) => setOfferDetails(e.target.value)}
+                    />
+                  </div>
+                  
+                  <div className="flex gap-2">
+                    <Button 
+                      onClick={handleSendOffer} 
+                      disabled={!offerDetails.trim()}
+                      className="flex-1"
+                    >
+                      <SendHorizontal className="mr-2 h-4 w-4" />
+                      Send Offer
+                    </Button>
+                  </div>
                 </div>
-                
-                <div className="flex gap-2">
-                  <Button 
-                    onClick={handleSendOffer} 
-                    disabled={!offerDetails.trim()}
-                    className="flex-1"
-                  >
-                    <SendHorizontal className="mr-2 h-4 w-4" />
-                    Send Offer
-                  </Button>
+              ) : application.status === 'Offered' || application.status === 'Hired' ? (
+                <div className="p-4 bg-green-50 dark:bg-green-900/30 rounded-md">
+                  <div className="flex items-start space-x-2">
+                    <CheckCircle2 className="h-5 w-5 text-green-500 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-medium">Offer already sent</p>
+                      <p className="text-sm text-muted-foreground">
+                        {application.offerDate ? (
+                          `Offer sent on ${format(new Date(application.offerDate), 'PPP')}`
+                        ) : 'An offer has been extended to the candidate'}
+                      </p>
+                      {application.status === 'Offered' && (
+                        <div className="mt-2">
+                          <Button variant="secondary" size="sm" 
+                                  onClick={() => handleStatusChange('Hired')}>
+                            Mark as Hired
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="p-4 bg-amber-50 dark:bg-amber-900/30 rounded-md">
+                  <div className="flex items-start space-x-2">
+                    <AlertCircle className="h-5 w-5 text-amber-500 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-medium">Cannot send offer at this stage</p>
+                      <p className="text-sm text-muted-foreground">
+                        The candidate must be interviewed before sending an offer
+                      </p>
+                      {application.status === 'Rejected' && (
+                        <Button variant="link" className="h-auto p-0 text-sm" 
+                                onClick={() => setActiveTab('interview')}>
+                          Schedule an interview first
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </TabsContent>
         </Tabs>
 
         <DialogFooter className="flex flex-col sm:flex-row gap-2 mt-4">
           <div className="flex-1 flex flex-col sm:flex-row gap-2">
-            <select
-              className="px-4 py-2 border border-input rounded-md bg-background text-sm"
-              value={application.status}
-              onChange={(e) => onUpdateStatus(e.target.value as JobApplication['status'])}
-            >
-              <option value="Pending">Pending</option>
-              <option value="Reviewed">Reviewed</option>
-              <option value="Interviewed">Interviewed</option>
-              <option value="Offered">Offered</option>
-              <option value="Rejected">Rejected</option>
-              <option value="Hired">Hired</option>
-            </select>
+            {/* Use a proper select component with disabled options */}
+            <Select value={selectedStatus} onValueChange={(value) => handleStatusChange(value as JobApplication['status'])}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Change status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Pending" disabled={!validNextStatuses.includes('Pending')}>
+                  Pending
+                </SelectItem>
+                <SelectItem value="Reviewed" disabled={!validNextStatuses.includes('Reviewed')}>
+                  Reviewed
+                </SelectItem>
+                <SelectItem value="Interviewed" disabled={!validNextStatuses.includes('Interviewed')}>
+                  Interviewed
+                </SelectItem>
+                <SelectItem value="Offered" disabled={!validNextStatuses.includes('Offered')}>
+                  Offered
+                </SelectItem>
+                <SelectItem value="Hired" disabled={!validNextStatuses.includes('Hired')}>
+                  Hired
+                </SelectItem>
+                <SelectItem value="Rejected" disabled={!validNextStatuses.includes('Rejected')}>
+                  Rejected
+                </SelectItem>
+              </SelectContent>
+            </Select>
             
             <div className="flex gap-2">
               <Button 
                 variant="success" 
-                onClick={() => onUpdateStatus('Hired')}
+                onClick={() => {
+                  if (application.status === 'Interviewed') {
+                    setActiveTab('offer');
+                  } else if (application.status === 'Offered') {
+                    handleStatusChange('Hired');
+                  } else {
+                    handleStatusChange('Hired');
+                  }
+                }}
                 className="flex-1"
+                disabled={application.status === 'Rejected' || application.status === 'Hired'}
               >
                 <CheckCircle2 className="mr-2 h-4 w-4" />
-                Hire
+                {application.status === 'Interviewed' ? 'Make Offer' : 
+                 application.status === 'Offered' ? 'Hire' : 'Hire'}
               </Button>
               <Button 
                 variant="destructive" 
-                onClick={() => onUpdateStatus('Rejected')}
+                onClick={() => handleStatusChange('Rejected')}
                 className="flex-1"
+                disabled={application.status === 'Rejected'}
               >
                 <XCircle className="mr-2 h-4 w-4" />
                 Reject

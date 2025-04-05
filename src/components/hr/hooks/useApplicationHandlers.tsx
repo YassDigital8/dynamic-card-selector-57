@@ -20,8 +20,16 @@ export const useApplicationHandlers = (
     setIsViewingApplication(true);
   };
 
-  // Update application status
+  // Update application status with status validation
   const handleUpdateApplicationStatus = (application: JobApplication, newStatus: JobApplication['status']) => {
+    // Prevent invalid status transitions
+    if (!isValidStatusTransition(application.status, newStatus)) {
+      toast.error(`Cannot change from ${application.status} to ${newStatus}`, {
+        description: "This status transition is not allowed."
+      });
+      return;
+    }
+    
     const updatedApplication = { ...application, status: newStatus };
     
     // Update based on new status
@@ -43,6 +51,35 @@ export const useApplicationHandlers = (
     });
   };
 
+  // Check if a status transition is valid
+  const isValidStatusTransition = (
+    currentStatus: JobApplication['status'], 
+    newStatus: JobApplication['status']
+  ): boolean => {
+    // Allow same status
+    if (currentStatus === newStatus) return true;
+    
+    // Define valid transitions
+    switch (currentStatus) {
+      case 'Pending':
+        return ['Reviewed', 'Rejected'].includes(newStatus);
+      case 'Reviewed':
+        return ['Interviewed', 'Rejected'].includes(newStatus);
+      case 'Interviewed':
+        return ['Offered', 'Rejected'].includes(newStatus);
+      case 'Offered':
+        return ['Hired', 'Rejected'].includes(newStatus);
+      case 'Rejected':
+        // Allow reopening a rejected application
+        return ['Pending'].includes(newStatus);
+      case 'Hired':
+        // No transitions from Hired
+        return false;
+      default:
+        return false;
+    }
+  };
+
   // Update application notes
   const handleUpdateApplicationNotes = (application: JobApplication, notes: string) => {
     const updatedApplication = { ...application, notes };
@@ -55,10 +92,18 @@ export const useApplicationHandlers = (
 
   // Schedule interview
   const handleScheduleInterview = (application: JobApplication, interviewDate: string) => {
+    // Validate status - can only schedule interviews for applications in Pending or Reviewed status
+    if (application.status !== 'Pending' && application.status !== 'Reviewed') {
+      toast.error('Cannot schedule interview', {
+        description: `The application must be in Pending or Reviewed status, not ${application.status}.`
+      });
+      return;
+    }
+    
     const updatedApplication = { 
       ...application, 
       interviewDate,
-      status: application.status === 'Pending' ? 'Reviewed' : application.status
+      status: 'Interviewed' // Auto-update to Interviewed
     };
     
     updateApplication(updatedApplication);
@@ -72,6 +117,14 @@ export const useApplicationHandlers = (
 
   // Send offer
   const handleSendOffer = (application: JobApplication, offerDetails: string) => {
+    // Validate status - can only send offers to interviewed candidates
+    if (application.status !== 'Interviewed') {
+      toast.error('Cannot send offer', {
+        description: `The candidate must be interviewed first. Current status: ${application.status}.`
+      });
+      return;
+    }
+    
     const updatedApplication: JobApplication = { 
       ...application, 
       offerDetails,
