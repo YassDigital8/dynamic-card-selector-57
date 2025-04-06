@@ -173,5 +173,91 @@ export const asiaHotels: Hotel[] = [
     ],
     createdAt: new Date('2023-02-28'),
     updatedAt: new Date('2023-07-15')
+  },
+  {
+    id: '32',
+    name: 'Bangkok Skyline Hotel',
+    country: 'Thailand',
+    governorate: 'Bangkok',
+    streetAddress: '120 Sukhumvit Road',
+    posKey: 'TH',
+    rating: 4.5,
+    amenities: {
+      airConditioning: true,
+      bar: true,
+      gym: true,
+      parking: true,
+      spa: true,
+      restaurant: true,
+      breakfast: true,
+      wifi: true,
+      swimmingPool: true,
+      petsAllowed: false,
+      extraBed: true,
+      shuttleBus: true
+    },
+    roomTypes: [
+      {
+        id: '1',
+        name: 'City View Deluxe',
+        maxAdults: 2,
+        maxChildren: 1,
+        description: 'Modern room with panoramic city views',
+        price: 195
+      },
+      {
+        id: '2',
+        name: 'Thai Executive Suite',
+        maxAdults: 2,
+        maxChildren: 2,
+        description: 'Elegant suite with traditional Thai elements',
+        price: 340
+      }
+    ],
+    createdAt: new Date('2023-04-10'),
+    updatedAt: new Date('2023-09-25')
+  },
+  {
+    id: '33',
+    name: 'Bali Beachfront Villa',
+    country: 'Indonesia',
+    governorate: 'Bali',
+    streetAddress: '56 Kuta Beach Road',
+    posKey: 'ID',
+    rating: 5,
+    amenities: {
+      airConditioning: true,
+      bar: true,
+      gym: true,
+      parking: true,
+      spa: true,
+      restaurant: true,
+      breakfast: true,
+      wifi: true,
+      swimmingPool: true,
+      petsAllowed: false,
+      extraBed: true,
+      shuttleBus: true
+    },
+    roomTypes: [
+      {
+        id: '1',
+        name: 'Garden Villa',
+        maxAdults: 2,
+        maxChildren: 2,
+        description: 'Private villa surrounded by tropical gardens',
+        price: 320
+      },
+      {
+        id: '2',
+        name: 'Ocean View Suite',
+        maxAdults: 3,
+        maxChildren: 1,
+        description: 'Luxurious suite with direct ocean views',
+        price: 480
+      }
+    ],
+    createdAt: new Date('2023-03-05'),
+    updatedAt: new Date('2023-08-18')
   }
 ];

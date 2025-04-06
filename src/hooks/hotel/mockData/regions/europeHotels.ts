@@ -216,5 +216,91 @@ export const europeHotels: Hotel[] = [
     ],
     createdAt: new Date('2023-03-18'),
     updatedAt: new Date('2023-07-25')
+  },
+  {
+    id: '34',
+    name: 'Swiss Alpine Lodge',
+    country: 'Switzerland',
+    governorate: 'Zermatt',
+    streetAddress: '29 Matterhorn View Road',
+    posKey: 'CH',
+    rating: 5,
+    amenities: {
+      airConditioning: true,
+      bar: true,
+      gym: true,
+      parking: true,
+      spa: true,
+      restaurant: true,
+      breakfast: true,
+      wifi: true,
+      swimmingPool: true,
+      petsAllowed: false,
+      extraBed: true,
+      shuttleBus: true
+    },
+    roomTypes: [
+      {
+        id: '1',
+        name: 'Mountain View Room',
+        maxAdults: 2,
+        maxChildren: 1,
+        description: 'Cozy room with stunning mountain views',
+        price: 380
+      },
+      {
+        id: '2',
+        name: 'Alpine Suite',
+        maxAdults: 4,
+        maxChildren: 2,
+        description: 'Spacious suite with fireplace and panoramic views',
+        price: 650
+      }
+    ],
+    createdAt: new Date('2023-02-10'),
+    updatedAt: new Date('2023-07-20')
+  },
+  {
+    id: '35',
+    name: 'Athens Acropolis View',
+    country: 'Greece',
+    governorate: 'Athens',
+    streetAddress: '14 Parthenon Street',
+    posKey: 'GR',
+    rating: 4.5,
+    amenities: {
+      airConditioning: true,
+      bar: true,
+      gym: true,
+      parking: true,
+      spa: true,
+      restaurant: true,
+      breakfast: true,
+      wifi: true,
+      swimmingPool: true,
+      petsAllowed: false,
+      extraBed: true,
+      shuttleBus: true
+    },
+    roomTypes: [
+      {
+        id: '1',
+        name: 'Classic Hellenic Room',
+        maxAdults: 2,
+        maxChildren: 1,
+        description: 'Elegant room with Acropolis views',
+        price: 240
+      },
+      {
+        id: '2',
+        name: 'Olympian Suite',
+        maxAdults: 3,
+        maxChildren: 2,
+        description: 'Luxurious suite with private terrace',
+        price: 420
+      }
+    ],
+    createdAt: new Date('2023-04-15'),
+    updatedAt: new Date('2023-09-10')
   }
 ];

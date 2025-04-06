@@ -130,5 +130,91 @@ export const oceaniaHotels: Hotel[] = [
     ],
     createdAt: new Date('2023-03-10'),
     updatedAt: new Date('2023-08-05')
+  },
+  {
+    id: '30',
+    name: 'Fiji Paradise Resort',
+    country: 'Fiji',
+    governorate: 'Nadi',
+    streetAddress: '84 Coral Beach Road',
+    posKey: 'FJ',
+    rating: 5,
+    amenities: {
+      airConditioning: true,
+      bar: true,
+      gym: true,
+      parking: true,
+      spa: true,
+      restaurant: true,
+      breakfast: true,
+      wifi: true,
+      swimmingPool: true,
+      petsAllowed: false,
+      extraBed: true,
+      shuttleBus: true
+    },
+    roomTypes: [
+      {
+        id: '1',
+        name: 'Beachfront Bungalow',
+        maxAdults: 2,
+        maxChildren: 2,
+        description: 'Traditional Fijian bungalow steps from the ocean',
+        price: 390
+      },
+      {
+        id: '2',
+        name: 'Overwater Villa',
+        maxAdults: 2,
+        maxChildren: 0,
+        description: 'Exclusive villa built over crystal clear waters',
+        price: 750
+      }
+    ],
+    createdAt: new Date('2023-05-20'),
+    updatedAt: new Date('2023-10-15')
+  },
+  {
+    id: '31',
+    name: 'Tahiti Lagoon Resort',
+    country: 'French Polynesia',
+    governorate: 'Tahiti',
+    streetAddress: '12 Matavai Bay',
+    posKey: 'PF',
+    rating: 5,
+    amenities: {
+      airConditioning: true,
+      bar: true,
+      gym: true,
+      parking: true,
+      spa: true,
+      restaurant: true,
+      breakfast: true,
+      wifi: true,
+      swimmingPool: true,
+      petsAllowed: false,
+      extraBed: false,
+      shuttleBus: true
+    },
+    roomTypes: [
+      {
+        id: '1',
+        name: 'Garden Bungalow',
+        maxAdults: 3,
+        maxChildren: 1,
+        description: 'Tropical garden setting with private patio',
+        price: 310
+      },
+      {
+        id: '2',
+        name: 'Premium Overwater Suite',
+        maxAdults: 2,
+        maxChildren: 0,
+        description: 'Luxury overwater accommodation with glass floor sections',
+        price: 860
+      }
+    ],
+    createdAt: new Date('2023-06-12'),
+    updatedAt: new Date('2023-11-05')
   }
 ];
