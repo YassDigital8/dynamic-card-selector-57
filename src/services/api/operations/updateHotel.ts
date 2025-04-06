@@ -15,6 +15,7 @@ export const updateHotel = async (id: string, hotelData: HotelFormData): Promise
     const mockUpdatedHotel: Hotel = {
       ...hotelData,
       id,
+      createdAt: new Date(), // Add the required createdAt property
       updatedAt: new Date()
     };
     return mockUpdatedHotel;
