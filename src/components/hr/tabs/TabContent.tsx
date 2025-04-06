@@ -43,7 +43,7 @@ interface TabContentProps {
   // Candidates props
   selectedCandidate: Candidate | null;
   onViewCandidateDetails: (candidate: Candidate) => void;
-  onCancelCandidateView?: () => void;
+  onCancelEdit?: () => void;
   onDeleteCandidate: (candidate: Candidate) => void;
 }
 
@@ -93,7 +93,7 @@ const TabContent: React.FC<TabContentProps> = ({
   // Candidates props
   selectedCandidate,
   onViewCandidateDetails,
-  onCancelCandidateView = () => {},
+  onCancelEdit = () => {},
   onDeleteCandidate,
 }) => {
   return (
@@ -149,7 +149,7 @@ const TabContent: React.FC<TabContentProps> = ({
           candidates={candidates}
           selectedCandidate={selectedCandidate}
           onViewDetails={onViewCandidateDetails}
-          onCancelEdit={onCancelCandidateView}
+          onCancelEdit={onCancelEdit}
           onDeleteCandidate={onDeleteCandidate}
         />
       )}

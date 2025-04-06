@@ -23,7 +23,6 @@ const HRPage: React.FC = () => {
     selectedApplication, setSelectedApplication,
     isViewingApplication, setIsViewingApplication,
     selectedCandidate, setSelectedCandidate,
-    isEditingCandidate, setIsEditingCandidate,
   } = useHRPageState();
   
   const [currentView, setCurrentView] = useState<'dashboard' | 'manage'>('dashboard');
@@ -66,20 +65,12 @@ const HRPage: React.FC = () => {
   // Get candidate handlers
   const {
     candidates,
-    isEditingCandidate: isCandidateInEditMode,
     handleViewCandidateDetails,
-    handleEditCandidate,
-    handleSaveCandidate,
-    handleCancelEdit,
+    handleCancelView,
     handleDeleteCandidate
   } = useCandidateHandlers(
     setSelectedCandidate
   );
-
-  // Update the HRPageState with the edit state from candidate handlers
-  React.useEffect(() => {
-    setIsEditingCandidate(isCandidateInEditMode);
-  }, [isCandidateInEditMode, setIsEditingCandidate]);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -164,11 +155,8 @@ const HRPage: React.FC = () => {
             
             // Candidates props
             selectedCandidate={selectedCandidate}
-            isEditingCandidate={isEditingCandidate}
             onViewCandidateDetails={handleViewCandidateDetails}
-            onEditCandidate={handleEditCandidate}
-            onSaveCandidate={handleSaveCandidate}
-            onCancelEdit={handleCancelEdit}
+            onCancelEdit={handleCancelView}
             onDeleteCandidate={handleDeleteCandidate}
           />
         </TabsContent>
