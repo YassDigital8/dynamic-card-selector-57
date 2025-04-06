@@ -3,6 +3,7 @@ import React from 'react';
 import { Candidate } from '@/models/ApplicationModel';
 import { CandidateList } from './index';
 import CandidateEditForm from './CandidateEditForm';
+import CandidateDetailsView from './CandidateDetailsView';
 
 interface CandidatesTabContentProps {
   candidates: Candidate[];
@@ -31,6 +32,17 @@ const CandidatesTabContent: React.FC<CandidatesTabContentProps> = ({
         candidate={selectedCandidate}
         onSave={onSaveCandidate}
         onCancel={onCancelEdit}
+      />
+    );
+  }
+  
+  if (selectedCandidate && !isEditingCandidate) {
+    return (
+      <CandidateDetailsView 
+        candidate={selectedCandidate}
+        onEdit={() => onEditCandidate(selectedCandidate)}
+        onBack={onCancelEdit}
+        onDelete={() => onDeleteCandidate(selectedCandidate)}
       />
     );
   }

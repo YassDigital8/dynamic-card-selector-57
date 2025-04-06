@@ -12,7 +12,10 @@ export const useCandidateHandlers = (
   
   const handleViewCandidateDetails = (candidate: Candidate) => {
     setSelectedCandidate(candidate);
-    // TODO: Implement candidate details view
+    // Show the candidate details view
+    toast('Viewing candidate', {
+      description: `Viewing ${candidate.name}'s profile.`
+    });
   };
   
   const handleEditCandidate = (candidate: Candidate) => {
@@ -33,6 +36,7 @@ export const useCandidateHandlers = (
   
   const handleCancelEdit = () => {
     setIsEditingCandidate(false);
+    setSelectedCandidate(null);
     toast('Edit cancelled', {
       description: 'No changes were made to the candidate profile.'
     });
@@ -41,8 +45,7 @@ export const useCandidateHandlers = (
   const handleDeleteCandidate = (candidate: Candidate) => {
     // TODO: Implement candidate delete with confirmation dialog
     toast('Delete candidate', {
-      description: `This would delete ${candidate.name}'s profile.`,
-      variant: 'destructive'
+      description: `This would delete ${candidate.name}'s profile.`
     });
   };
 

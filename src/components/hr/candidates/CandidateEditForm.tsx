@@ -1,204 +1,129 @@
 
 import React from 'react';
 import { Candidate } from '@/models/ApplicationModel';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import * as z from 'zod';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Check, X } from 'lucide-react';
-
-const candidateFormSchema = z.object({
-  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
-  email: z.string().email({ message: "Please enter a valid email address." }),
-  phone: z.string().optional(),
-  location: z.string().optional(),
-  currentPosition: z.string().optional(),
-  currentCompany: z.string().optional(),
-  experience: z.coerce.number().min(0, { message: "Experience can't be negative." }),
-  skills: z.string().transform(val => val.split(',').map(skill => skill.trim()).filter(Boolean)),
-});
-
-type CandidateFormValues = z.infer<typeof candidateFormSchema>;
+import { ArrowLeft, Save } from 'lucide-react';
+import { useForm } from 'react-hook-form';
 
 interface CandidateEditFormProps {
   candidate: Candidate;
-  onSave: (updatedCandidate: Candidate) => void;
+  onSave: (candidate: Candidate) => void;
   onCancel: () => void;
 }
 
-const CandidateEditForm: React.FC<CandidateEditFormProps> = ({ 
-  candidate, 
-  onSave, 
-  onCancel 
+const CandidateEditForm: React.FC<CandidateEditFormProps> = ({
+  candidate,
+  onSave,
+  onCancel,
 }) => {
-  const form = useForm<CandidateFormValues>({
-    resolver: zodResolver(candidateFormSchema),
+  const { register, handleSubmit, formState: { errors } } = useForm({
     defaultValues: {
-      name: candidate.name,
-      email: candidate.email,
-      phone: candidate.phone || '',
-      location: candidate.location || '',
-      currentPosition: candidate.currentPosition || '',
-      currentCompany: candidate.currentCompany || '',
-      experience: candidate.experience,
-      skills: candidate.skills.join(', '),
-    },
+      ...candidate,
+      skills: candidate.skills.join(', ') // Convert array to comma-separated string for editing
+    }
   });
 
-  const onSubmit = (data: CandidateFormValues) => {
-    const updatedCandidate: Candidate = {
+  const onSubmit = (data: any) => {
+    // Convert comma-separated skills back to array before saving
+    const skillsArray = data.skills.split(',').map((skill: string) => skill.trim()).filter(Boolean);
+    
+    onSave({
       ...candidate,
       ...data,
-      updatedAt: new Date().toISOString(),
-    };
-    onSave(updatedCandidate);
+      skills: skillsArray
+    });
   };
 
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle>Edit Candidate: {candidate.name}</CardTitle>
-      </CardHeader>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
+    <div className="space-y-4">
+      <div className="flex items-center">
+        <Button variant="ghost" onClick={onCancel} className="flex items-center gap-2">
+          <ArrowLeft className="h-4 w-4" />
+          Cancel
+        </Button>
+      </div>
+
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Card>
+          <CardHeader>
+            <CardTitle>Edit Candidate Profile</CardTitle>
+          </CardHeader>
           <CardContent className="space-y-4">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Full Name</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Full name" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Email address" type="email" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="phone"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Phone</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Phone number" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="location"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Location</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Location" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+            <div className="space-y-2">
+              <Label htmlFor="name">Full Name</Label>
+              <Input id="name" {...register('name', { required: true })} />
+              {errors.name && <p className="text-sm text-destructive">Name is required</p>}
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="currentPosition"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Current Position</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Current job title" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="currentCompany"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Current Company</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Current employer" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input id="email" type="email" {...register('email', { required: true })} />
+              {errors.email && <p className="text-sm text-destructive">Email is required</p>}
             </div>
 
-            <FormField
-              control={form.control}
-              name="experience"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Years of Experience</FormLabel>
-                  <FormControl>
-                    <Input type="number" min="0" step="1" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="space-y-2">
+              <Label htmlFor="phone">Phone</Label>
+              <Input id="phone" {...register('phone')} />
+            </div>
 
-            <FormField
-              control={form.control}
-              name="skills"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Skills</FormLabel>
-                  <FormControl>
-                    <Textarea 
-                      placeholder="Enter skills separated by commas" 
-                      {...field} 
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Enter skills separated by commas (e.g. React, TypeScript, UI Design)
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
+            <div className="space-y-2">
+              <Label htmlFor="location">Location</Label>
+              <Input id="location" {...register('location')} />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="currentPosition">Current Position</Label>
+              <Input id="currentPosition" {...register('currentPosition')} />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="currentCompany">Current Company</Label>
+              <Input id="currentCompany" {...register('currentCompany')} />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="experience">Experience (years)</Label>
+              <Input 
+                id="experience" 
+                type="number" 
+                {...register('experience', { 
+                  valueAsNumber: true,
+                  min: { value: 0, message: "Experience cannot be negative" }
+                })} 
+              />
+              {errors.experience && (
+                <p className="text-sm text-destructive">{errors.experience.message as string}</p>
               )}
-            />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="skills">Skills (comma-separated)</Label>
+              <Textarea id="skills" {...register('skills')} />
+              <p className="text-xs text-muted-foreground">Enter skills separated by commas (e.g., JavaScript, React, TypeScript)</p>
+            </div>
           </CardContent>
-          <CardFooter className="flex justify-between">
+          <CardFooter className="flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={onCancel}>
-              <X className="mr-2 h-4 w-4" />Cancel
+              Cancel
             </Button>
             <Button type="submit">
-              <Check className="mr-2 h-4 w-4" />Save Changes
+              <Save className="h-4 w-4 mr-2" />
+              Save Changes
             </Button>
           </CardFooter>
-        </form>
-      </Form>
-    </Card>
+        </Card>
+      </form>
+    </div>
   );
 };
 
