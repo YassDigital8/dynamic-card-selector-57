@@ -55,8 +55,8 @@ export const useApplicationActions = () => {
     
     const earliestStatus = getEarliestStatusForJob(application.jobId);
     
-    // Fix: Use explicit string comparison with type check to avoid type mismatch
-    if (earliestStatus !== 'Interviewed' && 
+    // Fix: Convert both sides to strings before comparison to avoid type mismatch
+    if (earliestStatus.toString() !== 'Interviewed' && 
         application.status !== earliestStatus) {
       const jobTitle = jobs.find(j => j.id === application.jobId)?.title || 'this position';
       toast.error('Cannot send offer yet', {
