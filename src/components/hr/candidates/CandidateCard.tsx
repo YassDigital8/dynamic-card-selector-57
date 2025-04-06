@@ -92,7 +92,7 @@ const CandidateCard: React.FC<CandidateCardProps> = ({
           <Eye className="h-4 w-4 mr-1" /> View
         </Button>
         <div>
-          <Button variant="destructive" size="icon" onClick={onDelete}>
+          <Button variant="destructive" size="icon" onClick={onDelete} disabled>
             <Trash className="h-4 w-4" />
           </Button>
         </div>

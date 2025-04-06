@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Candidate } from '@/models/ApplicationModel';
 import { useCandidatesData } from '@/hooks/hr/useCandidatesData';
@@ -25,12 +24,12 @@ export const useCandidateHandlers = (
   };
   
   const handleDeleteCandidate = (candidate: Candidate) => {
-    // TODO: Implement candidate delete with confirmation dialog
-    toast('Delete candidate', {
-      description: `This would delete ${candidate.name}'s profile.`
+    // This function is now disabled, but we keep it for future implementation
+    toast('Delete functionality disabled', {
+      description: `Delete operation for candidates is currently disabled.`
     });
     
-    // Uncomment to actually delete the candidate
+    // Code below is kept but won't execute since buttons are disabled
     // deleteCandidate(candidate.id);
     // setSelectedCandidate(null);
   };
