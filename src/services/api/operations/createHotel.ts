@@ -3,11 +3,24 @@ import { Hotel, HotelFormData } from '@/models/HotelModel';
 import { toast } from '@/hooks/use-toast';
 import { API_BASE_URL, createAuthHeaders } from '../config/apiConfig';
 import { transformHotelToApiRequest, transformApiResponseToHotel } from '../transforms/hotelTransforms';
+import { isInDemoMode } from '@/services/authService';
 
 /**
  * Create a new hotel
  */
 export const createHotel = async (hotelData: HotelFormData): Promise<Hotel | null> => {
+  // In demo mode, simulate a successful API response with mock data
+  if (isInDemoMode()) {
+    console.log('Demo mode active: Simulating hotel creation');
+    const mockHotel: Hotel = {
+      ...hotelData,
+      id: `demo-${Date.now()}`,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    return mockHotel;
+  }
+  
   try {
     // Transform our hotel model to match API expectations
     const apiHotel = transformHotelToApiRequest(hotelData);

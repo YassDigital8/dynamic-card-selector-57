@@ -3,11 +3,19 @@ import { Hotel } from '@/models/HotelModel';
 import { toast } from '@/hooks/use-toast';
 import { API_BASE_URL, createAuthHeaders, handleApiError } from '../config/apiConfig';
 import { transformApiResponseToHotel } from '../transforms/hotelTransforms';
+import { isInDemoMode } from '@/services/authService';
+import { defaultHotels } from '@/hooks/hotel/mockData';
 
 /**
- * Fetch all hotels from the API
+ * Fetch all hotels from the API, or return mock data in demo mode
  */
 export const fetchHotels = async (): Promise<Hotel[]> => {
+  // Check if in demo mode first
+  if (isInDemoMode()) {
+    console.log('Demo mode active: Using mock hotel data instead of API');
+    return defaultHotels;
+  }
+  
   try {
     console.log('Fetching hotels from:', `${API_BASE_URL}/Hotel`);
     
@@ -34,7 +42,7 @@ export const fetchHotels = async (): Promise<Hotel[]> => {
     } catch (parseError) {
       console.error('Failed to parse API response as JSON:', parseError);
       console.log('Falling back to mock data due to JSON parse error');
-      throw new Error('Invalid JSON response from API');
+      return defaultHotels;
     }
     
     // Transform API response to match our Hotel model
@@ -46,6 +54,7 @@ export const fetchHotels = async (): Promise<Hotel[]> => {
       description: error instanceof Error ? error.message : "Failed to fetch hotels",
       variant: "destructive",
     });
-    return [];
+    // Always fall back to mock data on any error
+    return defaultHotels;
   }
 };

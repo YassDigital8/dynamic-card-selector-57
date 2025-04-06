@@ -5,13 +5,15 @@ import { Hotel, HotelFormData } from '@/models/HotelModel';
 import { fetchHotels, createHotel, updateHotel as updateHotelApi, deleteHotel as deleteHotelApi } from '@/services/api';
 import { defaultHotels } from '../mockData';
 import { useToast } from '@/hooks/use-toast';
+import { isInDemoMode } from '@/services/authService';
 
 export const useHotelCrud = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const [isLocalLoading, setIsLocalLoading] = useState(false);
+  const demoMode = isInDemoMode();
   
-  // Use react-query to fetch hotels
+  // Use react-query to fetch hotels, but bypass if in demo mode
   const { 
     data: hotels = [], 
     isLoading: isQueryLoading,
@@ -22,7 +24,16 @@ export const useHotelCrud = () => {
     queryKey: ['hotels'],
     queryFn: fetchHotels,
     staleTime: 5 * 60 * 1000, // 5 minutes
+    enabled: !demoMode, // Only fetch from API if not in demo mode
   });
+  
+  // Initialize with mock data in demo mode
+  useEffect(() => {
+    if (demoMode) {
+      console.log('Using mock data due to demo mode');
+      queryClient.setQueryData(['hotels'], defaultHotels);
+    }
+  }, [demoMode, queryClient]);
   
   // Fallback to mock data if API fails
   useEffect(() => {
@@ -33,15 +44,33 @@ export const useHotelCrud = () => {
         description: "Using mock data as fallback due to API error.",
         variant: "destructive",
       });
+      queryClient.setQueryData(['hotels'], defaultHotels);
     }
-  }, [isError, error, toast]);
+  }, [isError, error, toast, queryClient]);
   
   // Add hotel mutation
   const addMutation = useMutation({
-    mutationFn: createHotel,
+    mutationFn: demoMode 
+      ? (hotelData: HotelFormData) => {
+          // Simulate API call in demo mode
+          return Promise.resolve({
+            ...hotelData,
+            id: `demo-${Date.now()}`,
+            createdAt: new Date(),
+            updatedAt: new Date()
+          } as Hotel);
+        }
+      : createHotel,
     onSuccess: (data) => {
       console.log('Hotel added successfully:', data);
       queryClient.invalidateQueries({ queryKey: ['hotels'] });
+      
+      if (demoMode) {
+        // In demo mode, manually update the cache
+        const existingHotels = queryClient.getQueryData<Hotel[]>(['hotels']) || [];
+        queryClient.setQueryData(['hotels'], [...existingHotels, data]);
+      }
+      
       toast({
         title: "Success",
         description: "Hotel added successfully",
@@ -59,10 +88,29 @@ export const useHotelCrud = () => {
   
   // Update hotel mutation
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: HotelFormData }) => 
-      updateHotelApi(id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['hotels'] });
+    mutationFn: demoMode
+      ? ({ id, data }: { id: string; data: HotelFormData }) => {
+          // Simulate API call in demo mode
+          return Promise.resolve({
+            ...data,
+            id,
+            updatedAt: new Date()
+          } as Hotel);
+        }
+      : ({ id, data }: { id: string; data: HotelFormData }) => 
+          updateHotelApi(id, data),
+    onSuccess: (updatedHotel) => {
+      if (demoMode) {
+        // In demo mode, manually update the cache
+        const existingHotels = queryClient.getQueryData<Hotel[]>(['hotels']) || [];
+        const updatedHotels = existingHotels.map(hotel => 
+          hotel.id === updatedHotel.id ? updatedHotel : hotel
+        );
+        queryClient.setQueryData(['hotels'], updatedHotels);
+      } else {
+        queryClient.invalidateQueries({ queryKey: ['hotels'] });
+      }
+      
       toast({
         title: "Success",
         description: "Hotel updated successfully",
@@ -72,9 +120,22 @@ export const useHotelCrud = () => {
   
   // Delete hotel mutation
   const deleteMutation = useMutation({
-    mutationFn: deleteHotelApi,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['hotels'] });
+    mutationFn: demoMode
+      ? (id: string) => {
+          // Simulate API call in demo mode
+          return Promise.resolve(true);
+        }
+      : deleteHotelApi,
+    onSuccess: (_, id) => {
+      if (demoMode) {
+        // In demo mode, manually update the cache
+        const existingHotels = queryClient.getQueryData<Hotel[]>(['hotels']) || [];
+        const filteredHotels = existingHotels.filter(hotel => hotel.id !== id);
+        queryClient.setQueryData(['hotels'], filteredHotels);
+      } else {
+        queryClient.invalidateQueries({ queryKey: ['hotels'] });
+      }
+      
       toast({
         title: "Success", 
         description: "Hotel deleted successfully",
@@ -170,9 +231,12 @@ export const useHotelCrud = () => {
   const isLoading = isQueryLoading || isLocalLoading || 
     addMutation.isPending || updateMutation.isPending || deleteMutation.isPending;
 
+  // In demo mode or if there's an error, use mock data
+  const activeHotels = demoMode || isError ? defaultHotels : hotels;
+
   return {
-    hotels: isError ? defaultHotels : hotels,
-    allHotels: isError ? defaultHotels : hotels, // Added for consistency
+    hotels: activeHotels,
+    allHotels: activeHotels, // Be consistent
     isLoading,
     addHotel,
     updateHotel,

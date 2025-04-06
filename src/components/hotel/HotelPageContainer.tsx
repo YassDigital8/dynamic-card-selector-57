@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Hotel } from '@/models/HotelModel';
 import { usePageSelectionViewModel } from '@/viewmodels/PageSelectionViewModel';
@@ -11,11 +11,15 @@ import HotelList from './HotelList';
 import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useNavigate } from 'react-router-dom';
+import { isInDemoMode } from '@/services/authService';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import { Info } from 'lucide-react';
 
 const HotelPageContainer: React.FC = () => {
   const navigate = useNavigate();
   const { posOptions } = usePageSelectionViewModel();
   const [selectedPOS, setSelectedPOS] = useState<string>('');
+  const demoMode = isInDemoMode();
   
   const {
     hotels,
@@ -53,6 +57,22 @@ const HotelPageContainer: React.FC = () => {
       onFilterChange={setFilters}
       onAddHotel={handleAddHotel}
     >
+      {demoMode && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-4"
+        >
+          <Alert className="bg-amber-50 border-amber-200 dark:bg-amber-900/20 dark:border-amber-800">
+            <Info className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+            <AlertTitle className="text-amber-800 dark:text-amber-300">Demo Mode Active</AlertTitle>
+            <AlertDescription className="text-amber-700 dark:text-amber-400">
+              You are currently viewing mock hotel data. API requests are disabled in demo mode.
+            </AlertDescription>
+          </Alert>
+        </motion.div>
+      )}
+      
       <motion.div 
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}

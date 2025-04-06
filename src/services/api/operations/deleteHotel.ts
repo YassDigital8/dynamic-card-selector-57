@@ -1,11 +1,18 @@
 
 import { toast } from '@/hooks/use-toast';
 import { API_BASE_URL, createAuthHeaders, handleApiError } from '../config/apiConfig';
+import { isInDemoMode } from '@/services/authService';
 
 /**
  * Delete a hotel
  */
 export const deleteHotel = async (id: string): Promise<boolean> => {
+  // In demo mode, simulate a successful API response
+  if (isInDemoMode()) {
+    console.log('Demo mode active: Simulating hotel deletion');
+    return true;
+  }
+  
   try {
     const response = await fetch(`${API_BASE_URL}/Hotel/${id}`, {
       method: 'DELETE',
