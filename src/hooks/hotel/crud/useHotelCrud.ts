@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Hotel, HotelFormData } from '@/models/HotelModel';
 import { fetchHotels, createHotel, updateHotel as updateHotelApi, deleteHotel as deleteHotelApi } from '@/services/api';
-import { defaultHotels } from '../hotelMockData';
+import { defaultHotels } from '../mockData';
 import { useToast } from '@/hooks/use-toast';
 
 export const useHotelCrud = () => {

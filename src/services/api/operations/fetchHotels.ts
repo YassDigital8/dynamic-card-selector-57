@@ -9,17 +9,33 @@ import { transformApiResponseToHotel } from '../transforms/hotelTransforms';
  */
 export const fetchHotels = async (): Promise<Hotel[]> => {
   try {
+    console.log('Fetching hotels from:', `${API_BASE_URL}/Hotel`);
+    
     const response = await fetch(`${API_BASE_URL}/Hotel`, {
       method: 'GET',
       headers: createAuthHeaders()
     });
+    
+    console.log('API response status:', response.status);
     
     if (!response.ok) {
       const errorMessage = await handleApiError(response);
       throw new Error(errorMessage);
     }
     
-    const hotels = await response.json();
+    // For debugging - log the raw response
+    const responseText = await response.text();
+    console.log('Raw API response:', responseText);
+    
+    // Try to parse the response as JSON
+    let hotels;
+    try {
+      hotels = JSON.parse(responseText);
+    } catch (parseError) {
+      console.error('Failed to parse API response as JSON:', parseError);
+      console.log('Falling back to mock data due to JSON parse error');
+      throw new Error('Invalid JSON response from API');
+    }
     
     // Transform API response to match our Hotel model
     return hotels.map((hotel: any) => transformApiResponseToHotel(hotel));

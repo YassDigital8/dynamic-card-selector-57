@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Hotel, HotelFormData } from '@/models/HotelModel';
 import { useHotelCrud } from '../crud';
 import { useHotelFiltering } from './useHotelFiltering';
@@ -10,10 +10,17 @@ export const useHotelNetwork = (selectedPOS: string = '') => {
   const [selectedHotel, setSelectedHotel] = useState<Hotel | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   
-  // Use the new filtering hook
+  // Log for debugging
+  useEffect(() => {
+    console.log('Hotels from useHotelCrud:', hotels);
+    console.log('allHotels from useHotelCrud:', allHotels);
+    console.log('Total hotels loaded:', hotels.length);
+  }, [hotels, allHotels]);
+  
+  // Use the filtering hook
   const { filteredHotels, isInitialized } = useHotelFiltering(hotels, selectedPOS);
   
-  // Use the new operations hook
+  // Use the operations hook
   const {
     addHotel,
     updateHotel,
