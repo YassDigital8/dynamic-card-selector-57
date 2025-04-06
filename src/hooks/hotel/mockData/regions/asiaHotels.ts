@@ -87,5 +87,91 @@ export const asiaHotels: Hotel[] = [
     ],
     createdAt: new Date('2023-03-15'),
     updatedAt: new Date('2023-06-25')
+  },
+  {
+    id: '13',
+    name: 'Seoul City Tower',
+    country: 'South Korea',
+    governorate: 'Seoul',
+    streetAddress: '25 Gangnam Boulevard',
+    posKey: 'KR',
+    rating: 5,
+    amenities: {
+      airConditioning: true,
+      bar: true,
+      gym: true,
+      parking: true,
+      spa: true,
+      restaurant: true,
+      breakfast: true,
+      wifi: true,
+      swimmingPool: true,
+      petsAllowed: false,
+      extraBed: true,
+      shuttleBus: true
+    },
+    roomTypes: [
+      {
+        id: '1',
+        name: 'K-Style Deluxe',
+        maxAdults: 2,
+        maxChildren: 1,
+        description: 'Modern room with Korean design elements',
+        price: 245
+      },
+      {
+        id: '2',
+        name: 'Panorama Suite',
+        maxAdults: 3,
+        maxChildren: 2,
+        description: 'Luxurious suite with city views',
+        price: 420
+      }
+    ],
+    createdAt: new Date('2023-05-12'),
+    updatedAt: new Date('2023-10-08')
+  },
+  {
+    id: '14',
+    name: 'Mumbai Taj Palace',
+    country: 'India',
+    governorate: 'Mumbai',
+    streetAddress: '45 Marine Drive',
+    posKey: 'IN',
+    rating: 5,
+    amenities: {
+      airConditioning: true,
+      bar: true,
+      gym: true,
+      parking: true,
+      spa: true,
+      restaurant: true,
+      breakfast: true,
+      wifi: true,
+      swimmingPool: true,
+      petsAllowed: false,
+      extraBed: true,
+      shuttleBus: true
+    },
+    roomTypes: [
+      {
+        id: '1',
+        name: 'Maharaja Room',
+        maxAdults: 2,
+        maxChildren: 1,
+        description: 'Elegant room with traditional Indian decor',
+        price: 280
+      },
+      {
+        id: '2',
+        name: 'Royal Suite',
+        maxAdults: 4,
+        maxChildren: 2,
+        description: 'Opulent suite with sea views',
+        price: 550
+      }
+    ],
+    createdAt: new Date('2023-02-28'),
+    updatedAt: new Date('2023-07-15')
   }
 ];
