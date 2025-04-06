@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { 
   JobApplication, 
@@ -30,7 +29,9 @@ import {
   XCircle,
   MessageSquare,
   AlertCircle,
-  Info
+  Info,
+  File,
+  Download
 } from 'lucide-react';
 import {
   Tabs,
@@ -61,6 +62,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface ApplicationDetailsProps {
   application: JobApplication;
@@ -74,7 +76,6 @@ interface ApplicationDetailsProps {
   onSendOffer?: (offerDetails: string) => void;
 }
 
-// Define the valid status transitions
 const getValidNextStatuses = (currentStatus: JobApplication['status']): JobApplication['status'][] => {
   switch (currentStatus) {
     case 'Pending':
@@ -114,22 +115,20 @@ const ApplicationDetails: React.FC<ApplicationDetailsProps> = ({
   const [selectedStatus, setSelectedStatus] = useState<JobApplication['status']>(application.status);
   const { applications } = useApplicationsData();
   const validNextStatuses = getValidNextStatuses(application.status);
+  const [isPdfOpen, setIsPdfOpen] = useState(false);
   
-  // Get the earliest status for this job's applications
   const getEarliestStatusForJob = (): JobApplication['status'] => {
     const jobApplications = applications.filter(app => app.jobId === application.jobId);
     if (jobApplications.length <= 1) return application.status;
     
-    // Define the order of statuses in the hiring process
     const statusOrder: JobApplication['status'][] = [
       'Pending', 'Reviewed', 'Interviewed', 'Offered', 'Hired', 'Rejected'
     ];
     
-    // Find the earliest status in the pipeline
     let earliestStatusIndex = statusOrder.length - 1;
     
     jobApplications.forEach(app => {
-      if (app.id !== application.id) { // Skip the current application
+      if (app.id !== application.id) {
         const appStatusIndex = statusOrder.indexOf(app.status);
         if (appStatusIndex < earliestStatusIndex) {
           earliestStatusIndex = appStatusIndex;
@@ -140,12 +139,10 @@ const ApplicationDetails: React.FC<ApplicationDetailsProps> = ({
     return statusOrder[earliestStatusIndex];
   };
   
-  // Get total applications and their statuses for this job
   const getJobApplicationStats = () => {
     const jobApplications = applications.filter(app => app.jobId === application.jobId);
     const total = jobApplications.length;
     
-    // Count applications by status
     const statusCounts: Record<JobApplication['status'], number> = {
       'Pending': 0,
       'Reviewed': 0,
@@ -165,7 +162,6 @@ const ApplicationDetails: React.FC<ApplicationDetailsProps> = ({
   const jobStats = getJobApplicationStats();
   const earliestStatus = getEarliestStatusForJob();
   
-  // Reset the selected status when the application changes
   useEffect(() => {
     setSelectedStatus(application.status);
   }, [application]);
@@ -180,7 +176,6 @@ const ApplicationDetails: React.FC<ApplicationDetailsProps> = ({
     if (onScheduleInterview && interviewDate) {
       onScheduleInterview(interviewDate.toISOString());
       
-      // Auto-update status to Interviewed if status is Reviewed
       if (application.status === 'Reviewed') {
         onUpdateStatus('Interviewed');
       }
@@ -195,7 +190,6 @@ const ApplicationDetails: React.FC<ApplicationDetailsProps> = ({
     if (onSendOffer && offerDetails) {
       onSendOffer(offerDetails);
       
-      // Auto-update status to Offered
       onUpdateStatus('Offered');
       
       toast('Offer sent', {
@@ -228,10 +222,9 @@ const ApplicationDetails: React.FC<ApplicationDetailsProps> = ({
     }
   };
 
-  // Check if application can move to next stage based on other applications
   const canAdvanceToNextStage = (nextStatus: JobApplication['status']): boolean => {
     if (nextStatus === 'Rejected' || (application.status === 'Rejected' && nextStatus === 'Pending')) {
-      return true; // Can always reject or reopen rejected applications
+      return true;
     }
     
     const statusOrder: JobApplication['status'][] = [
@@ -241,8 +234,35 @@ const ApplicationDetails: React.FC<ApplicationDetailsProps> = ({
     const nextStatusIndex = statusOrder.indexOf(nextStatus);
     const earliestStatusIndex = statusOrder.indexOf(earliestStatus);
     
-    // Can only advance if all other applications are at the same stage or later
     return nextStatusIndex <= earliestStatusIndex || application.status === earliestStatus;
+  };
+
+  const renderPdfViewer = (url: string) => {
+    return (
+      <div className="flex flex-col space-y-4">
+        <div className="rounded-md border bg-card text-card-foreground shadow-sm">
+          <div className="p-4 flex justify-between items-center border-b">
+            <div className="flex items-center space-x-2">
+              <FileText className="h-5 w-5 text-primary" />
+              <h3 className="font-medium">Candidate Resume</h3>
+            </div>
+            <div className="flex space-x-2">
+              <Button variant="outline" size="sm" onClick={() => window.open(url, '_blank')}>
+                <Download className="h-4 w-4 mr-2" />
+                Download
+              </Button>
+            </div>
+          </div>
+          <div className="relative w-full h-[500px] overflow-hidden">
+            <iframe 
+              src={`${url}#toolbar=0&navpanes=0`}
+              className="w-full h-full border-0"
+              title="Resume PDF Viewer"
+            />
+          </div>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -273,7 +293,6 @@ const ApplicationDetails: React.FC<ApplicationDetailsProps> = ({
           </DialogTitle>
         </DialogHeader>
         
-        {/* Fair Evaluation Alert */}
         {jobStats.total > 1 && (
           <Alert className="mb-4 bg-blue-50 dark:bg-blue-950/30">
             <Info className="h-4 w-4" />
@@ -297,8 +316,9 @@ const ApplicationDetails: React.FC<ApplicationDetailsProps> = ({
         )}
         
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="w-full grid grid-cols-4">
+          <TabsList className="w-full grid grid-cols-5">
             <TabsTrigger value="details">Details</TabsTrigger>
+            <TabsTrigger value="documents">Documents</TabsTrigger>
             <TabsTrigger value="notes">Notes</TabsTrigger>
             <TabsTrigger value="interview">Interview</TabsTrigger>
             <TabsTrigger value="offer">Offer</TabsTrigger>
@@ -306,7 +326,6 @@ const ApplicationDetails: React.FC<ApplicationDetailsProps> = ({
           
           <TabsContent value="details" className="mt-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Left Column - Job and Application Info */}
               <div className="space-y-6">
                 <div className="space-y-3">
                   <h3 className="text-lg font-semibold flex items-center">
@@ -347,37 +366,10 @@ const ApplicationDetails: React.FC<ApplicationDetailsProps> = ({
                         {format(new Date(application.interviewDate), 'MMM dd, yyyy - HH:mm')}
                       </div>
                     )}
-                    {application.resumeUrl && (
-                      <div>
-                        <a 
-                          href={application.resumeUrl} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="text-primary hover:underline flex items-center"
-                        >
-                          <FileText className="h-4 w-4 mr-2" />
-                          View Resume
-                        </a>
-                      </div>
-                    )}
-                    {application.coverLetterUrl && (
-                      <div>
-                        <a 
-                          href={application.coverLetterUrl} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="text-primary hover:underline flex items-center"
-                        >
-                          <FileText className="h-4 w-4 mr-2" />
-                          View Cover Letter
-                        </a>
-                      </div>
-                    )}
                   </div>
                 </div>
               </div>
 
-              {/* Right Column - Candidate Info */}
               <div className="space-y-6">
                 <div className="space-y-3">
                   <h3 className="text-lg font-semibold flex items-center">
@@ -432,6 +424,38 @@ const ApplicationDetails: React.FC<ApplicationDetailsProps> = ({
             </div>
           </TabsContent>
           
+          <TabsContent value="documents" className="mt-4 space-y-4">
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold flex items-center">
+                <File className="mr-2 h-5 w-5 text-primary" />
+                Application Documents
+              </h3>
+              
+              <div className="grid grid-cols-1 gap-4">
+                {application.resumeUrl ? (
+                  <div>
+                    <h4 className="text-md font-medium mb-2">Resume/CV</h4>
+                    {renderPdfViewer(application.resumeUrl)}
+                  </div>
+                ) : (
+                  <Card>
+                    <CardContent className="p-6 flex flex-col items-center justify-center">
+                      <FileText className="h-12 w-12 text-muted-foreground mb-4" />
+                      <p className="text-muted-foreground text-center">No resume/CV has been uploaded for this application.</p>
+                    </CardContent>
+                  </Card>
+                )}
+                
+                {application.coverLetterUrl && (
+                  <div className="mt-4">
+                    <h4 className="text-md font-medium mb-2">Cover Letter</h4>
+                    {renderPdfViewer(application.coverLetterUrl)}
+                  </div>
+                )}
+              </div>
+            </div>
+          </TabsContent>
+          
           <TabsContent value="notes" className="mt-4 space-y-4">
             <div className="space-y-2">
               <h3 className="text-lg font-semibold flex items-center">
@@ -459,7 +483,6 @@ const ApplicationDetails: React.FC<ApplicationDetailsProps> = ({
               
               {(application.status === 'Pending' || application.status === 'Reviewed') ? (
                 <>
-                  {/* Check if can advance to interview stage */}
                   {canAdvanceToNextStage('Interviewed') ? (
                     <div className="grid grid-cols-1 gap-4">
                       <div className="flex flex-col space-y-2">
@@ -540,7 +563,6 @@ const ApplicationDetails: React.FC<ApplicationDetailsProps> = ({
                           `Scheduled for ${format(new Date(application.interviewDate), 'PPP p')}`
                         ) : 'Interview has been conducted'}
                       </p>
-                      {/* Allow rescheduling if needed */}
                       <Button variant="link" className="h-auto p-0 text-sm" onClick={() => setActiveTab('notes')}>
                         Add interview notes instead
                       </Button>
@@ -664,7 +686,6 @@ const ApplicationDetails: React.FC<ApplicationDetailsProps> = ({
 
         <DialogFooter className="flex flex-col sm:flex-row gap-2 mt-4">
           <div className="flex-1 flex flex-col sm:flex-row gap-2">
-            {/* Use a proper select component with disabled options */}
             <Select value={selectedStatus} onValueChange={(value) => handleStatusChange(value as JobApplication['status'])}>
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Change status" />
@@ -710,7 +731,6 @@ const ApplicationDetails: React.FC<ApplicationDetailsProps> = ({
             </Select>
             
             <div className="flex gap-2">
-              {/* Context-aware action button */}
               {application.status === 'Pending' && (
                 <Button 
                   variant="default" 
