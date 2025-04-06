@@ -6,10 +6,10 @@ import HRPage from '@/components/hr/HRPage';
 const HR = () => {
   return (
     <StandardLayout
-      pageTitle="HR Management"
-      pageDescription="Manage job postings and applications"
+      pageTitle="HR Management System"
+      pageDescription="Comprehensive human resources management platform"
     >
-      <div className="w-full h-full py-2">
+      <div className="w-full h-full py-4 px-2">
         <HRPage />
       </div>
     </StandardLayout>
