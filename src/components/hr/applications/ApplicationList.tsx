@@ -6,10 +6,20 @@ import { useCandidatesData } from '@/hooks/hr/useCandidatesData';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Search } from 'lucide-react';
+import { Search, LayoutGrid, Table as TableIcon } from 'lucide-react';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@/components/ui/table';
 import ApplicationCard from './ApplicationCard';
+import ApplicationStatusBadge from './ApplicationStatusBadge';
 import ApplicationStatusFilter from './ApplicationStatusFilter';
 import JobPositionFilter from './JobPositionFilter';
+import { format } from 'date-fns';
 
 interface ApplicationListProps {
   applications: JobApplication[];
@@ -25,6 +35,7 @@ const ApplicationList: React.FC<ApplicationListProps> = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('All');
   const [jobFilter, setJobFilter] = useState<string | 'All'>('All');
+  const [viewMode, setViewMode] = useState<'table' | 'grid'>('table');
   const { jobs } = useJobsData();
   const { candidates } = useCandidatesData();
   
@@ -74,6 +85,26 @@ const ApplicationList: React.FC<ApplicationListProps> = ({
           selectedStatus={statusFilter} 
           onChange={setStatusFilter} 
         />
+        <div className="flex border rounded-md">
+          <Button
+            variant={viewMode === 'grid' ? 'default' : 'ghost'}
+            size="icon"
+            onClick={() => setViewMode('grid')}
+            className="rounded-r-none"
+            title="Grid view"
+          >
+            <LayoutGrid className="h-4 w-4" />
+          </Button>
+          <Button
+            variant={viewMode === 'table' ? 'default' : 'ghost'}
+            size="icon"
+            onClick={() => setViewMode('table')}
+            className="rounded-l-none"
+            title="Table view"
+          >
+            <TableIcon className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
 
       {filteredApplications.length === 0 ? (
@@ -95,6 +126,72 @@ const ApplicationList: React.FC<ApplicationListProps> = ({
             )}
           </CardContent>
         </Card>
+      ) : viewMode === 'table' ? (
+        <div className="border rounded-md overflow-hidden">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Candidate</TableHead>
+                <TableHead>Job Position</TableHead>
+                <TableHead>Applied Date</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredApplications.map((application) => {
+                const job = jobs.find(j => j.id === application.jobId);
+                const candidate = candidates.find(c => c.id === application.candidateId);
+                
+                return (
+                  <TableRow key={application.id}>
+                    <TableCell className="font-medium">
+                      {candidate?.name || 'Unknown Candidate'}
+                      <div className="text-xs text-muted-foreground">
+                        {candidate?.email || 'No email'}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      {job?.title || 'Unknown Position'}
+                      <div className="text-xs text-muted-foreground">
+                        {job?.department || 'No department'}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      {format(new Date(application.appliedDate), 'MMM dd, yyyy')}
+                    </TableCell>
+                    <TableCell>
+                      <ApplicationStatusBadge status={application.status} />
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-2">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => onViewDetails(application)}
+                        >
+                          View
+                        </Button>
+                        <select 
+                          className="text-xs border rounded px-2 py-1"
+                          value={application.status}
+                          onChange={(e) => onUpdateStatus(application, e.target.value as JobApplication['status'])}
+                        >
+                          <option value="Pending">Pending</option>
+                          <option value="Reviewed">Reviewed</option>
+                          <option value="Interviewed">Interviewed</option>
+                          <option value="Offered">Offered</option>
+                          <option value="Hired">Hired</option>
+                          <option value="Rejected">Rejected</option>
+                        </select>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredApplications.map((application) => (
