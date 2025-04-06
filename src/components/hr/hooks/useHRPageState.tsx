@@ -21,6 +21,7 @@ export const useHRPageState = () => {
   
   // Candidate states
   const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
+  const [isEditingCandidate, setIsEditingCandidate] = useState(false);
 
   return {
     activeTab, setActiveTab,
@@ -32,6 +33,7 @@ export const useHRPageState = () => {
     showDeleteDialog, setShowDeleteDialog,
     selectedApplication, setSelectedApplication,
     isViewingApplication, setIsViewingApplication,
-    selectedCandidate, setSelectedCandidate
+    selectedCandidate, setSelectedCandidate,
+    isEditingCandidate, setIsEditingCandidate
   };
 };

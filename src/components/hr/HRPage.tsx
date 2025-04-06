@@ -20,6 +20,7 @@ const HRPage: React.FC = () => {
     selectedApplication, setSelectedApplication,
     isViewingApplication, setIsViewingApplication,
     selectedCandidate, setSelectedCandidate,
+    isEditingCandidate, setIsEditingCandidate,
   } = useHRPageState();
   
   // Get job handlers
@@ -60,12 +61,20 @@ const HRPage: React.FC = () => {
   // Get candidate handlers
   const {
     candidates,
+    isEditingCandidate: isCandidateInEditMode,
     handleViewCandidateDetails,
     handleEditCandidate,
+    handleSaveCandidate,
+    handleCancelEdit,
     handleDeleteCandidate
   } = useCandidateHandlers(
     setSelectedCandidate
   );
+
+  // Update the HRPageState with the edit state from candidate handlers
+  React.useEffect(() => {
+    setIsEditingCandidate(isCandidateInEditMode);
+  }, [isCandidateInEditMode, setIsEditingCandidate]);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -122,8 +131,12 @@ const HRPage: React.FC = () => {
         onCloseApplicationDetails={handleCloseApplicationDetails}
         
         // Candidates props
+        selectedCandidate={selectedCandidate}
+        isEditingCandidate={isEditingCandidate}
         onViewCandidateDetails={handleViewCandidateDetails}
         onEditCandidate={handleEditCandidate}
+        onSaveCandidate={handleSaveCandidate}
+        onCancelEdit={handleCancelEdit}
         onDeleteCandidate={handleDeleteCandidate}
       />
     </motion.div>
