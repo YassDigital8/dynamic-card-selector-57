@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { motion } from 'framer-motion';
 import JobsTabContent from '../jobs/JobsTabContent';
@@ -41,11 +42,8 @@ interface TabContentProps {
   
   // Candidates props
   selectedCandidate: Candidate | null;
-  isEditingCandidate?: boolean;
   onViewCandidateDetails: (candidate: Candidate) => void;
-  onEditCandidate: (candidate: Candidate) => void;
-  onSaveCandidate?: (candidate: Candidate) => void;
-  onCancelEdit?: () => void;
+  onCancelCandidateView?: () => void;
   onDeleteCandidate: (candidate: Candidate) => void;
 }
 
@@ -94,11 +92,8 @@ const TabContent: React.FC<TabContentProps> = ({
   
   // Candidates props
   selectedCandidate,
-  isEditingCandidate = false,
   onViewCandidateDetails,
-  onEditCandidate,
-  onSaveCandidate,
-  onCancelEdit,
+  onCancelCandidateView = () => {},
   onDeleteCandidate,
 }) => {
   return (
@@ -152,12 +147,9 @@ const TabContent: React.FC<TabContentProps> = ({
       {activeTab === 'candidates' && (
         <CandidatesTabContent
           candidates={candidates}
-          isEditingCandidate={isEditingCandidate}
           selectedCandidate={selectedCandidate}
           onViewDetails={onViewCandidateDetails}
-          onEditCandidate={onEditCandidate}
-          onSaveCandidate={onSaveCandidate}
-          onCancelEdit={onCancelEdit}
+          onCancelEdit={onCancelCandidateView}
           onDeleteCandidate={onDeleteCandidate}
         />
       )}

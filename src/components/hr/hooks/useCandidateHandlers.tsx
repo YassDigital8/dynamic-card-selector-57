@@ -7,8 +7,7 @@ import { toast } from 'sonner';
 export const useCandidateHandlers = (
   setSelectedCandidate: (candidate: Candidate | null) => void
 ) => {
-  const { candidates, updateCandidate } = useCandidatesData();
-  const [isEditingCandidate, setIsEditingCandidate] = useState(false);
+  const { candidates, deleteCandidate } = useCandidatesData();
   
   const handleViewCandidateDetails = (candidate: Candidate) => {
     setSelectedCandidate(candidate);
@@ -17,28 +16,11 @@ export const useCandidateHandlers = (
       description: `Viewing ${candidate.name}'s profile.`
     });
   };
-  
-  const handleEditCandidate = (candidate: Candidate) => {
-    setSelectedCandidate(candidate);
-    setIsEditingCandidate(true);
-    toast('Edit mode', {
-      description: `Now editing ${candidate.name}'s profile.`
-    });
-  };
-  
-  const handleSaveCandidate = (updatedCandidate: Candidate) => {
-    updateCandidate(updatedCandidate);
-    setIsEditingCandidate(false);
-    toast('Profile updated', {
-      description: `${updatedCandidate.name}'s profile has been updated successfully.`
-    });
-  };
-  
-  const handleCancelEdit = () => {
-    setIsEditingCandidate(false);
+
+  const handleCancelView = () => {
     setSelectedCandidate(null);
-    toast('Edit cancelled', {
-      description: 'No changes were made to the candidate profile.'
+    toast('View closed', {
+      description: 'Returned to candidate list.'
     });
   };
   
@@ -47,15 +29,16 @@ export const useCandidateHandlers = (
     toast('Delete candidate', {
       description: `This would delete ${candidate.name}'s profile.`
     });
+    
+    // Uncomment to actually delete the candidate
+    // deleteCandidate(candidate.id);
+    // setSelectedCandidate(null);
   };
 
   return {
     candidates,
-    isEditingCandidate,
     handleViewCandidateDetails,
-    handleEditCandidate,
-    handleSaveCandidate,
-    handleCancelEdit,
+    handleCancelView,
     handleDeleteCandidate
   };
 };

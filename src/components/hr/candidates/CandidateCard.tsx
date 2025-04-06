@@ -11,7 +11,6 @@ import {
   Briefcase, 
   Building,
   MapPin,
-  Edit,
   Trash,
   Eye
 } from 'lucide-react';
@@ -22,14 +21,12 @@ import { Badge } from '@/components/ui/badge';
 interface CandidateCardProps {
   candidate: Candidate;
   onView: () => void;
-  onEdit: () => void;
   onDelete: () => void;
 }
 
 const CandidateCard: React.FC<CandidateCardProps> = ({ 
   candidate, 
   onView, 
-  onEdit, 
   onDelete 
 }) => {
   const getInitials = (name: string) => {
@@ -94,10 +91,7 @@ const CandidateCard: React.FC<CandidateCardProps> = ({
         <Button variant="ghost" size="sm" onClick={onView}>
           <Eye className="h-4 w-4 mr-1" /> View
         </Button>
-        <div className="flex space-x-2">
-          <Button variant="outline" size="icon" onClick={onEdit}>
-            <Edit className="h-4 w-4" />
-          </Button>
+        <div>
           <Button variant="destructive" size="icon" onClick={onDelete}>
             <Trash className="h-4 w-4" />
           </Button>

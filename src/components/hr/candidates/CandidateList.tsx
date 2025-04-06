@@ -10,14 +10,12 @@ import CandidateCard from './CandidateCard';
 interface CandidateListProps {
   candidates: Candidate[];
   onViewDetails: (candidate: Candidate) => void;
-  onEditCandidate: (candidate: Candidate) => void;
   onDeleteCandidate: (candidate: Candidate) => void;
 }
 
 const CandidateList: React.FC<CandidateListProps> = ({ 
   candidates, 
   onViewDetails, 
-  onEditCandidate,
   onDeleteCandidate
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -66,7 +64,6 @@ const CandidateList: React.FC<CandidateListProps> = ({
               key={candidate.id}
               candidate={candidate}
               onView={() => onViewDetails(candidate)}
-              onEdit={() => onEditCandidate(candidate)}
               onDelete={() => onDeleteCandidate(candidate)}
             />
           ))}

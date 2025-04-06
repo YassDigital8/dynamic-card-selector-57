@@ -12,18 +12,16 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { ArrowLeft, Edit, Trash, Mail, Phone, MapPin, Briefcase, Building } from 'lucide-react';
+import { ArrowLeft, Trash, Mail, Phone, MapPin, Briefcase, Building } from 'lucide-react';
 
 interface CandidateDetailsViewProps {
   candidate: Candidate;
-  onEdit: () => void;
   onBack: () => void;
   onDelete: () => void;
 }
 
 const CandidateDetailsView: React.FC<CandidateDetailsViewProps> = ({
   candidate,
-  onEdit,
   onBack,
   onDelete,
 }) => {
@@ -41,11 +39,7 @@ const CandidateDetailsView: React.FC<CandidateDetailsViewProps> = ({
           <ArrowLeft className="h-4 w-4" />
           Back to candidates
         </Button>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={onEdit}>
-            <Edit className="h-4 w-4 mr-2" />
-            Edit Profile
-          </Button>
+        <div>
           <Button variant="destructive" onClick={onDelete}>
             <Trash className="h-4 w-4 mr-2" />
             Delete
