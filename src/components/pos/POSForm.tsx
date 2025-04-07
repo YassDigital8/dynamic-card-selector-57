@@ -8,6 +8,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Flag } from 'lucide-react';
+import { POSEntry } from '@/models/POSModel';
 
 // Form validation schema
 const formSchema = z.object({
@@ -19,7 +20,7 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 interface POSFormProps {
-  onSubmit: (data: FormValues) => void;
+  onSubmit: (data: POSEntry) => void;
 }
 
 const POSForm: React.FC<POSFormProps> = ({ onSubmit }) => {
@@ -32,6 +33,16 @@ const POSForm: React.FC<POSFormProps> = ({ onSubmit }) => {
     },
   });
 
+  const handleSubmit = (data: FormValues) => {
+    // Convert form values to POSEntry type
+    const posData: POSEntry = {
+      key: data.key,
+      englishName: data.englishName,
+      arabicName: data.arabicName,
+    };
+    onSubmit(posData);
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -41,7 +52,7 @@ const POSForm: React.FC<POSFormProps> = ({ onSubmit }) => {
         </CardTitle>
       </CardHeader>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
+        <form onSubmit={form.handleSubmit(handleSubmit)}>
           <CardContent className="space-y-4">
             <FormField
               control={form.control}

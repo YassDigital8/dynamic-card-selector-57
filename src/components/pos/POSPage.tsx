@@ -4,6 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import POSList from './POSList';
 import POSForm from './POSForm';
 import { usePOSData } from '@/hooks/pos/usePOSData';
+import { POSEntry } from '@/models/POSModel';
 
 const POSPage = () => {
   const [activeTab, setActiveTab] = useState('list');
@@ -33,7 +34,7 @@ const POSPage = () => {
         
         <TabsContent value="add" className="space-y-4">
           <POSForm 
-            onSubmit={(posData) => {
+            onSubmit={(posData: POSEntry) => {
               addPOS(posData);
               setActiveTab('list');
             }} 
