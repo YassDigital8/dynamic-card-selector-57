@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { POSEntry } from '@/models/POSModel';
 import { toast } from 'sonner';
@@ -20,9 +21,44 @@ export const usePOSData = () => {
           // Return mock data in demo mode
           setTimeout(() => {
             setPosEntries([
-              { id: 1, key: 'SY', englishName: 'Syria', arabicName: 'سوريا', createdDate: '2025-01-01', createdBy: 'admin' },
-              { id: 2, key: 'UAE', englishName: 'United Arab Emirates', arabicName: 'الإمارات العربية المتحدة', createdDate: '2025-01-02', createdBy: 'admin' },
-              { id: 3, key: 'KSA', englishName: 'Saudi Arabia', arabicName: 'المملكة العربية السعودية', createdDate: '2025-01-03', createdBy: 'admin' },
+              { 
+                id: 1, 
+                key: 'SY', 
+                englishName: 'Syria', 
+                arabicName: 'سوريا', 
+                createdDate: '2025-01-01', 
+                createdBy: 'admin',
+                gsa: {
+                  name: 'Ahmad Khalil',
+                  location: 'Damascus International Airport, Terminal 1',
+                  phoneNumber: '+963 11 231 4567',
+                  email: 'ahmad.khalil@chamwings.com',
+                  officeHours: 'Mon-Fri: 8am-4pm, Sat: 9am-2pm, Sun: Closed'
+                }
+              },
+              { 
+                id: 2, 
+                key: 'UAE', 
+                englishName: 'United Arab Emirates', 
+                arabicName: 'الإمارات العربية المتحدة', 
+                createdDate: '2025-01-02', 
+                createdBy: 'admin',
+                gsa: {
+                  name: 'Mohammed Al Farsi',
+                  location: 'Dubai International Airport, Concourse D',
+                  phoneNumber: '+971 4 567 8901',
+                  email: 'mohammed.alfarsi@chamwings.com',
+                  officeHours: 'Open 24/7'
+                }
+              },
+              { 
+                id: 3, 
+                key: 'KSA', 
+                englishName: 'Saudi Arabia', 
+                arabicName: 'المملكة العربية السعودية', 
+                createdDate: '2025-01-03', 
+                createdBy: 'admin'
+              },
             ]);
             setIsLoading(false);
           }, 800);
@@ -47,8 +83,29 @@ export const usePOSData = () => {
         
         // Fallback to demo data when API fails
         setPosEntries([
-          { id: 1, key: 'SY', englishName: 'Syria', arabicName: 'سوريا', createdDate: '2025-01-01', createdBy: 'admin' },
-          { id: 2, key: 'UAE', englishName: 'United Arab Emirates', arabicName: 'الإمارات العربية المتحدة', createdDate: '2025-01-02', createdBy: 'admin' },
+          { 
+            id: 1, 
+            key: 'SY', 
+            englishName: 'Syria', 
+            arabicName: 'سوريا', 
+            createdDate: '2025-01-01', 
+            createdBy: 'admin',
+            gsa: {
+              name: 'Ahmad Khalil',
+              location: 'Damascus International Airport, Terminal 1',
+              phoneNumber: '+963 11 231 4567',
+              email: 'ahmad.khalil@chamwings.com',
+              officeHours: 'Mon-Fri: 8am-4pm, Sat: 9am-2pm, Sun: Closed'
+            }
+          },
+          { 
+            id: 2, 
+            key: 'UAE', 
+            englishName: 'United Arab Emirates', 
+            arabicName: 'الإمارات العربية المتحدة', 
+            createdDate: '2025-01-02', 
+            createdBy: 'admin'
+          },
         ]);
       } finally {
         setIsLoading(false);
