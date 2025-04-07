@@ -3,7 +3,8 @@
 import { createCorsHandledUrl } from '@/services/corsProxyService';
 import { isInDemoMode } from '@/services/authService';
 
-export const API_BASE_URL = createCorsHandledUrl(import.meta.env.VITE_API_BASE_URL || 'http://92.112.184.210:7183');
+// Centralized API base URL - Used by all API service modules
+export const API_BASE_URL = createCorsHandledUrl(import.meta.env.VITE_API_BASE_URL || 'https://staging.sa3d.online:7036');
 
 /**
  * Gets the authentication token from localStorage
