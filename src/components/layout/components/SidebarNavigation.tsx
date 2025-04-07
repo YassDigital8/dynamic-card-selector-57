@@ -16,7 +16,8 @@ import {
   Settings,
   Ticket,
   Briefcase,
-  Flag
+  Flag,
+  Building
 } from 'lucide-react';
 
 interface SidebarNavigationProps {
@@ -68,6 +69,11 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ isMobile }) => {
       label: 'POS Management',
       icon: Flag,
       href: '/pos'
+    },
+    {
+      label: 'Branches Management',
+      icon: Building,
+      href: '/branches'
     },
     { 
       label: 'Users', 

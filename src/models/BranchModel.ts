@@ -1,9 +1,11 @@
 
-export interface POSEntry {
+export interface Branch {
   id?: number;
-  key: string;
-  arabicName: string;
-  englishName: string;
+  name: string;
+  location: string;
+  phoneNumber: string;
+  email: string;
+  officeHours: string;
   createdDate?: string;
   createdBy?: string;
   modifiedDate?: string | null;

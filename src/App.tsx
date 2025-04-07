@@ -1,3 +1,4 @@
+
 import React, { memo, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -16,6 +17,7 @@ import Users from "./pages/Users";
 import EventsAttractions from "./pages/EventsAttractions";
 import HR from "./pages/HR";
 import POS from "./pages/POS";
+import Branches from "./pages/Branches";
 import useAuthentication from "./hooks/useAuthentication";
 
 // Initialize theme from localStorage or default to light
@@ -151,6 +153,13 @@ const App = () => {
               <Route path="/pos" element={
                 <ProtectedRoute>
                   <POS />
+                </ProtectedRoute>
+              } />
+              
+              {/* Branches route */}
+              <Route path="/branches" element={
+                <ProtectedRoute>
+                  <Branches />
                 </ProtectedRoute>
               } />
               
