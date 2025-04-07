@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { POSEntry } from '@/models/POSModel';
 import { toast } from 'sonner';
@@ -27,14 +26,7 @@ export const usePOSData = () => {
                 englishName: 'Syria', 
                 arabicName: 'سوريا', 
                 createdDate: '2025-01-01', 
-                createdBy: 'admin',
-                gsa: {
-                  name: 'Ahmad Khalil',
-                  location: 'Damascus International Airport, Terminal 1',
-                  phoneNumber: '+963 11 231 4567',
-                  email: 'ahmad.khalil@chamwings.com',
-                  officeHours: 'Mon-Fri: 8am-4pm, Sat: 9am-2pm, Sun: Closed'
-                }
+                createdBy: 'admin'
               },
               { 
                 id: 2, 
@@ -42,14 +34,7 @@ export const usePOSData = () => {
                 englishName: 'United Arab Emirates', 
                 arabicName: 'الإمارات العربية المتحدة', 
                 createdDate: '2025-01-02', 
-                createdBy: 'admin',
-                gsa: {
-                  name: 'Mohammed Al Farsi',
-                  location: 'Dubai International Airport, Concourse D',
-                  phoneNumber: '+971 4 567 8901',
-                  email: 'mohammed.alfarsi@chamwings.com',
-                  officeHours: 'Open 24/7'
-                }
+                createdBy: 'admin'
               },
               { 
                 id: 3, 
@@ -89,14 +74,7 @@ export const usePOSData = () => {
             englishName: 'Syria', 
             arabicName: 'سوريا', 
             createdDate: '2025-01-01', 
-            createdBy: 'admin',
-            gsa: {
-              name: 'Ahmad Khalil',
-              location: 'Damascus International Airport, Terminal 1',
-              phoneNumber: '+963 11 231 4567',
-              email: 'ahmad.khalil@chamwings.com',
-              officeHours: 'Mon-Fri: 8am-4pm, Sat: 9am-2pm, Sun: Closed'
-            }
+            createdBy: 'admin'
           },
           { 
             id: 2, 
