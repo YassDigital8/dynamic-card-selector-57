@@ -28,9 +28,11 @@ export const useSearchFilters = (
     if (key === 'status') {
       // Status filter is now handled separately via API
       if (Array.isArray(value)) {
+        console.log("Updating status filters to:", value);
         onStatusFiltersChange(value);
       } else {
         // Handle a single status value (for backward compatibility)
+        console.log("Single status value received:", value);
         onStatusFiltersChange([value]);
       }
     } else {
@@ -49,6 +51,7 @@ export const useSearchFilters = (
       department: 'all'
     });
     // Reset status filter to empty array (all)
+    console.log("Resetting status filters to ['all']");
     onStatusFiltersChange(['all']);
   }, [onStatusFiltersChange]);
 

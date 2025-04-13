@@ -6,7 +6,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
 import { StatusOption } from '@/hooks/users/data/userStatusData';
-import { Checkbox } from '@/components/ui/checkbox';
+import { 
+  DropdownMenu, 
+  DropdownMenuTrigger, 
+  DropdownMenuContent,
+  DropdownMenuCheckboxItem 
+} from '@/components/ui/dropdown-menu';
 
 interface UsersSearchBarProps {
   nameFilter: string;
@@ -63,6 +68,16 @@ const UsersSearchBar: React.FC<UsersSearchBarProps> = ({
     onUpdateFilter('status', newValues);
   };
 
+  // Helper to get display text for status dropdown
+  const getStatusDisplayText = () => {
+    if (statusFilters.includes('all')) return 'All Statuses';
+    if (statusFilters.length === 0) return 'All Statuses';
+    if (statusFilters.length === 1) {
+      return statusOptions.find(opt => opt.value === statusFilters[0])?.label || 'Status';
+    }
+    return `${statusFilters.length} statuses selected`;
+  };
+
   const isFilterActive = nameFilter || emailFilter || departmentFilter !== 'all' || 
                        (statusFilters.length === 1 && statusFilters[0] !== 'all') || 
                        statusFilters.length > 1;
@@ -115,24 +130,26 @@ const UsersSearchBar: React.FC<UsersSearchBarProps> = ({
         </div>
         
         <div>
-          <Label className="block mb-2">Status</Label>
-          <div className="flex flex-col space-y-2 mt-1 p-2 border rounded-md">
-            {statusOptions.map((status) => (
-              <div key={status.value} className="flex items-center space-x-2">
-                <Checkbox 
-                  id={`status-${status.value}`} 
+          <Label htmlFor="status" className="block mb-2">Status</Label>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="w-full justify-between mt-1" id="status">
+                {getStatusDisplayText()}
+                <span className="ml-2">▼</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56 bg-white">
+              {statusOptions.map((status) => (
+                <DropdownMenuCheckboxItem
+                  key={status.value}
                   checked={statusFilters.includes(status.value)}
-                  onCheckedChange={(checked) => handleStatusChange(status.value, checked === true)}
-                />
-                <label
-                  htmlFor={`status-${status.value}`}
-                  className="text-sm font-medium cursor-pointer"
+                  onCheckedChange={(checked) => handleStatusChange(status.value, !!checked)}
                 >
                   {status.label}
-                </label>
-              </div>
-            ))}
-          </div>
+                </DropdownMenuCheckboxItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
       

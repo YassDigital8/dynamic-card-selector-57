@@ -1,4 +1,3 @@
-
 import { useCallback, useEffect, useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { fetchAllUsers } from './api/operations/fetchUsers';
@@ -26,8 +25,11 @@ export const useUserData = () => {
   const fetchUsers = useCallback(async (page: number = currentPage, statusFilters: string[] = currentStatusFilters) => {
     setIsLoading(true);
     try {
+      console.log("Fetching users with status filters:", statusFilters);
+      
       // Convert status string to API filter parameters
       const apiStatusFilters = getStatusFiltersFromValues(statusFilters);
+      console.log("Converted to API filters:", apiStatusFilters);
       
       // Update current status filter
       setCurrentStatusFilters(statusFilters);
@@ -75,7 +77,6 @@ export const useUserData = () => {
     }
   }, [toast, setUsers, setIsLoading, authToken, demoMode, currentPage, pageSize, currentStatusFilters]);
 
-  // Fetch departments from API
   const loadDepartments = useCallback(async () => {
     try {
       if (!authToken || demoMode) {
@@ -106,24 +107,21 @@ export const useUserData = () => {
     }
   }, [authToken, demoMode, users]);
 
-  // Handle page change
   const changePage = useCallback((page: number) => {
     setCurrentPage(page);
     fetchUsers(page, currentStatusFilters);
   }, [fetchUsers, currentStatusFilters]);
 
-  // Apply status filter
   const applyStatusFilters = useCallback((statusValues: string[]) => {
+    console.log("Applying status filters:", statusValues);
     setCurrentPage(1); // Reset to first page when changing filters
     fetchUsers(1, statusValues);
   }, [fetchUsers]);
 
-  // Load users when component mounts or when currentPage changes
   useEffect(() => {
     fetchUsers(currentPage, currentStatusFilters);
   }, [fetchUsers, currentPage, currentStatusFilters]);
 
-  // Load departments when component mounts
   useEffect(() => {
     loadDepartments();
   }, [loadDepartments]);

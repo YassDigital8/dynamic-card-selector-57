@@ -15,6 +15,7 @@ export const fetchAllUsers = async (
 ): Promise<{users: User[], totalCount: number}> => {
   try {
     console.log(`Attempting to fetch users from API - page ${page}, pageSize ${pageSize}`);
+    console.log("Status filters:", statusFilters);
     
     // Create headers with authentication token
     const headers = createAuthHeaders();
@@ -22,6 +23,7 @@ export const fetchAllUsers = async (
 
     // Build status filter query string
     const filterQuery = buildStatusFilterQueryString(statusFilters);
+    console.log("Generated filter query:", filterQuery);
     
     // Make the API request with pagination parameters and filters
     const url = `https://reports.chamwings.com:7182/api/Authentication/get-all-users?page=${page}&pageSize=${pageSize}${filterQuery}`;
