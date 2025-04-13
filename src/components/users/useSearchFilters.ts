@@ -1,45 +1,54 @@
 
 import { useState, useCallback, useMemo } from 'react';
 import { User } from '@/types/user.types';
-import { getStatusOptions, UserStatusType } from '@/hooks/users/data/userStatusData';
+import { getStatusOptions } from '@/hooks/users/data/userStatusData';
 
 type SearchFilters = {
   name: string;
   email: string;
   department: string;
-  status: string;
 };
 
-export const useSearchFilters = (users: User[]) => {
+export const useSearchFilters = (
+  users: User[], 
+  currentStatusFilter: string, 
+  onStatusFilterChange: (value: string) => void
+) => {
   const [searchFilters, setSearchFilters] = useState<SearchFilters>({
     name: '',
     email: '',
-    department: 'all',
-    status: 'all'
+    department: 'all'
   });
 
   // Get status options for the dropdown
   const statusOptions = useMemo(() => getStatusOptions(), []);
 
   // Update a specific filter
-  const updateFilter = useCallback((key: keyof SearchFilters, value: string) => {
-    setSearchFilters(prev => ({
-      ...prev,
-      [key]: value
-    }));
-  }, []);
+  const updateFilter = useCallback((key: keyof SearchFilters | 'status', value: string) => {
+    if (key === 'status') {
+      // Status filter is now handled separately via API
+      onStatusFilterChange(value);
+    } else {
+      setSearchFilters(prev => ({
+        ...prev,
+        [key]: value
+      }));
+    }
+  }, [onStatusFilterChange]);
 
   // Reset all filters
   const resetFilters = useCallback(() => {
     setSearchFilters({
       name: '',
       email: '',
-      department: 'all',
-      status: 'all'
+      department: 'all'
     });
-  }, []);
+    // Reset status filter to 'all'
+    onStatusFilterChange('all');
+  }, [onStatusFilterChange]);
 
-  // Apply filters to users list
+  // Apply client-side filters (name, email, department) to users list
+  // Status filtering is now handled server-side via API
   const filteredUsers = useMemo(() => {
     return users.filter(user => {
       // Name filter
@@ -57,34 +66,17 @@ export const useSearchFilters = (users: User[]) => {
         return false;
       }
       
-      // Status filter
-      if (searchFilters.status !== 'all') {
-        // Map API status values to our constant values
-        const userStatus = getUserStatusFromApiStatus(user.isActive, user.status);
-        
-        if (searchFilters.status !== userStatus) {
-          return false;
-        }
-      }
-      
       return true;
     });
   }, [users, searchFilters]);
-
-  // Helper function to map API status to our constant statuses
-  const getUserStatusFromApiStatus = (isActive: boolean, apiStatus?: string): string => {
-    if (apiStatus?.toLowerCase() === 'deleted') return 'deleted';
-    if (apiStatus?.toLowerCase() === 'frozen') return 'frozen';
-    if (apiStatus?.toLowerCase() === 'locked') return 'locked';
-    return isActive ? 'active' : 'inactive';
-  };
 
   return {
     searchFilters,
     updateFilter,
     resetFilters,
     filteredUsers,
-    statusOptions
+    statusOptions,
+    currentStatusFilter
   };
 };
 

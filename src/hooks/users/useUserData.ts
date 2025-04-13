@@ -7,6 +7,7 @@ import { useUserState } from './state/useUserState';
 import { getUserPrivileges, getModulePermissions } from './data/userPrivilegeData';
 import { mockUsers } from '@/services/users/mockData';
 import useAuthentication from '@/hooks/useAuthentication';
+import { StatusFilters, getStatusFiltersFromValue } from './data/userStatusData';
 
 export const useUserData = () => {
   const { users, setUsers, selectedUser, setSelectedUser, isLoading, setIsLoading } = useUserState();
@@ -16,14 +17,21 @@ export const useUserData = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [departments, setDepartments] = useState<string[]>([]);
+  const [currentStatusFilter, setCurrentStatusFilter] = useState<string>('all');
   const pageSize = 15;
   
   const userPrivileges = getUserPrivileges();
   const modulePermissions = getModulePermissions();
 
-  const fetchUsers = useCallback(async (page: number = currentPage) => {
+  const fetchUsers = useCallback(async (page: number = currentPage, statusFilter: string = currentStatusFilter) => {
     setIsLoading(true);
     try {
+      // Convert status string to API filter parameters
+      const statusFilters = getStatusFiltersFromValue(statusFilter);
+      
+      // Update current status filter
+      setCurrentStatusFilter(statusFilter);
+      
       // Only attempt to fetch if there's an auth token and not in demo mode
       if (!authToken || demoMode) {
         console.log("No auth token available or in demo mode, using mock data");
@@ -37,8 +45,8 @@ export const useUserData = () => {
         return;
       }
 
-      console.log(`Attempting to fetch users with auth token for page ${page}`);
-      const { users: mappedUsers, totalCount } = await fetchAllUsers(page, pageSize);
+      console.log(`Attempting to fetch users with auth token for page ${page} and filters`, statusFilters);
+      const { users: mappedUsers, totalCount } = await fetchAllUsers(page, pageSize, statusFilters);
       
       setUsers(mappedUsers);
       setTotalCount(totalCount);
@@ -65,7 +73,7 @@ export const useUserData = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [toast, setUsers, setIsLoading, authToken, demoMode, currentPage, pageSize]);
+  }, [toast, setUsers, setIsLoading, authToken, demoMode, currentPage, pageSize, currentStatusFilter]);
 
   // Fetch departments from API
   const loadDepartments = useCallback(async () => {
@@ -101,13 +109,19 @@ export const useUserData = () => {
   // Handle page change
   const changePage = useCallback((page: number) => {
     setCurrentPage(page);
-    fetchUsers(page);
+    fetchUsers(page, currentStatusFilter);
+  }, [fetchUsers, currentStatusFilter]);
+
+  // Apply status filter
+  const applyStatusFilter = useCallback((statusValue: string) => {
+    setCurrentPage(1); // Reset to first page when changing filters
+    fetchUsers(1, statusValue);
   }, [fetchUsers]);
 
   // Load users when component mounts or when currentPage changes
   useEffect(() => {
-    fetchUsers(currentPage);
-  }, [fetchUsers, currentPage]);
+    fetchUsers(currentPage, currentStatusFilter);
+  }, [fetchUsers, currentPage, currentStatusFilter]);
 
   // Load departments when component mounts
   useEffect(() => {
@@ -122,6 +136,8 @@ export const useUserData = () => {
     isLoading,
     setIsLoading,
     fetchUsers,
+    applyStatusFilter,
+    currentStatusFilter,
     userPrivileges,
     modulePermissions,
     departments,

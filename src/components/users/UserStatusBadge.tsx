@@ -2,10 +2,11 @@
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle, AlertCircle, Lock, Archive } from 'lucide-react';
+import { UserStatusType } from '@/hooks/users/data/userStatusData';
 
 interface UserStatusBadgeProps {
   isActive: boolean;
-  status?: string; // Added to support API status strings
+  status?: string; // API status string
   onToggle: () => void;
 }
 
@@ -37,6 +38,14 @@ const UserStatusBadge: React.FC<UserStatusBadgeProps> = ({ isActive, status, onT
           variant: "secondary" as const,
           icon: <Lock className="mr-1 h-3 w-3" />,
           label: "Locked"
+        };
+      }
+      
+      if (statusLower === 'active') {
+        return {
+          variant: "success" as const,
+          icon: <CheckCircle className="mr-1 h-3 w-3" />,
+          label: "Active"
         };
       }
     }
