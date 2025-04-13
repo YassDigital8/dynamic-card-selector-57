@@ -1,6 +1,7 @@
 
 import { useState, useCallback, useMemo } from 'react';
 import { User } from '@/types/user.types';
+import { getStatusOptions, UserStatusType } from '@/hooks/users/data/userStatusData';
 
 type SearchFilters = {
   name: string;
@@ -16,6 +17,9 @@ export const useSearchFilters = (users: User[]) => {
     department: 'all',
     status: 'all'
   });
+
+  // Get status options for the dropdown
+  const statusOptions = useMemo(() => getStatusOptions(), []);
 
   // Update a specific filter
   const updateFilter = useCallback((key: keyof SearchFilters, value: string) => {
@@ -55,10 +59,10 @@ export const useSearchFilters = (users: User[]) => {
       
       // Status filter
       if (searchFilters.status !== 'all') {
-        if (searchFilters.status === 'active' && !user.isActive) {
-          return false;
-        }
-        if (searchFilters.status === 'inactive' && user.isActive) {
+        // Map API status values to our constant values
+        const userStatus = getUserStatusFromApiStatus(user.isActive, user.status);
+        
+        if (searchFilters.status !== userStatus) {
           return false;
         }
       }
@@ -67,11 +71,20 @@ export const useSearchFilters = (users: User[]) => {
     });
   }, [users, searchFilters]);
 
+  // Helper function to map API status to our constant statuses
+  const getUserStatusFromApiStatus = (isActive: boolean, apiStatus?: string): string => {
+    if (apiStatus?.toLowerCase() === 'deleted') return 'deleted';
+    if (apiStatus?.toLowerCase() === 'frozen') return 'frozen';
+    if (apiStatus?.toLowerCase() === 'locked') return 'locked';
+    return isActive ? 'active' : 'inactive';
+  };
+
   return {
     searchFilters,
     updateFilter,
     resetFilters,
-    filteredUsers
+    filteredUsers,
+    statusOptions
   };
 };
 

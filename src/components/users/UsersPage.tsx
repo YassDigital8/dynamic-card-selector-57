@@ -40,7 +40,8 @@ const UsersPage: React.FC = () => {
     searchFilters,
     updateFilter,
     resetFilters,
-    filteredUsers
+    filteredUsers,
+    statusOptions
   } = useSearchFilters(users);
 
   // Clear selected user when users are refreshed
@@ -88,6 +89,7 @@ const UsersPage: React.FC = () => {
           departmentFilter={searchFilters.department}
           statusFilter={searchFilters.status}
           departments={departments}
+          statusOptions={statusOptions}
           onUpdateFilter={updateFilter}
           onResetFilters={resetFilters}
         />

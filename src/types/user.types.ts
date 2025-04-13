@@ -26,6 +26,8 @@ export interface User {
   lastLogin?: Date;
   isActive: boolean;
   department?: string;
+  status?: string; // API status: 'Active', 'Frozen', 'Locked', 'Deleted'
+  reason?: string; // Reason for status (e.g., for Frozen or Locked)
 }
 
 // Used only for user creation API requests
