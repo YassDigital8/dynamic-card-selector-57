@@ -1,3 +1,4 @@
+
 import { toast } from '@/hooks/use-toast';
 import { User, UserPrivilege } from '@/types/user.types';
 import { getAuthToken } from '@/services/api/config/apiConfig';
@@ -127,7 +128,7 @@ export const fetchAllUsers = async () => {
     const headers = createAuthHeaders();
     console.log("Headers for user API request:", JSON.stringify(headers));
 
-    const response = await fetch('https://92.112.184.210:7182/api/Authentication/get-all-users', {
+    const response = await fetch('https://reports.chamwings.com:7182/api/Authentication/get-all-users', {
       method: 'GET',
       headers,
     });

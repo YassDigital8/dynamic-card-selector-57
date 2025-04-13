@@ -1,10 +1,9 @@
-
 // API configuration constants and utilities
 import { createCorsHandledUrl } from '@/services/corsProxyService';
 import { isInDemoMode } from '@/services/authService';
 
 // Centralized API base URL - Used by all API service modules
-export const API_BASE_URL = createCorsHandledUrl(import.meta.env.VITE_API_BASE_URL || 'https://staging.sa3d.online:7036');
+export const API_BASE_URL = createCorsHandledUrl(import.meta.env.VITE_API_BASE_URL || 'https://reports.chamwings.com:7036');
 
 /**
  * Gets the authentication token from localStorage

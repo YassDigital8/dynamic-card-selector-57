@@ -59,7 +59,7 @@ export const updatePage = async ({
     
     console.log('Sending update with data:', updateData);
     
-    const response = await fetch('https://staging.sa3d.online:7036/Page', {
+    const response = await fetch('https://reports.chamwings.com:7036/Page', {
       method: 'PUT',
       headers: {
         'Authorization': `Bearer ${token}`,
