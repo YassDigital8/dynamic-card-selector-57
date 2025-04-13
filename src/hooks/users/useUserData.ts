@@ -54,7 +54,6 @@ export const useUserData = () => {
         variant: "destructive",
         title: "Error",
         description: "Failed to load users. Using mock data.",
-        variant: "destructive",
       });
       // If API fails, fall back to mock data for demo purposes
       const start = (page - 1) * pageSize;
