@@ -109,7 +109,6 @@ const LoginForm = () => {
         
         <LoginErrorAlert 
           loginError={loginError}
-          isNetworkError={isNetworkError(loginError)}
           onDemoModeClick={handleEnterDemoMode}
         />
         
@@ -124,4 +123,3 @@ const LoginForm = () => {
 };
 
 export default LoginForm;
-
