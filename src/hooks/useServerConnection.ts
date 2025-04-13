@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { fetchWithCorsHandling } from '@/services/corsProxyService';
 
 export const useServerConnection = () => {
@@ -29,10 +29,7 @@ export const useServerConnection = () => {
     }
   };
 
-  // Test connection when component mounts
-  useEffect(() => {
-    testServerConnection();
-  }, []);
+  // Removed the automatic connection test on component mount
 
   return {
     isNetworkTested,

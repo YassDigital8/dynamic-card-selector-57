@@ -29,7 +29,8 @@ const LoginForm = () => {
   const { login } = useAuthentication();
   const navigate = useNavigate();
   
-  const { isNetworkTested, canReachServer, testServerConnection } = useServerConnection();
+  // We're still importing the hook, but not using the automatic testing feature
+  const { testServerConnection } = useServerConnection();
   
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -39,14 +40,6 @@ const LoginForm = () => {
     }
   });
 
-  // Simplified network error check
-  const isNetworkError = (error: string | null): boolean => {
-    if (!error) return false;
-    return error.includes('Failed to fetch') || 
-           error.includes('Network error') || 
-           error.includes('certificate');
-  };
-  
   // Handle entering demo mode
   const handleEnterDemoMode = () => {
     enableDemoMode();
@@ -105,8 +98,6 @@ const LoginForm = () => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        {/* Removed NetworkStatusAlert */}
-        
         <LoginErrorAlert 
           loginError={loginError}
           onDemoModeClick={handleEnterDemoMode}
