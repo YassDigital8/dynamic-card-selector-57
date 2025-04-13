@@ -26,6 +26,7 @@ const UsersPage: React.FC = () => {
     handleAddUser,
     handlePromoteToSuperAdmin,
     userPrivileges,
+    pagination
   } = useUsers();
 
   const { 
@@ -46,11 +47,6 @@ const UsersPage: React.FC = () => {
   useEffect(() => {
     setSelectedUser(null);
   }, [users]);
-
-  // Fetch users when component mounts
-  useEffect(() => {
-    fetchUsers();
-  }, [fetchUsers]);
 
   // Handle user selection
   const handleSelectUser = (user: User) => {
@@ -78,7 +74,7 @@ const UsersPage: React.FC = () => {
         selectedUser={selectedUser}
         onClearSelection={() => setSelectedUser(null)}
         onRefresh={() => {
-          fetchUsers();
+          fetchUsers(pagination.currentPage);
           setSelectedUser(null);
         }}
         onAddUser={openAddDialog}
@@ -116,6 +112,7 @@ const UsersPage: React.FC = () => {
         onToggleStatus={handleToggleStatus}
         onDeleteUser={handleDeleteUser}
         onPromoteToSuperAdmin={handlePromoteToSuperAdmin}
+        pagination={pagination}
       />
 
       <AddUserDialog

@@ -1,5 +1,5 @@
 
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { fetchAllUsers } from './api/operations/fetchUsers';
 import { useUserState } from './state/useUserState';
@@ -11,27 +11,40 @@ export const useUserData = () => {
   const { users, setUsers, selectedUser, setSelectedUser, isLoading, setIsLoading } = useUserState();
   const { toast } = useToast();
   const { authToken, demoMode } = useAuthentication();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const pageSize = 15;
   
   const userPrivileges = getUserPrivileges();
   const modulePermissions = getModulePermissions();
 
-  const fetchUsers = useCallback(async () => {
+  const fetchUsers = useCallback(async (page: number = currentPage) => {
     setIsLoading(true);
     try {
       // Only attempt to fetch if there's an auth token and not in demo mode
       if (!authToken || demoMode) {
         console.log("No auth token available or in demo mode, using mock data");
-        setUsers(mockUsers);
+        // For demo mode or no auth, we'll still simulate pagination with mock data
+        const start = (page - 1) * pageSize;
+        const end = start + pageSize;
+        const paginatedMockUsers = mockUsers.slice(start, end);
+        setUsers(paginatedMockUsers);
+        setTotalCount(mockUsers.length);
+        setTotalPages(Math.ceil(mockUsers.length / pageSize));
         return;
       }
 
-      console.log("Attempting to fetch users with auth token");
-      const mappedUsers = await fetchAllUsers();
+      console.log(`Attempting to fetch users with auth token for page ${page}`);
+      const { users: mappedUsers, totalCount } = await fetchAllUsers(page, pageSize);
       
       setUsers(mappedUsers);
+      setTotalCount(totalCount);
+      setTotalPages(Math.ceil(totalCount / pageSize));
+      
       toast({
         title: "Users loaded",
-        description: `Successfully loaded ${mappedUsers.length} users`,
+        description: `Showing page ${page} of ${Math.ceil(totalCount / pageSize)}`,
       });
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -41,16 +54,27 @@ export const useUserData = () => {
         variant: "destructive",
       });
       // If API fails, fall back to mock data for demo purposes
-      setUsers(mockUsers);
+      const start = (page - 1) * pageSize;
+      const end = start + pageSize;
+      const paginatedMockUsers = mockUsers.slice(start, end);
+      setUsers(paginatedMockUsers);
+      setTotalCount(mockUsers.length);
+      setTotalPages(Math.ceil(mockUsers.length / pageSize));
     } finally {
       setIsLoading(false);
     }
-  }, [toast, setUsers, setIsLoading, authToken, demoMode]);
+  }, [toast, setUsers, setIsLoading, authToken, demoMode, currentPage, pageSize]);
 
-  // Load users when component mounts
-  useEffect(() => {
-    fetchUsers();
+  // Handle page change
+  const changePage = useCallback((page: number) => {
+    setCurrentPage(page);
+    fetchUsers(page);
   }, [fetchUsers]);
+
+  // Load users when component mounts or when currentPage changes
+  useEffect(() => {
+    fetchUsers(currentPage);
+  }, [fetchUsers, currentPage]);
 
   return {
     users,
@@ -61,6 +85,13 @@ export const useUserData = () => {
     setIsLoading,
     fetchUsers,
     userPrivileges,
-    modulePermissions
+    modulePermissions,
+    pagination: {
+      currentPage,
+      totalPages,
+      totalCount,
+      pageSize,
+      changePage
+    }
   };
 };

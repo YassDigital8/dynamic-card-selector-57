@@ -12,7 +12,8 @@ export const useUsers = () => {
     setIsLoading,
     fetchUsers,
     userPrivileges,
-    modulePermissions
+    modulePermissions,
+    pagination
   } = useUserData();
 
   const {
@@ -37,7 +38,8 @@ export const useUsers = () => {
     handleAddUser,
     handlePromoteToSuperAdmin,
     userPrivileges,
-    modulePermissions
+    modulePermissions,
+    pagination
   };
 };
 

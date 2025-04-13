@@ -5,18 +5,18 @@ import { mapApiUserToUser } from '../mappers/userMappers';
 import { createAuthHeaders, handleApiError } from '@/services/api/config/apiConfig';
 
 /**
- * Fetches all users from the API
+ * Fetches users from the API with pagination
  */
-export const fetchAllUsers = async (): Promise<User[]> => {
+export const fetchAllUsers = async (page: number = 1, pageSize: number = 15): Promise<{users: User[], totalCount: number}> => {
   try {
-    console.log("Attempting to fetch users from API");
+    console.log(`Attempting to fetch users from API - page ${page}, pageSize ${pageSize}`);
     
     // Create headers with authentication token
     const headers = createAuthHeaders();
     console.log("Headers prepared for user API request:", JSON.stringify(headers));
 
-    // Make the API request
-    const response = await fetch('https://reports.chamwings.com:7182/api/Authentication/get-all-users', {
+    // Make the API request with pagination parameters
+    const response = await fetch(`https://reports.chamwings.com:7182/api/Authentication/get-all-users?page=${page}&pageSize=${pageSize}`, {
       method: 'GET',
       headers,
     });
@@ -36,9 +36,11 @@ export const fetchAllUsers = async (): Promise<User[]> => {
     const data = await response.json();
     console.log("Raw API response:", data);
     
-    // Check if the response has an items property (based on the network request logs)
+    // Extract the pagination details
     const apiUsers = data.items || data;
-    console.log(`Received ${apiUsers.length} users from API`);
+    const totalCount = data.totalCount || apiUsers.length;
+    
+    console.log(`Received ${apiUsers.length} users from API (total: ${totalCount})`);
     
     // Map API users to our User type
     const mappedUsers = apiUsers
@@ -46,7 +48,7 @@ export const fetchAllUsers = async (): Promise<User[]> => {
       .map(mapApiUserToUser);
     
     console.log("Mapped users:", mappedUsers);
-    return mappedUsers;
+    return { users: mappedUsers, totalCount };
   } catch (error) {
     console.error("Error fetching users:", error);
     
