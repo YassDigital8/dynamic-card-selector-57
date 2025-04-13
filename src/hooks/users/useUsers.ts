@@ -13,6 +13,7 @@ export const useUsers = () => {
     fetchUsers,
     userPrivileges,
     modulePermissions,
+    departments,
     pagination
   } = useUserData();
 
@@ -39,6 +40,7 @@ export const useUsers = () => {
     handlePromoteToSuperAdmin,
     userPrivileges,
     modulePermissions,
+    departments,
     pagination
   };
 };

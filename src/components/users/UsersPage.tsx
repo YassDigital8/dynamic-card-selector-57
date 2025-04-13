@@ -26,6 +26,7 @@ const UsersPage: React.FC = () => {
     handleAddUser,
     handlePromoteToSuperAdmin,
     userPrivileges,
+    departments,
     pagination
   } = useUsers();
 
@@ -39,8 +40,7 @@ const UsersPage: React.FC = () => {
     searchFilters,
     updateFilter,
     resetFilters,
-    filteredUsers,
-    departments
+    filteredUsers
   } = useSearchFilters(users);
 
   // Clear selected user when users are refreshed

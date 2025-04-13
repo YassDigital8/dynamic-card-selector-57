@@ -1,6 +1,6 @@
 
 import { useState, useCallback, useMemo } from 'react';
-import { User, UserPrivilege } from '@/types/user.types';
+import { User } from '@/types/user.types';
 
 type SearchFilters = {
   name: string;
@@ -16,17 +16,6 @@ export const useSearchFilters = (users: User[]) => {
     department: 'all',
     status: 'all'
   });
-
-  // Get unique departments for filter dropdown
-  const departments = useMemo(() => {
-    const deptSet = new Set<string>();
-    users.forEach(user => {
-      if (user.department) {
-        deptSet.add(user.department);
-      }
-    });
-    return Array.from(deptSet).sort();
-  }, [users]);
 
   // Update a specific filter
   const updateFilter = useCallback((key: keyof SearchFilters, value: string) => {
@@ -82,8 +71,7 @@ export const useSearchFilters = (users: User[]) => {
     searchFilters,
     updateFilter,
     resetFilters,
-    filteredUsers,
-    departments
+    filteredUsers
   };
 };
 

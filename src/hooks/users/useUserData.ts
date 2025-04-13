@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { fetchAllUsers } from './api/operations/fetchUsers';
+import { fetchDepartments } from './api/operations/fetchDepartments';
 import { useUserState } from './state/useUserState';
 import { getUserPrivileges, getModulePermissions } from './data/userPrivilegeData';
 import { mockUsers } from '@/services/users/mockData';
@@ -14,6 +15,7 @@ export const useUserData = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
+  const [departments, setDepartments] = useState<string[]>([]);
   const pageSize = 15;
   
   const userPrivileges = getUserPrivileges();
@@ -49,6 +51,7 @@ export const useUserData = () => {
     } catch (error) {
       console.error("Error fetching users:", error);
       toast({
+        variant: "destructive",
         title: "Error",
         description: "Failed to load users. Using mock data.",
         variant: "destructive",
@@ -65,6 +68,37 @@ export const useUserData = () => {
     }
   }, [toast, setUsers, setIsLoading, authToken, demoMode, currentPage, pageSize]);
 
+  // Fetch departments from API
+  const loadDepartments = useCallback(async () => {
+    try {
+      if (!authToken || demoMode) {
+        // For demo mode, we use a static list or extract from mock users
+        const deptSet = new Set<string>();
+        mockUsers.forEach(user => {
+          if (user.department) {
+            deptSet.add(user.department);
+          }
+        });
+        setDepartments(Array.from(deptSet).sort());
+        return;
+      }
+
+      const departmentsList = await fetchDepartments();
+      console.log("Fetched departments:", departmentsList);
+      setDepartments(departmentsList);
+    } catch (error) {
+      console.error("Error loading departments:", error);
+      // Extract departments from users as fallback
+      const deptSet = new Set<string>();
+      users.forEach(user => {
+        if (user.department) {
+          deptSet.add(user.department);
+        }
+      });
+      setDepartments(Array.from(deptSet).sort());
+    }
+  }, [authToken, demoMode, users]);
+
   // Handle page change
   const changePage = useCallback((page: number) => {
     setCurrentPage(page);
@@ -76,6 +110,11 @@ export const useUserData = () => {
     fetchUsers(currentPage);
   }, [fetchUsers, currentPage]);
 
+  // Load departments when component mounts
+  useEffect(() => {
+    loadDepartments();
+  }, [loadDepartments]);
+
   return {
     users,
     setUsers,
@@ -86,6 +125,7 @@ export const useUserData = () => {
     fetchUsers,
     userPrivileges,
     modulePermissions,
+    departments,
     pagination: {
       currentPage,
       totalPages,
