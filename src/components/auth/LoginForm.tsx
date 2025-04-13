@@ -83,6 +83,15 @@ const LoginForm = () => {
         errorMessage = 'Network error: The authentication server is not accessible. This may be due to CORS restrictions. Try using Demo Mode or check your network connection.';
       } else if (error instanceof Error) {
         errorMessage = error.message;
+        
+        // Extract and format API response if available
+        if (errorMessage.includes('status code') || errorMessage.includes('API error')) {
+          setResponseLog(JSON.stringify({
+            error: true,
+            message: errorMessage,
+            timestamp: new Date().toISOString()
+          }, null, 2));
+        }
       } else {
         errorMessage = 'Unknown error occurred during login';
       }

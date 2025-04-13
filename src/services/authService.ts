@@ -63,22 +63,38 @@ export const loginUser = async (credentials: LoginCredentials): Promise<AuthResp
       console.log('Parsed API response:', responseData);
     } catch (e) {
       console.log('Response is not valid JSON:', e);
-      throw new Error('Invalid response format from authentication server');
+      throw new Error(`Invalid response format from authentication server: ${responseText.substring(0, 100)}${responseText.length > 100 ? '...' : ''}`);
     }
     
     if (!response.ok) {
-      // For error responses, include the status code and response data
-      const errorMessage = typeof responseData === 'string' 
-        ? responseData 
-        : responseData.message || `Authentication failed: ${response.status}`;
+      // For error responses, provide detailed information about the error
+      let errorMessage = '';
       
-      throw new Error(errorMessage);
+      if (typeof responseData === 'string') {
+        errorMessage = responseData;
+      } else if (responseData.message) {
+        errorMessage = responseData.message;
+      } else if (responseData.error) {
+        errorMessage = responseData.error;
+      } else if (responseData.errors) {
+        // Handle validation errors array if present
+        errorMessage = Object.values(responseData.errors)
+          .flat()
+          .join(', ');
+      } else {
+        errorMessage = `API error: ${response.status}`;
+      }
+      
+      // Include the status code in the error message
+      const fullErrorMessage = `API error: ${response.status} - ${errorMessage}`;
+      console.error(fullErrorMessage, responseData);
+      throw new Error(fullErrorMessage);
     }
     
     // Check if there's a token in the response
     if (!responseData.token) {
       console.log('Response missing token:', responseData);
-      throw new Error('Authentication response missing token');
+      throw new Error('API error: Authentication response missing token');
     }
     
     console.log('Authentication successful, found valid token');

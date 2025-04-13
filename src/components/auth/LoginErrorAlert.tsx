@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { AlertCircle, ShieldAlert, ExternalLink } from 'lucide-react';
+import { AlertCircle, ShieldAlert, ExternalLink, Server } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 
@@ -18,21 +18,47 @@ const LoginErrorAlert: React.FC<LoginErrorAlertProps> = ({
   if (!loginError) return null;
   
   const isCorsProxyActivationError = loginError.includes('CORS Proxy Activation Required');
+  const isApiResponseError = loginError.includes('API error') || loginError.includes('status code');
+  
+  const getErrorIcon = () => {
+    if (isNetworkError || isCorsProxyActivationError) return <ShieldAlert className="h-4 w-4" />;
+    if (isApiResponseError) return <Server className="h-4 w-4" />;
+    return <AlertCircle className="h-4 w-4" />;
+  };
+  
+  const getErrorTitle = () => {
+    if (isCorsProxyActivationError) return "CORS Proxy Activation Required";
+    if (isNetworkError) return "Connection Issue";
+    if (isApiResponseError) return "API Response Error";
+    return "Login failed";
+  };
+  
+  const formatApiErrorMessage = (message: string) => {
+    if (!isApiResponseError) return message;
+    
+    // Extract the relevant part from the API error message
+    if (message.includes('API error:')) {
+      return (
+        <div className="space-y-2">
+          <p className="font-medium">The API returned an error:</p>
+          <div className="bg-red-50 dark:bg-red-900/20 p-2 rounded border border-red-200 dark:border-red-800 text-sm">
+            {message.split('API error:')[1].trim()}
+          </div>
+          <p className="text-sm italic">Please check your credentials or contact support if this persists.</p>
+        </div>
+      );
+    }
+    
+    return message;
+  };
   
   return (
     <Alert 
-      variant={isNetworkError || isCorsProxyActivationError ? "warning" : "destructive"} 
+      variant={isNetworkError || isCorsProxyActivationError ? "warning" : (isApiResponseError ? "error" : "destructive")} 
       className="mb-4"
     >
-      {isNetworkError || isCorsProxyActivationError ? 
-        <ShieldAlert className="h-4 w-4" /> : 
-        <AlertCircle className="h-4 w-4" />
-      }
-      <AlertTitle>
-        {isCorsProxyActivationError 
-          ? "CORS Proxy Activation Required" 
-          : (isNetworkError ? "Connection Issue" : "Login failed")}
-      </AlertTitle>
+      {getErrorIcon()}
+      <AlertTitle>{getErrorTitle()}</AlertTitle>
       <AlertDescription>
         {isCorsProxyActivationError 
           ? (
@@ -54,7 +80,7 @@ const LoginErrorAlert: React.FC<LoginErrorAlertProps> = ({
               </a>
             </div>
           ) 
-          : loginError
+          : formatApiErrorMessage(loginError)
         }
       </AlertDescription>
       
