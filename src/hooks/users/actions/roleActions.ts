@@ -1,7 +1,7 @@
 
 import { User, UserPrivilege, ModuleType } from '@/types/user.types';
 import { toast } from '@/hooks/use-toast';
-import { updateUserRole } from '../api/userApi';
+import { updateUserRole } from '../api/operations';
 
 export const useRoleActions = (
   users: User[],
@@ -10,32 +10,51 @@ export const useRoleActions = (
   setSelectedUser: React.Dispatch<React.SetStateAction<User | null>>,
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
 ) => {
+  // Update user's default role
   const handleUpdateRole = async (userId: string, role: UserPrivilege) => {
     try {
       setIsLoading(true);
       
-      // Update role via API
+      // Call API to update role
       await updateUserRole(userId, role);
       
       // Update local state
-      setUsers(users.map(u => 
-        u.id === userId 
-          ? { ...u, role } 
-          : u
-      ));
+      const updatedUsers = users.map(u => {
+        if (u.id === userId) {
+          // Also update the users module role to match
+          const updatedModuleRoles = u.moduleRoles?.map(mr => {
+            if (mr.moduleId === 'users') {
+              return { ...mr, role };
+            }
+            return mr;
+          }) || [];
+          
+          return { 
+            ...u, 
+            role,
+            moduleRoles: updatedModuleRoles
+          };
+        }
+        return u;
+      });
       
-      // Update selected user if it's the one being edited
+      setUsers(updatedUsers);
+      
+      // Update selected user if it's the one being updated
       if (selectedUser?.id === userId) {
+        const updatedModuleRoles = selectedUser.moduleRoles?.map(mr => {
+          if (mr.moduleId === 'users') {
+            return { ...mr, role };
+          }
+          return mr;
+        }) || [];
+        
         setSelectedUser({
           ...selectedUser,
-          role
+          role,
+          moduleRoles: updatedModuleRoles
         });
       }
-      
-      toast({
-        title: "Role Updated",
-        description: `User's role has been updated to ${role}`,
-      });
     } catch (error) {
       console.error('Error updating user role:', error);
       toast({
@@ -47,39 +66,38 @@ export const useRoleActions = (
       setIsLoading(false);
     }
   };
-
+  
+  // Update user's role for a specific module
   const handleUpdateModuleRole = async (userId: string, moduleId: ModuleType, role: UserPrivilege) => {
     try {
       setIsLoading(true);
       
-      // Find the user
-      const user = users.find(u => u.id === userId);
-      if (!user) {
-        throw new Error("User not found");
-      }
-      
-      // Prepare new moduleRoles array
-      const updatedModuleRoles = user.moduleRoles ? [...user.moduleRoles] : [];
-      
-      // Check if the moduleId already exists
-      const existingModuleRoleIndex = updatedModuleRoles.findIndex(mr => mr.moduleId === moduleId);
-      if (existingModuleRoleIndex >= 0) {
-        // Update existing module role
-        updatedModuleRoles[existingModuleRoleIndex] = { moduleId, role };
-      } else {
-        // Add new module role
-        updatedModuleRoles.push({ moduleId, role });
-      }
-      
-      // Currently, the API doesn't support module-specific role updates directly
-      // We'll update this when the API supports it
-      
-      // Update local state
+      // For now, update only local state since there's no specific API for module roles
       const updatedUsers = users.map(u => {
         if (u.id === userId) {
-          return {
-            ...u,
-            moduleRoles: updatedModuleRoles
+          let moduleRoles = [...(u.moduleRoles || [])];
+          
+          // Find if module role already exists
+          const moduleRoleIndex = moduleRoles.findIndex(mr => mr.moduleId === moduleId);
+          
+          if (moduleRoleIndex >= 0) {
+            // Update existing module role
+            moduleRoles[moduleRoleIndex] = { ...moduleRoles[moduleRoleIndex], role };
+          } else {
+            // Add new module role
+            moduleRoles.push({ moduleId, role });
+          }
+          
+          // If users module, also update default role
+          let updatedRole = u.role;
+          if (moduleId === 'users') {
+            updatedRole = role;
+          }
+          
+          return { 
+            ...u, 
+            role: updatedRole,
+            moduleRoles 
           };
         }
         return u;
@@ -87,17 +105,37 @@ export const useRoleActions = (
       
       setUsers(updatedUsers);
       
-      // Update selected user if it's the one being edited
+      // Update selected user if it's the one being updated
       if (selectedUser?.id === userId) {
+        let moduleRoles = [...(selectedUser.moduleRoles || [])];
+        
+        // Find if module role already exists
+        const moduleRoleIndex = moduleRoles.findIndex(mr => mr.moduleId === moduleId);
+        
+        if (moduleRoleIndex >= 0) {
+          // Update existing module role
+          moduleRoles[moduleRoleIndex] = { ...moduleRoles[moduleRoleIndex], role };
+        } else {
+          // Add new module role
+          moduleRoles.push({ moduleId, role });
+        }
+        
+        // If users module, also update default role
+        let updatedRole = selectedUser.role;
+        if (moduleId === 'users') {
+          updatedRole = role;
+        }
+        
         setSelectedUser({
           ...selectedUser,
-          moduleRoles: updatedModuleRoles
+          role: updatedRole,
+          moduleRoles
         });
       }
       
       toast({
         title: "Module Role Updated",
-        description: `User's role for ${moduleId} module has been updated to ${role}`,
+        description: `User's ${moduleId} role updated to ${role}`,
       });
     } catch (error) {
       console.error('Error updating module role:', error);

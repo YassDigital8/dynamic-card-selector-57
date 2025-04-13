@@ -1,7 +1,7 @@
 
 import { User, UserPrivilege } from '@/types/user.types';
 import { toast } from '@/hooks/use-toast';
-import { updateUserRole } from '../api/userApi';
+import { updateUserRole } from '../api/operations';
 
 export const useAdminActions = (
   users: User[],

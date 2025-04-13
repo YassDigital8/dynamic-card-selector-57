@@ -1,7 +1,7 @@
 
 import { useCallback, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { fetchAllUsers } from './api/userApi';
+import { fetchAllUsers } from './api/operations/fetchUsers';
 import { useUserState } from './state/useUserState';
 import { getUserPrivileges, getModulePermissions } from './data/userPrivilegeData';
 import { mockUsers } from '@/services/users/mockData';

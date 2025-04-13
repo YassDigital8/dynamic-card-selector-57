@@ -1,7 +1,7 @@
 
 import { User, UserPrivilege, UserCreationData } from '@/types/user.types';
 import { toast } from '@/hooks/use-toast';
-import { addUser } from '../api/userApi';
+import { addUser } from '../api/operations/addUser';
 import { v4 as uuidv4 } from 'uuid';
 
 export const useUserAddActions = (

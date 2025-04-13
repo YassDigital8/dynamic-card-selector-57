@@ -32,3 +32,18 @@ export interface User {
 export interface UserCreationData extends Partial<User> {
   password?: string;
 }
+
+// API User interface for mapping
+export interface ApiUser {
+  code: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  isActive: boolean;
+  department: string;
+  lastLogIn: string;
+  roles: string[];
+  status: string;
+  reason: string;
+  numberOfLogIn: number;
+}

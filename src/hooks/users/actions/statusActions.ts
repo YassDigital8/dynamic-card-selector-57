@@ -1,7 +1,7 @@
 
 import { User } from '@/types/user.types';
 import { toast } from '@/hooks/use-toast';
-import { toggleUserStatus, deleteUser } from '../api/userApi';
+import { toggleUserStatus, deleteUser } from '../api/operations';
 
 export const useStatusActions = (
   users: User[],
@@ -10,43 +10,37 @@ export const useStatusActions = (
   setSelectedUser: React.Dispatch<React.SetStateAction<User | null>>,
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
 ) => {
+  // Toggle user active status
   const handleToggleStatus = async (userId: string) => {
     try {
       setIsLoading(true);
       
-      // Find the user and determine their current status
-      const user = users.find(u => u.id === userId);
-      if (!user) {
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "User not found",
-        });
-        return;
+      // Find user to toggle
+      const userToToggle = users.find(u => u.id === userId);
+      if (!userToToggle) {
+        throw new Error("User not found");
       }
       
-      // Toggle status via API
-      await toggleUserStatus(userId, !user.isActive);
+      // Call API to toggle status
+      await toggleUserStatus(userId, !userToToggle.isActive);
       
       // Update local state
-      setUsers(users.map(u => 
-        u.id === userId 
-          ? { ...u, isActive: !u.isActive } 
-          : u
-      ));
+      const updatedUsers = users.map(u => {
+        if (u.id === userId) {
+          return { ...u, isActive: !u.isActive };
+        }
+        return u;
+      });
       
-      // Update selected user if it's the one being edited
+      setUsers(updatedUsers);
+      
+      // Update selected user if it's the one being toggled
       if (selectedUser?.id === userId) {
         setSelectedUser({
           ...selectedUser,
           isActive: !selectedUser.isActive
         });
       }
-      
-      toast({
-        title: "Status Updated",
-        description: `User is now ${user.isActive ? 'inactive' : 'active'}`,
-      });
     } catch (error) {
       console.error('Error toggling user status:', error);
       toast({
@@ -58,26 +52,22 @@ export const useStatusActions = (
       setIsLoading(false);
     }
   };
-
+  
+  // Delete user
   const handleDeleteUser = async (userId: string) => {
     try {
       setIsLoading(true);
       
-      // Delete user via API
+      // Call API to delete user
       await deleteUser(userId);
       
       // Update local state
       setUsers(users.filter(u => u.id !== userId));
       
-      // Clear selection if the deleted user was selected
+      // Clear selected user if it's the one being deleted
       if (selectedUser?.id === userId) {
         setSelectedUser(null);
       }
-      
-      toast({
-        title: "User Deleted",
-        description: "User has been successfully deleted",
-      });
     } catch (error) {
       console.error('Error deleting user:', error);
       toast({
