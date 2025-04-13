@@ -1,5 +1,5 @@
 
-import { User, UserPrivilege } from '@/types/user.types';
+import { User, UserPrivilege, UserCreationData } from '@/types/user.types';
 import { toast } from '@/hooks/use-toast';
 import { addUser } from '../api/userApi';
 import { v4 as uuidv4 } from 'uuid';
@@ -19,11 +19,11 @@ export const useUserAddActions = (
       setIsLoading(true);
       
       // Prepare the user data
-      const newUserData: Partial<User> = {
+      const newUserData: UserCreationData = {
         id: uuidv4(), // This will be replaced by the API response
         name: userData.name,
         email: userData.email,
-        password: userData.password, // This is included for the API but won't be stored in our state
+        password: userData.password, // Now using the type that includes password
         role: userData.role,
         department: userData.department || '',
         isActive: true,

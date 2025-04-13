@@ -27,3 +27,8 @@ export interface User {
   isActive: boolean;
   department?: string;
 }
+
+// Used only for user creation API requests
+export interface UserCreationData extends Partial<User> {
+  password?: string;
+}

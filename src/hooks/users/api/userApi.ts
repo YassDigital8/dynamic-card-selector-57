@@ -1,6 +1,6 @@
 
 import { toast } from '@/hooks/use-toast';
-import { User, UserPrivilege } from '@/types/user.types';
+import { User, UserPrivilege, UserCreationData } from '@/types/user.types';
 import { API_BASE_URL, getAuthToken, createAuthHeaders, handleApiError } from '@/services/api/config/apiConfig';
 
 interface ApiUser {
@@ -158,7 +158,7 @@ export const fetchAllUsers = async (): Promise<User[]> => {
 };
 
 // Function to add a new user
-export const addUser = async (userData: Partial<User>): Promise<User> => {
+export const addUser = async (userData: UserCreationData): Promise<User> => {
   try {
     // Create headers with authentication token
     const headers = createAuthHeaders();
@@ -168,7 +168,7 @@ export const addUser = async (userData: Partial<User>): Promise<User> => {
       firstName: userData.name?.split(' ')[0] || '',
       lastName: userData.name?.split(' ').slice(1).join(' ') || '',
       email: userData.email,
-      password: userData.password || 'DefaultPassword123!', // Should come from form
+      password: userData.password || 'DefaultPassword123!', // Using password from UserCreationData
       isActive: userData.isActive === undefined ? true : userData.isActive,
       department: userData.department || '',
       roles: userData.moduleRoles?.map(mr => `${mr.moduleId.charAt(0).toUpperCase() + mr.moduleId.slice(1)}-${mr.role}`) || []

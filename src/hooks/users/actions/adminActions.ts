@@ -1,5 +1,5 @@
 
-import { User } from '@/types/user.types';
+import { User, UserPrivilege } from '@/types/user.types';
 import { toast } from '@/hooks/use-toast';
 import { updateUserRole } from '../api/userApi';
 
@@ -14,7 +14,7 @@ export const useAdminActions = (
     try {
       setIsLoading(true);
       
-      // Update role via API to SuperAdmin
+      // Update role via API to SuperAdmin (which is a valid UserPrivilege)
       await updateUserRole(userId, 'SuperAdmin');
       
       // Update local state
@@ -23,12 +23,12 @@ export const useAdminActions = (
           // Create SuperAdmin moduleRoles for all modules
           const moduleRoles = ['hotels', 'users', 'gallery', 'cms'].map(moduleId => ({
             moduleId: moduleId as any,
-            role: 'SuperAdmin' as any
+            role: 'SuperAdmin' as UserPrivilege
           }));
           
           return {
             ...u,
-            role: 'SuperAdmin',
+            role: 'SuperAdmin' as UserPrivilege,
             moduleRoles
           };
         }
@@ -41,12 +41,12 @@ export const useAdminActions = (
       if (selectedUser?.id === userId) {
         const moduleRoles = ['hotels', 'users', 'gallery', 'cms'].map(moduleId => ({
           moduleId: moduleId as any,
-          role: 'SuperAdmin' as any
+          role: 'SuperAdmin' as UserPrivilege
         }));
         
         setSelectedUser({
           ...selectedUser,
-          role: 'SuperAdmin',
+          role: 'SuperAdmin' as UserPrivilege,
           moduleRoles
         });
       }
