@@ -6,7 +6,7 @@ import { fetchWithCorsHandling } from './corsProxyService';
 let isDemoMode = false;
 
 // Define the API endpoint for authentication
-const AUTH_ENDPOINT = '132.145.251.144:7182/api/Authentication/login';
+const AUTH_ENDPOINT = 'https://reports.chamwings.com:7182/api/Authentication/login';
 
 export const loginUser = async (credentials: LoginCredentials): Promise<AuthResponse> => {
   console.log('Attempting to authenticate with:', credentials.email);
@@ -138,4 +138,3 @@ export const enableDemoMode = (): void => {
 export const disableDemoMode = (): void => {
   isDemoMode = false;
 };
-
