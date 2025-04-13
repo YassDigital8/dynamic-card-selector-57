@@ -1,5 +1,5 @@
 
-import { ApiUser, User, UserPrivilege, ModuleRole } from '@/types/user.types';
+import { ApiUser, User, UserPrivilege, ModuleRole, ModuleType } from '@/types/user.types';
 
 /**
  * Validates if a role string is a valid UserPrivilege
@@ -27,7 +27,7 @@ export const validateUserPrivilege = (role: string): UserPrivilege => {
 export const mapModuleRoles = (apiRoles: string[], isSuperAdmin: boolean): ModuleRole[] => {
   // If user is SuperAdmin, set SuperAdmin role for all modules
   if (isSuperAdmin) {
-    return ['hotels', 'users', 'gallery', 'cms'].map(moduleId => ({
+    return (['hotels', 'users', 'gallery', 'cms'] as ModuleType[]).map(moduleId => ({
       moduleId,
       role: 'SuperAdmin' as UserPrivilege
     }));
@@ -39,20 +39,20 @@ export const mapModuleRoles = (apiRoles: string[], isSuperAdmin: boolean): Modul
       const parts = role.split('-');
       
       // Handle service name mapping
-      let moduleId: string;
+      let moduleId: ModuleType;
       const serviceName = parts[0];
       
       // Map service names to our internal module IDs
       if (serviceName === 'Hotel') {
-        moduleId = 'hotels';
+        moduleId = 'hotels' as ModuleType;
       } else if (serviceName === 'Authntication') { // Using exact spelling from API
-        moduleId = 'users';
+        moduleId = 'users' as ModuleType;
       } else if (serviceName === 'Gallery') {
-        moduleId = 'gallery';
+        moduleId = 'gallery' as ModuleType;
       } else if (serviceName === 'CMS') {
-        moduleId = 'cms';
+        moduleId = 'cms' as ModuleType;
       } else {
-        moduleId = serviceName.toLowerCase();
+        moduleId = serviceName.toLowerCase() as ModuleType;
       }
 
       // Get the role part (after the hyphen)
@@ -62,13 +62,13 @@ export const mapModuleRoles = (apiRoles: string[], isSuperAdmin: boolean): Modul
       const validRole = validateUserPrivilege(roleLevel || 'Officer');
       
       return {
-        moduleId: moduleId,
+        moduleId,
         role: validRole
       };
     })
     .filter(mr => 
-      ['hotels', 'users', 'gallery', 'cms'].includes(mr.moduleId)
-    );
+      ['hotels', 'users', 'gallery', 'cms'].includes(mr.moduleId as string)
+    ) as ModuleRole[];
 };
 
 /**
