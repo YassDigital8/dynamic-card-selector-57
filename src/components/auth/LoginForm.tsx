@@ -39,13 +39,12 @@ const LoginForm = () => {
     }
   });
 
-  // Helper to check if the error is related to SSL certificates or network
+  // Simplified network error check
   const isNetworkError = (error: string | null): boolean => {
     if (!error) return false;
     return error.includes('Failed to fetch') || 
            error.includes('Network error') || 
-           error.includes('certificate') ||
-           error.includes('CORS');
+           error.includes('certificate');
   };
   
   // Handle entering demo mode
@@ -60,31 +59,24 @@ const LoginForm = () => {
     setResponseLog(null);
     
     try {
-      console.log('Attempting to authenticate with:', data.email);
-      
       const authResult = await login({
         email: data.email,
         password: data.password
       });
       
-      // Log the response
+      // Log the response, but we'll handle it differently now
       setResponseLog(JSON.stringify(authResult, null, 2));
       
-      console.log('Login successful, navigating to home page');
-      
-      // Force navigation after successful login
       navigate('/', { replace: true });
       
     } catch (error) {
       console.error('Login error:', error);
       let errorMessage = '';
       
-      if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
-        errorMessage = 'Network error: The authentication server is not accessible. This may be due to CORS restrictions. Try using Demo Mode or check your network connection.';
-      } else if (error instanceof Error) {
+      if (error instanceof Error) {
         errorMessage = error.message;
         
-        // Extract and format API response if available
+        // If it's an API response error, log the full response
         if (errorMessage.includes('API response:') || errorMessage.includes('API error:')) {
           setResponseLog(JSON.stringify({
             error: true,
@@ -113,11 +105,7 @@ const LoginForm = () => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <NetworkStatusAlert 
-          isNetworkTested={isNetworkTested}
-          canReachServer={canReachServer}
-          testServerConnection={testServerConnection}
-        />
+        {/* Removed NetworkStatusAlert */}
         
         <LoginErrorAlert 
           loginError={loginError}
@@ -136,3 +124,4 @@ const LoginForm = () => {
 };
 
 export default LoginForm;
+
