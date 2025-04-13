@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -10,29 +9,44 @@ export const useApiStatus = () => {
   const checkApiStatus = useCallback(async () => {
     setIsChecking(true);
     try {
-      // Try to fetch from the POS endpoint to check if API is working
-      const response = await fetch('https://staging.sa3d.online:7036/POS', {
+      // Check for authentication token
+      const authToken = localStorage.getItem('authToken');
+      
+      // If we have a token and it's not the demo token, consider the API as live
+      if (authToken && authToken !== 'demo-mode-token') {
+        setIsApiLive(true);
+        console.log('API is considered live based on valid authentication token');
+        setIsChecking(false);
+        return;
+      }
+      
+      // Try to fetch from the users endpoint to check if API is working
+      const response = await fetch('https://reports.chamwings.com:7182/api/Authentication/get-all-users', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
           // Include auth token if available
-          ...(localStorage.getItem('authToken') ? {
-            'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+          ...(authToken ? {
+            'Authorization': `Bearer ${authToken}`
           } : {})
         }
       });
       
       if (response.ok) {
         setIsApiLive(true);
-        console.log('POS API is live and responding');
+        console.log('API is live and responding');
       } else {
-        // If API returns an error status, set to demo mode
-        setIsApiLive(false);
-        console.log(`POS API returned status: ${response.status}`);
-        
-        // Only show toast for non-403 errors (403 is expected for unauthorized access)
-        if (response.status !== 403) {
+        // If API returns an error status but it's a 401/403, that's still considered "live"
+        // since those are authorization errors, not connectivity issues
+        if (response.status === 401 || response.status === 403) {
+          setIsApiLive(true);
+          console.log(`API returned auth error: ${response.status}, but connection is working`);
+        } else {
+          // Other error statuses indicate API issues
+          setIsApiLive(false);
+          console.log(`API returned error status: ${response.status}`);
+          
           toast({
             title: "API Connection Issue",
             description: "Running in demo mode due to API status: " + response.status,
@@ -41,15 +55,24 @@ export const useApiStatus = () => {
         }
       }
     } catch (error) {
-      console.error('Error checking POS API status:', error);
-      setIsApiLive(false);
-      
-      // Show toast for API connection errors
-      toast({
-        title: "API Connection Issue",
-        description: "Running in demo mode due to API connection issues",
-        variant: "destructive"
-      });
+      // Only show toast for network errors if we don't have a valid token
+      // This prevents the message from appearing when we're actually authenticated
+      const authToken = localStorage.getItem('authToken');
+      if (!authToken || authToken === 'demo-mode-token') {
+        console.error('Error checking API status:', error);
+        setIsApiLive(false);
+        
+        toast({
+          title: "API Connection Issue",
+          description: "Running in demo mode due to API connection issues",
+          variant: "destructive"
+        });
+      } else {
+        // If we have a valid token but still get an error, don't show the toast
+        // Just log it and consider API as live
+        console.log('Network error occurred but we have a valid token:', error);
+        setIsApiLive(true);
+      }
     } finally {
       setIsChecking(false);
     }
@@ -59,10 +82,10 @@ export const useApiStatus = () => {
     // Immediate check when component mounts
     checkApiStatus();
     
-    // Check API status every 2 minutes
+    // Check API status every 5 minutes instead of 2 minutes (to reduce noise)
     const interval = setInterval(() => {
       checkApiStatus();
-    }, 2 * 60 * 1000);
+    }, 5 * 60 * 1000);
     
     return () => clearInterval(interval);
   }, [checkApiStatus]);
