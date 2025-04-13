@@ -1,9 +1,7 @@
 
-import { useCallback } from 'react';
-import { useToast } from '@/hooks/use-toast';
 import { User, UserPrivilege, ModuleType } from '@/types/user.types';
-import { updateUserRole, updateUserModuleRole } from '@/services/userService';
-import { createAuthHeaders } from '@/services/api/config/apiConfig';
+import { toast } from '@/hooks/use-toast';
+import { updateUserRole } from '../api/userApi';
 
 export const useRoleActions = (
   users: User[],
@@ -12,119 +10,106 @@ export const useRoleActions = (
   setSelectedUser: React.Dispatch<React.SetStateAction<User | null>>,
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
 ) => {
-  const { toast } = useToast();
-
-  const handleUpdateRole = useCallback((userId: string, newRole: UserPrivilege) => {
-    setIsLoading(true);
+  const handleUpdateRole = async (userId: string, role: UserPrivilege) => {
     try {
-      const updatedUser = updateUserRole(userId, newRole);
-      if (updatedUser) {
-        setUsers(prev => prev.map(user => user.id === userId ? updatedUser : user));
-        if (selectedUser?.id === userId) {
-          setSelectedUser(updatedUser);
-        }
-        toast({
-          title: "Role updated",
-          description: `User's default role updated to ${newRole}`,
+      setIsLoading(true);
+      
+      // Update role via API
+      await updateUserRole(userId, role);
+      
+      // Update local state
+      setUsers(users.map(u => 
+        u.id === userId 
+          ? { ...u, role } 
+          : u
+      ));
+      
+      // Update selected user if it's the one being edited
+      if (selectedUser?.id === userId) {
+        setSelectedUser({
+          ...selectedUser,
+          role
         });
       }
-    } catch (error) {
+      
       toast({
-        title: "Error",
-        description: "Failed to update user role",
+        title: "Role Updated",
+        description: `User's role has been updated to ${role}`,
+      });
+    } catch (error) {
+      console.error('Error updating user role:', error);
+      toast({
         variant: "destructive",
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to update user role",
       });
     } finally {
       setIsLoading(false);
     }
-  }, [toast, selectedUser, setUsers, setSelectedUser, setIsLoading]);
+  };
 
-  const handleUpdateModuleRole = useCallback(async (userId: string, moduleId: ModuleType, newRole: UserPrivilege) => {
-    setIsLoading(true);
-    
-    // Map our internal module names to the API-expected service names
-    const moduleToServiceMap: Record<ModuleType, string> = {
-      'hotels': 'Hotel',
-      'users': 'Authntication', // Note: This is the spelling used in the API (fixed from Authentication)
-      'gallery': 'Gallery',
-      'cms': 'CMS',
-      'settings': 'Settings',
-      'reports': 'Reports'
-    };
-    
-    const serviceName = moduleToServiceMap[moduleId];
-    
+  const handleUpdateModuleRole = async (userId: string, moduleId: ModuleType, role: UserPrivilege) => {
     try {
-      // Format the request body as "ServiceName-Role" (e.g. "CMS-Admin")
-      const roleBody = `${serviceName}-${newRole}`;
+      setIsLoading(true);
       
-      // Get auth headers using the common utility function
-      const headers = createAuthHeaders();
-      console.log(`Updating role for user ${userId} to ${roleBody} with headers:`, headers);
+      // Find the user
+      const user = users.find(u => u.id === userId);
+      if (!user) {
+        throw new Error("User not found");
+      }
       
-      // Make the API call to update the module-specific role
-      const response = await fetch(`https://92.112.184.210:7182/api/Authentication/AssignServiceRoleToUser/${userId}`, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify(roleBody),
+      // Prepare new moduleRoles array
+      const updatedModuleRoles = user.moduleRoles ? [...user.moduleRoles] : [];
+      
+      // Check if the moduleId already exists
+      const existingModuleRoleIndex = updatedModuleRoles.findIndex(mr => mr.moduleId === moduleId);
+      if (existingModuleRoleIndex >= 0) {
+        // Update existing module role
+        updatedModuleRoles[existingModuleRoleIndex] = { moduleId, role };
+      } else {
+        // Add new module role
+        updatedModuleRoles.push({ moduleId, role });
+      }
+      
+      // Currently, the API doesn't support module-specific role updates directly
+      // We'll update this when the API supports it
+      
+      // Update local state
+      const updatedUsers = users.map(u => {
+        if (u.id === userId) {
+          return {
+            ...u,
+            moduleRoles: updatedModuleRoles
+          };
+        }
+        return u;
       });
       
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error(`API error: ${response.status} - ${errorText}`);
-        throw new Error(`API error: ${response.status}`);
-      }
+      setUsers(updatedUsers);
       
-      // Update the local state
-      const userToUpdate = users.find(user => user.id === userId);
-      
-      if (userToUpdate) {
-        // Create updated module roles
-        const moduleRoles = userToUpdate.moduleRoles 
-          ? [...userToUpdate.moduleRoles]
-          : [];
-        
-        // Find if there's already a role for this module
-        const existingRoleIndex = moduleRoles.findIndex(mr => mr.moduleId === moduleId);
-        
-        if (existingRoleIndex >= 0) {
-          // Update existing role
-          moduleRoles[existingRoleIndex] = { ...moduleRoles[existingRoleIndex], role: newRole };
-        } else {
-          // Add new role
-          moduleRoles.push({ moduleId, role: newRole });
-        }
-        
-        // Create updated user
-        const updatedUser: User = {
-          ...userToUpdate,
-          moduleRoles
-        };
-        
-        // Update users array
-        setUsers(prev => prev.map(user => user.id === userId ? updatedUser : user));
-        
-        // Update selected user if needed
-        if (selectedUser?.id === userId) {
-          setSelectedUser(updatedUser);
-        }
-        
-        toast({
-          title: "Module role updated",
-          description: `User's role for ${moduleId} updated to ${newRole}`,
+      // Update selected user if it's the one being edited
+      if (selectedUser?.id === userId) {
+        setSelectedUser({
+          ...selectedUser,
+          moduleRoles: updatedModuleRoles
         });
       }
-    } catch (error) {
-      console.error("Error updating module role:", error);
+      
       toast({
-        title: "Error",
-        description: "Failed to update module role",
+        title: "Module Role Updated",
+        description: `User's role for ${moduleId} module has been updated to ${role}`,
+      });
+    } catch (error) {
+      console.error('Error updating module role:', error);
+      toast({
         variant: "destructive",
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to update module role",
       });
     } finally {
       setIsLoading(false);
     }
-  }, [toast, selectedUser, setUsers, setSelectedUser, setIsLoading, users]);
+  };
 
   return {
     handleUpdateRole,

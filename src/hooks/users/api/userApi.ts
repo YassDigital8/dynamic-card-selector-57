@@ -1,8 +1,7 @@
 
 import { toast } from '@/hooks/use-toast';
 import { User, UserPrivilege } from '@/types/user.types';
-import { getAuthToken } from '@/services/api/config/apiConfig';
-import { createAuthHeaders } from '@/services/api/config/apiConfig';
+import { API_BASE_URL, getAuthToken, createAuthHeaders, handleApiError } from '@/services/api/config/apiConfig';
 
 interface ApiUser {
   code: string;
@@ -112,41 +111,228 @@ export const mapApiUserToUser = (apiUser: ApiUser): User => {
   };
 };
 
-export const fetchAllUsers = async () => {
+export const fetchAllUsers = async (): Promise<User[]> => {
   try {
-    // Get auth token from config utility
-    let token;
-    try {
-      token = getAuthToken();
-      console.log("Using auth token for user API request:", token.substring(0, 15) + "...");
-    } catch (error) {
-      console.error("Authentication token not found, using fallback data");
-      throw new Error("Authentication token not found");
-    }
-
-    // Using a common utility to create auth headers
+    console.log("Attempting to fetch users from API");
+    
+    // Create headers with authentication token
     const headers = createAuthHeaders();
-    console.log("Headers for user API request:", JSON.stringify(headers));
+    console.log("Headers prepared for user API request:", JSON.stringify(headers));
 
+    // Make the API request
     const response = await fetch('https://reports.chamwings.com:7182/api/Authentication/get-all-users', {
       method: 'GET',
       headers,
     });
     
     if (!response.ok) {
-      console.error(`API error: ${response.status} - ${response.statusText}`);
-      
-      // Try to get more information from the response
-      const errorText = await response.text();
-      console.error("API response:", errorText);
-      
-      throw new Error(`API error: ${response.status} - ${errorText}`);
+      const errorMessage = await handleApiError(response);
+      console.error(`API error: ${response.status} - ${errorMessage}`);
+      toast({
+        variant: "destructive",
+        title: "Error fetching users",
+        description: `${errorMessage}`,
+      });
+      throw new Error(errorMessage);
     }
     
+    console.log("Successfully received user data from API");
     const apiUsers: ApiUser[] = await response.json();
-    return apiUsers.map(mapApiUserToUser);
+    console.log(`Received ${apiUsers.length} users from API`);
+    
+    // Map API users to our User type
+    const mappedUsers = apiUsers.map(mapApiUserToUser);
+    return mappedUsers;
   } catch (error) {
     console.error("Error fetching users:", error);
+    
+    // Show toast notification for the error
+    toast({
+      variant: "destructive",
+      title: "Error fetching users",
+      description: error instanceof Error ? error.message : "Unknown error occurred",
+    });
+    
+    throw error;
+  }
+};
+
+// Function to add a new user
+export const addUser = async (userData: Partial<User>): Promise<User> => {
+  try {
+    // Create headers with authentication token
+    const headers = createAuthHeaders();
+    
+    // Prepare the request body
+    const requestBody = {
+      firstName: userData.name?.split(' ')[0] || '',
+      lastName: userData.name?.split(' ').slice(1).join(' ') || '',
+      email: userData.email,
+      password: userData.password || 'DefaultPassword123!', // Should come from form
+      isActive: userData.isActive === undefined ? true : userData.isActive,
+      department: userData.department || '',
+      roles: userData.moduleRoles?.map(mr => `${mr.moduleId.charAt(0).toUpperCase() + mr.moduleId.slice(1)}-${mr.role}`) || []
+    };
+    
+    console.log("Adding new user with data:", requestBody);
+    
+    // Make the API request
+    const response = await fetch('https://reports.chamwings.com:7182/api/Authentication/register', {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(requestBody)
+    });
+    
+    if (!response.ok) {
+      const errorMessage = await handleApiError(response);
+      toast({
+        variant: "destructive",
+        title: "Error adding user",
+        description: errorMessage,
+      });
+      throw new Error(errorMessage);
+    }
+    
+    // Parse response
+    const responseData = await response.json();
+    
+    // Convert API response to our User type
+    const newUser: User = {
+      id: responseData.code || userData.id || '',
+      name: userData.name || '',
+      email: userData.email || '',
+      role: userData.role || 'Officer',
+      moduleRoles: userData.moduleRoles || [],
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      isActive: userData.isActive || true,
+      department: userData.department || ''
+    };
+    
+    toast({
+      title: "User added",
+      description: `${newUser.name} was successfully added`,
+    });
+    
+    return newUser;
+  } catch (error) {
+    console.error("Error adding user:", error);
+    throw error;
+  }
+};
+
+// Function to update a user's role
+export const updateUserRole = async (userId: string, role: UserPrivilege): Promise<void> => {
+  try {
+    // Create headers with authentication token
+    const headers = createAuthHeaders();
+    
+    // Prepare the request body
+    const requestBody = {
+      userCode: userId,
+      role: role
+    };
+    
+    console.log("Updating user role:", requestBody);
+    
+    // Make the API request
+    const response = await fetch('https://reports.chamwings.com:7182/api/Authentication/update-user-role', {
+      method: 'PUT',
+      headers,
+      body: JSON.stringify(requestBody)
+    });
+    
+    if (!response.ok) {
+      const errorMessage = await handleApiError(response);
+      toast({
+        variant: "destructive",
+        title: "Error updating user role",
+        description: errorMessage,
+      });
+      throw new Error(errorMessage);
+    }
+    
+    toast({
+      title: "Role updated",
+      description: `User role successfully updated to ${role}`,
+    });
+  } catch (error) {
+    console.error("Error updating user role:", error);
+    throw error;
+  }
+};
+
+// Function to toggle user active status
+export const toggleUserStatus = async (userId: string, isActive: boolean): Promise<void> => {
+  try {
+    // Create headers with authentication token
+    const headers = createAuthHeaders();
+    
+    // Prepare the request body
+    const requestBody = {
+      userCode: userId,
+      isActive: isActive
+    };
+    
+    console.log("Toggling user status:", requestBody);
+    
+    // Make the API request
+    const response = await fetch('https://reports.chamwings.com:7182/api/Authentication/toggle-user-status', {
+      method: 'PUT',
+      headers,
+      body: JSON.stringify(requestBody)
+    });
+    
+    if (!response.ok) {
+      const errorMessage = await handleApiError(response);
+      toast({
+        variant: "destructive",
+        title: "Error toggling user status",
+        description: errorMessage,
+      });
+      throw new Error(errorMessage);
+    }
+    
+    toast({
+      title: "Status updated",
+      description: `User is now ${isActive ? 'active' : 'inactive'}`,
+    });
+  } catch (error) {
+    console.error("Error toggling user status:", error);
+    throw error;
+  }
+};
+
+// Function to delete a user
+export const deleteUser = async (userId: string): Promise<void> => {
+  try {
+    // Create headers with authentication token
+    const headers = createAuthHeaders();
+    
+    console.log("Deleting user with ID:", userId);
+    
+    // Make the API request
+    const response = await fetch(`https://reports.chamwings.com:7182/api/Authentication/delete-user/${userId}`, {
+      method: 'DELETE',
+      headers
+    });
+    
+    if (!response.ok) {
+      const errorMessage = await handleApiError(response);
+      toast({
+        variant: "destructive",
+        title: "Error deleting user",
+        description: errorMessage,
+      });
+      throw new Error(errorMessage);
+    }
+    
+    toast({
+      title: "User deleted",
+      description: "User has been successfully deleted",
+    });
+  } catch (error) {
+    console.error("Error deleting user:", error);
     throw error;
   }
 };

@@ -10,7 +10,7 @@ import useAuthentication from '@/hooks/useAuthentication';
 export const useUserData = () => {
   const { users, setUsers, selectedUser, setSelectedUser, isLoading, setIsLoading } = useUserState();
   const { toast } = useToast();
-  const { authToken } = useAuthentication();
+  const { authToken, demoMode } = useAuthentication();
   
   const userPrivileges = getUserPrivileges();
   const modulePermissions = getModulePermissions();
@@ -18,9 +18,9 @@ export const useUserData = () => {
   const fetchUsers = useCallback(async () => {
     setIsLoading(true);
     try {
-      // Only attempt to fetch if there's an auth token
-      if (!authToken) {
-        console.log("No auth token available, using mock data");
+      // Only attempt to fetch if there's an auth token and not in demo mode
+      if (!authToken || demoMode) {
+        console.log("No auth token available or in demo mode, using mock data");
         setUsers(mockUsers);
         return;
       }
@@ -45,7 +45,7 @@ export const useUserData = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [toast, setUsers, setIsLoading, authToken]);
+  }, [toast, setUsers, setIsLoading, authToken, demoMode]);
 
   // Load users when component mounts
   useEffect(() => {

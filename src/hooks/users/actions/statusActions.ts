@@ -1,9 +1,7 @@
 
-import { useCallback } from 'react';
-import { useToast } from '@/hooks/use-toast';
 import { User } from '@/types/user.types';
-import { deleteUser } from '@/services/userService';
-import { createAuthHeaders } from '@/services/api/config/apiConfig';
+import { toast } from '@/hooks/use-toast';
+import { toggleUserStatus, deleteUser } from '../api/userApi';
 
 export const useStatusActions = (
   users: User[],
@@ -12,117 +10,85 @@ export const useStatusActions = (
   setSelectedUser: React.Dispatch<React.SetStateAction<User | null>>,
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
 ) => {
-  const { toast } = useToast();
-
-  const handleToggleStatus = useCallback(async (userId: string) => {
-    setIsLoading(true);
+  const handleToggleStatus = async (userId: string) => {
     try {
-      // Find current user to get current status
-      const currentUser = users.find(user => user.id === userId);
-      if (!currentUser) {
-        throw new Error("User not found");
+      setIsLoading(true);
+      
+      // Find the user and determine their current status
+      const user = users.find(u => u.id === userId);
+      if (!user) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "User not found",
+        });
+        return;
       }
       
-      // Get auth headers using the common utility function
-      const headers = createAuthHeaders();
-      console.log(`Toggling status for user ${userId} with headers:`, headers);
+      // Toggle status via API
+      await toggleUserStatus(userId, !user.isActive);
       
-      // Make API call to change user status with proper authentication
-      const response = await fetch(`https://92.112.184.210:7182/api/Authentication/ChangeUserAccountStatus/${userId}`, {
-        method: 'PUT',
-        headers,
-      });
+      // Update local state
+      setUsers(users.map(u => 
+        u.id === userId 
+          ? { ...u, isActive: !u.isActive } 
+          : u
+      ));
       
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error(`API error: ${response.status} - ${errorText}`);
-        throw new Error(`API error: ${response.status}`);
-      }
-      
-      // Update the user in the state with toggled status
-      const updatedUser = {
-        ...currentUser,
-        isActive: !currentUser.isActive
-      };
-      
-      setUsers(prev => prev.map(user => user.id === userId ? updatedUser : user));
-      
+      // Update selected user if it's the one being edited
       if (selectedUser?.id === userId) {
-        setSelectedUser(updatedUser);
+        setSelectedUser({
+          ...selectedUser,
+          isActive: !selectedUser.isActive
+        });
       }
       
       toast({
-        title: "Status updated",
-        description: `User status set to ${updatedUser.isActive ? 'active' : 'inactive'}`,
+        title: "Status Updated",
+        description: `User is now ${user.isActive ? 'inactive' : 'active'}`,
       });
     } catch (error) {
-      console.error("Error updating user status:", error);
+      console.error('Error toggling user status:', error);
       toast({
-        title: "Error",
-        description: "Failed to update user status",
         variant: "destructive",
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to update user status",
       });
     } finally {
       setIsLoading(false);
     }
-  }, [toast, selectedUser, setUsers, setSelectedUser, setIsLoading, users]);
+  };
 
-  const handleDeleteUser = useCallback(async (userId: string) => {
-    setIsLoading(true);
+  const handleDeleteUser = async (userId: string) => {
     try {
-      // Find the user to delete
-      const userToDelete = users.find(user => user.id === userId);
-      if (!userToDelete) {
-        throw new Error("User not found");
-      }
+      setIsLoading(true);
       
-      console.log(`Attempting to delete user ${userId}`);
+      // Delete user via API
+      await deleteUser(userId);
       
-      // Get auth headers using the common utility function
-      const headers = createAuthHeaders();
+      // Update local state
+      setUsers(users.filter(u => u.id !== userId));
       
-      // Make API call to delete the user with proper authentication
-      const response = await fetch('https://92.112.184.210:7182/api/Authentication/FakeDelete', {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({
-          "code": userId,
-          "isdeleted": true
-        })
-      });
-      
-      // Log the full API response for debugging
-      const responseText = await response.text();
-      console.log(`API response for user deletion:`, responseText);
-      
-      if (!response.ok) {
-        console.error(`API error: ${response.status} - ${responseText}`);
-        throw new Error(`API error: ${response.status}`);
-      }
-      
-      // Remove the user from the state
-      setUsers(prev => prev.filter(user => user.id !== userId));
-      
-      // If the deleted user was selected, clear the selection
+      // Clear selection if the deleted user was selected
       if (selectedUser?.id === userId) {
         setSelectedUser(null);
       }
       
       toast({
-        title: "User deleted",
-        description: `User ${userToDelete.name} has been successfully deleted`,
+        title: "User Deleted",
+        description: "User has been successfully deleted",
       });
     } catch (error) {
-      console.error("Error deleting user:", error);
+      console.error('Error deleting user:', error);
       toast({
-        title: "Error",
-        description: "Failed to delete user. Please try again.",
         variant: "destructive",
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to delete user",
       });
     } finally {
       setIsLoading(false);
     }
-  }, [toast, selectedUser, setUsers, setSelectedUser, setIsLoading, users]);
+  };
 
   return {
     handleToggleStatus,
