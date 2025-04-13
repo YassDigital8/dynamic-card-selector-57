@@ -12,6 +12,9 @@ interface ApiUser {
   department: string;
   lastLogIn: string;
   roles: string[];
+  status: string;
+  reason: string;
+  numberOfLogIn: number;
 }
 
 // Helper function to validate a role string is a valid UserPrivilege
@@ -106,7 +109,7 @@ export const mapApiUserToUser = (apiUser: ApiUser): User => {
     createdAt: new Date(),
     updatedAt: new Date(),
     lastLogin: apiUser.lastLogIn ? new Date(apiUser.lastLogIn) : undefined,
-    isActive: apiUser.isActive,
+    isActive: apiUser.status === "Active",
     department: apiUser.department
   };
 };
@@ -137,11 +140,19 @@ export const fetchAllUsers = async (): Promise<User[]> => {
     }
     
     console.log("Successfully received user data from API");
-    const apiUsers: ApiUser[] = await response.json();
+    const data = await response.json();
+    console.log("Raw API response:", data);
+    
+    // Check if the response has an items property (based on the network request logs)
+    const apiUsers: ApiUser[] = data.items || data;
     console.log(`Received ${apiUsers.length} users from API`);
     
     // Map API users to our User type
-    const mappedUsers = apiUsers.map(mapApiUserToUser);
+    const mappedUsers = apiUsers
+      .filter(user => user.status !== "Deleted") // Filter out deleted users
+      .map(mapApiUserToUser);
+    
+    console.log("Mapped users:", mappedUsers);
     return mappedUsers;
   } catch (error) {
     console.error("Error fetching users:", error);
