@@ -85,7 +85,7 @@ const LoginForm = () => {
         errorMessage = error.message;
         
         // Extract and format API response if available
-        if (errorMessage.includes('status code') || errorMessage.includes('API error')) {
+        if (errorMessage.includes('API response:') || errorMessage.includes('API error:')) {
           setResponseLog(JSON.stringify({
             error: true,
             message: errorMessage,
@@ -101,7 +101,9 @@ const LoginForm = () => {
       toast({
         variant: "destructive",
         title: "Login failed",
-        description: errorMessage,
+        description: errorMessage.includes('API response:') 
+          ? "Authentication failed. Please check your credentials." 
+          : errorMessage,
       });
     } finally {
       setIsLoading(false);

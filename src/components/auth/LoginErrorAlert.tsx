@@ -18,7 +18,7 @@ const LoginErrorAlert: React.FC<LoginErrorAlertProps> = ({
   if (!loginError) return null;
   
   const isCorsProxyActivationError = loginError.includes('CORS Proxy Activation Required');
-  const isApiResponseError = loginError.includes('API error') || loginError.includes('status code');
+  const isApiResponseError = loginError.includes('API response:') || loginError.includes('API error:');
   
   const getErrorIcon = () => {
     if (isNetworkError || isCorsProxyActivationError) return <ShieldAlert className="h-4 w-4" />;
@@ -29,7 +29,7 @@ const LoginErrorAlert: React.FC<LoginErrorAlertProps> = ({
   const getErrorTitle = () => {
     if (isCorsProxyActivationError) return "CORS Proxy Activation Required";
     if (isNetworkError) return "Connection Issue";
-    if (isApiResponseError) return "API Response Error";
+    if (isApiResponseError) return "Authentication Failed";
     return "Login failed";
   };
   
@@ -37,7 +37,17 @@ const LoginErrorAlert: React.FC<LoginErrorAlertProps> = ({
     if (!isApiResponseError) return message;
     
     // Extract the relevant part from the API error message
-    if (message.includes('API error:')) {
+    if (message.includes('API response:')) {
+      return (
+        <div className="space-y-2">
+          <p className="font-medium">The server returned:</p>
+          <div className="bg-red-50 dark:bg-red-900/20 p-2 rounded border border-red-200 dark:border-red-800 text-sm">
+            {message.split('API response:')[1].trim()}
+          </div>
+          <p className="text-sm italic">Please check your credentials and try again.</p>
+        </div>
+      );
+    } else if (message.includes('API error:')) {
       return (
         <div className="space-y-2">
           <p className="font-medium">The API returned an error:</p>

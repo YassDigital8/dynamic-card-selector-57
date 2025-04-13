@@ -66,8 +66,9 @@ export const loginUser = async (credentials: LoginCredentials): Promise<AuthResp
       throw new Error(`Invalid response format from authentication server: ${responseText.substring(0, 100)}${responseText.length > 100 ? '...' : ''}`);
     }
     
+    // Important change: Even if response is not OK, if we got a valid JSON response from the API,
+    // we should pass that information to the user rather than treating it as a generic error
     if (!response.ok) {
-      // For error responses, provide detailed information about the error
       let errorMessage = '';
       
       if (typeof responseData === 'string') {
@@ -82,12 +83,15 @@ export const loginUser = async (credentials: LoginCredentials): Promise<AuthResp
           .flat()
           .join(', ');
       } else {
-        errorMessage = `API error: ${response.status}`;
+        errorMessage = `HTTP error: ${response.status}`;
       }
       
-      // Include the status code in the error message
-      const fullErrorMessage = `API error: ${response.status} - ${errorMessage}`;
+      // Include the status code in the error message but make it clear this is an API response
+      // not a CORS or network issue
+      const fullErrorMessage = `API response: ${response.status} - ${errorMessage}`;
       console.error(fullErrorMessage, responseData);
+      
+      // For status 400/401/403, throw with the API's actual response message
       throw new Error(fullErrorMessage);
     }
     
@@ -123,6 +127,11 @@ export const loginUser = async (credentials: LoginCredentials): Promise<AuthResp
     // Check if this is a CORS Anywhere activation error
     if (error instanceof Error && error.message.includes('CORS Proxy Activation Required')) {
       throw error; // Rethrow the specific error
+    }
+    
+    // Check if this is an API response error (which we want to show directly)
+    if (error instanceof Error && error.message.includes('API response:')) {
+      throw error; // Rethrow the API error directly
     }
     
     // Check if this is a CORS or network related error
