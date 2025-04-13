@@ -28,8 +28,8 @@ const UsersPage: React.FC = () => {
     userPrivileges,
     departments,
     pagination,
-    applyStatusFilter,
-    currentStatusFilter
+    applyStatusFilters,
+    currentStatusFilters
   } = useUsers();
 
   const { 
@@ -44,8 +44,8 @@ const UsersPage: React.FC = () => {
     resetFilters,
     filteredUsers,
     statusOptions,
-    currentStatusFilter: uiStatusFilter
-  } = useSearchFilters(users, currentStatusFilter, applyStatusFilter);
+    currentStatusFilters: uiStatusFilters
+  } = useSearchFilters(users, currentStatusFilters, applyStatusFilters);
 
   // Clear selected user when users are refreshed
   useEffect(() => {
@@ -78,7 +78,7 @@ const UsersPage: React.FC = () => {
         selectedUser={selectedUser}
         onClearSelection={() => setSelectedUser(null)}
         onRefresh={() => {
-          fetchUsers(pagination.currentPage, currentStatusFilter);
+          fetchUsers(pagination.currentPage, currentStatusFilters);
           setSelectedUser(null);
         }}
         onAddUser={openAddDialog}
@@ -90,7 +90,7 @@ const UsersPage: React.FC = () => {
           nameFilter={searchFilters.name}
           emailFilter={searchFilters.email}
           departmentFilter={searchFilters.department}
-          statusFilter={currentStatusFilter}
+          statusFilters={currentStatusFilters}
           departments={departments}
           statusOptions={statusOptions}
           onUpdateFilter={updateFilter}

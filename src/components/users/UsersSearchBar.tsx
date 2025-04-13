@@ -6,15 +6,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
 import { StatusOption } from '@/hooks/users/data/userStatusData';
+import { Checkbox } from '@/components/ui/checkbox';
 
 interface UsersSearchBarProps {
   nameFilter: string;
   emailFilter: string;
   departmentFilter: string;
-  statusFilter: string;
+  statusFilters: string[];
   departments: string[];
   statusOptions: StatusOption[];
-  onUpdateFilter: (key: string, value: string) => void;
+  onUpdateFilter: (key: string, value: string | string[]) => void;
   onResetFilters: () => void;
 }
 
@@ -22,7 +23,7 @@ const UsersSearchBar: React.FC<UsersSearchBarProps> = ({
   nameFilter,
   emailFilter,
   departmentFilter,
-  statusFilter,
+  statusFilters,
   departments,
   statusOptions,
   onUpdateFilter,
@@ -36,7 +37,35 @@ const UsersSearchBar: React.FC<UsersSearchBarProps> = ({
     onUpdateFilter(key, value);
   };
 
-  const isFilterActive = nameFilter || emailFilter || departmentFilter !== 'all' || statusFilter !== 'all';
+  const handleStatusChange = (value: string, checked: boolean) => {
+    let newValues: string[];
+
+    // Special handling for 'all' status
+    if (value === 'all') {
+      newValues = checked ? ['all'] : [];
+    } else {
+      newValues = [...statusFilters.filter(s => s !== 'all')];
+      
+      if (checked) {
+        if (!newValues.includes(value)) {
+          newValues.push(value);
+        }
+      } else {
+        newValues = newValues.filter(v => v !== value);
+      }
+
+      // If no status selected, default to 'all'
+      if (newValues.length === 0) {
+        newValues = ['all'];
+      }
+    }
+
+    onUpdateFilter('status', newValues);
+  };
+
+  const isFilterActive = nameFilter || emailFilter || departmentFilter !== 'all' || 
+                       (statusFilters.length === 1 && statusFilters[0] !== 'all') || 
+                       statusFilters.length > 1;
 
   return (
     <div className="space-y-4">
@@ -86,22 +115,24 @@ const UsersSearchBar: React.FC<UsersSearchBarProps> = ({
         </div>
         
         <div>
-          <Label htmlFor="status">Status</Label>
-          <Select
-            value={statusFilter}
-            onValueChange={(value) => handleSelectChange('status', value)}
-          >
-            <SelectTrigger id="status" className="mt-1">
-              <SelectValue placeholder="All Statuses" />
-            </SelectTrigger>
-            <SelectContent>
-              {statusOptions.map((status) => (
-                <SelectItem key={status.value} value={status.value}>
+          <Label className="block mb-2">Status</Label>
+          <div className="flex flex-col space-y-2 mt-1 p-2 border rounded-md">
+            {statusOptions.map((status) => (
+              <div key={status.value} className="flex items-center space-x-2">
+                <Checkbox 
+                  id={`status-${status.value}`} 
+                  checked={statusFilters.includes(status.value)}
+                  onCheckedChange={(checked) => handleStatusChange(status.value, checked === true)}
+                />
+                <label
+                  htmlFor={`status-${status.value}`}
+                  className="text-sm font-medium cursor-pointer"
+                >
                   {status.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+                </label>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
       

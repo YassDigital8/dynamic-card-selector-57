@@ -24,7 +24,7 @@ export const getStatusOptions = (): StatusOption[] => {
   ];
 };
 
-// API status filter interface for the query parameters
+// Define the structure for multiple status filters
 export interface StatusFilters {
   isactive?: boolean;
   islocked?: boolean;
@@ -32,20 +32,28 @@ export interface StatusFilters {
   isdeleted?: boolean;
 }
 
-// Convert a status string to API filter parameters
-export const getStatusFiltersFromValue = (statusValue: string): StatusFilters => {
-  const filters: StatusFilters = {};
-  
-  if (statusValue === 'all') {
-    // If 'all' is selected, return empty object (no filters)
+// Convert selected status values to API filter parameters
+export const getStatusFiltersFromValues = (selectedStatuses: string[]): StatusFilters => {
+  // If 'all' is selected or no statuses are selected, return empty object (no filters)
+  if (selectedStatuses.includes('all') || selectedStatuses.length === 0) {
     return {};
   }
   
-  // Set only the selected status to true
-  if (statusValue === 'active') filters.isactive = true;
-  if (statusValue === 'locked') filters.islocked = true;
-  if (statusValue === 'frozen') filters.isfrozen = true;
-  if (statusValue === 'deleted') filters.isdeleted = true;
+  // Initialize all statuses to false
+  const filters: StatusFilters = {
+    isactive: false,
+    islocked: false,
+    isfrozen: false,
+    isdeleted: false
+  };
+  
+  // Set selected statuses to true
+  selectedStatuses.forEach(status => {
+    if (status === 'active') filters.isactive = true;
+    if (status === 'locked') filters.islocked = true;
+    if (status === 'frozen') filters.isfrozen = true;
+    if (status === 'deleted') filters.isdeleted = true;
+  });
   
   return filters;
 };
@@ -56,10 +64,11 @@ export const buildStatusFilterQueryString = (filters: StatusFilters): string => 
   
   const filterParams: string[] = [];
   
-  if (filters.isactive) filterParams.push('isactive=true');
-  if (filters.islocked) filterParams.push('islocked=true');
-  if (filters.isfrozen) filterParams.push('isfrozen=true');
-  if (filters.isdeleted) filterParams.push('isdeleted=true');
+  Object.entries(filters).forEach(([key, value]) => {
+    if (value !== undefined) {
+      filterParams.push(`${key}=${value}`);
+    }
+  });
   
   return filterParams.length > 0 ? `&filters=${filterParams.join(',')}` : '';
 };

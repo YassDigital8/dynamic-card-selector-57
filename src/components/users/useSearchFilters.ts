@@ -11,8 +11,8 @@ type SearchFilters = {
 
 export const useSearchFilters = (
   users: User[], 
-  currentStatusFilter: string, 
-  onStatusFilterChange: (value: string) => void
+  currentStatusFilters: string[], 
+  onStatusFiltersChange: (values: string[]) => void
 ) => {
   const [searchFilters, setSearchFilters] = useState<SearchFilters>({
     name: '',
@@ -24,17 +24,22 @@ export const useSearchFilters = (
   const statusOptions = useMemo(() => getStatusOptions(), []);
 
   // Update a specific filter
-  const updateFilter = useCallback((key: keyof SearchFilters | 'status', value: string) => {
+  const updateFilter = useCallback((key: keyof SearchFilters | 'status', value: string | string[]) => {
     if (key === 'status') {
       // Status filter is now handled separately via API
-      onStatusFilterChange(value);
+      if (Array.isArray(value)) {
+        onStatusFiltersChange(value);
+      } else {
+        // Handle a single status value (for backward compatibility)
+        onStatusFiltersChange([value]);
+      }
     } else {
       setSearchFilters(prev => ({
         ...prev,
         [key]: value
       }));
     }
-  }, [onStatusFilterChange]);
+  }, [onStatusFiltersChange]);
 
   // Reset all filters
   const resetFilters = useCallback(() => {
@@ -43,9 +48,9 @@ export const useSearchFilters = (
       email: '',
       department: 'all'
     });
-    // Reset status filter to 'all'
-    onStatusFilterChange('all');
-  }, [onStatusFilterChange]);
+    // Reset status filter to empty array (all)
+    onStatusFiltersChange(['all']);
+  }, [onStatusFiltersChange]);
 
   // Apply client-side filters (name, email, department) to users list
   // Status filtering is now handled server-side via API
@@ -76,7 +81,7 @@ export const useSearchFilters = (
     resetFilters,
     filteredUsers,
     statusOptions,
-    currentStatusFilter
+    currentStatusFilters
   };
 };
 
