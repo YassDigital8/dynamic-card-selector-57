@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { FileText, Settings, PlusCircle } from 'lucide-react';
+import { FileText, Settings, PlusCircle, Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable';
 
@@ -9,6 +9,7 @@ import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/componen
 import usePageNavigation from '@/hooks/usePageNavigation';
 import usePageAddition from '@/hooks/usePageAddition';
 import useAuthentication from '@/hooks/useAuthentication';
+import { usePageApprovals } from '@/hooks/usePageApprovals';
 
 // Components
 import LoadingScreen from '@/components/pages/index/LoadingScreen';
@@ -19,11 +20,15 @@ import AddPageDialog from '@/components/pages/index/addPageDialog';
 import PageContainer from '@/components/pages/index/PageContainer';
 import PagesTour from '@/components/pages/index/PagesTour';
 import AuthenticatedContent from '@/components/pages/index/AuthenticatedContent';
+import PendingApprovalBadge from '@/components/pages/approval/PendingApprovalBadge';
+import { Link } from 'react-router-dom';
 
 const Index = () => {
   const [initialLoading, setInitialLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("pages");
   const { userInfo } = useAuthentication();
+  const { pendingApprovals } = usePageApprovals();
+  const hasPendingApprovals = pendingApprovals.length > 0;
 
   // Refs for tour highlights
   const pageSelectorsRef = useRef<HTMLDivElement>(null);
@@ -56,22 +61,44 @@ const Index = () => {
     return <LoadingScreen />;
   }
 
+  // Check if the user has supervisor role or higher to show approvals
+  const canApprove = userInfo?.role === 'Supervisor' || 
+                    userInfo?.role === 'Manager' || 
+                    userInfo?.role === 'Admin' || 
+                    userInfo?.role === 'Super Admin';
+
   return (
     <PageContainer>
       <AuthenticatedContent userInfo={userInfo} />
       
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <div ref={tabsRef} className="flex items-center justify-between mb-6">
-          <TabsList className="bg-gray-100">
-            <TabsTrigger value="pages" className="data-[state=active]:bg-white gap-2 text-black dark:text-black">
-              <FileText className="h-4 w-4" />
-              Pages
-            </TabsTrigger>
-            <TabsTrigger value="settings" className="data-[state=active]:bg-white gap-2 text-black dark:text-black">
-              <Settings className="h-4 w-4" />
-              Settings
-            </TabsTrigger>
-          </TabsList>
+          <div className="flex items-center">
+            <TabsList className="bg-gray-100">
+              <TabsTrigger value="pages" className="data-[state=active]:bg-white gap-2 text-black dark:text-black">
+                <FileText className="h-4 w-4" />
+                Pages
+              </TabsTrigger>
+              <TabsTrigger value="settings" className="data-[state=active]:bg-white gap-2 text-black dark:text-black">
+                <Settings className="h-4 w-4" />
+                Settings
+              </TabsTrigger>
+            </TabsList>
+            
+            {canApprove && (
+              <Link to="/page-approvals" className="ml-4">
+                <Button variant="outline" size="sm" className="gap-2">
+                  <Bell className="h-4 w-4" />
+                  Approvals
+                  {hasPendingApprovals && (
+                    <span className="bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                      {pendingApprovals.length}
+                    </span>
+                  )}
+                </Button>
+              </Link>
+            )}
+          </div>
           
           <Button 
             onClick={() => pageAddition.setAddPageDialogOpen(true)}
