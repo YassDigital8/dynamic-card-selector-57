@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { PageData } from '@/models/PageModel';
+import { PageData, ApprovalStatus } from '@/models/PageModel';
 import { updatePage } from '@/utils/pageApi';
 import { useToast } from './use-toast';
 import { usePageApprovals } from './usePageApprovals';
@@ -196,9 +196,9 @@ export function usePageEdit({
     setIsRequestingApproval(true);
     
     // Update page to include approval status
-    const updatedPage = {
+    const updatedPage: PageData = {
       ...pageData,
-      approvalStatus: 'pending',
+      approvalStatus: 'pending' as ApprovalStatus,
       createdBy: userInfo?.firstName || 'Current User'
     };
     

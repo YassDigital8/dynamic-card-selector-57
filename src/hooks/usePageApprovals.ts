@@ -81,7 +81,7 @@ export const usePageApprovals = () => {
               if (approver.id === '1') { // In a real app, match with userInfo.id
                 return {
                   ...approver,
-                  status: 'approved',
+                  status: 'approved' as const,
                   approvedAt: new Date().toISOString(),
                   comment
                 };
@@ -94,7 +94,7 @@ export const usePageApprovals = () => {
             
             return {
               ...approval,
-              status: allApproved ? 'approved' : 'pending',
+              status: allApproved ? 'approved' as const : 'pending' as const,
               approvers: updatedApprovers
             };
           }
@@ -133,7 +133,7 @@ export const usePageApprovals = () => {
               if (approver.id === '1') { // In a real app, match with userInfo.id
                 return {
                   ...approver,
-                  status: 'rejected',
+                  status: 'rejected' as const,
                   approvedAt: new Date().toISOString(),
                   comment
                 };
@@ -143,7 +143,7 @@ export const usePageApprovals = () => {
             
             return {
               ...approval,
-              status: 'rejected',
+              status: 'rejected' as const,
               approvers: updatedApprovers
             };
           }
