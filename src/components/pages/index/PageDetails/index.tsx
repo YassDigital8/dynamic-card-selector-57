@@ -4,7 +4,6 @@ import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
 import { PageData } from '@/models/PageModel';
 import { usePageEdit } from '@/hooks/usePageEdit';
-import useAuthentication from '@/hooks/useAuthentication';
 
 // Components
 import PageHeader from './PageHeader';
@@ -43,7 +42,6 @@ const PageDetails = ({
   selectedPathId,
   selectedSubPathId
 }: PageDetailsProps) => {
-  const { userInfo } = useAuthentication();
   const {
     isEditing,
     editedTitle,
@@ -51,16 +49,13 @@ const PageDetails = ({
     isSaving,
     isPublishing,
     isTogglingStatus,
-    isRequestingApproval,
-    userRole,
     setEditedTitle,
     setEditedContent,
     handleEdit,
     handleCancel,
     handleSave,
     handlePublish,
-    handleToggleStatus,
-    handleRequestApproval
+    handleToggleStatus
   } = usePageEdit({
     pageData,
     onRefresh,
@@ -102,14 +97,9 @@ const PageDetails = ({
           onSave={handleSave}
           onPublish={handlePublish}
           onToggleStatus={handleToggleStatus}
-          onRequestApproval={handleRequestApproval}
           isPublishing={isPublishing}
           isTogglingStatus={isTogglingStatus}
-          isRequestingApproval={isRequestingApproval}
           pageStatus={pageData.status}
-          approvalStatus={pageData.approvalStatus}
-          userRole={userInfo?.role}
-          page={pageData}
         />
         <CardContent className="p-6">
           <PageDetailsView 

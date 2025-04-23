@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { format } from 'date-fns';
 import { TableRow, TableCell } from '@/components/ui/table';
@@ -97,7 +98,6 @@ const UserTableRow: React.FC<UserTableRowProps> = ({
       <TableCell>
         <UserStatusBadge 
           isActive={user.isActive} 
-          status={user.status} 
           onToggle={() => onToggleStatus(user.id)} 
         />
       </TableCell>

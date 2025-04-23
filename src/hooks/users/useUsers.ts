@@ -11,11 +11,8 @@ export const useUsers = () => {
     isLoading,
     setIsLoading,
     fetchUsers,
-    applyStatusFilters,
-    currentStatusFilters,
     userPrivileges,
     modulePermissions,
-    departments,
     pagination
   } = useUserData();
 
@@ -34,8 +31,6 @@ export const useUsers = () => {
     setSelectedUser,
     isLoading,
     fetchUsers,
-    applyStatusFilters,
-    currentStatusFilters,
     handleUpdateRole,
     handleUpdateModuleRole,
     handleToggleStatus,
@@ -44,7 +39,6 @@ export const useUsers = () => {
     handlePromoteToSuperAdmin,
     userPrivileges,
     modulePermissions,
-    departments,
     pagination
   };
 };

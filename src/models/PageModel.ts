@@ -11,9 +11,6 @@ export interface PageData {
   pageUrlName?: string;
   segments?: any[];
   updatedAt?: string; // Added to support the PageDetailsView component
-  approvalStatus?: ApprovalStatus;
-  approvers?: Approver[];
-  createdBy?: string;
 }
 
 export interface PageSelectionModel {
@@ -24,23 +21,3 @@ export interface PageSelectionModel {
 }
 
 export type SelectionStep = 'pos' | 'language' | 'options';
-
-export type ApprovalStatus = 'pending' | 'approved' | 'rejected' | 'not_required';
-
-export interface Approver {
-  id: string;
-  name: string;
-  role: string;
-  status: 'pending' | 'approved' | 'rejected';
-  approvedAt?: string;
-  comment?: string;
-}
-
-export interface ApprovalRequest {
-  pageId: number;
-  pageTitle: string;
-  requestedBy: string;
-  requestedAt: string;
-  status: ApprovalStatus;
-  approvers: Approver[];
-}

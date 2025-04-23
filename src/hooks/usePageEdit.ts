@@ -1,10 +1,8 @@
 
 import { useState } from 'react';
-import { PageData, ApprovalStatus } from '@/models/PageModel';
+import { PageData } from '@/models/PageModel';
 import { updatePage } from '@/utils/pageApi';
 import { useToast } from './use-toast';
-import { usePageApprovals } from './usePageApprovals';
-import useAuthentication from './useAuthentication';
 
 interface UsePageEditProps {
   pageData: PageData | null;
@@ -29,14 +27,7 @@ export function usePageEdit({
   const [isSaving, setIsSaving] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
   const [isTogglingStatus, setIsTogglingStatus] = useState(false);
-  const [isRequestingApproval, setIsRequestingApproval] = useState(false);
   const { toast } = useToast();
-  const { userInfo } = useAuthentication();
-  const { requestApproval } = usePageApprovals();
-  
-  // Determine if the user needs approval to publish
-  const userRole = userInfo?.role || '';
-  const needsApproval = userRole === 'Officer' || userRole === 'Editor';
   
   // Start editing with current values
   const handleEdit = () => {
@@ -97,15 +88,6 @@ export function usePageEdit({
     
     const newStatus = pageData.status === 'published' ? 'draft' : 'published';
     
-    // If publishing and needs approval, offer to request approval
-    if (newStatus === 'published' && needsApproval) {
-      toast({
-        title: "Approval Required",
-        description: "As an Officer, you need to request approval before publishing.",
-      });
-      return;
-    }
-    
     setIsTogglingStatus(true);
     
     const success = await updatePage({
@@ -149,15 +131,6 @@ export function usePageEdit({
       return;
     }
     
-    // If needs approval, offer to request approval
-    if (needsApproval) {
-      toast({
-        title: "Approval Required",
-        description: "As an Officer, you need to request approval before publishing.",
-      });
-      return;
-    }
-    
     setIsPublishing(true);
     
     const success = await updatePage({
@@ -189,37 +162,6 @@ export function usePageEdit({
     setIsPublishing(false);
   };
 
-  // Request approval for the page
-  const handleRequestApproval = async () => {
-    if (!pageData) return;
-    
-    setIsRequestingApproval(true);
-    
-    // Update page to include approval status
-    const updatedPage: PageData = {
-      ...pageData,
-      approvalStatus: 'pending' as ApprovalStatus,
-      createdBy: userInfo?.firstName || 'Current User'
-    };
-    
-    // Request approval using the approvals hook
-    const success = await requestApproval(updatedPage);
-    
-    if (success) {
-      // Update the local page data
-      if (pageData) {
-        pageData.approvalStatus = 'pending';
-      }
-      
-      // Refresh the page data
-      if (onRefresh) {
-        onRefresh();
-      }
-    }
-    
-    setIsRequestingApproval(false);
-  };
-
   return {
     isEditing,
     editedTitle,
@@ -227,15 +169,12 @@ export function usePageEdit({
     isSaving,
     isPublishing,
     isTogglingStatus,
-    isRequestingApproval,
-    userRole,
     setEditedTitle,
     setEditedContent,
     handleEdit,
     handleCancel,
     handleSave,
     handlePublish,
-    handleToggleStatus,
-    handleRequestApproval
+    handleToggleStatus
   };
 }

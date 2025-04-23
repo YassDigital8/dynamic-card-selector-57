@@ -1,26 +1,18 @@
 
 import React from 'react';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { X } from 'lucide-react';
-import { StatusOption } from '@/hooks/users/data/userStatusData';
-import { 
-  DropdownMenu, 
-  DropdownMenuTrigger, 
-  DropdownMenuContent,
-  DropdownMenuCheckboxItem 
-} from '@/components/ui/dropdown-menu';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Search, X } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 interface UsersSearchBarProps {
   nameFilter: string;
   emailFilter: string;
   departmentFilter: string;
-  statusFilters: string[];
+  statusFilter: string;
   departments: string[];
-  statusOptions: StatusOption[];
-  onUpdateFilter: (key: string, value: string | string[]) => void;
+  onUpdateFilter: (key: string, value: string) => void;
   onResetFilters: () => void;
 }
 
@@ -28,145 +20,101 @@ const UsersSearchBar: React.FC<UsersSearchBarProps> = ({
   nameFilter,
   emailFilter,
   departmentFilter,
-  statusFilters,
+  statusFilter,
   departments,
-  statusOptions,
   onUpdateFilter,
   onResetFilters
 }) => {
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onUpdateFilter(e.target.name, e.target.value);
-  };
-
-  const handleSelectChange = (key: string, value: string) => {
-    onUpdateFilter(key, value);
-  };
-
-  const handleStatusChange = (value: string, checked: boolean) => {
-    let newValues: string[];
-
-    // Special handling for 'all' status
-    if (value === 'all') {
-      newValues = checked ? ['all'] : [];
-    } else {
-      newValues = [...statusFilters.filter(s => s !== 'all')];
-      
-      if (checked) {
-        if (!newValues.includes(value)) {
-          newValues.push(value);
-        }
-      } else {
-        newValues = newValues.filter(v => v !== value);
-      }
-
-      // If no status selected, default to 'all'
-      if (newValues.length === 0) {
-        newValues = ['all'];
-      }
-    }
-
-    onUpdateFilter('status', newValues);
-  };
-
-  // Helper to get display text for status dropdown
-  const getStatusDisplayText = () => {
-    if (statusFilters.includes('all')) return 'All Statuses';
-    if (statusFilters.length === 0) return 'All Statuses';
-    if (statusFilters.length === 1) {
-      return statusOptions.find(opt => opt.value === statusFilters[0])?.label || 'Status';
-    }
-    return `${statusFilters.length} statuses selected`;
-  };
-
-  const isFilterActive = nameFilter || emailFilter || departmentFilter !== 'all' || 
-                       (statusFilters.length === 1 && statusFilters[0] !== 'all') || 
-                       statusFilters.length > 1;
+  const hasFilters = nameFilter || emailFilter || departmentFilter !== 'all' || statusFilter !== 'all';
 
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div>
-          <Label htmlFor="name">Name</Label>
-          <Input
-            id="name"
-            name="name"
-            placeholder="Search by name"
-            value={nameFilter}
-            onChange={handleInputChange}
-            className="mt-1"
-          />
+    <motion.div 
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="border rounded-lg p-5 mb-6 bg-card shadow-sm"
+    >
+      <div className="flex flex-col md:flex-row gap-4 mb-4">
+        <div className="flex-1">
+          <div className="text-sm font-medium mb-1.5 text-muted-foreground">Name</div>
+          <div className="relative">
+            <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search by name"
+              value={nameFilter}
+              onChange={(e) => onUpdateFilter('name', e.target.value)}
+              className="pl-9 h-10 transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+            />
+          </div>
         </div>
         
-        <div>
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            name="email"
-            placeholder="Search by email"
-            value={emailFilter}
-            onChange={handleInputChange}
-            className="mt-1"
-          />
+        <div className="flex-1">
+          <div className="text-sm font-medium mb-1.5 text-muted-foreground">Email</div>
+          <div className="relative">
+            <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search by email"
+              value={emailFilter}
+              onChange={(e) => onUpdateFilter('email', e.target.value)}
+              className="pl-9 h-10 transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+            />
+          </div>
         </div>
         
-        <div>
-          <Label htmlFor="department">Department</Label>
-          <Select
+        <div className="w-full md:w-[180px]">
+          <div className="text-sm font-medium mb-1.5 text-muted-foreground">Dep</div>
+          <Select 
             value={departmentFilter}
-            onValueChange={(value) => handleSelectChange('department', value)}
+            onValueChange={(value) => onUpdateFilter('department', value)}
           >
-            <SelectTrigger id="department" className="mt-1">
-              <SelectValue placeholder="All Departments" />
+            <SelectTrigger className="h-10 transition-all duration-200 focus:ring-2 focus:ring-primary/20">
+              <SelectValue placeholder="All departments" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Departments</SelectItem>
+              <SelectItem value="all">All departments</SelectItem>
               {departments.map((dept) => (
-                <SelectItem key={dept} value={dept}>
-                  {dept}
-                </SelectItem>
+                <SelectItem key={dept} value={dept}>{dept}</SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
         
-        <div>
-          <Label htmlFor="status" className="block mb-2">Status</Label>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="w-full justify-between mt-1" id="status">
-                {getStatusDisplayText()}
-                <span className="ml-2">▼</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56 bg-white">
-              {statusOptions.map((status) => (
-                <DropdownMenuCheckboxItem
-                  key={status.value}
-                  checked={statusFilters.includes(status.value)}
-                  onCheckedChange={(checked) => handleStatusChange(status.value, !!checked)}
-                >
-                  {status.label}
-                </DropdownMenuCheckboxItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+        <div className="w-full md:w-[180px]">
+          <div className="text-sm font-medium mb-1.5 text-muted-foreground">Status</div>
+          <Select
+            value={statusFilter}
+            onValueChange={(value) => onUpdateFilter('status', value)}
+          >
+            <SelectTrigger className="h-10 transition-all duration-200 focus:ring-2 focus:ring-primary/20">
+              <SelectValue placeholder="All statuses" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All statuses</SelectItem>
+              <SelectItem value="active">Active</SelectItem>
+              <SelectItem value="inactive">Inactive</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
       
-      {isFilterActive && (
-        <div className="flex justify-end">
+      {hasFilters && (
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="flex justify-end"
+        >
           <Button
             variant="outline"
             size="sm"
             onClick={onResetFilters}
-            className="flex items-center"
+            className="text-xs group"
           >
-            <X className="h-4 w-4 mr-1" />
-            Clear Filters
+            <X className="h-3.5 w-3.5 mr-1.5 group-hover:rotate-90 transition-transform duration-200" />
+            Clear filters
           </Button>
-        </div>
+        </motion.div>
       )}
-    </div>
+    </motion.div>
   );
 };
 

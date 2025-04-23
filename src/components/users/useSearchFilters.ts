@@ -1,62 +1,52 @@
 
 import { useState, useCallback, useMemo } from 'react';
-import { User } from '@/types/user.types';
-import { getStatusOptions } from '@/hooks/users/data/userStatusData';
+import { User, UserPrivilege } from '@/types/user.types';
 
 type SearchFilters = {
   name: string;
   email: string;
   department: string;
+  status: string;
 };
 
-export const useSearchFilters = (
-  users: User[], 
-  currentStatusFilters: string[], 
-  onStatusFiltersChange: (values: string[]) => void
-) => {
+export const useSearchFilters = (users: User[]) => {
   const [searchFilters, setSearchFilters] = useState<SearchFilters>({
     name: '',
     email: '',
-    department: 'all'
+    department: 'all',
+    status: 'all'
   });
 
-  // Get status options for the dropdown
-  const statusOptions = useMemo(() => getStatusOptions(), []);
+  // Get unique departments for filter dropdown
+  const departments = useMemo(() => {
+    const deptSet = new Set<string>();
+    users.forEach(user => {
+      if (user.department) {
+        deptSet.add(user.department);
+      }
+    });
+    return Array.from(deptSet).sort();
+  }, [users]);
 
   // Update a specific filter
-  const updateFilter = useCallback((key: keyof SearchFilters | 'status', value: string | string[]) => {
-    if (key === 'status') {
-      // Status filter is now handled separately via API
-      if (Array.isArray(value)) {
-        console.log("Updating status filters to:", value);
-        onStatusFiltersChange(value);
-      } else {
-        // Handle a single status value (for backward compatibility)
-        console.log("Single status value received:", value);
-        onStatusFiltersChange([value]);
-      }
-    } else {
-      setSearchFilters(prev => ({
-        ...prev,
-        [key]: value
-      }));
-    }
-  }, [onStatusFiltersChange]);
+  const updateFilter = useCallback((key: keyof SearchFilters, value: string) => {
+    setSearchFilters(prev => ({
+      ...prev,
+      [key]: value
+    }));
+  }, []);
 
   // Reset all filters
   const resetFilters = useCallback(() => {
     setSearchFilters({
       name: '',
       email: '',
-      department: 'all'
+      department: 'all',
+      status: 'all'
     });
-    // Reset status filter to empty array (all)
-    console.log("Resetting status filters to ['all']");
-    onStatusFiltersChange(['all']);
-  }, [onStatusFiltersChange]);
+  }, []);
 
-  // Apply client-side filters (name, email, department) to users list
-  // Status filtering is now handled server-side via API
+  // Apply filters to users list
   const filteredUsers = useMemo(() => {
     return users.filter(user => {
       // Name filter
@@ -74,6 +64,16 @@ export const useSearchFilters = (
         return false;
       }
       
+      // Status filter
+      if (searchFilters.status !== 'all') {
+        if (searchFilters.status === 'active' && !user.isActive) {
+          return false;
+        }
+        if (searchFilters.status === 'inactive' && user.isActive) {
+          return false;
+        }
+      }
+      
       return true;
     });
   }, [users, searchFilters]);
@@ -83,8 +83,7 @@ export const useSearchFilters = (
     updateFilter,
     resetFilters,
     filteredUsers,
-    statusOptions,
-    currentStatusFilters
+    departments
   };
 };
 

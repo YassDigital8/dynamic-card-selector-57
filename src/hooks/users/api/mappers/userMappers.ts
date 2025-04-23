@@ -103,8 +103,6 @@ export const mapApiUserToUser = (apiUser: ApiUser): User => {
     updatedAt: new Date(),
     lastLogin: apiUser.lastLogIn ? new Date(apiUser.lastLogIn) : undefined,
     isActive: apiUser.status === "Active",
-    department: apiUser.department,
-    status: apiUser.status, // Ensure status from API is included
-    reason: apiUser.reason  // Include reason for status if provided
+    department: apiUser.department
   };
 };
