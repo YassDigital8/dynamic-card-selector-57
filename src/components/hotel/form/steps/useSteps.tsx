@@ -61,11 +61,10 @@ export const useSteps = ({ form, hotelId }: UseStepsProps) => {
       id: 'room-types',
       label: 'Room Types',
       component: <RoomTypesSection form={form} />,
-      // Custom validation to check if at least one room type is added
+      // Allow users to proceed even without room types for now (they can add later)
       customValidation: (formValues: FormValues) => {
-        const isValid = formValues.roomTypes && formValues.roomTypes.length > 0;
-        console.log("Room types validation:", isValid, formValues.roomTypes);
-        return isValid;
+        console.log("Room types validation:", formValues.roomTypes);
+        return true; // Allow users to proceed without room types initially
       }
     },
     {
@@ -131,7 +130,8 @@ export const useSteps = ({ form, hotelId }: UseStepsProps) => {
       console.log("Steps status:", {
         currentIndex: currentStepIndex,
         totalSteps: steps.length,
-        validity: stepsValidity
+        validity: stepsValidity,
+        currentStep: steps[currentStepIndex]?.id
       });
     }, 250);
     

@@ -25,6 +25,11 @@ const RoomTypesSection: React.FC<RoomTypesSectionProps> = ({ form }) => {
   const { galleryFiles } = useGalleryFiles();
   const roomTypes = form.watch('roomTypes') || [];
 
+  useEffect(() => {
+    // Debug to make sure roomTypes are properly initialized
+    console.log('RoomTypesSection rendered, roomTypes:', roomTypes);
+  }, [roomTypes]);
+
   const getCurrentRoomName = () => {
     const name = form.getValues(`roomTypes.${currentRoomTypeIndex}.name`);
     return name || `Room Type ${currentRoomTypeIndex + 1}`;
@@ -77,21 +82,26 @@ const RoomTypesSection: React.FC<RoomTypesSectionProps> = ({ form }) => {
 
   // Initialize new room type with default values
   const addNewRoomType = () => {
-    const currentRoomTypes = form.getValues('roomTypes');
+    console.log('Adding new room type...');
+    const currentRoomTypes = form.getValues('roomTypes') || [];
     const newIndex = currentRoomTypes.length;
     
-    form.setValue('roomTypes', [
-      ...currentRoomTypes,
-      { 
-        name: `Room Type ${newIndex + 1}`, // Give it a default name
-        maxAdults: 2, 
-        maxChildren: 0, 
-        images: [],
-        allowExtraBed: false,
-        maxExtraBeds: 1,
-        extraBedPrice: 0
-      }
-    ]);
+    // Create new room type with required fields
+    const newRoomType = { 
+      id: `temp-${Date.now()}`, // Temporary ID that will be replaced on save
+      name: `Room Type ${newIndex + 1}`,
+      maxAdults: 2, 
+      maxChildren: 0,
+      images: [],
+      allowExtraBed: false,
+      maxExtraBeds: 1,
+      extraBedPrice: 0
+    };
+    
+    console.log('New room type:', newRoomType);
+    console.log('Current room types:', currentRoomTypes);
+    
+    form.setValue('roomTypes', [...currentRoomTypes, newRoomType]);
     
     // Set focus to the new room type
     setTimeout(() => {
@@ -110,7 +120,7 @@ const RoomTypesSection: React.FC<RoomTypesSectionProps> = ({ form }) => {
   };
 
   const handleRemoveRoomType = (index: number) => {
-    const currentRoomTypes = form.getValues('roomTypes');
+    const currentRoomTypes = form.getValues('roomTypes') || [];
     form.setValue('roomTypes', currentRoomTypes.filter((_, i) => i !== index));
   };
 
@@ -119,7 +129,7 @@ const RoomTypesSection: React.FC<RoomTypesSectionProps> = ({ form }) => {
       <RoomTypeHeader onAddRoomType={addNewRoomType} />
       
       {roomTypes.length === 0 ? (
-        <EmptyRoomTypeState />
+        <EmptyRoomTypeState onAddRoomType={addNewRoomType} />
       ) : (
         <RoomTypeList 
           roomTypes={roomTypes}

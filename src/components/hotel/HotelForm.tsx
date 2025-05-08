@@ -41,8 +41,19 @@ const HotelForm = memo(({
 
   // For debugging
   useEffect(() => {
+    console.log("HotelForm initialized with data:", initialData ? "provided" : "default");
+    console.log("Current form values:", form.getValues());
     console.log("Current steps validity in HotelForm:", stepsValidity);
-  }, [stepsValidity]);
+    
+    // Ensure roomTypes is initialized properly
+    const roomTypes = form.getValues('roomTypes');
+    console.log("Initial room types:", roomTypes);
+    
+    if (!roomTypes || roomTypes.length === 0) {
+      console.log("No room types found, ensuring array is initialized");
+      form.setValue('roomTypes', [], { shouldValidate: false });
+    }
+  }, [form, initialData, stepsValidity]);
 
   // Make sure extraBedPolicy is properly set when extraBed is enabled
   useEffect(() => {

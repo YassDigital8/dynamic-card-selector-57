@@ -1,14 +1,14 @@
 
-// Original file content with our additions
-import { FormValues } from './formSchema';
+import { HotelFormData } from '@/models/HotelModel';
 
-export const defaultValues: Partial<FormValues> = {
+// Default values for the hotel form
+export const defaultValues: HotelFormData = {
   name: '',
   country: '',
   governorate: '',
   streetAddress: '',
   posKey: '',
-  rating: 3,
+  rating: 0,
   amenities: {
     airConditioning: false,
     bar: false,
@@ -22,34 +22,15 @@ export const defaultValues: Partial<FormValues> = {
     petsAllowed: false,
     shuttleBus: false,
     extraBed: false,
-    barImages: [],
-    gymImages: [],
-    spaImages: [],
-    restaurantImages: [],
-    breakfastImages: [],
-    swimmingPoolImages: [],
   },
-  roomTypes: [],
+  roomTypes: [], // Initialize with empty array
   contactDetails: [],
   socialMedia: [],
   contractDocuments: [],
-  geolocation: undefined,
-  paymentMethods: [],
-  extraBedPolicy: {
-    pricePerNight: 0,
-    availableForRoomTypes: [],
-    maxExtraBedsPerRoom: 1,
-    notes: ''
-  }
-};
-
-// Default bank account details for new hotel forms
-export const defaultBankAccountDetails = {
-  accountName: '',
-  accountNumber: '',
-  bankName: '',
-  branchName: '',
-  swiftCode: '',
-  iban: '',
-  additionalInfo: ''
+  paymentMethods: [
+    { id: 'cash', name: 'Cash', enabled: true },
+    { id: 'credit', name: 'Credit Card', enabled: false },
+    { id: 'bank', name: 'Bank Transfer', enabled: false },
+    { id: 'online', name: 'Online Payment', enabled: false }
+  ],
 };

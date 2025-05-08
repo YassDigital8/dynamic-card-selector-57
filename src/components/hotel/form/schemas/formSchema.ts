@@ -14,9 +14,9 @@ export const formSchema = z.object({
   governorate: z.string().min(2, { message: "Governorate must be at least 2 characters." }),
   streetAddress: z.string().min(5, { message: "Street address must be at least 5 characters." }),
   posKey: z.string().default(''),
-  rating: z.number().min(0).max(5).optional(),
+  rating: z.number().min(0).max(5).default(0),
   amenities: amenitiesSchema,
-  roomTypes: z.array(roomTypeSchema).default([]),
+  roomTypes: z.array(roomTypeSchema).default([]), // Properly define default empty array
   contactDetails: z.array(contactDetailSchema).optional().default([]),
   socialMedia: z.array(socialMediaSchema).optional().default([]),
   contractDocuments: z.array(contractDocumentSchema).optional().default([]),
