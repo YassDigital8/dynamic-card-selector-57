@@ -2,7 +2,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { useFormContext, useFieldArray } from 'react-hook-form';
-import { FormValues } from '../formSchema';
+import { FormValues } from '../schemas/formSchema';
 import { CreditCard } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { defaultBankAccountDetails } from '../formDefaults';

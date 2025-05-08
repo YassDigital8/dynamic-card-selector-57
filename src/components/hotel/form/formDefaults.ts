@@ -1,6 +1,17 @@
 
 import { HotelFormData } from '@/models/HotelModel';
 
+// Default bank account details for bank transfer payment method
+export const defaultBankAccountDetails = {
+  accountName: '',
+  accountNumber: '',
+  bankName: '',
+  branchName: '',
+  swiftCode: '',
+  iban: '',
+  additionalInfo: ''
+};
+
 // Default values for the hotel form
 export const defaultValues: HotelFormData = {
   name: '',
