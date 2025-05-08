@@ -17,7 +17,7 @@ export const roomTypeSchema = z.object({
   maxAdults: z.number().min(1, { message: "At least 1 adult required." }),
   maxChildren: z.number().min(0),
   description: z.string().optional(),
-  price: z.number().optional(),
+  price: z.number().min(0).optional(),
   imageUrl: z.string().optional(),
   images: z.array(z.string()).optional().default([]),
   seasonalPrices: z.array(seasonalPriceSchema).optional().default([]),

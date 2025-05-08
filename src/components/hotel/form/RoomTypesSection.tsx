@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { UseFormReturn } from 'react-hook-form';
-import { FormValues } from './formSchema';
+import { FormValues } from './schemas/formSchema';
 import { FileInfo } from '@/models/FileModel';
 import { FileMetadataValues } from '@/hooks/upload/useFileMetadata';
 import { 
@@ -92,16 +92,24 @@ const RoomTypesSection: React.FC<RoomTypesSectionProps> = ({ form }) => {
       name: `Room Type ${newIndex + 1}`,
       maxAdults: 2, 
       maxChildren: 0,
+      description: '',
+      price: 0,
       images: [],
       allowExtraBed: false,
       maxExtraBeds: 1,
-      extraBedPrice: 0
+      extraBedPrice: 0,
+      seasonalPrices: []
     };
     
     console.log('New room type:', newRoomType);
     console.log('Current room types:', currentRoomTypes);
     
-    form.setValue('roomTypes', [...currentRoomTypes, newRoomType]);
+    // Use setValue with isDirty flag to mark the field as changed
+    form.setValue('roomTypes', [...currentRoomTypes, newRoomType], { 
+      shouldValidate: true,
+      shouldDirty: true,
+      shouldTouch: true
+    });
     
     // Set focus to the new room type
     setTimeout(() => {
@@ -121,7 +129,9 @@ const RoomTypesSection: React.FC<RoomTypesSectionProps> = ({ form }) => {
 
   const handleRemoveRoomType = (index: number) => {
     const currentRoomTypes = form.getValues('roomTypes') || [];
-    form.setValue('roomTypes', currentRoomTypes.filter((_, i) => i !== index));
+    form.setValue('roomTypes', currentRoomTypes.filter((_, i) => i !== index), {
+      shouldValidate: true
+    });
   };
 
   return (
@@ -139,7 +149,9 @@ const RoomTypesSection: React.FC<RoomTypesSectionProps> = ({ form }) => {
         />
       )}
       
-      <AddRoomTypeButton onAddRoomType={addNewRoomType} />
+      {roomTypes.length > 0 && (
+        <AddRoomTypeButton onAddRoomType={addNewRoomType} />
+      )}
 
       {/* Universal Image Upload Dialog for Room Types */}
       <RoomTypeImageUploadDialog 

@@ -1,7 +1,7 @@
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
-import { FormValues } from '../../formSchema';
+import { FormValues } from '../../schemas/formSchema';
 
 interface UseRoomTypeFormProps {
   form: UseFormReturn<FormValues>;
@@ -9,29 +9,24 @@ interface UseRoomTypeFormProps {
 }
 
 export const useRoomTypeForm = ({ form, index }: UseRoomTypeFormProps) => {
-  const hasExtraBed = form.watch('amenities.extraBed');
-  const roomType = form.watch(`roomTypes.${index}`);
+  const [hasExtraBed, setHasExtraBed] = useState<boolean>(false);
   
-  // Initialize form fields when component mounts
+  // Watch for changes in the allowExtraBed field
   useEffect(() => {
-    // If room name is empty, set a default name
-    const currentName = form.getValues(`roomTypes.${index}.name`);
-    if (!currentName || currentName.trim() === '') {
-      form.setValue(`roomTypes.${index}.name`, `Room Type ${index + 1}`, {
-        shouldValidate: true
-      });
-    }
+    const subscription = form.watch((value, { name }) => {
+      if (name === `roomTypes.${index}.allowExtraBed`) {
+        const extraBedEnabled = form.getValues(`roomTypes.${index}.allowExtraBed`);
+        setHasExtraBed(!!extraBedEnabled);
+      }
+    });
+    
+    // Set initial value
+    setHasExtraBed(!!form.getValues(`roomTypes.${index}.allowExtraBed`));
+    
+    return () => subscription.unsubscribe();
   }, [form, index]);
-
-  // Handle allowing extra beds based on the global amenity setting
-  useEffect(() => {
-    if (!hasExtraBed) {
-      form.setValue(`roomTypes.${index}.allowExtraBed`, false);
-    }
-  }, [hasExtraBed, form, index]);
-
+  
   return {
-    hasExtraBed,
-    roomType
+    hasExtraBed
   };
 };
