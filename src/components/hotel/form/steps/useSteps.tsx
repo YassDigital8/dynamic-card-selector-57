@@ -61,10 +61,10 @@ export const useSteps = ({ form, hotelId }: UseStepsProps) => {
       label: 'Room Types',
       component: <RoomTypesSection form={form} />,
       // Always consider room types step as valid - users can add room types later
-      customValidation: (formValues: FormValues) => {
-        console.log("Room types validation:", formValues.roomTypes);
-        // Consider this step valid regardless of whether there are room types
-        return true; 
+      customValidation: () => {
+        // Always valid - no need to check roomTypes
+        console.log("Room types step is always considered valid");
+        return true;
       }
     },
     {

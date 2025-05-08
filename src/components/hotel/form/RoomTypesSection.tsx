@@ -14,6 +14,8 @@ import {
   RoomTypeList,
   AddRoomTypeButton
 } from './room-types/components';
+import { addNewRoomType } from './room-types/hooks/useRoomTypeForm';
+import { toast } from '@/hooks/use-toast';
 
 interface RoomTypesSectionProps {
   form: UseFormReturn<FormValues>;
@@ -22,16 +24,16 @@ interface RoomTypesSectionProps {
 const RoomTypesSection: React.FC<RoomTypesSectionProps> = ({ form }) => {
   const [isImageDialogOpen, setIsImageDialogOpen] = useState(false);
   const [currentRoomTypeIndex, setCurrentRoomTypeIndex] = useState(0);
+  const [forceUpdate, setForceUpdate] = useState(0); // Add this for forcing re-renders
   const { galleryFiles } = useGalleryFiles();
   const roomTypes = form.watch('roomTypes') || [];
 
   // Ensure room types are initialized
   useEffect(() => {
-    // Debug to make sure roomTypes are properly initialized
     console.log('RoomTypesSection rendered, roomTypes:', roomTypes);
     
     const currentRoomTypes = form.getValues('roomTypes');
-    if (!currentRoomTypes || !Array.isArray(currentRoomTypes) || currentRoomTypes.length === 0) {
+    if (!currentRoomTypes || !Array.isArray(currentRoomTypes)) {
       console.log('No room types found in form, initializing empty array');
       form.setValue('roomTypes', [], { 
         shouldValidate: false,
@@ -39,7 +41,7 @@ const RoomTypesSection: React.FC<RoomTypesSectionProps> = ({ form }) => {
         shouldTouch: false
       });
     }
-  }, [form]);
+  }, [form, forceUpdate]); // Added forceUpdate dependency
 
   const getCurrentRoomName = () => {
     const name = form.getValues(`roomTypes.${currentRoomTypeIndex}.name`);
@@ -92,43 +94,24 @@ const RoomTypesSection: React.FC<RoomTypesSectionProps> = ({ form }) => {
   };
 
   // Initialize new room type with default values
-  const addNewRoomType = () => {
+  const handleAddNewRoomType = () => {
     console.log('Adding new room type...');
-    const currentRoomTypes = form.getValues('roomTypes') || [];
-    const newIndex = currentRoomTypes.length;
+    const newRoomType = addNewRoomType(form);
+    console.log('New room type added:', newRoomType);
     
-    // Create new room type with required fields
-    const newRoomType = { 
-      id: `temp-${Date.now()}`, // Temporary ID that will be replaced on save
-      name: `Room Type ${newIndex + 1}`,
-      maxAdults: 2, 
-      maxChildren: 0,
-      description: '',
-      price: 0,
-      images: [],
-      allowExtraBed: false,
-      maxExtraBeds: 1,
-      extraBedPrice: 0,
-      seasonalPrices: []
-    };
+    // Force a re-render to update the UI
+    setForceUpdate(prev => prev + 1);
     
-    console.log('New room type:', newRoomType);
-    console.log('Current room types:', currentRoomTypes);
-    
-    // Use setValue with isDirty flag to mark the field as changed
-    const updatedRoomTypes = [...currentRoomTypes, newRoomType];
-    form.setValue('roomTypes', updatedRoomTypes, { 
-      shouldValidate: true,
-      shouldDirty: true,
-      shouldTouch: true
+    // Show a toast notification
+    toast({
+      title: "Room Type Added",
+      description: `A new room type has been added.`
     });
     
-    console.log('Updated roomTypes:', updatedRoomTypes);
-    
-    // Force form validation
+    // Trigger form validation to update the form state
     form.trigger('roomTypes');
     
-    // Set focus to the new room type
+    // Set focus to the new room type after a short delay
     setTimeout(() => {
       const roomCards = document.querySelectorAll('.room-type-card');
       if (roomCards.length > 0) {
@@ -153,14 +136,17 @@ const RoomTypesSection: React.FC<RoomTypesSectionProps> = ({ form }) => {
       shouldTouch: true
     });
     console.log('Removed room type at index', index, 'new roomTypes:', updatedRoomTypes);
+    
+    // Force a re-render
+    setForceUpdate(prev => prev + 1);
   };
 
   return (
     <div className="space-y-6 col-span-2">
-      <RoomTypeHeader onAddRoomType={addNewRoomType} />
+      <RoomTypeHeader onAddRoomType={handleAddNewRoomType} />
       
       {(!roomTypes || roomTypes.length === 0) ? (
-        <EmptyRoomTypeState onAddRoomType={addNewRoomType} />
+        <EmptyRoomTypeState onAddRoomType={handleAddNewRoomType} form={form} />
       ) : (
         <RoomTypeList 
           roomTypes={roomTypes}
@@ -171,7 +157,7 @@ const RoomTypesSection: React.FC<RoomTypesSectionProps> = ({ form }) => {
       )}
       
       {roomTypes && roomTypes.length > 0 && (
-        <AddRoomTypeButton onAddRoomType={addNewRoomType} />
+        <AddRoomTypeButton onAddRoomType={handleAddNewRoomType} />
       )}
 
       {/* Universal Image Upload Dialog for Room Types */}

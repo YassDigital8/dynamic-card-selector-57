@@ -64,12 +64,29 @@ export const useRoomTypeForm = ({ form, index }: UseRoomTypeFormProps) => {
 
 // Function to add a new room type to the form
 export const addNewRoomType = (form: UseFormReturn<FormValues>) => {
+  // Get current room types or initialize as empty array
   const currentRoomTypes = form.getValues('roomTypes') || [];
+  
+  // Create a new default room type
   const newRoomType = createDefaultRoomType();
   
-  form.setValue('roomTypes', [...currentRoomTypes, newRoomType], { shouldValidate: true });
-  console.log('Added new room type:', newRoomType);
-  console.log('Room types after adding:', form.getValues('roomTypes'));
+  // Create a meaningful room type name based on the array length
+  const roomNumber = currentRoomTypes.length + 1;
+  newRoomType.name = `Room Type ${roomNumber}`;
   
+  // Update the form with the new room types array
+  const updatedRoomTypes = [...currentRoomTypes, newRoomType];
+  
+  // Use setValue with all the flags to ensure the form state is properly updated
+  form.setValue('roomTypes', updatedRoomTypes, { 
+    shouldValidate: true, 
+    shouldDirty: true,
+    shouldTouch: true
+  });
+  
+  console.log('Added new room type:', newRoomType);
+  console.log('Room types after adding:', updatedRoomTypes);
+  
+  // Return the new room type
   return newRoomType;
 };

@@ -25,12 +25,12 @@ export const roomTypeSchema = z.object({
   allowExtraBed: z.boolean().optional().default(false),
   maxExtraBeds: z.number().min(1).max(5).optional().default(1),
   extraBedPrice: z.number().min(0).optional().default(0),
-});
+}).default(() => createDefaultRoomType());
 
 // Export a function to create a default room type with a unique ID
 export const createDefaultRoomType = () => ({
   id: `room-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
-  name: "",
+  name: "Room Type",
   maxAdults: 2,
   maxChildren: 0,
   description: "",

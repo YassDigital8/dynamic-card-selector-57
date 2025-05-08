@@ -11,17 +11,12 @@ interface EmptyRoomTypeStateProps {
   form?: UseFormReturn<FormValues>;
 }
 
-const EmptyRoomTypeState: React.FC<EmptyRoomTypeStateProps> = ({ onAddRoomType, form }) => {
+const EmptyRoomTypeState: React.FC<EmptyRoomTypeStateProps> = ({ onAddRoomType }) => {
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     
-    if (form) {
-      // Add a new room type to the form
-      addNewRoomType(form);
-    }
-    
-    // Call the parent's onAddRoomType function
+    // Call the parent's onAddRoomType function directly
     onAddRoomType();
   };
   
