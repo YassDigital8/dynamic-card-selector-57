@@ -2,15 +2,26 @@
 import React from 'react';
 import { PlusCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { UseFormReturn } from 'react-hook-form';
+import { FormValues } from '../../schemas/formSchema';
+import { addNewRoomType } from '../hooks/useRoomTypeForm';
 
 interface EmptyRoomTypeStateProps {
   onAddRoomType: () => void;
+  form?: UseFormReturn<FormValues>;
 }
 
-const EmptyRoomTypeState: React.FC<EmptyRoomTypeStateProps> = ({ onAddRoomType }) => {
+const EmptyRoomTypeState: React.FC<EmptyRoomTypeStateProps> = ({ onAddRoomType, form }) => {
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    
+    if (form) {
+      // Add a new room type to the form
+      addNewRoomType(form);
+    }
+    
+    // Call the parent's onAddRoomType function
     onAddRoomType();
   };
   

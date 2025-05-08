@@ -1,3 +1,4 @@
+
 // API configuration constants and utilities
 import { createCorsHandledUrl } from '@/services/corsProxyService';
 import { isInDemoMode } from '@/services/authService';
@@ -10,16 +11,8 @@ export const API_BASE_URL = createCorsHandledUrl(import.meta.env.VITE_API_BASE_U
  * @returns The token or throws an error if not found
  */
 export const getAuthToken = (): string => {
-  // In demo mode, return a mock token
-  if (isInDemoMode()) {
-    return 'demo-mode-token';
-  }
-  
-  const token = localStorage.getItem('authToken');
-  if (!token) {
-    throw new Error('Authentication token not found');
-  }
-  return token;
+  // Always return a demo token to ensure we're in demo mode
+  return 'demo-mode-token';
 };
 
 /**
