@@ -13,6 +13,13 @@ export const useRoomTypeForm = ({ form, index }: UseRoomTypeFormProps) => {
   
   // Watch for changes in the allowExtraBed field
   useEffect(() => {
+    // Ensure room types array is initialized
+    const roomTypes = form.getValues('roomTypes');
+    if (!roomTypes || !Array.isArray(roomTypes)) {
+      console.log("Initializing room types array");
+      form.setValue('roomTypes', [], { shouldValidate: false });
+    }
+    
     const subscription = form.watch((value, { name }) => {
       if (name === `roomTypes.${index}.allowExtraBed`) {
         const extraBedEnabled = form.getValues(`roomTypes.${index}.allowExtraBed`);
@@ -21,7 +28,8 @@ export const useRoomTypeForm = ({ form, index }: UseRoomTypeFormProps) => {
     });
     
     // Set initial value
-    setHasExtraBed(!!form.getValues(`roomTypes.${index}.allowExtraBed`));
+    const allowExtraBed = form.getValues(`roomTypes.${index}.allowExtraBed`);
+    setHasExtraBed(!!allowExtraBed);
     
     return () => subscription.unsubscribe();
   }, [form, index]);

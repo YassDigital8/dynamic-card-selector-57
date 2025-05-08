@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { FormValues } from '../formSchema';
 import { ContractDocument } from '@/models/HotelModel';
@@ -61,10 +60,11 @@ export const useSteps = ({ form, hotelId }: UseStepsProps) => {
       id: 'room-types',
       label: 'Room Types',
       component: <RoomTypesSection form={form} />,
-      // Allow users to proceed even without room types for now (they can add later)
+      // Always consider room types step as valid - users can add room types later
       customValidation: (formValues: FormValues) => {
         console.log("Room types validation:", formValues.roomTypes);
-        return true; // Allow users to proceed without room types initially
+        // Consider this step valid regardless of whether there are room types
+        return true; 
       }
     },
     {

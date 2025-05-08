@@ -25,10 +25,21 @@ const RoomTypesSection: React.FC<RoomTypesSectionProps> = ({ form }) => {
   const { galleryFiles } = useGalleryFiles();
   const roomTypes = form.watch('roomTypes') || [];
 
+  // Ensure room types are initialized
   useEffect(() => {
     // Debug to make sure roomTypes are properly initialized
     console.log('RoomTypesSection rendered, roomTypes:', roomTypes);
-  }, [roomTypes]);
+    
+    const currentRoomTypes = form.getValues('roomTypes');
+    if (!currentRoomTypes || !Array.isArray(currentRoomTypes) || currentRoomTypes.length === 0) {
+      console.log('No room types found in form, initializing empty array');
+      form.setValue('roomTypes', [], { 
+        shouldValidate: false,
+        shouldDirty: false,
+        shouldTouch: false
+      });
+    }
+  }, [form]);
 
   const getCurrentRoomName = () => {
     const name = form.getValues(`roomTypes.${currentRoomTypeIndex}.name`);
@@ -105,11 +116,17 @@ const RoomTypesSection: React.FC<RoomTypesSectionProps> = ({ form }) => {
     console.log('Current room types:', currentRoomTypes);
     
     // Use setValue with isDirty flag to mark the field as changed
-    form.setValue('roomTypes', [...currentRoomTypes, newRoomType], { 
+    const updatedRoomTypes = [...currentRoomTypes, newRoomType];
+    form.setValue('roomTypes', updatedRoomTypes, { 
       shouldValidate: true,
       shouldDirty: true,
       shouldTouch: true
     });
+    
+    console.log('Updated roomTypes:', updatedRoomTypes);
+    
+    // Force form validation
+    form.trigger('roomTypes');
     
     // Set focus to the new room type
     setTimeout(() => {
@@ -129,16 +146,20 @@ const RoomTypesSection: React.FC<RoomTypesSectionProps> = ({ form }) => {
 
   const handleRemoveRoomType = (index: number) => {
     const currentRoomTypes = form.getValues('roomTypes') || [];
-    form.setValue('roomTypes', currentRoomTypes.filter((_, i) => i !== index), {
-      shouldValidate: true
+    const updatedRoomTypes = currentRoomTypes.filter((_, i) => i !== index);
+    form.setValue('roomTypes', updatedRoomTypes, {
+      shouldValidate: true,
+      shouldDirty: true,
+      shouldTouch: true
     });
+    console.log('Removed room type at index', index, 'new roomTypes:', updatedRoomTypes);
   };
 
   return (
     <div className="space-y-6 col-span-2">
       <RoomTypeHeader onAddRoomType={addNewRoomType} />
       
-      {roomTypes.length === 0 ? (
+      {(!roomTypes || roomTypes.length === 0) ? (
         <EmptyRoomTypeState onAddRoomType={addNewRoomType} />
       ) : (
         <RoomTypeList 
@@ -149,7 +170,7 @@ const RoomTypesSection: React.FC<RoomTypesSectionProps> = ({ form }) => {
         />
       )}
       
-      {roomTypes.length > 0 && (
+      {roomTypes && roomTypes.length > 0 && (
         <AddRoomTypeButton onAddRoomType={addNewRoomType} />
       )}
 
