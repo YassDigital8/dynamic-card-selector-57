@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 interface HeroComponentProps {
   title: string;
@@ -16,6 +17,8 @@ const HeroComponent: React.FC<HeroComponentProps> = ({
   ctaText,
   ctaLink
 }) => {
+  const isInternalLink = ctaLink?.startsWith('/');
+  
   return (
     <div className="relative w-full bg-slate-800 text-white overflow-hidden rounded-lg">
       {/* Background Image */}
@@ -30,12 +33,23 @@ const HeroComponent: React.FC<HeroComponentProps> = ({
         {subtitle && <p className="text-xl mb-8">{subtitle}</p>}
         
         {ctaText && ctaLink && (
-          <a 
-            href={ctaLink} 
-            className="bg-white text-slate-900 hover:bg-slate-100 px-6 py-3 rounded-md font-medium"
-          >
-            {ctaText}
-          </a>
+          isInternalLink ? (
+            <Link 
+              to={ctaLink} 
+              className="bg-white text-slate-900 hover:bg-slate-100 px-6 py-3 rounded-md font-medium"
+            >
+              {ctaText}
+            </Link>
+          ) : (
+            <a 
+              href={ctaLink} 
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-white text-slate-900 hover:bg-slate-100 px-6 py-3 rounded-md font-medium"
+            >
+              {ctaText}
+            </a>
+          )
         )}
       </div>
     </div>
