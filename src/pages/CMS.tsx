@@ -9,7 +9,7 @@ import CMSEditor from '@/components/cms/CMSEditor';
 import CMSPagePreview from '@/components/cms/CMSPagePreview';
 import useCmsState from '@/hooks/cms/useCmsState';
 import { CommandDialog, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem } from '@/components/ui/command';
-import { FileText } from 'lucide-react';
+import { FileText, Search } from 'lucide-react';
 
 const CMS = () => {
   const { pageId } = useParams();
@@ -17,6 +17,7 @@ const CMS = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [commandOpen, setCommandOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   
   const { 
     pages, 
@@ -33,6 +34,12 @@ const CMS = () => {
     moveComponent,
     savePage
   } = useCmsState();
+  
+  // Filter pages based on search query
+  const filteredPages = pages.filter(page => 
+    page.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    page.slug.toLowerCase().includes(searchQuery.toLowerCase())
+  );
   
   // Switch to editor view if a page ID is provided
   useEffect(() => {
@@ -95,6 +102,10 @@ const CMS = () => {
     command();
   }, []);
   
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
+  
   return (
     <StandardLayout pageTitle="Content Management System" pageDescription="Create and manage your website content">
       <Tabs value={currentView} onValueChange={setCurrentView} className="w-full">
@@ -148,20 +159,32 @@ const CMS = () => {
       <CommandDialog 
         open={commandOpen} 
         onOpenChange={setCommandOpen}
+        className="z-50"
       >
-        <CommandInput placeholder="Search pages..." />
-        <CommandList className="max-h-[300px]">
-          <CommandEmpty>No pages found.</CommandEmpty>
+        <div className="flex items-center border-b px-3">
+          <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
+          <CommandInput 
+            placeholder="Search pages..." 
+            value={searchQuery}
+            onValueChange={setSearchQuery}
+            className="flex h-11 w-full bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground"
+          />
+        </div>
+        <CommandList className="max-h-[300px] overflow-y-auto">
+          <CommandEmpty>No pages found with that search term.</CommandEmpty>
           <CommandGroup heading="Pages">
-            {pages.map((page) => (
+            {filteredPages.map((page) => (
               <CommandItem
                 key={page.id}
                 onSelect={() => {
                   runCommand(() => navigate(`/cms/editor/${page.id}`));
                 }}
+                className="flex items-center justify-between py-2 cursor-pointer"
               >
-                <FileText className="mr-2 h-4 w-4" />
-                <span>{page.title}</span>
+                <div className="flex items-center">
+                  <FileText className="mr-2 h-4 w-4" />
+                  <span>{page.title}</span>
+                </div>
                 <span className="text-xs text-muted-foreground ml-2">/{page.slug}</span>
               </CommandItem>
             ))}
