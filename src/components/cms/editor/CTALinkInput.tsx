@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/popover';
 import { Command, CommandInput, CommandEmpty, CommandGroup, CommandItem } from '@/components/ui/command';
 import { Check, FileText } from 'lucide-react';
-import { CMSPage } from '@/hooks/cms/useCmsState';
+import { CMSPage } from '@/hooks/cms/types';
 
 interface CTALinkInputProps {
   value: string;
@@ -21,7 +21,7 @@ interface CTALinkInputProps {
 const CTALinkInput: React.FC<CTALinkInputProps> = ({ 
   value, 
   onChange, 
-  pages,
+  pages = [], // Provide default empty array to prevent undefined
   label = "CTA Link"
 }) => {
   const [open, setOpen] = useState(false);
@@ -43,7 +43,7 @@ const CTALinkInput: React.FC<CTALinkInputProps> = ({
 
   // Filter pages whenever the input value changes and it starts with "/"
   useEffect(() => {
-    if (inputValue.startsWith('/')) {
+    if (inputValue.startsWith('/') && Array.isArray(pages)) {
       const searchTerm = inputValue.substring(1).toLowerCase(); // Remove the leading "/"
       const filtered = pages.filter(page => 
         page.slug.toLowerCase().includes(searchTerm)

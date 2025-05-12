@@ -36,15 +36,12 @@ const CMS = () => {
   } = useCmsState();
   
   // Filter pages based on search query
-  const filteredPages = searchQuery
+  const filteredPages = searchQuery && Array.isArray(pages)
     ? pages.filter(page => 
         page.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
         page.slug.toLowerCase().includes(searchQuery.toLowerCase())
       )
-    : pages;
-  
-  console.log('Search query:', searchQuery);
-  console.log('Filtered pages:', filteredPages);
+    : (pages || []);
   
   // Switch to editor view if a page ID is provided
   useEffect(() => {
@@ -66,7 +63,6 @@ const CMS = () => {
         
         e.preventDefault();
         setCommandOpen(true);
-        console.log("Command dialog opened"); // Add logging to verify the function is called
       }
     };
     
@@ -128,7 +124,7 @@ const CMS = () => {
         
         <TabsContent value="pages" className="mt-0">
           <CMSPageList 
-            pages={pages}
+            pages={pages || []}
             loading={loading}
             onCreatePage={handleCreatePage}
             onSelectPage={(id) => navigate(`/cms/editor/${id}`)}
@@ -139,7 +135,7 @@ const CMS = () => {
           <TabsContent value="editor" className="mt-0">
             <CMSEditor 
               page={selectedPage}
-              components={components}
+              components={components || []}
               onAddComponent={addComponentToPage}
               onUpdateComponent={updateComponentProps}
               onRemoveComponent={removeComponentFromPage}
@@ -157,6 +153,7 @@ const CMS = () => {
         )}
       </Tabs>
       
+      {/* CommandDialog for page search */}
       <CommandDialog 
         open={commandOpen} 
         onOpenChange={setCommandOpen}
