@@ -54,6 +54,7 @@ const CMS = () => {
         
         e.preventDefault();
         setCommandOpen(true);
+        console.log("Command dialog opened"); // Add logging to verify the function is called
       }
     };
     
@@ -144,9 +145,12 @@ const CMS = () => {
         )}
       </Tabs>
       
-      <CommandDialog open={commandOpen} onOpenChange={setCommandOpen}>
+      <CommandDialog 
+        open={commandOpen} 
+        onOpenChange={setCommandOpen}
+      >
         <CommandInput placeholder="Search pages..." />
-        <CommandList>
+        <CommandList className="max-h-[300px]">
           <CommandEmpty>No pages found.</CommandEmpty>
           <CommandGroup heading="Pages">
             {pages.map((page) => (
