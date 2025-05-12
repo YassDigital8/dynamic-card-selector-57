@@ -1,9 +1,9 @@
+
 import React, { useState } from 'react';
 import { CMSComponent, ComponentDefinition } from '@/hooks/cms/types';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Button } from '@/components/ui/button';
 import {
   Select,
   SelectContent,
@@ -27,7 +27,7 @@ const ComponentEditor: React.FC<ComponentEditorProps> = ({
   onUpdate
 }) => {
   const [localProps, setLocalProps] = useState({ ...component.props });
-  const { pages } = useCmsState();
+  const { pages = [] } = useCmsState();
   
   const handleChange = (key: string, value: any) => {
     setLocalProps(prev => ({
@@ -48,7 +48,7 @@ const ComponentEditor: React.FC<ComponentEditorProps> = ({
           <CTALinkInput
             value={localProps[key] || ''}
             onChange={(value) => handleChange(key, value)}
-            pages={pages}
+            pages={pages || []}
           />
         </div>
       );

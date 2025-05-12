@@ -35,6 +35,15 @@ const useCmsState = (): UseCmsStateReturn => {
 
   // Select a page by ID
   const selectPage = useCallback((pageId: string) => {
+    if (!pages || !Array.isArray(pages)) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Unable to select page: pages data is not available"
+      });
+      return;
+    }
+    
     const page = pages.find(p => p.id === pageId);
     setSelectedPage(page || null);
     
@@ -59,9 +68,9 @@ const useCmsState = (): UseCmsStateReturn => {
   }, [createNewPage]);
 
   return {
-    pages,
+    pages: pages || [],
     selectedPage,
-    components,
+    components: components || [],
     loading,
     loadPages,
     createNewPage: createNewPageWrapper,
