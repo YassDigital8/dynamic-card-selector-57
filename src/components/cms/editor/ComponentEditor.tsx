@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CMSComponent, ComponentDefinition } from '@/hooks/cms/useCmsState';
+import { CMSComponent, ComponentDefinition } from '@/hooks/cms/types';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/select";
 import { Switch } from '@/components/ui/switch';
 import CTALinkInput from './CTALinkInput';
-import useCmsState, { CMSComponent, ComponentDefinition } from '@/hooks/cms/useCmsState';
+import useCmsState from '@/hooks/cms/useCmsState';
 
 interface ComponentEditorProps {
   component: CMSComponent;

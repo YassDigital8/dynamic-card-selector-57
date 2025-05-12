@@ -1,11 +1,11 @@
 
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { CMSComponent, CMSPage, ComponentDefinition } from './types';
 
 export function useComponentOperations(
   selectedPage: CMSPage | null, 
-  setSelectedPage: (page: CMSPage | null) => void,
+  setSelectedPage: React.Dispatch<React.SetStateAction<CMSPage | null>>,
   availableComponents: ComponentDefinition[]
 ) {
   // Add a component to the selected page
