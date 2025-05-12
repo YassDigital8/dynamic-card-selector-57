@@ -38,13 +38,22 @@ const CMS = () => {
   // Ensure pages is always an array
   const safePages = Array.isArray(pages) ? pages : [];
   
-  // Filter pages based on search query with null checks
-  const filteredPages = searchQuery && Array.isArray(safePages)
-    ? safePages.filter(page => 
-        page && page.title && page.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-        page && page.slug && page.slug.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    : safePages;
+  // Filter pages based on search query with improved null checks
+  const filteredPages = React.useMemo(() => {
+    if (!searchQuery) return safePages;
+    if (!Array.isArray(safePages)) return [];
+    
+    return safePages.filter(page => {
+      if (!page) return false;
+      
+      const title = page.title || '';
+      const slug = page.slug || '';
+      const searchLower = searchQuery.toLowerCase();
+      
+      return title.toLowerCase().includes(searchLower) || 
+             slug.toLowerCase().includes(searchLower);
+    });
+  }, [safePages, searchQuery]);
   
   // Switch to editor view if a page ID is provided
   useEffect(() => {
@@ -161,16 +170,12 @@ const CMS = () => {
         open={commandOpen} 
         onOpenChange={setCommandOpen}
       >
-        <div className="flex items-center border-b px-3" style={{ zIndex: 50 }}>
-          <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
-          <CommandInput 
-            placeholder="Search pages..." 
-            value={searchQuery}
-            onValueChange={setSearchQuery}
-            className="flex h-11 w-full bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground"
-          />
-        </div>
-        <CommandList className="max-h-[300px] overflow-y-auto">
+        <CommandInput 
+          placeholder="Search pages..." 
+          value={searchQuery}
+          onValueChange={setSearchQuery}
+        />
+        <CommandList>
           <CommandEmpty>No pages found with that search term.</CommandEmpty>
           <CommandGroup heading="Pages">
             {filteredPages.length > 0 ? (

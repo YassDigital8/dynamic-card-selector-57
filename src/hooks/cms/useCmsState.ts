@@ -35,7 +35,7 @@ const useCmsState = (): UseCmsStateReturn => {
 
   // Select a page by ID
   const selectPage = useCallback((pageId: string) => {
-    if (!pages || !Array.isArray(pages)) {
+    if (!Array.isArray(pages) || !pages.length) {
       toast({
         variant: "destructive",
         title: "Error",

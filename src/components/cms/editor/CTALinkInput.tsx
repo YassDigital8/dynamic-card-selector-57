@@ -45,15 +45,32 @@ const CTALinkInput: React.FC<CTALinkInputProps> = ({
   useEffect(() => {
     if (inputValue.startsWith('/') && Array.isArray(pages)) {
       const searchTerm = inputValue.substring(1).toLowerCase(); // Remove the leading "/"
-      const filtered = pages.filter(page => 
-        page && page.slug && page.slug.toLowerCase().includes(searchTerm)
-      );
-      setFilteredPages(filtered);
-      if (filtered.length > 0 && searchTerm) {
-        setOpen(true);
+      
+      // Only filter if we have a searchTerm and valid pages array
+      if (searchTerm) {
+        const filtered = pages.filter(page => {
+          if (!page || typeof page !== 'object') return false;
+          if (!page.slug || typeof page.slug !== 'string') return false;
+          
+          return page.slug.toLowerCase().includes(searchTerm);
+        });
+        
+        setFilteredPages(filtered);
+        
+        // Open the popover if we have results
+        if (filtered.length > 0) {
+          setOpen(true);
+        } else {
+          setOpen(false);
+        }
+      } else {
+        // No search term, show all pages
+        setFilteredPages(pages.filter(page => page && typeof page === 'object' && page.slug));
+        setOpen(searchTerm === ''); // Open only if there's just a slash
       }
     } else {
       setOpen(false);
+      setFilteredPages([]);
     }
   }, [inputValue, pages]);
 
@@ -96,23 +113,29 @@ const CTALinkInput: React.FC<CTALinkInputProps> = ({
             />
             <CommandEmpty>No pages found</CommandEmpty>
             <CommandGroup heading="Pages">
-              {filteredPages.map((page) => (
-                <CommandItem
-                  key={page.id}
-                  value={page.slug}
-                  onSelect={() => handleSelectPage(page.slug)}
-                  className="flex items-center justify-between"
-                >
-                  <div className="flex items-center">
-                    <FileText className="mr-2 h-4 w-4" />
-                    <span>{page.title}</span>
-                  </div>
-                  <span className="text-xs text-muted-foreground ml-2">/{page.slug}</span>
-                  {inputValue === `/${page.slug}` && (
-                    <Check className="h-4 w-4 ml-2 text-green-500" />
-                  )}
-                </CommandItem>
-              ))}
+              {filteredPages.length > 0 ? (
+                filteredPages.map((page) => (
+                  <CommandItem
+                    key={page.id}
+                    value={page.slug}
+                    onSelect={() => handleSelectPage(page.slug)}
+                    className="flex items-center justify-between"
+                  >
+                    <div className="flex items-center">
+                      <FileText className="mr-2 h-4 w-4" />
+                      <span>{page.title || page.slug}</span>
+                    </div>
+                    <span className="text-xs text-muted-foreground ml-2">/{page.slug}</span>
+                    {inputValue === `/${page.slug}` && (
+                      <Check className="h-4 w-4 ml-2 text-green-500" />
+                    )}
+                  </CommandItem>
+                ))
+              ) : (
+                <div className="p-2 text-sm text-center text-muted-foreground">
+                  Start typing to search pages
+                </div>
+              )}
             </CommandGroup>
           </Command>
         </PopoverContent>
