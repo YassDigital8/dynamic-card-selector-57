@@ -36,10 +36,15 @@ const CMS = () => {
   } = useCmsState();
   
   // Filter pages based on search query
-  const filteredPages = pages.filter(page => 
-    page.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    page.slug.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredPages = searchQuery
+    ? pages.filter(page => 
+        page.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+        page.slug.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : pages;
+  
+  console.log('Search query:', searchQuery);
+  console.log('Filtered pages:', filteredPages);
   
   // Switch to editor view if a page ID is provided
   useEffect(() => {
@@ -101,10 +106,6 @@ const CMS = () => {
     setCommandOpen(false);
     command();
   }, []);
-  
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
-  };
   
   return (
     <StandardLayout pageTitle="Content Management System" pageDescription="Create and manage your website content">
@@ -172,21 +173,27 @@ const CMS = () => {
         <CommandList className="max-h-[300px] overflow-y-auto">
           <CommandEmpty>No pages found with that search term.</CommandEmpty>
           <CommandGroup heading="Pages">
-            {filteredPages.map((page) => (
-              <CommandItem
-                key={page.id}
-                onSelect={() => {
-                  runCommand(() => navigate(`/cms/editor/${page.id}`));
-                }}
-                className="flex items-center justify-between py-2 cursor-pointer"
-              >
-                <div className="flex items-center">
-                  <FileText className="mr-2 h-4 w-4" />
-                  <span>{page.title}</span>
-                </div>
-                <span className="text-xs text-muted-foreground ml-2">/{page.slug}</span>
-              </CommandItem>
-            ))}
+            {filteredPages.length > 0 ? (
+              filteredPages.map((page) => (
+                <CommandItem
+                  key={page.id}
+                  onSelect={() => {
+                    runCommand(() => navigate(`/cms/editor/${page.id}`));
+                  }}
+                  className="flex items-center justify-between py-2 cursor-pointer"
+                >
+                  <div className="flex items-center">
+                    <FileText className="mr-2 h-4 w-4" />
+                    <span>{page.title}</span>
+                  </div>
+                  <span className="text-xs text-muted-foreground ml-2">/{page.slug}</span>
+                </CommandItem>
+              ))
+            ) : (
+              <div className="px-2 py-4 text-center text-sm text-muted-foreground">
+                No pages match your search.
+              </div>
+            )}
           </CommandGroup>
         </CommandList>
       </CommandDialog>
