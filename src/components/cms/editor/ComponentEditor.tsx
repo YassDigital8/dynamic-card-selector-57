@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { CMSComponent, ComponentDefinition } from '@/hooks/cms/useCmsState';
 import { Input } from '@/components/ui/input';
@@ -14,7 +13,7 @@ import {
 } from "@/components/ui/select";
 import { Switch } from '@/components/ui/switch';
 import CTALinkInput from './CTALinkInput';
-import useCmsState from '@/hooks/cms/useCmsState';
+import useCmsState, { CMSComponent, ComponentDefinition } from '@/hooks/cms/useCmsState';
 
 interface ComponentEditorProps {
   component: CMSComponent;
