@@ -160,7 +160,7 @@ const CMS = () => {
         open={commandOpen} 
         onOpenChange={setCommandOpen}
       >
-        <div className="flex items-center border-b px-3 z-50">
+        <div className="flex items-center border-b px-3" style={{ zIndex: 50 }}>
           <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
           <CommandInput 
             placeholder="Search pages..." 
