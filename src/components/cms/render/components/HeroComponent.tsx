@@ -17,7 +17,8 @@ const HeroComponent: React.FC<HeroComponentProps> = ({
   ctaText,
   ctaLink
 }) => {
-  const isInternalLink = ctaLink?.startsWith('/');
+  // Check if link is internal (starts with "/" or "#")
+  const isInternalLink = ctaLink?.startsWith('/') || ctaLink?.startsWith('#');
   
   // Determine if we should render a CTA button - both text and link must be present
   const shouldRenderCTA = ctaText && ctaLink;

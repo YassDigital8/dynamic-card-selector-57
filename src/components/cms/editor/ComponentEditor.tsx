@@ -13,6 +13,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from '@/components/ui/switch';
+import CTALinkInput from './CTALinkInput';
+import useCmsState from '@/hooks/cms/useCmsState';
 
 interface ComponentEditorProps {
   component: CMSComponent;
@@ -26,6 +28,7 @@ const ComponentEditor: React.FC<ComponentEditorProps> = ({
   onUpdate
 }) => {
   const [localProps, setLocalProps] = useState({ ...component.props });
+  const { pages } = useCmsState();
   
   const handleChange = (key: string, value: any) => {
     setLocalProps(prev => ({
@@ -39,6 +42,19 @@ const ComponentEditor: React.FC<ComponentEditorProps> = ({
   
   // Render different inputs based on the property type
   const renderPropertyInput = (key: string, value: any) => {
+    // Special case for CTA links in hero components
+    if (component.type === 'hero' && key === 'ctaLink') {
+      return (
+        <div key={key} className="mb-4">
+          <CTALinkInput
+            value={localProps[key] || ''}
+            onChange={(value) => handleChange(key, value)}
+            pages={pages}
+          />
+        </div>
+      );
+    }
+    
     // Determine type based on the value
     if (typeof value === 'string') {
       if (value.length > 50) {
