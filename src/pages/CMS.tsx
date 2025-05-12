@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
@@ -69,11 +68,18 @@ const CMS = () => {
       // Open command dialog when "/" is pressed
       if (e.key === '/') {
         // Prevent the key from being typed in input fields
-        if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        if (
+          e.target instanceof HTMLInputElement || 
+          e.target instanceof HTMLTextAreaElement ||
+          e.target instanceof HTMLSelectElement ||
+          (e.target instanceof HTMLElement && e.target.isContentEditable)
+        ) {
           return;
         }
         
+        // Prevent default behavior
         e.preventDefault();
+        // Open command dialog
         setCommandOpen(true);
       }
     };
@@ -178,27 +184,21 @@ const CMS = () => {
         <CommandList>
           <CommandEmpty>No pages found with that search term.</CommandEmpty>
           <CommandGroup heading="Pages">
-            {filteredPages.length > 0 ? (
-              filteredPages.map((page) => (
-                <CommandItem
-                  key={page.id}
-                  onSelect={() => {
-                    runCommand(() => navigate(`/cms/editor/${page.id}`));
-                  }}
-                  className="flex items-center justify-between py-2 cursor-pointer"
-                >
-                  <div className="flex items-center">
-                    <FileText className="mr-2 h-4 w-4" />
-                    <span>{page.title}</span>
-                  </div>
-                  <span className="text-xs text-muted-foreground ml-2">/{page.slug}</span>
-                </CommandItem>
-              ))
-            ) : (
-              <div className="px-2 py-4 text-center text-sm text-muted-foreground">
-                No pages match your search.
-              </div>
-            )}
+            {filteredPages.map((page) => (
+              <CommandItem
+                key={page.id}
+                onSelect={() => {
+                  runCommand(() => navigate(`/cms/editor/${page.id}`));
+                }}
+                className="flex items-center justify-between py-2 cursor-pointer"
+              >
+                <div className="flex items-center">
+                  <FileText className="mr-2 h-4 w-4" />
+                  <span>{page.title}</span>
+                </div>
+                <span className="text-xs text-muted-foreground ml-2">/{page.slug}</span>
+              </CommandItem>
+            ))}
           </CommandGroup>
         </CommandList>
       </CommandDialog>
