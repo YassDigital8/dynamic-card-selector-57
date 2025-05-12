@@ -46,7 +46,7 @@ const CTALinkInput: React.FC<CTALinkInputProps> = ({
     if (inputValue.startsWith('/') && Array.isArray(pages)) {
       const searchTerm = inputValue.substring(1).toLowerCase(); // Remove the leading "/"
       const filtered = pages.filter(page => 
-        page.slug.toLowerCase().includes(searchTerm)
+        page && page.slug && page.slug.toLowerCase().includes(searchTerm)
       );
       setFilteredPages(filtered);
       if (filtered.length > 0 && searchTerm) {

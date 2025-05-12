@@ -44,7 +44,7 @@ const useCmsState = (): UseCmsStateReturn => {
       return;
     }
     
-    const page = pages.find(p => p.id === pageId);
+    const page = pages.find(p => p && p.id === pageId);
     setSelectedPage(page || null);
     
     if (!page) {
@@ -68,9 +68,9 @@ const useCmsState = (): UseCmsStateReturn => {
   }, [createNewPage]);
 
   return {
-    pages: pages || [],
+    pages: Array.isArray(pages) ? pages : [],
     selectedPage,
-    components: components || [],
+    components: Array.isArray(components) ? components : [],
     loading,
     loadPages,
     createNewPage: createNewPageWrapper,

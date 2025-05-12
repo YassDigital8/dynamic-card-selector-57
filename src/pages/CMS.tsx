@@ -35,13 +35,16 @@ const CMS = () => {
     savePage
   } = useCmsState();
   
-  // Filter pages based on search query
-  const filteredPages = searchQuery && Array.isArray(pages)
-    ? pages.filter(page => 
-        page.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-        page.slug.toLowerCase().includes(searchQuery.toLowerCase())
+  // Ensure pages is always an array
+  const safePages = Array.isArray(pages) ? pages : [];
+  
+  // Filter pages based on search query with null checks
+  const filteredPages = searchQuery && Array.isArray(safePages)
+    ? safePages.filter(page => 
+        page && page.title && page.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+        page && page.slug && page.slug.toLowerCase().includes(searchQuery.toLowerCase())
       )
-    : (pages || []);
+    : safePages;
   
   // Switch to editor view if a page ID is provided
   useEffect(() => {
@@ -124,7 +127,7 @@ const CMS = () => {
         
         <TabsContent value="pages" className="mt-0">
           <CMSPageList 
-            pages={pages || []}
+            pages={safePages}
             loading={loading}
             onCreatePage={handleCreatePage}
             onSelectPage={(id) => navigate(`/cms/editor/${id}`)}
@@ -135,7 +138,7 @@ const CMS = () => {
           <TabsContent value="editor" className="mt-0">
             <CMSEditor 
               page={selectedPage}
-              components={components || []}
+              components={Array.isArray(components) ? components : []}
               onAddComponent={addComponentToPage}
               onUpdateComponent={updateComponentProps}
               onRemoveComponent={removeComponentFromPage}

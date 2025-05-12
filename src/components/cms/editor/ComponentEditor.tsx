@@ -27,7 +27,7 @@ const ComponentEditor: React.FC<ComponentEditorProps> = ({
   onUpdate
 }) => {
   const [localProps, setLocalProps] = useState({ ...component.props });
-  const { pages = [] } = useCmsState();
+  const { pages } = useCmsState();
   
   const handleChange = (key: string, value: any) => {
     setLocalProps(prev => ({
@@ -48,7 +48,7 @@ const ComponentEditor: React.FC<ComponentEditorProps> = ({
           <CTALinkInput
             value={localProps[key] || ''}
             onChange={(value) => handleChange(key, value)}
-            pages={pages || []}
+            pages={Array.isArray(pages) ? pages : []}
           />
         </div>
       );
