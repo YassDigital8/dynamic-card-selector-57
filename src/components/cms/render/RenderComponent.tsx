@@ -19,17 +19,29 @@ const RenderComponent: React.FC<RenderComponentProps> = ({ component }) => {
   // Render the component based on its type
   switch (type) {
     case 'hero':
-      return <HeroComponent {...props} />;
+      return <HeroComponent title={props.title || 'Hero Title'} 
+                           subtitle={props.subtitle} 
+                           bgImage={props.bgImage} 
+                           ctaText={props.ctaText} 
+                           ctaLink={props.ctaLink} />;
     case 'text':
-      return <TextComponent {...props} />;
+      return <TextComponent content={props.content || 'Text content goes here'} 
+                           alignment={props.alignment} />;
     case 'image':
-      return <ImageComponent {...props} />;
+      return <ImageComponent src={props.src || '/placeholder.svg'} 
+                            alt={props.alt || 'Image'} 
+                            width={props.width} 
+                            height={props.height} />;
     case 'section':
-      return <SectionComponent {...props} />;
+      return <SectionComponent title={props.title || 'Section Title'} 
+                              columns={props.columns || 3} 
+                              items={props.items || []} />;
     case 'contact-form':
-      return <ContactFormComponent {...props} />;
+      return <ContactFormComponent title={props.title || 'Contact Us'} 
+                                  fields={props.fields || ['name', 'email', 'message']} 
+                                  submitText={props.submitText || 'Send'} />;
     case 'gallery':
-      return <GalleryComponent {...props} />;
+      return <GalleryComponent images={props.images || []} />;
     default:
       return <UnknownComponent type={type} props={props} />;
   }

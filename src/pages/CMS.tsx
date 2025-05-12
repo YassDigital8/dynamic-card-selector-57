@@ -39,7 +39,12 @@ const CMS = () => {
   }, [pageId, selectPage]);
   
   const handleCreatePage = async (title: string, slug: string, template: string) => {
-    const newPageId = await createNewPage(title, slug, template);
+    // Convert template string to the expected template type
+    const validTemplate = (template === 'blank' || template === 'landing' || template === 'about') 
+      ? template 
+      : 'blank';
+      
+    const newPageId = await createNewPage(title, slug, validTemplate);
     if (newPageId) {
       toast({
         title: "Success",

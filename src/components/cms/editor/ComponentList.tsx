@@ -17,7 +17,6 @@ import {
   MessageCircle,
   Video
 } from 'lucide-react';
-import { useDrag } from 'react-dnd';
 
 interface ComponentListProps {
   components: ComponentDefinition[];
