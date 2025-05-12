@@ -17,7 +17,8 @@ import {
   Ticket,
   Briefcase,
   Flag,
-  Building
+  Building,
+  Layout
 } from 'lucide-react';
 
 interface SidebarNavigationProps {
@@ -29,6 +30,9 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ isMobile }) => {
   
   const isActive = (path: string) => {
     if (path === '/hotel' && location.pathname.startsWith('/hotel')) {
+      return true;
+    }
+    if (path === '/cms' && location.pathname.startsWith('/cms')) {
       return true;
     }
     return location.pathname === path;
@@ -74,6 +78,11 @@ const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ isMobile }) => {
       label: 'Branches Management',
       icon: Building,
       href: '/branches'
+    },
+    {
+      label: 'CMS Builder',
+      icon: Layout,
+      href: '/cms'
     },
     { 
       label: 'Users', 

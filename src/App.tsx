@@ -18,6 +18,7 @@ import EventsAttractions from "./pages/EventsAttractions";
 import HR from "./pages/HR";
 import POS from "./pages/POS";
 import Branches from "./pages/Branches";
+import CMS from "./pages/CMS";
 import useAuthentication from "./hooks/useAuthentication";
 
 // Initialize theme from localStorage or default to light
@@ -160,6 +161,18 @@ const App = () => {
               <Route path="/branches" element={
                 <ProtectedRoute>
                   <Branches />
+                </ProtectedRoute>
+              } />
+              
+              {/* CMS route */}
+              <Route path="/cms" element={
+                <ProtectedRoute>
+                  <CMS />
+                </ProtectedRoute>
+              } />
+              <Route path="/cms/editor/:pageId" element={
+                <ProtectedRoute>
+                  <CMS />
                 </ProtectedRoute>
               } />
               
