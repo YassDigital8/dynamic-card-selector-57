@@ -1,10 +1,15 @@
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import StandardLayout from '@/components/layout/StandardLayout';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import CMSPageList from '@/components/cms/CMSPageList';
+import CMSEditor from '@/components/cms/CMSEditor';
+import CMSPagePreview from '@/components/cms/CMSPagePreview';
 import useCmsState from '@/hooks/cms/useCmsState';
-import { CmsPageView, CmsCommandPalette, useCmsKeyboardShortcuts, useCmsPageSearch } from '@/components/cms/page';
+import { CommandDialog, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem } from '@/components/ui/command';
+import { FileText } from 'lucide-react';
 
 const CMS = () => {
   const { pageId } = useParams();
@@ -12,13 +17,13 @@ const CMS = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [commandOpen, setCommandOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
   
   const { 
     pages, 
     selectedPage, 
     components,
     loading,
+    loadPages,
     createNewPage,
     publishPage,
     selectPage,
@@ -29,17 +34,33 @@ const CMS = () => {
     savePage
   } = useCmsState();
   
-  // Use our custom hooks
-  useCmsKeyboardShortcuts({ setCommandOpen });
-  const { filteredPages } = useCmsPageSearch(pages, searchQuery);
-  
   // Switch to editor view if a page ID is provided
-  React.useEffect(() => {
+  useEffect(() => {
     if (pageId) {
       setCurrentView("editor");
       selectPage(pageId);
     }
   }, [pageId, selectPage]);
+  
+  // Listen for keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Open command dialog when "/" is pressed
+      if (e.key === '/') {
+        // Prevent the key from being typed in input fields
+        if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+          return;
+        }
+        
+        e.preventDefault();
+        setCommandOpen(true);
+        console.log("Command dialog opened"); // Add logging to verify the function is called
+      }
+    };
+    
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
   
   const handleCreatePage = async (title: string, slug: string, template: string) => {
     // Convert template string to the expected template type
@@ -69,47 +90,84 @@ const CMS = () => {
     }
   };
   
-  // This function always returns a boolean
-  const handleSavePage = () => {
-    return savePage() || false; // Ensure a boolean is always returned
-  };
-  
   const runCommand = useCallback((command: () => void) => {
     setCommandOpen(false);
     command();
   }, []);
   
-  const handleCommandSelect = useCallback((pageId: string) => {
-    runCommand(() => navigate(`/cms/editor/${pageId}`));
-  }, [runCommand, navigate]);
-  
   return (
     <StandardLayout pageTitle="Content Management System" pageDescription="Create and manage your website content">
-      <CmsPageView
-        currentView={currentView}
-        setCurrentView={setCurrentView}
-        pages={Array.isArray(pages) ? pages : []}
-        selectedPage={selectedPage}
-        components={Array.isArray(components) ? components : []}
-        loading={loading}
-        onCreatePage={handleCreatePage}
-        onSelectPage={(id) => navigate(`/cms/editor/${id}`)}
-        onAddComponent={addComponentToPage}
-        onUpdateComponent={updateComponentProps}
-        onRemoveComponent={removeComponentFromPage}
-        onMoveComponent={moveComponent}
-        onSavePage={handleSavePage} // Using our fixed function that returns boolean
-        onPublishPage={handlePublishPage}
-      />
+      <Tabs value={currentView} onValueChange={setCurrentView} className="w-full">
+        <TabsList className="mb-6">
+          <TabsTrigger value="pages" className="data-[state=active]:bg-white">
+            Pages
+          </TabsTrigger>
+          {selectedPage && (
+            <TabsTrigger value="editor" className="data-[state=active]:bg-white">
+              Page Editor
+            </TabsTrigger>
+          )}
+          {selectedPage && (
+            <TabsTrigger value="preview" className="data-[state=active]:bg-white">
+              Preview
+            </TabsTrigger>
+          )}
+        </TabsList>
+        
+        <TabsContent value="pages" className="mt-0">
+          <CMSPageList 
+            pages={pages}
+            loading={loading}
+            onCreatePage={handleCreatePage}
+            onSelectPage={(id) => navigate(`/cms/editor/${id}`)}
+          />
+        </TabsContent>
+        
+        {selectedPage && (
+          <TabsContent value="editor" className="mt-0">
+            <CMSEditor 
+              page={selectedPage}
+              components={components}
+              onAddComponent={addComponentToPage}
+              onUpdateComponent={updateComponentProps}
+              onRemoveComponent={removeComponentFromPage}
+              onMoveComponent={moveComponent}
+              onSavePage={savePage}
+              onPublishPage={handlePublishPage}
+            />
+          </TabsContent>
+        )}
+        
+        {selectedPage && (
+          <TabsContent value="preview" className="mt-0">
+            <CMSPagePreview page={selectedPage} />
+          </TabsContent>
+        )}
+      </Tabs>
       
-      <CmsCommandPalette
-        open={commandOpen}
+      <CommandDialog 
+        open={commandOpen} 
         onOpenChange={setCommandOpen}
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        filteredPages={filteredPages}
-        onSelectPage={handleCommandSelect}
-      />
+      >
+        <CommandInput placeholder="Search pages..." />
+        <CommandList className="max-h-[300px]">
+          <CommandEmpty>No pages found.</CommandEmpty>
+          <CommandGroup heading="Pages">
+            {pages.map((page) => (
+              <CommandItem
+                key={page.id}
+                onSelect={() => {
+                  runCommand(() => navigate(`/cms/editor/${page.id}`));
+                }}
+              >
+                <FileText className="mr-2 h-4 w-4" />
+                <span>{page.title}</span>
+                <span className="text-xs text-muted-foreground ml-2">/{page.slug}</span>
+              </CommandItem>
+            ))}
+          </CommandGroup>
+        </CommandList>
+      </CommandDialog>
     </StandardLayout>
   );
 };

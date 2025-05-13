@@ -1,9 +1,10 @@
 
 import React, { useState } from 'react';
-import { CMSComponent, ComponentDefinition } from '@/hooks/cms/types';
+import { CMSComponent, ComponentDefinition } from '@/hooks/cms/useCmsState';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
 import {
   Select,
   SelectContent,
@@ -12,8 +13,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from '@/components/ui/switch';
-import CTALinkInput from './CTALinkInput';
-import useCmsState from '@/hooks/cms/useCmsState';
 
 interface ComponentEditorProps {
   component: CMSComponent;
@@ -27,8 +26,6 @@ const ComponentEditor: React.FC<ComponentEditorProps> = ({
   onUpdate
 }) => {
   const [localProps, setLocalProps] = useState({ ...component.props });
-  const { pages } = useCmsState();
-  const safePages = Array.isArray(pages) ? pages : [];
   
   const handleChange = (key: string, value: any) => {
     setLocalProps(prev => ({
@@ -42,19 +39,6 @@ const ComponentEditor: React.FC<ComponentEditorProps> = ({
   
   // Render different inputs based on the property type
   const renderPropertyInput = (key: string, value: any) => {
-    // Special case for CTA links in hero components
-    if (component.type === 'hero' && key === 'ctaLink') {
-      return (
-        <div key={key} className="mb-4">
-          <CTALinkInput
-            value={localProps[key] || ''}
-            onChange={(value) => handleChange(key, value)}
-            pages={safePages}
-          />
-        </div>
-      );
-    }
-    
     // Determine type based on the value
     if (typeof value === 'string') {
       if (value.length > 50) {
@@ -116,7 +100,7 @@ const ComponentEditor: React.FC<ComponentEditorProps> = ({
         </div>
       );
     } else if (Array.isArray(value)) {
-      if (value.length > 0 && typeof value[0] === 'string') {
+      if (typeof value[0] === 'string') {
         return (
           <div key={key} className="mb-4">
             <Label htmlFor={key} className="block mb-1 capitalize">
