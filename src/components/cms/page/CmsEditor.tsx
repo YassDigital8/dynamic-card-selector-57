@@ -9,6 +9,8 @@ import { Save, Eye, Upload } from 'lucide-react';
 import ComponentList from '../editor/ComponentList';
 import PageCanvas from '../editor/PageCanvas';
 import ComponentEditor from '../editor/ComponentEditor';
+import { useEditorShortcuts } from '@/hooks/cms';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface CmsEditorProps {
   page: CMSPage;
@@ -46,6 +48,21 @@ const CmsEditor: React.FC<CmsEditorProps> = ({
       setEditorTab('properties');
     }
   };
+
+  const handleEscapeKey = () => {
+    if (selectedComponentId) {
+      setSelectedComponentId(null);
+      setEditorTab('components');
+    }
+  };
+  
+  // Initialize keyboard shortcuts
+  const { shortcuts } = useEditorShortcuts({
+    onSave: onSavePage,
+    onPublish: onPublishPage,
+    onPreview,
+    onEscape: handleEscapeKey
+  });
   
   return (
     <div className="flex h-[calc(100vh-200px)]">
@@ -54,6 +71,15 @@ const CmsEditor: React.FC<CmsEditorProps> = ({
         <div className="p-4 border-b border-slate-200">
           <h3 className="font-medium">Page Editor</h3>
           <p className="text-sm text-slate-500">{page.title}</p>
+          <div className="mt-2 space-y-1">
+            <p className="text-xs font-medium text-slate-700">Keyboard shortcuts:</p>
+            {shortcuts.map((shortcut, idx) => (
+              <p key={idx} className="text-xs text-slate-500">
+                <span className="font-mono bg-slate-100 px-1 rounded">{shortcut.key}</span>
+                {' '}- {shortcut.action}
+              </p>
+            ))}
+          </div>
         </div>
         
         <Tabs value={editorTab} onValueChange={setEditorTab} className="flex-1 flex flex-col">
@@ -91,19 +117,36 @@ const CmsEditor: React.FC<CmsEditorProps> = ({
             <p className="text-sm text-gray-500">/{page.slug}</p>
           </div>
           <div className="space-x-2">
-            <Button variant="outline" size="sm" onClick={onPreview}>
-              <Eye className="h-4 w-4 mr-2" /> Preview
-            </Button>
-            <Button size="sm" onClick={onSavePage}>
-              <Save className="h-4 w-4 mr-2" /> Save
-            </Button>
-            <Button 
-              size="sm" 
-              onClick={onPublishPage}
-              className="bg-green-600 hover:bg-green-700"
-            >
-              <Upload className="h-4 w-4 mr-2" /> Publish
-            </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="outline" size="sm" onClick={onPreview}>
+                  <Eye className="h-4 w-4 mr-2" /> Preview
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Preview page (Ctrl+P)</TooltipContent>
+            </Tooltip>
+            
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button size="sm" onClick={onSavePage}>
+                  <Save className="h-4 w-4 mr-2" /> Save
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Save changes (Ctrl+S)</TooltipContent>
+            </Tooltip>
+            
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button 
+                  size="sm" 
+                  onClick={onPublishPage}
+                  className="bg-green-600 hover:bg-green-700"
+                >
+                  <Upload className="h-4 w-4 mr-2" /> Publish
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Publish page (Ctrl+Shift+P)</TooltipContent>
+            </Tooltip>
           </div>
         </div>
         

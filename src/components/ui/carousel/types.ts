@@ -1,27 +1,20 @@
 
-import type { ReactNode } from "react"
-// Remove the embla-carousel import to fix the build error
-// import type { EmblaOptionsType } from "embla-carousel"
+import { ReactNode, useRef } from 'react';
 
-export interface CarouselProps {
-  opts?: any // Replace EmblaOptionsType with any to fix the build error
-  plugins?: any[] // Replace EmblaPluginType[] with any[]
-  orientation?: "horizontal" | "vertical"
-  setApi?: (api: any) => void // Replace EmblaCarouselType with any
-  children?: ReactNode
+export interface CarouselProps extends React.HTMLAttributes<HTMLDivElement> {
+  opts?: any;
+  plugins?: any[];
+  orientation?: 'horizontal' | 'vertical';
+  setApi?: (api: CarouselApi) => void;
 }
 
-export interface CarouselContextProps extends Required<Pick<CarouselProps, "orientation">> {
-  carouselRef: ReturnType<typeof useRef<HTMLElement>>
-  api?: any // Replace EmblaCarouselType with any
-  scrollPrev: () => void
-  scrollNext: () => void
-  canScrollPrev: boolean
-  canScrollNext: boolean
-}
+export type CarouselApi = any;
 
-export interface CarouselControlProps {
-  orientation?: "horizontal" | "vertical"
-  children?: ReactNode
+export interface CarouselContextProps {
+  carousel: ReturnType<typeof useRef<HTMLDivElement>;
+  api: CarouselApi;
+  opts: any;
+  orientation: 'horizontal' | 'vertical';
+  slideCount: number;
+  activeIndex: number;
 }
-

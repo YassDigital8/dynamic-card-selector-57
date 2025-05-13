@@ -1,8 +1,8 @@
 
-export * from "./carousel";
-export * from "./carousel-content";
-export * from "./carousel-item";
-export * from "./carousel-next";
-export * from "./carousel-previous";
-export * from "./carousel-indicators";
-export * from "./types";
+export { Carousel } from './carousel';
+export { CarouselContent } from './carousel-content';
+export { CarouselItem } from './carousel-item';
+export { CarouselPrevious } from './carousel-previous';
+export { CarouselNext } from './carousel-next';
+export { CarouselIndicators } from './carousel-indicators';
+export type { CarouselApi } from './types';

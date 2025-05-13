@@ -5,3 +5,4 @@ export * from './mockData';
 export * from './usePageLoading';
 export * from './usePageOperations';
 export * from './useComponentOperations';
+export * from './useEditorShortcuts';

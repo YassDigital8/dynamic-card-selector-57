@@ -1,124 +1,71 @@
 
-import * as React from "react"
-import useEmblaCarousel, { type UseEmblaCarouselType } from "embla-carousel-react"
-import { cn } from "@/lib/utils"
-import { CarouselContext } from "./carousel-context"
-import { CarouselProps } from "./types"
+import * as React from 'react';
+import { cn } from '@/lib/utils';
+import { type CarouselApi, type CarouselContextProps, type CarouselProps } from './types';
 
-const Carousel = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> & CarouselProps
->(
-  (
-    {
-      orientation = "horizontal",
-      opts,
-      setApi,
-      plugins,
-      className,
-      children,
-      ...props
-    },
-    ref
-  ) => {
-    const [carouselRef, api] = useEmblaCarousel(
-      {
-        ...opts,
-        axis: orientation === "horizontal" ? "x" : "y",
-      },
-      plugins
-    )
-    const [canScrollPrev, setCanScrollPrev] = React.useState(false)
-    const [canScrollNext, setCanScrollNext] = React.useState(false)
-    const [activeIndex, setActiveIndex] = React.useState(0)
-    const [slideCount, setSlideCount] = React.useState(0)
+const CarouselContext = React.createContext<CarouselContextProps | null>(null);
 
-    const onSelect = React.useCallback((api: UseEmblaCarouselType[1]) => {
-      if (!api) {
-        return
-      }
+export function useCarousel() {
+  const context = React.useContext(CarouselContext);
+  if (!context) {
+    throw new Error('useCarousel must be used within a <Carousel />');
+  }
+  return context;
+}
 
-      setCanScrollPrev(api.canScrollPrev())
-      setCanScrollNext(api.canScrollNext())
-      setActiveIndex(api.selectedScrollSnap())
-      setSlideCount(api.scrollSnapList().length)
-    }, [])
-
-    const scrollPrev = React.useCallback(() => {
-      api?.scrollPrev()
-    }, [api])
-
-    const scrollNext = React.useCallback(() => {
-      api?.scrollNext()
-    }, [api])
-
-    const handleKeyDown = React.useCallback(
-      (event: React.KeyboardEvent<HTMLDivElement>) => {
-        if (event.key === "ArrowLeft") {
-          event.preventDefault()
-          scrollPrev()
-        } else if (event.key === "ArrowRight") {
-          event.preventDefault()
-          scrollNext()
-        }
-      },
-      [scrollPrev, scrollNext]
-    )
-
+const Carousel = React.forwardRef<HTMLDivElement, CarouselProps>(
+  ({ orientation = 'horizontal', opts, setApi, className, children, ...props }, ref) => {
+    const [carouselRef, api] = React.useState<CarouselApi | null>(null);
+    const [activeIndex, setActiveIndex] = React.useState(0);
+    const [slideCount, setSlideCount] = React.useState(0);
+    
     React.useEffect(() => {
-      if (!api || !setApi) {
-        return
-      }
-
-      setApi(api)
-    }, [api, setApi])
-
+      if (!api || !setApi) return;
+      setApi(api);
+    }, [api, setApi]);
+    
     React.useEffect(() => {
-      if (!api) {
-        return
-      }
+      if (!api) return;
+      
+      // Set the slide count
+      setSlideCount(api.slideNodes().length);
+      
+      // Set initial active index
+      setActiveIndex(api.selectedScrollSnap());
+      
+      // Subscribe to scroll events
+      api.on('select', () => {
+        setActiveIndex(api.selectedScrollSnap());
+      });
+    }, [api]);
 
-      onSelect(api)
-      api.on("reInit", onSelect)
-      api.on("select", onSelect)
-
-      return () => {
-        api?.off("select", onSelect)
-      }
-    }, [api, onSelect])
+    const contextValue = React.useMemo<CarouselContextProps>(
+      () => ({
+        carousel: carouselRef,
+        api,
+        opts,
+        orientation,
+        slideCount,
+        activeIndex,
+      }),
+      [carouselRef, api, opts, orientation, slideCount, activeIndex]
+    );
 
     return (
-      <CarouselContext.Provider
-        value={{
-          carouselRef: carouselRef as unknown as React.RefObject<HTMLDivElement>,
-          api: api,
-          opts,
-          orientation:
-            orientation || (opts?.axis === "y" ? "vertical" : "horizontal"),
-          scrollPrev,
-          scrollNext,
-          canScrollPrev,
-          canScrollNext,
-          activeIndex,
-          slideCount
-        }}
-      >
+      <CarouselContext.Provider value={contextValue}>
         <div
           ref={ref}
-          onKeyDownCapture={handleKeyDown}
-          className={cn("relative", className)}
+          className={cn('relative', className)}
           role="region"
           aria-roledescription="carousel"
-          aria-label={props['aria-label'] || "Image carousel"}
-          tabIndex={0}
           {...props}
         >
           {children}
         </div>
       </CarouselContext.Provider>
-    )
+    );
   }
-)
-Carousel.displayName = "Carousel"
+);
+Carousel.displayName = 'Carousel';
 
-export { Carousel }
+export { Carousel };
