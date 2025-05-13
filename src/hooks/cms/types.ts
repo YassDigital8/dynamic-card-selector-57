@@ -41,6 +41,6 @@ export interface UseCmsStateReturn {
   updateComponentProps: (componentId: string, props: Record<string, any>) => void;
   removeComponentFromPage: (componentId: string) => void;
   moveComponent: (componentId: string, direction: 'up' | 'down') => void;
-  savePage: () => boolean;
+  savePage: () => boolean; // Ensure this is explicitly defined as returning a boolean
   publishPage: (pageId: string) => boolean;
 }

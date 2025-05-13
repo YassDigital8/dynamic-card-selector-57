@@ -18,7 +18,7 @@ interface CmsPageViewProps {
   onUpdateComponent: (componentId: string, props: Record<string, any>) => void;
   onRemoveComponent: (componentId: string) => void;
   onMoveComponent: (componentId: string, direction: 'up' | 'down') => void;
-  onSavePage: () => void;
+  onSavePage: () => boolean | void; // Updated type to accept both boolean and void return types
   onPublishPage: () => void;
 }
 

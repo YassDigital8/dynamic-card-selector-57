@@ -69,6 +69,11 @@ const CMS = () => {
     }
   };
   
+  // This is the function that needs to return the same type as expected in the component
+  const handleSavePage = () => {
+    return savePage(); // Now this will correctly return a boolean as expected by CmsPageView
+  };
+  
   const runCommand = useCallback((command: () => void) => {
     setCommandOpen(false);
     command();
@@ -93,7 +98,7 @@ const CMS = () => {
         onUpdateComponent={updateComponentProps}
         onRemoveComponent={removeComponentFromPage}
         onMoveComponent={moveComponent}
-        onSavePage={savePage}
+        onSavePage={handleSavePage} // Using our fixed function that returns boolean
         onPublishPage={handlePublishPage}
       />
       

@@ -56,7 +56,7 @@ const useCmsState = (): UseCmsStateReturn => {
     }
   }, [pages, toast]);
 
-  // Save the page changes
+  // Save the page changes - ensure this returns a boolean
   const savePageWrapper = useCallback(() => {
     if (!selectedPage) return false;
     return savePage(selectedPage);
