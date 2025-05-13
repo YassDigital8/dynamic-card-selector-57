@@ -1,14 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react';
+
+import React, { useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import StandardLayout from '@/components/layout/StandardLayout';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import CMSPageList from '@/components/cms/CMSPageList';
-import CMSEditor from '@/components/cms/CMSEditor';
-import CMSPagePreview from '@/components/cms/CMSPagePreview';
 import useCmsState from '@/hooks/cms/useCmsState';
-import { CommandDialog, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem } from '@/components/ui/command';
-import { FileText, Search } from 'lucide-react';
+import { CmsPageView, CmsCommandPalette, useCmsKeyboardShortcuts, useCmsPageSearch } from '@/components/cms/page';
 
 const CMS = () => {
   const { pageId } = useParams();
@@ -23,7 +19,6 @@ const CMS = () => {
     selectedPage, 
     components,
     loading,
-    loadPages,
     createNewPage,
     publishPage,
     selectPage,
@@ -34,59 +29,17 @@ const CMS = () => {
     savePage
   } = useCmsState();
   
-  // Ensure pages is always an array
-  const safePages = Array.isArray(pages) ? pages : [];
-  
-  // Filter pages based on search query with improved null checks
-  const filteredPages = React.useMemo(() => {
-    if (!searchQuery) return safePages;
-    if (!Array.isArray(safePages)) return [];
-    
-    return safePages.filter(page => {
-      if (!page) return false;
-      
-      const title = page.title || '';
-      const slug = page.slug || '';
-      const searchLower = searchQuery.toLowerCase();
-      
-      return title.toLowerCase().includes(searchLower) || 
-             slug.toLowerCase().includes(searchLower);
-    });
-  }, [safePages, searchQuery]);
+  // Use our custom hooks
+  useCmsKeyboardShortcuts({ setCommandOpen });
+  const { filteredPages } = useCmsPageSearch(pages, searchQuery);
   
   // Switch to editor view if a page ID is provided
-  useEffect(() => {
+  React.useEffect(() => {
     if (pageId) {
       setCurrentView("editor");
       selectPage(pageId);
     }
   }, [pageId, selectPage]);
-  
-  // Listen for keyboard shortcuts
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // Open command dialog when "/" is pressed
-      if (e.key === '/') {
-        // Prevent the key from being typed in input fields
-        if (
-          e.target instanceof HTMLInputElement || 
-          e.target instanceof HTMLTextAreaElement ||
-          e.target instanceof HTMLSelectElement ||
-          (e.target instanceof HTMLElement && e.target.isContentEditable)
-        ) {
-          return;
-        }
-        
-        // Prevent default behavior
-        e.preventDefault();
-        // Open command dialog
-        setCommandOpen(true);
-      }
-    };
-    
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, []);
   
   const handleCreatePage = async (title: string, slug: string, template: string) => {
     // Convert template string to the expected template type
@@ -121,87 +74,37 @@ const CMS = () => {
     command();
   }, []);
   
+  const handleCommandSelect = useCallback((pageId: string) => {
+    runCommand(() => navigate(`/cms/editor/${pageId}`));
+  }, [runCommand, navigate]);
+  
   return (
     <StandardLayout pageTitle="Content Management System" pageDescription="Create and manage your website content">
-      <Tabs value={currentView} onValueChange={setCurrentView} className="w-full">
-        <TabsList className="mb-6">
-          <TabsTrigger value="pages" className="data-[state=active]:bg-white">
-            Pages
-          </TabsTrigger>
-          {selectedPage && (
-            <TabsTrigger value="editor" className="data-[state=active]:bg-white">
-              Page Editor
-            </TabsTrigger>
-          )}
-          {selectedPage && (
-            <TabsTrigger value="preview" className="data-[state=active]:bg-white">
-              Preview
-            </TabsTrigger>
-          )}
-        </TabsList>
-        
-        <TabsContent value="pages" className="mt-0">
-          <CMSPageList 
-            pages={safePages}
-            loading={loading}
-            onCreatePage={handleCreatePage}
-            onSelectPage={(id) => navigate(`/cms/editor/${id}`)}
-          />
-        </TabsContent>
-        
-        {selectedPage && (
-          <TabsContent value="editor" className="mt-0">
-            <CMSEditor 
-              page={selectedPage}
-              components={Array.isArray(components) ? components : []}
-              onAddComponent={addComponentToPage}
-              onUpdateComponent={updateComponentProps}
-              onRemoveComponent={removeComponentFromPage}
-              onMoveComponent={moveComponent}
-              onSavePage={savePage}
-              onPublishPage={handlePublishPage}
-            />
-          </TabsContent>
-        )}
-        
-        {selectedPage && (
-          <TabsContent value="preview" className="mt-0">
-            <CMSPagePreview page={selectedPage} />
-          </TabsContent>
-        )}
-      </Tabs>
+      <CmsPageView
+        currentView={currentView}
+        setCurrentView={setCurrentView}
+        pages={Array.isArray(pages) ? pages : []}
+        selectedPage={selectedPage}
+        components={Array.isArray(components) ? components : []}
+        loading={loading}
+        onCreatePage={handleCreatePage}
+        onSelectPage={(id) => navigate(`/cms/editor/${id}`)}
+        onAddComponent={addComponentToPage}
+        onUpdateComponent={updateComponentProps}
+        onRemoveComponent={removeComponentFromPage}
+        onMoveComponent={moveComponent}
+        onSavePage={savePage}
+        onPublishPage={handlePublishPage}
+      />
       
-      {/* CommandDialog for page search */}
-      <CommandDialog 
-        open={commandOpen} 
+      <CmsCommandPalette
+        open={commandOpen}
         onOpenChange={setCommandOpen}
-      >
-        <CommandInput 
-          placeholder="Search pages..." 
-          value={searchQuery}
-          onValueChange={setSearchQuery}
-        />
-        <CommandList>
-          <CommandEmpty>No pages found with that search term.</CommandEmpty>
-          <CommandGroup heading="Pages">
-            {filteredPages.map((page) => (
-              <CommandItem
-                key={page.id}
-                onSelect={() => {
-                  runCommand(() => navigate(`/cms/editor/${page.id}`));
-                }}
-                className="flex items-center justify-between py-2 cursor-pointer"
-              >
-                <div className="flex items-center">
-                  <FileText className="mr-2 h-4 w-4" />
-                  <span>{page.title}</span>
-                </div>
-                <span className="text-xs text-muted-foreground ml-2">/{page.slug}</span>
-              </CommandItem>
-            ))}
-          </CommandGroup>
-        </CommandList>
-      </CommandDialog>
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        filteredPages={filteredPages}
+        onSelectPage={handleCommandSelect}
+      />
     </StandardLayout>
   );
 };
