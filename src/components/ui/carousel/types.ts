@@ -11,7 +11,7 @@ export interface CarouselProps extends React.HTMLAttributes<HTMLDivElement> {
 export type CarouselApi = any;
 
 export interface CarouselContextProps {
-  carousel: ReturnType<typeof useRef<HTMLDivElement>;
+  carousel: ReturnType<typeof useRef<HTMLDivElement>>;
   api: CarouselApi;
   opts: any;
   orientation: 'horizontal' | 'vertical';
