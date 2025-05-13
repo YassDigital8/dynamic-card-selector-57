@@ -69,9 +69,9 @@ const CMS = () => {
     }
   };
   
-  // This is the function that needs to return the same type as expected in the component
+  // This function always returns a boolean
   const handleSavePage = () => {
-    return savePage(); // Now this will correctly return a boolean as expected by CmsPageView
+    return savePage() || false; // Ensure a boolean is always returned
   };
   
   const runCommand = useCallback((command: () => void) => {
