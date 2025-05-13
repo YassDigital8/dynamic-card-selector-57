@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { CMSComponent } from '@/hooks/cms/useCmsState';
+import { CMSComponent } from '@/hooks/cms';
 import HeroComponent from './components/HeroComponent';
 import TextComponent from './components/TextComponent';
 import ImageComponent from './components/ImageComponent';

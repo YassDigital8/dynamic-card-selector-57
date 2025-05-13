@@ -4,9 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import StandardLayout from '@/components/layout/StandardLayout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import CMSPageList from '@/components/cms/CMSPageList';
-import CMSEditor from '@/components/cms/CMSEditor';
-import CMSPagePreview from '@/components/cms/CMSPagePreview';
+import { CmsPageList, CmsEditor, CmsPagePreview } from '@/components/cms/page';
 import useCmsState from '@/hooks/cms/useCmsState';
 
 const CMS = () => {
@@ -65,7 +63,22 @@ const CMS = () => {
       }
     }
   };
+
+  const handleSavePage = () => {
+    const success = savePage();
+    if (success) {
+      toast({
+        title: "Page Saved",
+        description: `The page has been saved successfully.`,
+      });
+    }
+    return success;
+  };
   
+  const handlePreview = () => {
+    setCurrentView("preview");
+  };
+
   return (
     <StandardLayout pageTitle="Content Management System" pageDescription="Create and manage your website content">
       <Tabs value={currentView} onValueChange={setCurrentView} className="w-full">
@@ -86,7 +99,7 @@ const CMS = () => {
         </TabsList>
         
         <TabsContent value="pages" className="mt-0">
-          <CMSPageList 
+          <CmsPageList 
             pages={pages}
             loading={loading}
             onCreatePage={handleCreatePage}
@@ -96,22 +109,26 @@ const CMS = () => {
         
         {selectedPage && (
           <TabsContent value="editor" className="mt-0">
-            <CMSEditor 
+            <CmsEditor 
               page={selectedPage}
               components={components}
               onAddComponent={addComponentToPage}
               onUpdateComponent={updateComponentProps}
               onRemoveComponent={removeComponentFromPage}
               onMoveComponent={moveComponent}
-              onSavePage={savePage}
+              onSavePage={handleSavePage}
               onPublishPage={handlePublishPage}
+              onPreview={handlePreview}
             />
           </TabsContent>
         )}
         
         {selectedPage && (
           <TabsContent value="preview" className="mt-0">
-            <CMSPagePreview page={selectedPage} />
+            <CmsPagePreview 
+              page={selectedPage} 
+              onBack={() => setCurrentView("editor")}
+            />
           </TabsContent>
         )}
       </Tabs>
