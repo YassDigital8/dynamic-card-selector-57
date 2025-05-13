@@ -19,9 +19,6 @@ const HeroComponent: React.FC<HeroComponentProps> = ({
 }) => {
   const isInternalLink = ctaLink?.startsWith('/');
   
-  // Determine if we should render a CTA button
-  const shouldRenderCTA = ctaText && ctaLink;
-  
   return (
     <div className="relative w-full bg-slate-800 text-white overflow-hidden rounded-lg">
       {/* Background Image */}
@@ -35,7 +32,7 @@ const HeroComponent: React.FC<HeroComponentProps> = ({
         <h1 className="text-4xl font-bold mb-4">{title}</h1>
         {subtitle && <p className="text-xl mb-8">{subtitle}</p>}
         
-        {shouldRenderCTA && (
+        {ctaText && ctaLink && (
           isInternalLink ? (
             <Link 
               to={ctaLink} 

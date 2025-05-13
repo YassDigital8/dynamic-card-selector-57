@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import StandardLayout from '@/components/layout/StandardLayout';
@@ -8,16 +8,12 @@ import CMSPageList from '@/components/cms/CMSPageList';
 import CMSEditor from '@/components/cms/CMSEditor';
 import CMSPagePreview from '@/components/cms/CMSPagePreview';
 import useCmsState from '@/hooks/cms/useCmsState';
-import { CommandDialog, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem } from '@/components/ui/command';
-import { FileText } from 'lucide-react';
 
 const CMS = () => {
   const { pageId } = useParams();
   const [currentView, setCurrentView] = useState<string>("pages");
   const { toast } = useToast();
   const navigate = useNavigate();
-  const [commandOpen, setCommandOpen] = useState(false);
-  
   const { 
     pages, 
     selectedPage, 
@@ -41,26 +37,6 @@ const CMS = () => {
       selectPage(pageId);
     }
   }, [pageId, selectPage]);
-  
-  // Listen for keyboard shortcuts
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // Open command dialog when "/" is pressed
-      if (e.key === '/') {
-        // Prevent the key from being typed in input fields
-        if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
-          return;
-        }
-        
-        e.preventDefault();
-        setCommandOpen(true);
-        console.log("Command dialog opened"); // Add logging to verify the function is called
-      }
-    };
-    
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, []);
   
   const handleCreatePage = async (title: string, slug: string, template: string) => {
     // Convert template string to the expected template type
@@ -89,11 +65,6 @@ const CMS = () => {
       }
     }
   };
-  
-  const runCommand = useCallback((command: () => void) => {
-    setCommandOpen(false);
-    command();
-  }, []);
   
   return (
     <StandardLayout pageTitle="Content Management System" pageDescription="Create and manage your website content">
@@ -144,30 +115,6 @@ const CMS = () => {
           </TabsContent>
         )}
       </Tabs>
-      
-      <CommandDialog 
-        open={commandOpen} 
-        onOpenChange={setCommandOpen}
-      >
-        <CommandInput placeholder="Search pages..." />
-        <CommandList className="max-h-[300px]">
-          <CommandEmpty>No pages found.</CommandEmpty>
-          <CommandGroup heading="Pages">
-            {pages.map((page) => (
-              <CommandItem
-                key={page.id}
-                onSelect={() => {
-                  runCommand(() => navigate(`/cms/editor/${page.id}`));
-                }}
-              >
-                <FileText className="mr-2 h-4 w-4" />
-                <span>{page.title}</span>
-                <span className="text-xs text-muted-foreground ml-2">/{page.slug}</span>
-              </CommandItem>
-            ))}
-          </CommandGroup>
-        </CommandList>
-      </CommandDialog>
     </StandardLayout>
   );
 };
