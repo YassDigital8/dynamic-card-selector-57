@@ -29,7 +29,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { PlusCircle, Edit, Eye, Trash, CheckCircle2, Clock } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { CMSPage } from '@/hooks/cms';
+import { CMSPage } from '@/hooks/cms/types';
 import { Skeleton } from '@/components/ui/skeleton';
 
 interface CmsPageListProps {

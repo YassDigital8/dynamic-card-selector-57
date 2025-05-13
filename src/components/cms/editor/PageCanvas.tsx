@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { CMSComponent } from '@/hooks/cms/useCmsState';
+import { CMSComponent } from '@/hooks/cms/types';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ArrowDown, ArrowUp, Trash, Pencil } from 'lucide-react';

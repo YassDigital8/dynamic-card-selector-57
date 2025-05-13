@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { CMSPage } from '@/hooks/cms/useCmsState';
+import { CMSPage } from '@/hooks/cms/types';
 import RenderComponent from './render/RenderComponent';
 import { Button } from '@/components/ui/button';
 import { Eye, ArrowLeft } from 'lucide-react';

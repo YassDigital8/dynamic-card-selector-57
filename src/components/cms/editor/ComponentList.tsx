@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ComponentDefinition } from '@/hooks/cms/useCmsState';
+import { ComponentDefinition } from '@/hooks/cms/types';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { 
@@ -78,13 +78,13 @@ const ComponentList: React.FC<ComponentListProps> = ({ components, onAddComponen
   
   return (
     <div className="space-y-4">
-      {Object.entries(categories).map(([category, components]) => (
+      {Object.entries(categories).map(([category, categoryComponents]) => (
         <div key={category}>
           <h3 className="text-sm uppercase font-medium text-slate-600 mb-2">
             {category.charAt(0).toUpperCase() + category.slice(1)}
           </h3>
           <div>
-            {components.map(component => (
+            {categoryComponents.map(component => (
               <ComponentItem 
                 key={component.id}
                 component={component}

@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { CMSPage, CMSComponent, ComponentDefinition } from '@/hooks/cms/useCmsState';
+import { CMSPage, CMSComponent, ComponentDefinition } from '@/hooks/cms/types';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Save, Eye, Upload } from 'lucide-react';
 import ComponentList from './editor/ComponentList';

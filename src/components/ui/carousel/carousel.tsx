@@ -15,9 +15,15 @@ export function useCarousel() {
 
 const Carousel = React.forwardRef<HTMLDivElement, CarouselProps>(
   ({ orientation = 'horizontal', opts, setApi, className, children, ...props }, ref) => {
-    const [carouselRef, api] = React.useState<CarouselApi | null>(null);
+    const carouselRef = React.useRef<HTMLDivElement>(null);
+    const [api, setInternalApi] = React.useState<CarouselApi | null>(null);
     const [activeIndex, setActiveIndex] = React.useState(0);
     const [slideCount, setSlideCount] = React.useState(0);
+    const [canScrollNext, setCanScrollNext] = React.useState(false);
+    const [canScrollPrev, setCanScrollPrev] = React.useState(false);
+    
+    const scrollNext = React.useCallback(() => api?.scrollNext(), [api]);
+    const scrollPrev = React.useCallback(() => api?.scrollPrev(), [api]);
     
     React.useEffect(() => {
       if (!api || !setApi) return;
@@ -33,22 +39,32 @@ const Carousel = React.forwardRef<HTMLDivElement, CarouselProps>(
       // Set initial active index
       setActiveIndex(api.selectedScrollSnap());
       
+      // Update the scrolling states
+      setCanScrollNext(api.canScrollNext());
+      setCanScrollPrev(api.canScrollPrev());
+      
       // Subscribe to scroll events
       api.on('select', () => {
         setActiveIndex(api.selectedScrollSnap());
+        setCanScrollNext(api.canScrollNext());
+        setCanScrollPrev(api.canScrollPrev());
       });
     }, [api]);
 
     const contextValue = React.useMemo<CarouselContextProps>(
       () => ({
-        carousel: carouselRef,
+        carouselRef,
         api,
         opts,
         orientation,
         slideCount,
         activeIndex,
+        scrollNext,
+        scrollPrev,
+        canScrollNext,
+        canScrollPrev
       }),
-      [carouselRef, api, opts, orientation, slideCount, activeIndex]
+      [carouselRef, api, opts, orientation, slideCount, activeIndex, scrollNext, scrollPrev, canScrollNext, canScrollPrev]
     );
 
     return (

@@ -1,5 +1,5 @@
 
-import { ReactNode, useRef } from 'react';
+import { ReactNode } from 'react';
 
 export interface CarouselProps extends React.HTMLAttributes<HTMLDivElement> {
   opts?: any;
@@ -8,13 +8,25 @@ export interface CarouselProps extends React.HTMLAttributes<HTMLDivElement> {
   setApi?: (api: CarouselApi) => void;
 }
 
-export type CarouselApi = any;
+export type CarouselApi = {
+  slideNodes: () => HTMLElement[];
+  selectedScrollSnap: () => number;
+  on: (event: string, callback: () => void) => void;
+  scrollNext: () => void;
+  scrollPrev: () => void;
+  canScrollNext: () => boolean;
+  canScrollPrev: () => boolean;
+}
 
 export interface CarouselContextProps {
-  carousel: ReturnType<typeof useRef<HTMLDivElement>>;
-  api: CarouselApi;
+  carouselRef: React.RefObject<HTMLDivElement>;
+  api: CarouselApi | null;
   opts: any;
   orientation: 'horizontal' | 'vertical';
   slideCount: number;
   activeIndex: number;
+  scrollNext: () => void;
+  scrollPrev: () => void;
+  canScrollNext: boolean;
+  canScrollPrev: boolean;
 }
