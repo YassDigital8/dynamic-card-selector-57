@@ -16,6 +16,7 @@ export type CarouselApi = {
   scrollPrev: () => void;
   canScrollNext: () => boolean;
   canScrollPrev: () => boolean;
+  scrollTo: (index: number) => void; // <-- Added scrollTo method
 }
 
 export interface CarouselContextProps {
